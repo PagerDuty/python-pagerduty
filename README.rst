@@ -1,7 +1,9 @@
-================================================================
-python-pagerduty: a basic API Client for PagerDuty's public APIs
-================================================================
+=====================================================
+python-pagerduty: clients for PagerDuty's public APIs
+=====================================================
 A module that supplies lightweight Python clients for the PagerDuty REST API v2 and Events API v2.
+
+**This library is currently a work in progress.**
 
 For how-to, refer to the `User Guide
 <https://pagerduty.github.io/python-pagerduty/user_guide.html>`_.
