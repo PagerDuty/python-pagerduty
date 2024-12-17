@@ -1,7 +1,7 @@
 #!/usr/bin/env python
 
 """
-Unit tests for pdpyras
+Unit tests for pagerduty
 
 Python 3, or the backport of unittest.mock for Python 2, is required.
 
@@ -21,7 +21,7 @@ import unittest
 
 from unittest.mock import Mock, MagicMock, patch, call
 
-import pdpyras
+import pagerduty
 
 class SessionTest(unittest.TestCase):
     def assertDictContainsSubset(self, d0, d1):
@@ -79,18 +79,18 @@ class URLHandlingTest(unittest.TestCase):
                 '/{entity_type}/{id}/change_tags',
                 '/services/POOPBUG/change_tags',
             ),
-            ( # for https://github.com/PagerDuty/pdpyras/pull/109
+            ( # for https://github.com/PagerDuty/pagerduty/pull/109
                 '/users/me',
                 '/users/me',
             ),
         ]
         for (pattern, url) in identified_urls:
             base_url = 'https://api.pagerduty.com'
-            self.assertEqual(pattern, pdpyras.canonical_path(base_url, url))
+            self.assertEqual(pattern, pagerduty.canonical_path(base_url, url))
 
     def test_is_path_param(self):
-        self.assertTrue(pdpyras.is_path_param('{id}'))
-        self.assertFalse(pdpyras.is_path_param('services'))
+        self.assertTrue(pagerduty.is_path_param('{id}'))
+        self.assertFalse(pagerduty.is_path_param('services'))
 
     def test_normalize_url(self):
         urls_expected = [
@@ -113,7 +113,7 @@ class URLHandlingTest(unittest.TestCase):
         for (base_url_url, expected_url) in urls_expected:
             self.assertEqual(
                 expected_url,
-                pdpyras.normalize_url(*base_url_url)
+                pagerduty.normalize_url(*base_url_url)
             )
         invalid_input = [ # URL does not start with base_url
             (
@@ -126,7 +126,7 @@ class URLHandlingTest(unittest.TestCase):
             )
         ]
         for args in invalid_input:
-            self.assertRaises(pdpyras.URLError, pdpyras.normalize_url, *args)
+            self.assertRaises(pagerduty.URLError, pagerduty.normalize_url, *args)
 
 class EntityWrappingTest(unittest.TestCase):
 
@@ -159,7 +159,7 @@ class EntityWrappingTest(unittest.TestCase):
             (('post', '/analytics/raw/incidents'), (None, None)),
         ]
         for ((method, path), rval) in io_expected:
-            self.assertEqual(rval, pdpyras.entity_wrappers(method, path))
+            self.assertEqual(rval, pagerduty.entity_wrappers(method, path))
 
     def test_infer_entity_wrapper(self):
         io_expected = [
@@ -171,27 +171,27 @@ class EntityWrappingTest(unittest.TestCase):
         for (method_path, expected_wrapper) in io_expected:
             self.assertEqual(
                 expected_wrapper,
-                pdpyras.infer_entity_wrapper(*method_path),
+                pagerduty.infer_entity_wrapper(*method_path),
             )
 
     def test_unwrap(self):
         # Response has unexpected type, raise:
         r = Response(200, json.dumps([]))
-        self.assertRaises(pdpyras.PDServerError, pdpyras.unwrap, r, 'foo')
+        self.assertRaises(pagerduty.PDServerError, pagerduty.unwrap, r, 'foo')
         # Response has unexpected structure, raise:
         r = Response(200, json.dumps({'foo_1': {'bar':1}, 'foo_2': 'bar2'}))
-        self.assertRaises(pdpyras.PDServerError, pdpyras.unwrap, r, 'foo')
+        self.assertRaises(pagerduty.PDServerError, pagerduty.unwrap, r, 'foo')
         # Response has the expected structure, return the wrapped entity:
         foo_entity = {'type':'foo_reference', 'id': 'PFOOBAR'}
         r = Response(200, json.dumps({'foo': foo_entity}))
-        self.assertEqual(foo_entity, pdpyras.unwrap(r, 'foo'))
+        self.assertEqual(foo_entity, pagerduty.unwrap(r, 'foo'))
         # Disabled entity wrapping (wrapper=None), return body as-is
-        self.assertEqual({'foo': foo_entity}, pdpyras.unwrap(r, None))
+        self.assertEqual({'foo': foo_entity}, pagerduty.unwrap(r, None))
 
 class FunctionDecoratorsTest(unittest.TestCase):
-    @patch.object(pdpyras.APISession, 'put')
+    @patch.object(pagerduty.APISession, 'put')
     def test_resource_path(self, put_method):
-        sess = pdpyras.APISession('some-key')
+        sess = pagerduty.APISession('some-key')
         resource_url = 'https://api.pagerduty.com/users/PSOMEUSR'
         user = {
             'id': 'PSOMEUSR',
@@ -209,7 +209,7 @@ class FunctionDecoratorsTest(unittest.TestCase):
         do_http_things = MagicMock()
         response = MagicMock()
         do_http_things.return_value = response
-        session = pdpyras.APISession('some_key')
+        session = pagerduty.APISession('some_key')
         dummy_session = MagicMock()
         def reset_mocks():
             do_http_things.reset_mock()
@@ -222,7 +222,7 @@ class FunctionDecoratorsTest(unittest.TestCase):
         response.json.return_value = {'service': {'name': 'value'}}
         do_http_things.__name__ = 'rput' # just for instance
         self.assertEqual(
-            pdpyras.wrapped_entities(do_http_things)(session,
+            pagerduty.wrapped_entities(do_http_things)(session,
                 '/services/PTHINGY'),
             {'name': 'value'}
         )
@@ -232,8 +232,8 @@ class FunctionDecoratorsTest(unittest.TestCase):
         response.ok = True
         do_http_things.__name__ = 'rput' # just for instance
         response.json.side_effect = [ValueError('Bad JSON!')]
-        self.assertRaises(pdpyras.PDClientError,
-            pdpyras.wrapped_entities(do_http_things), session, '/services')
+        self.assertRaises(pagerduty.PDClientError,
+            pagerduty.wrapped_entities(do_http_things), session, '/services')
         reset_mocks()
 
         # OK response, but the response isn't what we expected: exception.
@@ -244,16 +244,16 @@ class FunctionDecoratorsTest(unittest.TestCase):
         do_http_things.return_value = response
         do_http_things.__name__ = 'rput' # just for instance
         response.json.return_value = {'nope': 'nopenope'}
-        self.assertRaises(pdpyras.PDHTTPError,
-            pdpyras.wrapped_entities(do_http_things), session, '/services')
+        self.assertRaises(pagerduty.PDHTTPError,
+            pagerduty.wrapped_entities(do_http_things), session, '/services')
         reset_mocks()
 
         # Not OK response, raise
         response.reset_mock()
         response.ok = False
         do_http_things.__name__ = 'rput' # just for instance
-        self.assertRaises(pdpyras.PDClientError,
-            pdpyras.wrapped_entities(do_http_things), session, '/services')
+        self.assertRaises(pagerduty.PDClientError,
+            pagerduty.wrapped_entities(do_http_things), session, '/services')
         reset_mocks()
 
         # GET /<index>: use a different envelope name
@@ -264,7 +264,7 @@ class FunctionDecoratorsTest(unittest.TestCase):
         do_http_things.__name__ = 'rget'
         dummy_session.url = 'https://api.pagerduty.com'
         self.assertEqual(users_array,
-            pdpyras.wrapped_entities(do_http_things)(dummy_session, '/users',
+            pagerduty.wrapped_entities(do_http_things)(dummy_session, '/users',
                 query='user'))
         reset_mocks()
 
@@ -273,8 +273,8 @@ class FunctionDecoratorsTest(unittest.TestCase):
         do_http_things.__name__ = 'rpost'
         user_payload = {'email':'user@example.com', 'name':'User McUserson'}
         self.assertRaises(
-            pdpyras.PDClientError,
-            pdpyras.wrapped_entities(do_http_things),
+            pagerduty.PDClientError,
+            pagerduty.wrapped_entities(do_http_things),
             dummy_session, '/users', json=user_payload
         )
         reset_mocks()
@@ -288,7 +288,7 @@ class FunctionDecoratorsTest(unittest.TestCase):
         response.json.return_value = {'user':created_user}
         self.assertEqual(
             created_user,
-            pdpyras.wrapped_entities(do_http_things)(dummy_session, '/users',
+            pagerduty.wrapped_entities(do_http_things)(dummy_session, '/users',
                 json=user_payload)
         )
         do_http_things.assert_called_with(dummy_session, '/users',
@@ -303,7 +303,7 @@ class FunctionDecoratorsTest(unittest.TestCase):
         response.json.return_value = {'incidents': updated_incidents}
         self.assertEqual(
             updated_incidents,
-            pdpyras.wrapped_entities(do_http_things)(dummy_session,
+            pagerduty.wrapped_entities(do_http_things)(dummy_session,
                 '/incidents', json=incidents)
         )
         # The final value of the json parameter passed to the method (which goes
@@ -320,25 +320,25 @@ class HelperFunctionsTest(unittest.TestCase):
         for r_name in ('escalation_policies', 'services', 'log_entries'):
             self.assertEqual(
                 r_name,
-                pdpyras.plural_name(pdpyras.singular_name(r_name))
+                pagerduty.plural_name(pagerduty.singular_name(r_name))
             )
         # reverse
         for o_name in ('escalation_policy', 'service', 'log_entry'):
             self.assertEqual(
                 o_name,
-                pdpyras.singular_name(pdpyras.plural_name(o_name))
+                pagerduty.singular_name(pagerduty.plural_name(o_name))
             )
 
     def test_successful_response(self):
-        self.assertRaises(pdpyras.PDClientError, pdpyras.successful_response,
+        self.assertRaises(pagerduty.PDClientError, pagerduty.successful_response,
             Response(400, json.dumps({})))
-        self.assertRaises(pdpyras.PDServerError, pdpyras.successful_response,
+        self.assertRaises(pagerduty.PDServerError, pagerduty.successful_response,
             Response(500, json.dumps({})))
 
 class EventsSessionTest(SessionTest):
 
     def test_send_event(self):
-        sess = pdpyras.EventsAPISession('routingkey')
+        sess = pagerduty.EventsAPISession('routingkey')
         parent = MagicMock()
         parent.request = MagicMock()
         parent.request.side_effect = [
@@ -347,7 +347,7 @@ class EventsSessionTest(SessionTest):
             Response(202, '{"dedup_key":"abc123"}')
         ]
         with patch.object(sess, 'parent', new=parent):
-            ddk = sess.trigger('testing 123', 'triggered.from.pdpyras',
+            ddk = sess.trigger('testing 123', 'triggered.from.pagerduty',
                 custom_details={"this":"that"}, severity='warning',
                 images=[{'url':'https://http.cat/502.jpg'}])
             self.assertEqual('abc123', ddk)
@@ -369,7 +369,7 @@ class EventsSessionTest(SessionTest):
                     'routing_key':'routingkey',
                     'payload':{
                         'summary': 'testing 123',
-                        'source': 'triggered.from.pdpyras',
+                        'source': 'triggered.from.pagerduty',
                         'severity': 'warning',
                         'custom_details': {'this':'that'},
                     },
@@ -397,7 +397,7 @@ class EventsSessionTest(SessionTest):
     def test_send_explicit_event(self):
         # test sending an event by calling `post` directly as opposed to any of
         # the methods written into the client for sending events
-        sess = pdpyras.EventsAPISession('routingkey')
+        sess = pagerduty.EventsAPISession('routingkey')
         parent = MagicMock()
         parent.request = MagicMock()
         parent.request.side_effect = [Response(202, '{"dedup_key":"abc123"}')]
@@ -405,7 +405,7 @@ class EventsSessionTest(SessionTest):
             response = sess.post('/v2/enqueue', json={
                 'payload': {
                     'summary': 'testing 123',
-                    'source': 'pdpyras integration',
+                    'source': 'pagerduty integration',
                     'severity': 'critical'
                 },
                 'event_action': 'trigger'
@@ -419,14 +419,14 @@ class APISessionTest(SessionTest):
     def test_oauth_headers(self):
         secret = 'randomly generated lol'
         for authtype in 'oauth2', 'bearer':
-            sess = pdpyras.APISession(secret, auth_type=authtype)
+            sess = pagerduty.APISession(secret, auth_type=authtype)
             self.assertEqual(
                 sess.headers['Authorization'],
                 "Bearer "+secret
             )
 
     def test_print_debug(self):
-        sess = pdpyras.APISession('token')
+        sess = pagerduty.APISession('token')
         log = Mock()
         log.setLevel = Mock()
         log.addHandler = Mock()
@@ -450,7 +450,7 @@ class APISessionTest(SessionTest):
             logging.StreamHandler
         ))
         # Setter called via constructor:
-        sess = pdpyras.APISession('token', debug=True)
+        sess = pagerduty.APISession('token', debug=True)
         self.assertTrue(isinstance(sess._debugHandler, logging.StreamHandler))
         # Setter should be idempotent:
         sess.print_debug = False
@@ -460,9 +460,9 @@ class APISessionTest(SessionTest):
         sess.print_debug = True
         self.assertTrue(hasattr(sess, '_debugHandler'))
 
-    @patch.object(pdpyras.APISession, 'iter_all')
+    @patch.object(pagerduty.APISession, 'iter_all')
     def test_find(self, iter_all):
-        sess = pdpyras.APISession('token')
+        sess = pagerduty.APISession('token')
         iter_all.return_value = iter([
             {'type':'user', 'name': 'Someone Else', 'email':'some1@me.me.me', 'f':1},
             {'type':'user', 'name': 'Space Person', 'email':'some1@me.me ', 'f':2},
@@ -479,31 +479,31 @@ class APISessionTest(SessionTest):
             sess.find('users', 5, attribute='f')['name']
         )
 
-    @patch.object(pdpyras.APISession, 'iter_cursor')
-    @patch.object(pdpyras.APISession, 'get')
+    @patch.object(pagerduty.APISession, 'iter_cursor')
+    @patch.object(pagerduty.APISession, 'get')
     def test_iter_all(self, get, iter_cursor):
-        sess = pdpyras.APISession('token')
+        sess = pagerduty.APISession('token')
         sess.log = MagicMock()
 
         # Test: user uses iter_all on an endpoint that supports cursor-based
         # pagination, short-circuit to iter_cursor
         path = '/audit/records'
-        cpath = pdpyras.canonical_path('https://api.pagerduty.com', path)
-        self.assertTrue(cpath in pdpyras.CURSOR_BASED_PAGINATION_PATHS)
+        cpath = pagerduty.canonical_path('https://api.pagerduty.com', path)
+        self.assertTrue(cpath in pagerduty.CURSOR_BASED_PAGINATION_PATHS)
         iter_cursor.return_value = []
         self.assertEqual([], list(sess.iter_all('/audit/records')))
         iter_cursor.assert_called_once_with('/audit/records', params=None)
 
         # Test: user tries to use iter_all on a singular resource, raise error:
         self.assertRaises(
-            pdpyras.URLError,
+            pagerduty.URLError,
             lambda p: list(sess.iter_all(p)),
             'users/PABC123'
         )
         # Test: user tries to use iter_all on an endpoint that doesn't actually
         # support pagination, raise error:
         self.assertRaises(
-            pdpyras.URLError,
+            pagerduty.URLError,
             lambda p: list(sess.iter_all(p)),
             '/analytics/raw/incidents/Q3R8ZN19Z8K083/responses'
         )
@@ -551,7 +551,7 @@ class APISessionTest(SessionTest):
             Response(200, json.dumps(page(4, 50, 10))),
         ]
         get.side_effect = copy.deepcopy(error_encountered)
-        self.assertRaises(pdpyras.PDClientError, list, sess.iter_all(weirdurl))
+        self.assertRaises(pagerduty.PDClientError, list, sess.iter_all(weirdurl))
 
         # Test reaching the iteration limit:
         get.reset_mock()
@@ -577,9 +577,9 @@ class APISessionTest(SessionTest):
         self.assertEqual(30, len(items))
 
 
-    @patch.object(pdpyras.APISession, 'get')
+    @patch.object(pagerduty.APISession, 'get')
     def test_iter_cursor(self, get):
-        sess = pdpyras.APISession('token')
+        sess = pagerduty.APISession('token')
         sess.log = MagicMock()
         # Generate a dummy response dict
         page = lambda wrapper, results, cursor: json.dumps({
@@ -588,7 +588,7 @@ class APISessionTest(SessionTest):
         })
         # Test: user tries to use iter_cursor where it won't work, raise:
         self.assertRaises(
-            pdpyras.URLError,
+            pagerduty.URLError,
             lambda p: list(sess.iter_cursor(p)),
             'incidents', # Maybe some glorious day, but not as of this writing
         )
@@ -610,9 +610,9 @@ class APISessionTest(SessionTest):
         # last response as the cursor query parameter in the final request
         self.assertEqual(get.mock_calls[-1][2]['params']['cursor'], 5)
 
-    @patch.object(pdpyras.APISession, 'rput')
-    @patch.object(pdpyras.APISession, 'rpost')
-    @patch.object(pdpyras.APISession, 'iter_all')
+    @patch.object(pagerduty.APISession, 'rput')
+    @patch.object(pagerduty.APISession, 'rpost')
+    @patch.object(pagerduty.APISession, 'iter_all')
     def test_persist(self, iterator, creator, updater):
         user = {
             "name": "User McUserson",
@@ -621,7 +621,7 @@ class APISessionTest(SessionTest):
         }
         # Do not create if the user exists already (default)
         iterator.return_value = iter([user])
-        sess = pdpyras.APISession('apiKey')
+        sess = pagerduty.APISession('apiKey')
         sess.persist('users', 'email', user)
         creator.assert_not_called()
         # Call session.rpost to create if the user does not exist
@@ -650,7 +650,7 @@ class APISessionTest(SessionTest):
         # Test call count and API time
         response = Response(201, json.dumps({'key':'value'}), method='POST',
             url='https://api.pagerduty.com/users/PCWKOPZ/contact_methods')
-        sess = pdpyras.APISession('apikey')
+        sess = pagerduty.APISession('apikey')
         sess.postprocess(response)
 
         self.assertEqual(
@@ -670,7 +670,7 @@ class APISessionTest(SessionTest):
         # Test logging
         response = Response(500, json.dumps({'key': 'value'}), method='GET',
             url='https://api.pagerduty.com/users/PCWKOPZ/contact_methods')
-        sess = pdpyras.APISession('apikey')
+        sess = pagerduty.APISession('apikey')
         sess.log = logger
         sess.postprocess(response)
         if not (sys.version_info.major == 3 and sys.version_info.minor == 5):
@@ -682,17 +682,17 @@ class APISessionTest(SessionTest):
         logger.debug.call_args[0][0]%logger.debug.call_args[0][1:]
 
 
-    @patch.object(pdpyras.APISession, 'postprocess')
+    @patch.object(pagerduty.APISession, 'postprocess')
     def test_request(self, postprocess):
-        sess = pdpyras.APISession('12345')
+        sess = pagerduty.APISession('12345')
         parent = Session()
         request = MagicMock()
         # Expected headers:
         headers_get = {
             'Accept': 'application/vnd.pagerduty+json;version=2',
             'Authorization': 'Token token=12345',
-            'User-Agent': 'pdpyras/%s python-requests/%s Python/%d.%d'%(
-                pdpyras.__version__,
+            'User-Agent': 'pagerduty/%s python-requests/%s Python/%d.%d'%(
+                pagerduty.__version__,
                 requests.__version__,
                 sys.version_info.major,
                 sys.version_info.minor
@@ -710,7 +710,7 @@ class APISessionTest(SessionTest):
             parent.request = request
             # Test bad request method
             self.assertRaises(
-                pdpyras.PDClientError,
+                pagerduty.PDClientError,
                 sess.request,
                 *['poke', '/something']
             )
@@ -731,7 +731,7 @@ class APISessionTest(SessionTest):
             headers = headers_get.copy()
             request.assert_called_once_with('GET',
                 'https://api.pagerduty.com/users', headers=headers_get,
-                stream=False, timeout=pdpyras.TIMEOUT)
+                stream=False, timeout=pagerduty.TIMEOUT)
             request.reset_mock()
 
             # Test POST/PUT (in terms of code coverage they're identical)
@@ -739,7 +739,7 @@ class APISessionTest(SessionTest):
             sess.request('post', 'users', json={'user':user})
             request.assert_called_once_with(
                 'POST', 'https://api.pagerduty.com/users',
-                headers=headers_post, json={'user':user}, stream=False, timeout=pdpyras.TIMEOUT)
+                headers=headers_post, json={'user':user}, stream=False, timeout=pagerduty.TIMEOUT)
             request.reset_mock()
 
             # Test GET with parameters and using a HTTP verb method
@@ -749,7 +749,7 @@ class APISessionTest(SessionTest):
             request.assert_called_once_with(
                 'GET', 'https://api.pagerduty.com/users',
                 headers=headers_get, params=user_query, stream=False,
-                allow_redirects=True, timeout=pdpyras.TIMEOUT)
+                allow_redirects=True, timeout=pagerduty.TIMEOUT)
             request.reset_mock()
 
             # Test GET with one array-type parameter not suffixed with []
@@ -762,7 +762,7 @@ class APISessionTest(SessionTest):
             request.assert_called_once_with(
                 'GET', 'https://api.pagerduty.com/users',
                 headers=headers_get, params=modified_user_query, stream=False,
-                allow_redirects=True, timeout=pdpyras.TIMEOUT)
+                allow_redirects=True, timeout=pagerduty.TIMEOUT)
             request.reset_mock()
 
             # Test a POST request with additional headers
@@ -775,7 +775,7 @@ class APISessionTest(SessionTest):
             request.assert_called_once_with('POST',
                 'https://api.pagerduty.com/users/PD6LYSO/future_endpoint',
                 headers=headers_special, json={'user': user}, stream=False,
-                data=None, timeout=pdpyras.TIMEOUT)
+                data=None, timeout=pagerduty.TIMEOUT)
             request.reset_mock()
 
             # Test hitting the rate limit
@@ -784,7 +784,7 @@ class APISessionTest(SessionTest):
                 Response(429, json.dumps({'error': {'message': 'chill out'}})),
                 Response(200, json.dumps({'user': user})),
             ]
-            with patch.object(pdpyras.time, 'sleep') as sleep:
+            with patch.object(pagerduty.time, 'sleep') as sleep:
                 r = sess.get('/users')
                 self.assertTrue(r.ok) # should only return after success
                 self.assertEqual(3, request.call_count)
@@ -799,15 +799,15 @@ class APISessionTest(SessionTest):
                     'message': "You shall not pass.",
                 }
             }))
-            self.assertRaises(pdpyras.PDClientError, sess.request, 'get',
+            self.assertRaises(pagerduty.PDClientError, sess.request, 'get',
                 '/services')
             request.reset_mock()
 
             # Test retry logic:
-            with patch.object(pdpyras.time, 'sleep') as sleep:
+            with patch.object(pagerduty.time, 'sleep') as sleep:
                 # Test getting a connection error and succeeding the final time.
                 returns = [
-                    pdpyras.HTTPError("D'oh!")
+                    pagerduty.HTTPError("D'oh!")
                 ]*sess.max_network_attempts
                 returns.append(Response(200, json.dumps({'user': user})))
                 request.side_effect = returns
@@ -825,14 +825,14 @@ class APISessionTest(SessionTest):
                 # Now test handling a non-transient error when the client
                 # library itself hits odd issues that it can't handle, i.e.
                 # network, and that the raised exception includes context:
-                raises = [pdpyras.RequestException("D'oh!")]*(
+                raises = [pagerduty.RequestException("D'oh!")]*(
                     sess.max_network_attempts+1)
                 request.side_effect = raises
                 try:
                     sess.get('/users')
                     self.assertTrue(False, msg='Exception not raised after ' \
                         'retry maximum count reached')
-                except pdpyras.PDClientError as e:
+                except pagerduty.PDClientError as e:
                     self.assertEqual(e.__cause__, raises[-1])
                 except Exception as e:
                     self.assertTrue(False, msg='Raised exception not of the ' \
@@ -864,12 +864,12 @@ class APISessionTest(SessionTest):
                 r = sess.get('/users/P123456')
                 self.assertEqual(404, r.status_code)
 
-    @patch.object(pdpyras.APISession, 'get')
+    @patch.object(pagerduty.APISession, 'get')
     def test_rget(self, get):
         response200 = Response(200, '{"user":{"type":"user_reference",'
             '"email":"user@example.com","summary":"User McUserson"}}')
         get.return_value = response200
-        s = pdpyras.APISession('token')
+        s = pagerduty.APISession('token')
         self.assertEqual(
             {"type":"user_reference","email":"user@example.com",
                 "summary":"User McUserson"},
@@ -879,33 +879,33 @@ class APISessionTest(SessionTest):
         response404 = Response(404, '{"user": {"email": "user@example.com"}}')
         get.reset_mock()
         get.return_value = response404
-        self.assertRaises(pdpyras.PDClientError, s.rget, '/users/P123ABC')
+        self.assertRaises(pagerduty.PDClientError, s.rget, '/users/P123ABC')
 
-    @patch.object(pdpyras.APISession, 'rget')
+    @patch.object(pagerduty.APISession, 'rget')
     def test_subdomain(self, rget):
         rget.return_value = [{'html_url': 'https://something.pagerduty.com'}]
-        sess = pdpyras.APISession('key')
+        sess = pagerduty.APISession('key')
         self.assertEqual('something', sess.subdomain)
         self.assertEqual('something', sess.subdomain)
         rget.assert_called_once_with('users', params={'limit':1})
 
     def test_truncated_token(self):
-        sess = pdpyras.APISession('abcd1234')
+        sess = pagerduty.APISession('abcd1234')
         self.assertEqual('*1234', sess.trunc_token)
 
 
 class ChangeEventsSessionTest(SessionTest):
-    @patch('pdpyras.ChangeEventsAPISession.event_timestamp',
+    @patch('pagerduty.ChangeEventsAPISession.event_timestamp',
         '2020-03-25T00:00:00Z')
     def test_submit_change_event(self):
-        sess = pdpyras.ChangeEventsAPISession('routingkey')
+        sess = pagerduty.ChangeEventsAPISession('routingkey')
         parent = MagicMock()
         parent.request = MagicMock()
         parent.request.side_effect = [ Response(202, '{"id":"abc123"}') ]
         with patch.object(sess, 'parent', new=parent):
             ddk = sess.submit(
                     'testing 123',
-                    'triggered.from.pdpyras',
+                    'triggered.from.pagerduty',
                     custom_details={"this":"that"},
                     links=[{'href':'https://http.cat/502.jpg'}],
                     )
@@ -928,14 +928,14 @@ class ChangeEventsSessionTest(SessionTest):
                     'payload':{
                         'summary': 'testing 123',
                         'timestamp': '2020-03-25T00:00:00Z',
-                        'source': 'triggered.from.pdpyras',
+                        'source': 'triggered.from.pagerduty',
                         'custom_details': {'this':'that'},
                     },
                     'links': [{'href':'https://http.cat/502.jpg'}]
                 },
                 parent.request.call_args[1]['json'])
         # Same as above but with a custom timestamp:
-        sess = pdpyras.ChangeEventsAPISession('routingkey')
+        sess = pagerduty.ChangeEventsAPISession('routingkey')
         parent = MagicMock()
         parent.request = MagicMock()
         parent.request.side_effect = [ Response(202, '{"id":"abc123"}') ]
@@ -943,7 +943,7 @@ class ChangeEventsSessionTest(SessionTest):
             custom_timestamp = '2023-06-26T00:00:00Z'
             ddk = sess.submit(
                 'testing 123',
-                'triggered.from.pdpyras',
+                'triggered.from.pagerduty',
                 custom_details={"this":"that"},
                 links=[{'href':'https://http.cat/502.jpg'}],
                 timestamp=custom_timestamp,
@@ -953,10 +953,10 @@ class ChangeEventsSessionTest(SessionTest):
                 custom_timestamp
             )
 
-    @patch('pdpyras.ChangeEventsAPISession.event_timestamp',
+    @patch('pagerduty.ChangeEventsAPISession.event_timestamp',
         '2020-03-25T00:00:00Z')
     def test_submit_lite_change_event(self):
-        sess = pdpyras.ChangeEventsAPISession('routingkey')
+        sess = pagerduty.ChangeEventsAPISession('routingkey')
         parent = MagicMock()
         parent.request = MagicMock()
         parent.request.side_effect = [ Response(202, '{"id":"abc123"}') ]

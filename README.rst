@@ -1,10 +1,10 @@
-===========================================
-PDPYRAS: PagerDuty Python REST API Sessions
-===========================================
+================================================================
+Python-Pagerduty: a basic API Client for PagerDuty's public APIs
+================================================================
 A module that supplies lightweight Python clients for the PagerDuty REST API v2 and Events API v2.
 
 For how-to, refer to the `User Guide
-<https://pagerduty.github.io/pdpyras/user_guide.html>`_.
+<https://pagerduty.github.io/python-pagerduty/user_guide.html>`_.
 
 |circleci-build|
 
@@ -12,12 +12,16 @@ Overview
 --------
 This library supplies classes extending `requests.Session`_ from the Requests_
 HTTP library that serve as Python interfaces to the `REST API v2`_ and `Events
-API v2`_ of PagerDuty. One might call it an opinionated wrapper library. It was
-designed with the philosophy that Requests_ is a perfectly adequate HTTP
-client, and that abstraction should focus only on the most generally applicable
-and frequently-implemented core features, requirements and tasks. Design
-decisions concerning how any particular PagerDuty resource is accessed or
-manipulated through APIs are left to the user or implementer to make.
+API v2`_ of PagerDuty. One might call it an opinionated wrapper library. It is
+the successor to the popular `pdpyras`_ library and is based on the same source
+code.
+
+The client was designed with the philosophy that `Requests`_ is a perfectly
+adequate HTTP client, and that abstraction should focus only on the most
+generally applicable and frequently-implemented core features, requirements and
+patterns of APIs. Design decisions concerning how any particular PagerDuty
+resource is accessed or manipulated through APIs are left to the user or
+implementer to make.
 
 Features
 --------
@@ -31,7 +35,7 @@ Features
 History
 -------
 This module was borne of necessity for a basic API client to eliminate code
-duplication in some of PagerDuty Support's internal Python-based API tooling.
+duplication in the PagerDuty Support team's internal Python-based API tooling.
 
 We found ourselves frequently performing REST API requests using beta or
 non-documented API endpoints for one reason or another, so we needed the client
@@ -50,7 +54,7 @@ License
 -------
 All the code in this distribution is Copyright (c) 2023 PagerDuty.
 
-``pdpyras`` is made available under the MIT License:
+``python-pagerduty`` is made available under the MIT License:
 
     Permission is hereby granted, free of charge, to any person obtaining a copy
     of this software and associated documentation files (the "Software"), to deal
@@ -93,5 +97,5 @@ Warranty
 .. _requests.Response: https://docs.python-requests.org/en/master/api/#requests.Response
 .. _requests.Session: https://docs.python-requests.org/en/master/api/#request-sessions
 
-.. |circleci-build| image:: https://circleci.com/gh/PagerDuty/pdpyras.svg?style=svg
-    :target: https://circleci.com/gh/PagerDuty/pdpyras
+.. |circleci-build| image:: https://circleci.com/gh/PagerDuty/python-pagerduty.svg?style=svg
+    :target: https://circleci.com/gh/PagerDuty/python-pagerduty
