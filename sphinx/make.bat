@@ -9,7 +9,7 @@ if "%SPHINXBUILD%" == "" (
 )
 set SOURCEDIR=source
 set BUILDDIR=build
-set SPHINXPROJ=pdpyrasPagerDutyPythonRESTAPISessions
+set SPHINXPROJ=python-pagerduty
 
 if "%1" == "" goto help
 

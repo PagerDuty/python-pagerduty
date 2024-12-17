@@ -1,5 +1,5 @@
 ================================================================
-Python-Pagerduty: a basic API Client for PagerDuty's public APIs
+python-pagerduty: a basic API Client for PagerDuty's public APIs
 ================================================================
 A module that supplies lightweight Python clients for the PagerDuty REST API v2 and Events API v2.
 
@@ -34,8 +34,9 @@ Features
 
 History
 -------
-This module was borne of necessity for a basic API client to eliminate code
-duplication in the PagerDuty Support team's internal Python-based API tooling.
+This project was borne of necessity for a basic API client to eliminate code
+duplication in the PagerDuty Customer Support team's internal Python-based
+tooling.
 
 We found ourselves frequently performing REST API requests using beta or
 non-documented API endpoints for one reason or another, so we needed the client

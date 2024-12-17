@@ -13,10 +13,10 @@ If ``pip`` is available, it can be installed via:
 
 .. code-block:: shell
 
-    pip install pdpyras
+    pip install pagerduty
 
 Alternately, if the dependencies (Requests_ and "deprecation" Python libraries)
-have been installed locally, one can download ``pdpyras.py`` into the directory
+have been installed locally, one can download ``pagerduty.py`` into the directory
 where it will be used.
 
 Authentication
@@ -26,26 +26,26 @@ constructor is the secret to use for accessing the API:
 
 .. code-block:: python
 
-    import pdpyras
+    import pagerduty
 
     # REST API v2:
-    session = pdpyras.APISession(API_KEY)
+    session = pagerduty.APISession(API_KEY)
 
     # REST API v2 with an OAuth2 access token:
-    session_oauth = pdpyras.APISession(OAUTH_TOKEN, auth_type='oauth2')
+    session_oauth = pagerduty.APISession(OAUTH_TOKEN, auth_type='oauth2')
 
     # Events API v2:
-    events_session = pdpyras.EventsAPISession(ROUTING_KEY)
+    events_session = pagerduty.EventsAPISession(ROUTING_KEY)
 
     # A special session class for the change events API (part of Events API v2):
-    change_events_session = pdpyras.ChangeEventsAPISession(ROUTING_KEY)
+    change_events_session = pagerduty.ChangeEventsAPISession(ROUTING_KEY)
 
 Session objects, being descendants of `requests.Session`_, can also be used as
 context managers. For example:
 
 .. code-block:: python
 
-    with pdpyras.APISession(API_KEY) as session:
+    with pagerduty.APISession(API_KEY) as session:
         do_application(session)
 
 The From header
@@ -174,7 +174,7 @@ matching a string using the ``query`` parameter on an index endpoint:
 **Using multi-valued set filters:** set the value in the ``params`` dictionary
 at the appropriate key to a list. Square brackets will then be automatically
 appended to the names of list-type-value parameters as necessary. Ordinarily
-(and in pdpyras versions prior to 4.4.0) one must include ``[]`` at the end of
+(and in pagerduty versions prior to 4.4.0) one must include ``[]`` at the end of
 the paramter name to denote a set type filter. For example:
 
 .. code-block:: python
@@ -234,7 +234,7 @@ Generic Client Features
 -----------------------
 Generally, all of the features of `requests.Session`_ are available to the user
 as they would be if using the Requests Python library directly, since
-:class:`pdpyras.PDSession` and its subclasses for the REST/Events APIs are
+:class:`pagerduty.PDSession` and its subclasses for the REST/Events APIs are
 descendants of it. 
 
 The ``get``, ``post``, ``put`` and ``delete`` methods of REST/Events API
@@ -262,7 +262,7 @@ the ``self`` property of any object can be used, and there is no need to strip
 out the API base URL.
 
 The ``r*`` (and ``j*`` methods as of version 5), i.e.
-:attr:`pdpyras.APISession.rget`, can also accept a dictionary object
+:attr:`pagerduty.APISession.rget`, can also accept a dictionary object
 representing an API resource or a resource reference in place of a URL, in
 which case the URL at its ``self`` key will be used as the request target.
 
@@ -320,7 +320,7 @@ obtained:
     # Support in the event of server errors (status 5xx):
     print(response.headers['x-request-id'])
 
-If using the ``j*`` methods, i.e. :attr:`pdpyras.APISession.jget`, the return value
+If using the ``j*`` methods, i.e. :attr:`pagerduty.APISession.jget`, the return value
 will be the full body of the response from the API after JSON-decoding, and
 the ``json`` keyword argument is not modified.
 
@@ -402,15 +402,15 @@ Wrapped-entity-aware Functions
 The following methods will automatically extract and return the wrapped content
 of API responses, and wrap request entities for the user as appropriate:
 
-* :attr:`pdpyras.APISession.dict_all`: Create a dictionary of all results from a resource collection
-* :attr:`pdpyras.APISession.find`: Find and return a specific result of a resource collection that matches a query
-* :attr:`pdpyras.APISession.iter_all`: Iterate through all results of a resource collection
-* :attr:`pdpyras.APISession.iter_cursor`: Iterate through all results of a resource collection using cursor-based pagination
-* :attr:`pdpyras.APISession.list_all`: Create a list of all results from a resource collection
-* :attr:`pdpyras.APISession.persist`: Create a resource entity with specified attributes if one that matches them does not already exist
-* :attr:`pdpyras.APISession.rget`: Get the wrapped entity or resource collection at a given endpoint
-* :attr:`pdpyras.APISession.rpost`: Send a POST request, wrapping the request entity / unwrapping the response entity
-* :attr:`pdpyras.APISession.rput`: Send a PUT request, wrapping the request entity / unwrapping the response entity
+* :attr:`pagerduty.APISession.dict_all`: Create a dictionary of all results from a resource collection
+* :attr:`pagerduty.APISession.find`: Find and return a specific result of a resource collection that matches a query
+* :attr:`pagerduty.APISession.iter_all`: Iterate through all results of a resource collection
+* :attr:`pagerduty.APISession.iter_cursor`: Iterate through all results of a resource collection using cursor-based pagination
+* :attr:`pagerduty.APISession.list_all`: Create a list of all results from a resource collection
+* :attr:`pagerduty.APISession.persist`: Create a resource entity with specified attributes if one that matches them does not already exist
+* :attr:`pagerduty.APISession.rget`: Get the wrapped entity or resource collection at a given endpoint
+* :attr:`pagerduty.APISession.rpost`: Send a POST request, wrapping the request entity / unwrapping the response entity
+* :attr:`pagerduty.APISession.rput`: Send a PUT request, wrapping the request entity / unwrapping the response entity
 
 Classic Patterns
 ****************
@@ -430,7 +430,7 @@ necessary to avoid discarding features of the response schema.
 
 The configuration that this client uses to decide if entity wrapping is enabled
 for an endpoint or not is stored in the module variable
-:attr:`pdpyras.ENTITY_WRAPPER_CONFIG` and generally follows this rule: *If the
+:attr:`pagerduty.ENTITY_WRAPPER_CONFIG` and generally follows this rule: *If the
 endpoint's response body or expected request body contains only one property
 that points to all the content of the requested resource, entity wrapping is
 enabled for the endpoint.* The only exception is for resource collection
@@ -483,13 +483,13 @@ entity is wrapped as appropriate. For instance:
 
 Pagination
 ----------
-The method :attr:`pdpyras.APISession.iter_all` returns an iterator that yields
+The method :attr:`pagerduty.APISession.iter_all` returns an iterator that yields
 results from an endpoint that returns a wrapped collection of resources. By
 default it will use classic, a.k.a. numeric pagination. If the endpoint
 supports cursor-based pagination, it will use
-:attr:`pdpyras.APISession.iter_cursor` to iterate through results instead. The
-methods :attr:`pdpyras.APISession.list_all` and
-:attr:`pdpyras.APISession.dict_all` will request all pages of the collection
+:attr:`pagerduty.APISession.iter_cursor` to iterate through results instead. The
+methods :attr:`pagerduty.APISession.list_all` and
+:attr:`pagerduty.APISession.dict_all` will request all pages of the collection
 and return the results as a list or dictionary, respectively.
 
 Pagination functions require that the API endpoint being requested have entity
@@ -525,7 +525,7 @@ number of results is higher.
 Moreover, if these methods are used to fetch a very large volume of data, and
 an error is encountered when this happens, the partial data set will be
 discarded when the exception is raised. To make use of partial results, use
-:attr:`pdpyras.APISession.iter_all`, perform actions on each result
+:attr:`pagerduty.APISession.iter_all`, perform actions on each result
 yielded, and catch/handle exceptions as desired.
 
 Updating, creating or deleting while paginating
@@ -585,14 +585,14 @@ It is important to note, however, that updating incidents requires using a
 user-scoped access token or setting the ``From`` header to the login email
 address of a valid PagerDuty user. To set this, pass it through using the
 ``headers`` keyword argument, or set the
-:attr:`pdpyras.APISession.default_from` property, or pass the email address as
+:attr:`pagerduty.APISession.default_from` property, or pass the email address as
 the ``default_from`` keyword argument when constructing the session initially.
 
 Error Handling
 --------------
 For any of the methods that do not return `requests.Response`_, when the API
 responds with a non-success HTTP status, the method will raise a
-:class:`pdpyras.PDClientError` exception. This way, these methods can always be
+:class:`pagerduty.PDClientError` exception. This way, these methods can always be
 expected to return the same structure of data based on the API being used, and
 there is no need to differentiate between the response schema for a successful
 request and one for an error response.
@@ -612,7 +612,7 @@ exception if it's any other HTTP error code, and prints an error otherwise:
         user = session.rget("/users/PJKL678")
         print(user['email'])
 
-    except pdpyras.PDClientError as e:
+    except pagerduty.PDClientError as e:
         if e.response:
             if e.response.status_code == 404:
                 print("User not found")
@@ -630,12 +630,12 @@ is not ``None``:
     try:
         user = session.rget("/users/PJKL678")
         print(user['email'])
-    except pdpyras.PDHTTPError as e:
+    except pagerduty.PDHTTPError as e:
         if e.response.status_code == 404:
             print("User not found")
         else:
             raise e
-    except pdpyras.PDClientError as e:
+    except pagerduty.PDClientError as e:
         print("Non-transient network or client error")
 
 Logging
@@ -652,16 +652,16 @@ is created as follows:
   handlers is left to the discretion of the user (see `logging.handlers
   <https://docs.python.org/3/library/logging.handlers.html>`_)
 * The logger can be accessed and set through the property
-  :attr:`pdpyras.PDSession.log`.
+  :attr:`pagerduty.PDSession.log`.
 
-In v5.0.0 and later, the attribute :attr:`pdpyras.PDSession.print_debug` was
+In v5.0.0 and later, the attribute :attr:`pagerduty.PDSession.print_debug` was
 introduced to enable sending debug-level log messages from the client to
 command line output. It is used as follows:
 
 .. code-block:: python
 
     # Method 1: keyword argument, when constructing a new session:
-    session = pdpyras.APISession(api_key, debug=True)
+    session = pagerduty.APISession(api_key, debug=True)
 
     # Method 2: on an existing session, by setting the property:
     session.print_debug = True
@@ -693,19 +693,19 @@ response or if they encounter a network error.
 
 This behavior is configurable through the following properties:
 
-* :attr:`pdpyras.PDSession.retry`: a dictionary that allows defining per-HTTP-status retry limits
-* :attr:`pdpyras.PDSession.max_http_attempts`: The maximum total number of unsuccessful requests to make in the retry loop of :attr:`pdpyras.PDSession.request` before returning
-* :attr:`pdpyras.PDSession.max_network_attempts`: The maximum number of retries that will be attempted in the case of network or non-HTTP error
-* :attr:`pdpyras.PDSession.sleep_timer`: The initial cooldown factor
-* :attr:`pdpyras.PDSession.sleep_timer_base`: Factor by which the cooldown time is increased after each unsuccessful attempt
-* :attr:`pdpyras.PDSession.stagger_cooldown`: Randomizing factor for increasing successive cooldown wait times
+* :attr:`pagerduty.PDSession.retry`: a dictionary that allows defining per-HTTP-status retry limits
+* :attr:`pagerduty.PDSession.max_http_attempts`: The maximum total number of unsuccessful requests to make in the retry loop of :attr:`pagerduty.PDSession.request` before returning
+* :attr:`pagerduty.PDSession.max_network_attempts`: The maximum number of retries that will be attempted in the case of network or non-HTTP error
+* :attr:`pagerduty.PDSession.sleep_timer`: The initial cooldown factor
+* :attr:`pagerduty.PDSession.sleep_timer_base`: Factor by which the cooldown time is increased after each unsuccessful attempt
+* :attr:`pagerduty.PDSession.stagger_cooldown`: Randomizing factor for increasing successive cooldown wait times
 
 Default Behavior
 ****************
 By default, after receiving a status 429 response, sessions will retry an
 unlimited number of times, increasing the wait time before retry each
 successive time.  When encountering status ``401 Unauthorized``, the client
-will immediately raise ``pdpyras.PDClientError``; this is a non-transient error
+will immediately raise ``pagerduty.PDClientError``; this is a non-transient error
 caused by an invalid credential.
 
 For all other success or error statuses, the underlying request method in the
@@ -718,10 +718,10 @@ increases exponentially with each retry.
 
 Let:
 
-* a = :attr:`pdpyras.PDSession.sleep_timer_base`
+* a = :attr:`pagerduty.PDSession.sleep_timer_base`
 * t\ :sub:`0` = ``sleep_timer``
 * t\ :sub:`n` = Sleep time after n attempts
-* ρ = :attr:`pdpyras.PDSession.stagger_cooldown`
+* ρ = :attr:`pagerduty.PDSession.stagger_cooldown`
 * r\ :sub:`n` = a randomly-generated real number between 0 and 1, distinct for each n-th request
 
 Assuming ρ = 0:
@@ -734,7 +734,7 @@ t\ :sub:`n` = a (1 + ρ r\ :sub:`n`) t\ :sub:`n-1`
 
 Setting the retry property
 **************************
-The dictionary property :attr:`pdpyras.PDSession.retry` allows customization of
+The dictionary property :attr:`pagerduty.PDSession.retry` allows customization of
 HTTP retry limits on a per-HTTP-status basis. This includes the ability to
 override the above defaults for 401 and 429, although that is not recommended.
 
@@ -745,15 +745,15 @@ that status. **Success statuses (2xx) will be ignored.**
 If a different error status is encountered on a retry, it won't count towards
 the limit of the first status, but will be counted separately. However, the
 total overall number of attempts that will be made to get a success status is
-limited by :attr:`pdpyras.PDSession.max_http_attempts`. This will always
+limited by :attr:`pagerduty.PDSession.max_http_attempts`. This will always
 supersede the maximum number of retries for any status defined in
-:attr:`pdpyras.PDSession.retry` if it is lower.
+:attr:`pagerduty.PDSession.retry` if it is lower.
 
 Low-level HTTP request functions in client classes, i.e. ``get``, will return
 `requests.Response`_ objects when they run out of retries. Higher-level
 functions that require a success status response, i.e.
-:attr:`pdpyras.APISession.list_all` and
-:attr:`pdpyras.EventsAPISession.trigger`, will raise exceptions that include
+:attr:`pagerduty.APISession.list_all` and
+:attr:`pagerduty.EventsAPISession.trigger`, will raise exceptions that include
 the response object when they encounter error status responses, but only after
 the configured retry limits are reached in the underlying HTTP request methods.
 

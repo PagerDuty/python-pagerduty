@@ -9,34 +9,34 @@ by the module. For general usage and examples, refer to the :ref:`user_guide`.
 
 API Client Classes
 ------------------
-.. autoclass:: pdpyras.PDSession
+.. autoclass:: pagerduty.PDSession
     :members:
 
-.. autoclass:: pdpyras.APISession
+.. autoclass:: pagerduty.APISession
     :members:
 
-.. autoclass:: pdpyras.EventsAPISession
+.. autoclass:: pagerduty.EventsAPISession
     :members:
 
-.. autoclass:: pdpyras.ChangeEventsAPISession
+.. autoclass:: pagerduty.ChangeEventsAPISession
     :members:
 
 Errors
 ------
-.. autoclass:: pdpyras.PDClientError
+.. autoclass:: pagerduty.PDClientError
     :members:
-.. autoclass:: pdpyras.PDHTTPError
+.. autoclass:: pagerduty.PDHTTPError
     :members:
-.. autoclass:: pdpyras.PDServerError
+.. autoclass:: pagerduty.PDServerError
     :members:
-.. autoclass:: pdpyras.URLError
+.. autoclass:: pagerduty.URLError
 
 Client Defaults
 ---------------
 These are properties of the module that configure default behavior for the API
 client. There should be no need for the end user to modify them.
 
-.. automodule:: pdpyras
+.. automodule:: pagerduty
     :members: ITERATION_LIMIT, TEXT_LEN_LIMIT, TIMEOUT, ENTITY_WRAPPER_CONFIG, CANONICAL_PATHS, CURSOR_BASED_PAGINATION_PATHS
 
 Functions
@@ -49,14 +49,14 @@ URL Handling
 ************
 URL related functions.
 
-.. automodule:: pdpyras
+.. automodule:: pagerduty
     :members: canonical_path, endpoint_matches, is_path_param, normalize_url
 
 Entity Wrapping
 ***************
 Functions that implement entity wrapping logic.
 
-.. automodule:: pdpyras
+.. automodule:: pagerduty
     :members: entity_wrappers, infer_entity_wrapper, unwrap
 
 Function Decorators
@@ -65,14 +65,14 @@ Intended for use with functions based on the HTTP verb functions of subclasses
 of `requests.Session`_, i.e. that would otherwise return a `requests.Response`_
 object.
 
-.. automodule:: pdpyras
+.. automodule:: pagerduty
     :members: auto_json, requires_success, resource_url, wrapped_entities
 
 Helpers
 *******
 Miscellaneous functions
 
-.. automodule:: pdpyras
+.. automodule:: pagerduty
     :members: deprecated_kwarg, http_error_message, last_4, plural_name, successful_response, truncate_text, try_decoding
 
 

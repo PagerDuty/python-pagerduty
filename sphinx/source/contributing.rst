@@ -6,7 +6,7 @@ Bug reports and pull requests to fix issues are always welcome, as are
 contributions to the built-in documentation.
 
 If adding features, or making changes, it is recommended to update or add tests
-and assertions to the appropriate test case class in ``test_pdpyras.py`` to
+and assertions to the appropriate test case class in ``test_pagerduty.py`` to
 ensure code coverage. If the change(s) fix a bug, please add assertions that
 reproduce the bug along with code changes themselves, and include the GitHub
 issue number in the commit message.
@@ -28,12 +28,12 @@ testing locally:
 
 Running Unit Tests
 ------------------
-Assuming that all dependencies are installed, running ``test_pdpyras.py`` in
+Assuming that all dependencies are installed, running ``test_pagerduty.py`` in
 the root path of the repository will run the unit test suite:
 
 .. code-block:: shell
 
-    ./test_pdpyras.py
+    ./test_pagerduty.py
 
 
 Updating Documentation
@@ -103,7 +103,7 @@ the functional changes should also include at least:
   contributions end with (in parentheses) the GitHub user handle of the
   contributor, a slash, and a link to the pull request (see CHANGELOG.rst for
   preexisting examples).
-* A change in the version number in both setup.py and pdpyras.py, to a new
+* A change in the version number in both setup.py and pagerduty.py, to a new
   version that follows `Semantic Versioning <https://semver.org/>`_.
 * Rebuilt HTML documentation
 
@@ -124,7 +124,7 @@ Once the pull request is approved, merge. Then (locally) checkout main and tag:
 
     git checkout main && \
       git pull origin main && \
-      git tag "v$(python -c 'from pdpyras import __version__; print(__version__)')" && \
+      git tag "v$(python -c 'from pagerduty import __version__; print(__version__)')" && \
       git push --tags origin main
 
 Publishing
@@ -141,7 +141,7 @@ local file tree is clean (has no uncommitted changes). Then run:
 When prompted, enter ``__token__`` as your username and your API token as the password.
 
 Finally, `create a new release
-<https://github.com/PagerDuty/pdpyras/releases/new>`_, and fill in some
+<https://github.com/PagerDuty/pagerduty/releases/new>`_, and fill in some
 details:
 
 * Select "Choose a tag" and select the new latest tag.
