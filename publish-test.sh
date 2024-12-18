@@ -10,18 +10,18 @@ refresh_virtualenv () {
 }
 
 echo "Uploading to test.pypi.org"
-twine upload --repository-url https://test.pypi.org/legacy/ dist/*
+twine upload --repository testpypi dist/*
 
 refresh_virtualenv
 source ./tmp/bin/activate
 echo "Testing install from scratch"
-pip install --index-url https://test.pypi.org/simple/ pdpyras
+pip install --index-url https://test.pypi.org/simple/ pagerduty
 deactivate
 
 refresh_virtualenv
 source ./tmp/bin/activate
 echo "Testing install and then upgrade"
-pip install pdpyras
-pip install --upgrade --index-url https://test.pypi.org/simple/ pdpyras
+pip install pagerduty
+pip install --upgrade --index-url https://test.pypi.org/simple/ pagerduty
 deactivate
 rm -rf tmp

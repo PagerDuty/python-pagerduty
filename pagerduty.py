@@ -549,7 +549,7 @@ def entity_wrappers(method: str, path: str) -> tuple:
     else:
         matches_str = ', '.join(match)
         raise Exception(f"{endpoint} matches more than one pattern:" + \
-            f"{matches_str}; this is most likely a bug in pdpyras.")
+            f"{matches_str}; this is most likely a bug.")
 
 def infer_entity_wrapper(method: str, path: str) -> str:
     """
@@ -1237,7 +1237,7 @@ class PDSession(Session):
 
     @property
     def user_agent(self) -> str:
-        return 'pdpyras/%s python-requests/%s Python/%d.%d'%(
+        return 'pagerduty/%s python-requests/%s Python/%d.%d'%(
             __version__,
             REQUESTS_VERSION,
             sys.version_info.major,
@@ -1250,7 +1250,7 @@ class EventsAPISession(PDSession):
     Session class for submitting events to the PagerDuty v2 Events API.
 
     Implements methods for submitting events to PagerDuty through the Events API
-    and inherits from :class:`pdpyras.PDSession`.  For more details on usage of
+    and inherits from :class:`pagerduty.PDSession`.  For more details on usage of
     this API, refer to the `Events API v2 documentation
     <https://developer.pagerduty.com/docs/events-api-v2/overview/>`_
 
@@ -2198,7 +2198,7 @@ class PDHTTPError(PDClientError):
 
         try:
             user = session.rget('/users/PABC123')
-        except pdpyras.PDClientError as e:
+        except pagerduty.PDClientError as e:
             if e.response is not None:
                 print("HTTP error: "+str(e.response.status_code))
             else:
@@ -2210,7 +2210,7 @@ class PDHTTPError(PDClientError):
 
         try:
             user = session.rget('/users/PABC123')
-        except pdpyras.PDHTTPError as e:
+        except pagerduty.PDHTTPError as e:
             print("HTTP error: "+str(e.response.status_code))
     """
 

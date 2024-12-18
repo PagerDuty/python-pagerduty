@@ -3,7 +3,7 @@ docs/build/*
 docs/_sources/
 sphinx/build
 dist/
-pdpyras.egg-info/
+pagerduty.egg-info/
 docs/.buildinfo
 tmp/
 .DS_Store
