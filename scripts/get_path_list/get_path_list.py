@@ -5,16 +5,16 @@
 #   PATH must be a path to "reference/v2/Index.yaml" within a clone of the API
 #   source code repository.
 
-# This script is not part of the pdpyras library. Rather, it can be used for the
-# by PagerDuty engineers to assist the development and maintenance of pdpyras.
-# It automatically generates the declaration of module variables
-# "ENDPOINT_PATTERNS" and "CURSOR_BASED_ITERATION_ENDPOINTS" from the API
-# documentation source code (which is kept in a private repository in the
+# This script is not part of the python-pagerduty library. Rather, it can be used for
+# the by PagerDuty engineers to assist with its development and maintenance.  It
+# automatically generates the declaration of module variables "ENDPOINT_PATTERNS" and
+# "CURSOR_BASED_ITERATION_ENDPOINTS" from the API documentation source code (which is
+# kept in a private repository in the
 # PagerDuty GitHub org).
 #
-# It is meant to minimize the amount of work that has to be done to allow
-# pdpyras to support new APIs by generating the client's specific knowledge
-# of APIs directly from the documentation programatically.
+# It is meant to minimize the amount of work that has to be done to allow the REST API
+# v2 client to support new APIs by generating the client's specific knowledge of APIs
+# directly from the documentation programatically.
 
 # NOTE:
 #
