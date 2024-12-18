@@ -10,7 +10,7 @@ refresh_virtualenv () {
 }
 
 echo "Uploading to test.pypi.org"
-twine upload --repository-url https://test.pypi.org/legacy/ dist/*
+twine upload --repository testpypi dist/*
 
 refresh_virtualenv
 source ./tmp/bin/activate
