@@ -12,13 +12,10 @@ API Client Classes
 .. autoclass:: pagerduty.PDSession
     :members:
 
-.. autoclass:: pagerduty.APISession
+.. autoclass:: pagerduty.RestApiV2Client
     :members:
 
-.. autoclass:: pagerduty.EventsAPISession
-    :members:
-
-.. autoclass:: pagerduty.ChangeEventsAPISession
+.. autoclass:: pagerduty.EventsApiV2Client
     :members:
 
 Errors
