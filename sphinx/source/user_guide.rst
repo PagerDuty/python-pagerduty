@@ -158,7 +158,7 @@ matching a string using the ``query`` parameter on an index endpoint:
             'type':'user',
             'name': 'Jane Doe'
         })
-    except PDClientError:
+    except Error:
         updated_user = None
 
 **Idempotent create/update:**
@@ -592,7 +592,7 @@ Error Handling
 --------------
 For any of the methods that do not return `requests.Response`_, when the API
 responds with a non-success HTTP status, the method will raise a
-:class:`pagerduty.PDClientError` exception. This way, these methods can always be
+:class:`pagerduty.Error` exception. This way, these methods can always be
 expected to return the same structure of data based on the API being used, and
 there is no need to differentiate between the response schema for a successful
 request and one for an error response.
@@ -603,8 +603,8 @@ specialized error handling logic in which the REST API response data (i.e.
 headers, code and body) are available in the catching scope.
 
 For instance, the following code prints "User not found" in the event of a 404,
-prints out the user's email if the user exists, raises the underlying
-exception if it's any other HTTP error code, and prints an error otherwise:
+prints out the user's email if the user exists and raises the underlying
+exception if it's any other HTTP error code:
 
 .. code-block:: python
 
@@ -612,31 +612,11 @@ exception if it's any other HTTP error code, and prints an error otherwise:
         user = session.rget("/users/PJKL678")
         print(user['email'])
 
-    except pagerduty.PDClientError as e:
-        if e.response:
-            if e.response.status_code == 404:
-                print("User not found")
-            else:
-                raise e
-        else:
-            print("Non-transient network or client error")
-
-Version 4.4.0 introduced a new error subclass, PDHTTPError, in which it can be
-assumed that the error pertains to a HTTP request and the ``response`` property
-is not ``None``:
-
-.. code-block:: python
-
-    try:
-        user = session.rget("/users/PJKL678")
-        print(user['email'])
-    except pagerduty.PDHTTPError as e:
+    except pagerduty.HttpError as e:
         if e.response.status_code == 404:
             print("User not found")
         else:
             raise e
-    except pagerduty.PDClientError as e:
-        print("Non-transient network or client error")
 
 Logging
 -------
@@ -705,7 +685,7 @@ Default Behavior
 By default, after receiving a status 429 response, sessions will retry an
 unlimited number of times, increasing the wait time before retry each
 successive time.  When encountering status ``401 Unauthorized``, the client
-will immediately raise ``pagerduty.PDClientError``; this is a non-transient error
+will immediately raise ``pagerduty.Error``; this is a non-transient error
 caused by an invalid credential.
 
 For all other success or error statuses, the underlying request method in the
@@ -732,14 +712,14 @@ If ρ is nonzero:
 
 t\ :sub:`n` = a (1 + ρ r\ :sub:`n`) t\ :sub:`n-1`
 
-Setting the retry property
+Configuring Retry Behavior
 **************************
 The dictionary property :attr:`pagerduty.PDSession.retry` allows customization of
 HTTP retry limits on a per-HTTP-status basis. This includes the ability to
 override the above defaults for 401 and 429, although that is not recommended.
 
 Each key in the dictionary represents a HTTP status, and its associated value
-is the number of times that the client will retry the request if it receives
+the number of times that the client will retry the request if it receives
 that status. **Success statuses (2xx) will be ignored.**
 
 If a different error status is encountered on a retry, it won't count towards
@@ -779,10 +759,9 @@ the configured retry limits are reached in the underlying HTTP request methods.
 .. -----------
 
 .. _`Requests`: https://docs.python-requests.org/en/master/
- .. _`Errors`: https://developer.pagerduty.com/docs/ZG9jOjExMDI5NTYz-errors
+.. _`Errors`: https://developer.pagerduty.com/docs/ZG9jOjExMDI5NTYz-errors
 .. _`Events API v2`: https://developer.pagerduty.com/docs/ZG9jOjExMDI5NTgw-events-api-v2-overview
 .. _`PagerDuty API Reference`: https://developer.pagerduty.com/api-reference/
 .. _`REST API v2`: https://developer.pagerduty.com/docs/ZG9jOjExMDI5NTUw-rest-api-v2-overview
-.. _`setuptools`: https://pypi.org/project/setuptools/
 .. _requests.Response: https://docs.python-requests.org/en/master/api/#requests.Response
 .. _requests.Session: https://docs.python-requests.org/en/master/api/#request-sessions

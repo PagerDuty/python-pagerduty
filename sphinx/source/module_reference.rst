@@ -9,7 +9,7 @@ by the module. For general usage and examples, refer to the :ref:`user_guide`.
 
 API Client Classes
 ------------------
-.. autoclass:: pagerduty.PDSession
+.. autoclass:: pagerduty.ApiClient
     :members:
 
 .. autoclass:: pagerduty.RestApiV2Client
@@ -20,13 +20,13 @@ API Client Classes
 
 Errors
 ------
-.. autoclass:: pagerduty.PDClientError
+.. autoclass:: pagerduty.Error
     :members:
-.. autoclass:: pagerduty.PDHTTPError
+.. autoclass:: pagerduty.HttpError
     :members:
-.. autoclass:: pagerduty.PDServerError
+.. autoclass:: pagerduty.ServerHttpError
     :members:
-.. autoclass:: pagerduty.URLError
+.. autoclass:: pagerduty.UrlError
 
 Client Defaults
 ---------------
