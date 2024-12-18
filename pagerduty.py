@@ -43,7 +43,7 @@ The default timeout in seconds for any given HTTP request.
 
 Modifying this value will not affect any preexisting API session instances.
 Rather, it will only affect new instances. It is recommended to use
-:attr:`PDSession.timeout` to configure the timeout for a given session.
+:attr:`ApiClient.timeout` to configure the timeout for a given session.
 """
 
 TEXT_LEN_LIMIT = 100
@@ -286,7 +286,7 @@ ENTITY_WRAPPER_CONFIG = {
     'GET /business_services/{id}/supporting_services/impacts': 'services',
 
     # Change Events
-    'POST /change_events': None, # why not just use ChangeEventsAPISession?
+    'POST /change_events': None, # why not just use EventsApiV2Client?
     'GET /incidents/{id}/related_change_events': 'change_events',
 
     # Event Orchestrations
@@ -428,7 +428,7 @@ def canonical_path(base_url: str, url: str) -> str:
         # Don't break early if len(patterns) == 1, but require an exact match...
 
     if len(patterns) == 0:
-        raise URLError(f"URL {url} does not match any canonical API path " \
+        raise UrlError(f"URL {url} does not match any canonical API path " \
             'supported by this client.')
     elif len(patterns) > 1:
         # If there's multiple matches but one matches exactly, return that.
@@ -492,7 +492,7 @@ def normalize_url(base_url: str, url: str) -> str:
     elif not (url.startswith('http://') or url.startswith('https://')):
         return base_url.rstrip('/') + "/" + url.lstrip('/')
     else:
-        raise URLError(
+        raise UrlError(
             f"URL {url} does not start with the API base URL {base_url}"
         )
 
@@ -602,12 +602,12 @@ def unwrap(response: Response, wrapper) -> Union[dict, list]:
                 return body[wrapper]
             else:
                 keys = truncate_text(', '.join(body.keys()))
-                raise PDServerError(
+                raise ServerHttpError(
                     error_msg + f"its keys are: {keys}",
                     response
                 )
         else:
-            raise PDServerError(
+            raise ServerHttpError(
                 error_msg + f"its type is {bod_type}.",
                 response
             )
@@ -660,7 +660,7 @@ def resource_url(method):
             url = resource['self']
         elif type(resource) is not str:
             name = method.__name__
-            raise URLError(f"Value passed to {name} is not a str or dict with "
+            raise UrlError(f"Value passed to {name} is not a str or dict with "
                 "key 'self'")
         return method(self, url, **kw)
     call.__doc__ = doc
@@ -670,8 +670,8 @@ def wrapped_entities(method):
     """
     Automatically wrap request entities and unwrap response entities.
 
-    Used for methods :attr:`APISession.rget`, :attr:`APISession.rpost` and
-    :attr:`APISession.rput`. It makes them always return an object representing
+    Used for methods :attr:`RestApiV2Client.rget`, :attr:`RestApiV2Client.rpost` and
+    :attr:`RestApiV2Client.rput`. It makes them always return an object representing
     the resource entity in the response (whether wrapped in a root-level
     property or not) rather than the full response body. When making a post /
     put request, and passing the ``json`` keyword argument to specify the
@@ -679,10 +679,10 @@ def wrapped_entities(method):
     the to-be-wrapped content or the full body including the entity wrapper, and
     the ``json`` keyword argument will be normalized to include the wrapper.
 
-    Methods using this decorator will raise a :class:`PDHTTPError` with its
+    Methods using this decorator will raise a :class:`HttpError` with its
     ``response`` property being being the `requests.Response`_ object in the
     case of any error (as of version 4.2 this is subclassed as
-    :class:`PDHTTPError`), so that the implementer can access it by catching the
+    :class:`HttpError`), so that the implementer can access it by catching the
     exception, and thus design their own custom logic around different types of
     error responses.
 
@@ -824,11 +824,11 @@ def successful_response(r: Response, context=None) -> Response:
     if r.ok and bool(r.status_code):
         return r
     elif r.status_code / 100 == 5:
-        raise PDServerError(http_error_message(r, context=context), r)
+        raise ServerHttpError(http_error_message(r, context=context), r)
     elif bool(r.status_code):
-        raise PDHTTPError(http_error_message(r, context=context), r)
+        raise HttpError(http_error_message(r, context=context), r)
     else:
-        raise PDClientError(http_error_message(r, context=context))
+        raise Error(http_error_message(r, context=context))
 
 def truncate_text(text: str) -> str:
     """Truncates a string longer than :attr:`TEXT_LEN_LIMIT`
@@ -844,7 +844,7 @@ def try_decoding(r: Response) -> Union[dict, list, str]:
     """
     JSON-decode a response body
 
-    Returns the decoded body if successful; raises :class:`PDServerError`
+    Returns the decoded body if successful; raises :class:`ServerHttpError`
     otherwise.
 
     :param r:
@@ -853,7 +853,7 @@ def try_decoding(r: Response) -> Union[dict, list, str]:
     try:
         return r.json()
     except ValueError as e:
-        raise PDServerError(
+        raise ServerHttpError(
             "API responded with invalid JSON: " + truncate_text(r.text),
             r,
         )
@@ -862,7 +862,7 @@ def try_decoding(r: Response) -> Union[dict, list, str]:
 ### CLASSES ###
 ###############
 
-class PDSession(Session):
+class ApiClient(Session):
     """
     Base class for making HTTP requests to PagerDuty APIs
 
@@ -877,7 +877,7 @@ class PDSession(Session):
     - The request URL, if it doesn't already start with the REST API base URL,
       will be prepended with the default REST API base URL.
     - It will only perform requests with methods as given in the
-      :attr:`permitted_methods` list, and will raise :class:`PDClientError` for
+      :attr:`permitted_methods` list, and will raise :class:`Error` for
       any other HTTP methods.
 
     :param api_key:
@@ -906,7 +906,7 @@ class PDSession(Session):
     max_network_attempts = 3
     """
     The number of times that connecting to the API will be attempted before
-    treating the failure as non-transient; a :class:`PDClientError` exception
+    treating the failure as non-transient; a :class:`Error` exception
     will be raised if this happens.
     """
 
@@ -966,7 +966,7 @@ class PDSession(Session):
     url = ""
 
     def __init__(self, api_key: str, debug=False):
-        self.parent = super(PDSession, self)
+        self.parent = super(ApiClient, self)
         self.parent.__init__()
         self.api_key = api_key
         self.log = logging.getLogger(__name__)
@@ -1112,7 +1112,7 @@ class PDSession(Session):
         method = method.strip().upper()
         if method not in self.permitted_methods:
             m_str = ', '.join(self.permitted_methods)
-            raise PDClientError(f"Method {method} not supported by this API. " \
+            raise Error(f"Method {method} not supported by this API. " \
                 f"Permitted methods: {m_str}")
         req_kw = deepcopy(kwargs)
         full_url = self.normalize_url(url)
@@ -1141,7 +1141,7 @@ class PDSession(Session):
                     error_msg = f"{endpoint}: Non-transient network " \
                         'error; exceeded maximum number of attempts ' \
                         f"({self.max_network_attempts}) to connect to the API."
-                    raise PDClientError(error_msg) from e
+                    raise Error(error_msg) from e
                 sleep_timer *= self.cooldown_factor()
                 self.log.warning(
                     "%s: HTTP or network error: %s. retrying in %g seconds.",
@@ -1181,7 +1181,7 @@ class PDSession(Session):
             elif status == 401:
                 # Stop. Authentication failed. We shouldn't try doing any more,
                 # because we'll run into the same problem later anyway.
-                raise PDHTTPError(
+                raise HttpError(
                     "Received 401 Unauthorized response from the API. The key "
                     "(...%s) may be invalid or deactivated."%self.trunc_key,
                     response)
@@ -1244,17 +1244,15 @@ class PDSession(Session):
             sys.version_info.minor
         )
 
-class EventsAPISession(PDSession):
+class EventsApiV2Client(ApiClient):
 
     """
     Session class for submitting events to the PagerDuty v2 Events API.
 
-    Implements methods for submitting events to PagerDuty through the Events API
-    and inherits from :class:`pagerduty.PDSession`.  For more details on usage of
-    this API, refer to the `Events API v2 documentation
+    Implements methods for submitting events to PagerDuty through the Events API,
+    including change events, and inherits from :class:`pagerduty.ApiClient`.  For more
+    details on usage of this API, refer to the `Events API v2 documentation
     <https://developer.pagerduty.com/docs/events-api-v2/overview/>`_
-
-    Inherits from :class:`PDSession`.
     """
 
     permitted_methods = ('POST',)
@@ -1262,7 +1260,7 @@ class EventsAPISession(PDSession):
     url = "https://events.pagerduty.com"
 
     def __init__(self, api_key: str, debug=False):
-        super(EventsAPISession, self).__init__(api_key, debug)
+        super(EventsApiV2Client, self).__init__(api_key, debug)
         # See: https://developer.pagerduty.com/docs/3d063fd4814a6-events-api-v2-overview#response-codes--retry-logic
         self.retry[500] = 2 # internal server error
         self.retry[502] = 4 # bad gateway
@@ -1283,6 +1281,10 @@ class EventsAPISession(PDSession):
             The deduplication key
         """
         return self.send_event('acknowledge', dedup_key=dedup_key)
+
+    @property
+    def event_timestamp(self) -> str:
+        return datetime.utcnow().isoformat()+'Z'
 
     def prepare_headers(self, method, user_headers={}) -> dict:
         """
@@ -1309,6 +1311,35 @@ class EventsAPISession(PDSession):
             The deduplication key of the alert to resolve.
         """
         return self.send_event('resolve', dedup_key=dedup_key)
+
+    def send_change_event(self, **properties):
+        """
+        Send a change event to the v2 Change Events API.
+
+        See: https://developer.pagerduty.com/docs/events-api-v2/send-change-events/
+
+        :param **properties:
+            Properties to set, i.e. ``payload`` and ``links``
+        :returns:
+            The response ID
+        """
+        event = deepcopy(properties)
+        response = self.post('/v2/change/enqueue', json=event)
+        response_body = try_decoding(successful_response(
+            response,
+            context="submitting change event",
+        ))
+        return response_body.get("id", None)
+
+    def post(self, *args, **kw) -> Response:
+        """
+        Override of ``requests.Session.post``
+
+        Adds the ``routing_key`` parameter to the body before sending.
+        """
+        if 'json' in kw and hasattr(kw['json'], 'update'):
+            kw['json'].update({'routing_key': self.api_key})
+        return super(EventsApiV2Client, self).post(*args, **kw)
 
     def send_event(self, action, dedup_key=None, **properties) -> str:
         """
@@ -1352,23 +1383,56 @@ class EventsAPISession(PDSession):
             err_msg = 'Malformed response body from the events API; it is ' \
                 'not a dict that has a key named "dedup_key" after ' \
                 'decoding. Body = '+truncate_text(response.text)
-            raise PDServerError(err_msg, response)
+            raise ServerHttpError(err_msg, response)
         return response_body['dedup_key']
 
-    def post(self, *args, **kw) -> Response:
+    def submit(self, summary, source=None, custom_details=None, links=None,
+            timestamp=None) -> str:
         """
-        Override of ``requests.Session.post``
+        Submit an incident change
 
-        Adds the ``routing_key`` parameter to the body before sending.
+        :param summary:
+            Summary / brief description of the change.
+        :param source:
+            A human-readable name identifying the source of the change.
+        :param custom_details:
+            The ``payload.custom_details`` property of the payload.
+        :param links:
+            Set the ``links`` property of the event.
+        :param timestamp:
+            Specifies an event timestamp. Must be an ISO8601-format date/time.
+        :type summary: str
+        :type source: str
+        :type custom_details: dict
+        :type links: list
+        :type timestamp: str
+        :returns:
+            The response ID
         """
-        if 'json' in kw and hasattr(kw['json'], 'update'):
-            kw['json'].update({'routing_key': self.api_key})
-        return super(EventsAPISession, self).post(*args, **kw)
+        local_var = locals()['custom_details']
+        if not (local_var is None or isinstance(local_var, dict)):
+            raise ValueError("custom_details must be a dict")
+        if timestamp is None:
+            timestamp = self.event_timestamp
+        event = {
+                'routing_key': self.api_key,
+                'payload': {
+                    'summary': summary,
+                    'timestamp': timestamp,
+                    }
+                }
+        if isinstance(source, str):
+            event['payload']['source'] = source
+        if isinstance(custom_details, dict):
+            event['payload']['custom_details'] = custom_details
+        if links:
+            event['links'] = links
+        return self.send_change_event(**event)
 
     def trigger(self, summary, source, dedup_key=None, severity='critical',
             payload=None, custom_details=None, images=None, links=None) -> str:
         """
-        Trigger an incident
+        Send an alert-triggering event
 
         :param summary:
             Summary / brief description of what is wrong.
@@ -1422,127 +1486,14 @@ class EventsAPISession(PDSession):
             event['links'] = links
         return self.send_event('trigger', dedup_key=dedup_key, **event)
 
-
-class ChangeEventsAPISession(PDSession):
-
+class RestApiV2Client(ApiClient):
     """
-    Session class for submitting events to the PagerDuty v2 Change Events API.
-
-    Implements methods for submitting change events to PagerDuty's change events
-    API. See the `Change Events API documentation
-    <https://developer.pagerduty.com/docs/events-api-v2/send-change-events/>`_
-    for more details.
-
-    Inherits from :class:`PDSession`.
-    """
-
-    permitted_methods = ('POST',)
-
-    url = "https://events.pagerduty.com"
-
-    def __init__(self, api_key: str, debug=False):
-        super(ChangeEventsAPISession, self).__init__(api_key, debug)
-        # See: https://developer.pagerduty.com/docs/ZG9jOjExMDI5NTgw-events-api-v2-overview#response-codes--retry-logic
-        self.retry[500] = 2 # internal server error, 3 requests total
-        self.retry[502] = 4 # bad gateway, 5 requests total
-        self.retry[503] = 6 # service unavailable, 7 requests total
-
-    @property
-    def auth_header(self) -> dict:
-        return {}
-
-    @property
-    def event_timestamp(self) -> str:
-        return datetime.utcnow().isoformat()+'Z'
-
-    def prepare_headers(self, method, user_headers={}) -> dict:
-        """
-        Add user agent and content type headers for Change Events API requests.
-
-        :param user_headers: User-supplied headers that will override defaults
-        :returns:
-            The final list of headers to use in the request
-        """
-        headers = deepcopy(self.headers)
-        headers.update({
-            'Content-Type': 'application/json',
-            'User-Agent': self.user_agent,
-        })
-        if user_headers:
-            headers.update(user_headers)
-        return headers
-
-    def send_change_event(self, **properties):
-        """
-        Send a change event to the v2 Change Events API.
-
-        See: https://developer.pagerduty.com/docs/events-api-v2/send-change-events/
-
-        :param **properties:
-            Properties to set, i.e. ``payload`` and ``links``
-        :returns:
-            The response ID
-        """
-        event = deepcopy(properties)
-        response = self.post('/v2/change/enqueue', json=event)
-        response_body = try_decoding(successful_response(
-            response,
-            context="submitting change event",
-        ))
-        return response_body.get("id", None)
-
-    def submit(self, summary, source=None, custom_details=None, links=None,
-            timestamp=None) -> str:
-        """
-        Submit an incident change
-
-        :param summary:
-            Summary / brief description of the change.
-        :param source:
-            A human-readable name identifying the source of the change.
-        :param custom_details:
-            The ``payload.custom_details`` property of the payload.
-        :param links:
-            Set the ``links`` property of the event.
-        :param timestamp:
-            Specifies an event timestamp. Must be an ISO8601-format date/time.
-        :type summary: str
-        :type source: str
-        :type custom_details: dict
-        :type links: list
-        :type timestamp: str
-        :returns:
-            The response ID
-        """
-        local_var = locals()['custom_details']
-        if not (local_var is None or isinstance(local_var, dict)):
-            raise ValueError("custom_details must be a dict")
-        if timestamp is None:
-            timestamp = self.event_timestamp
-        event = {
-                'routing_key': self.api_key,
-                'payload': {
-                    'summary': summary,
-                    'timestamp': timestamp,
-                    }
-                }
-        if isinstance(source, str):
-            event['payload']['source'] = source
-        if isinstance(custom_details, dict):
-            event['payload']['custom_details'] = custom_details
-        if links:
-            event['links'] = links
-        return self.send_change_event(**event)
-
-
-class APISession(PDSession):
-    """
-    PagerDuty REST API v2 session object class.
+    PagerDuty REST API v2 client class.
 
     Implements the most generic and oft-implemented aspects of PagerDuty's REST
     API v2 as an opinionated wrapper of `requests.Session`_.
 
-    Inherits from :class:`PDSession`.
+    Inherits from :class:`ApiClient`.
 
     :param api_key:
         REST API access token to use for HTTP requests
@@ -1588,7 +1539,7 @@ class APISession(PDSession):
         self.api_call_counts = {}
         self.api_time = {}
         self.auth_type = auth_type
-        super(APISession, self).__init__(api_key, debug=debug)
+        super(RestApiV2Client, self).__init__(api_key, debug=debug)
         self.default_from = default_from
         self.headers.update({
             'Accept': 'application/vnd.pagerduty+json;version=2',
@@ -1784,13 +1735,13 @@ class APISession(PDSession):
             # scripts/get_path_list/get_path_list.py, after which
             # CANONICAL_PATHS will then need to be updated accordingly based on
             # the new output of the script.
-            raise URLError(f"Path {path} (URL={url}) is formatted like an " \
+            raise UrlError(f"Path {path} (URL={url}) is formatted like an " \
                 "individual resource versus a resource collection. It is " \
                 "therefore assumed to not support pagination.")
         _, wrapper = entity_wrappers('GET', path)
 
         if wrapper is None:
-            raise URLError(f"Pagination is not supported for {endpoint}.")
+            raise UrlError(f"Pagination is not supported for {endpoint}.")
 
         # Parameters to send:
         data = {}
@@ -1882,7 +1833,7 @@ class APISession(PDSession):
         """
         path = canonical_path(self.url, url)
         if path not in CURSOR_BASED_PAGINATION_PATHS:
-            raise URLError(f"{path} does not support cursor-based pagination.")
+            raise UrlError(f"{path} does not support cursor-based pagination.")
         _, wrapper = entity_wrappers('GET', path)
         user_params = {}
         if isinstance(params, (dict, list)):
@@ -2016,7 +1967,7 @@ class APISession(PDSession):
 
         try:
             endpoint = "%s %s"%(method, canonical_path(self.url, url))
-        except URLError:
+        except UrlError:
             # This is necessary so that profiling can also support using the
             # basic get / post / put / delete methods with APIs that are not yet
             # explicitly supported by inclusion in CANONICAL_PATHS.
@@ -2132,7 +2083,7 @@ class APISession(PDSession):
             try:
                 url = self.rget('users', params={'limit':1})[0]['html_url']
                 self._subdomain = url.split('/')[2].split('.')[0]
-            except PDClientError as e:
+            except Error as e:
                 self.log.error("Failed to obtain subdomain; encountered error.")
                 self._subdomain = None
                 raise e
@@ -2153,13 +2104,13 @@ class APISession(PDSession):
         """Truncated token for secure display/identification purposes."""
         return last_4(self.api_key)
 
-class URLError(Exception):
+class UrlError(Exception):
     """
     Exception class for unsupported URLs or malformed input.
     """
     pass
 
-class PDClientError(Exception):
+class Error(Exception):
     """
     General API errors base class.
 
@@ -2178,9 +2129,9 @@ class PDClientError(Exception):
     def __init__(self, message, response=None):
         self.msg = message
         self.response = response
-        super(PDClientError, self).__init__(message)
+        super(Error, self).__init__(message)
 
-class PDHTTPError(PDClientError):
+class HttpError(Error):
     """
     Error class representing errors strictly associated with HTTP responses.
 
@@ -2188,7 +2139,7 @@ class PDHTTPError(PDClientError):
     way of a class that is guaranteed to have its ``response`` be a valid
     `requests.Response`_ object.
 
-    Whereas, the more generic :class:`PDClientError` could also be used
+    Whereas, the more generic :class:`Error` could also be used
     to denote such things as non-transient network errors wherein no response
     was recevied from the API.
 
@@ -2198,7 +2149,7 @@ class PDHTTPError(PDClientError):
 
         try:
             user = session.rget('/users/PABC123')
-        except pagerduty.PDClientError as e:
+        except pagerduty.Error as e:
             if e.response is not None:
                 print("HTTP error: "+str(e.response.status_code))
             else:
@@ -2210,14 +2161,14 @@ class PDHTTPError(PDClientError):
 
         try:
             user = session.rget('/users/PABC123')
-        except pagerduty.PDHTTPError as e:
+        except pagerduty.HttpError as e:
             print("HTTP error: "+str(e.response.status_code))
     """
 
     def __init__(self, message, response: Response):
-        super(PDHTTPError, self).__init__(message, response=response)
+        super(HttpError, self).__init__(message, response=response)
 
-class PDServerError(PDHTTPError):
+class ServerHttpError(HttpError):
     """
     Error class representing failed expectations made of the server
 

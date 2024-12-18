@@ -29,23 +29,23 @@ constructor is the secret to use for accessing the API:
     import pagerduty
 
     # REST API v2:
-    session = pagerduty.APISession(API_KEY)
+    session = pagerduty.RestApiV2Client(API_KEY)
 
     # REST API v2 with an OAuth2 access token:
-    session_oauth = pagerduty.APISession(OAUTH_TOKEN, auth_type='oauth2')
+    session_oauth = pagerduty.RestApiV2Client(OAUTH_TOKEN, auth_type='oauth2')
 
     # Events API v2:
-    events_session = pagerduty.EventsAPISession(ROUTING_KEY)
+    events_session = pagerduty.EventsApiV2Client(ROUTING_KEY)
 
     # A special session class for the change events API (part of Events API v2):
-    change_events_session = pagerduty.ChangeEventsAPISession(ROUTING_KEY)
+    change_events_session = pagerduty.EventsApiV2Client(ROUTING_KEY)
 
 Session objects, being descendants of `requests.Session`_, can also be used as
 context managers. For example:
 
 .. code-block:: python
 
-    with pagerduty.APISession(API_KEY) as session:
+    with pagerduty.RestApiV2Client(API_KEY) as session:
         do_application(session)
 
 The From header
@@ -158,7 +158,7 @@ matching a string using the ``query`` parameter on an index endpoint:
             'type':'user',
             'name': 'Jane Doe'
         })
-    except PDClientError:
+    except Error:
         updated_user = None
 
 **Idempotent create/update:**
@@ -206,7 +206,7 @@ the paramter name to denote a set type filter. For example:
 
 Events API v2
 *************
-**Trigger and resolve an alert,** getting its deduplication key from the API, using :class:`EventsAPISession`:
+**Trigger and resolve an alert,** getting its deduplication key from the API, using :class:`EventsApiV2Client`:
 
 .. code-block:: python
 
@@ -223,7 +223,7 @@ Events API v2
     # ...
     events_session.acknowledge('abc123')
 
-**Submit a change event** using a :class:`ChangeEventsAPISession` instance:
+**Submit a change event** using a :class:`EventsApiV2Client` instance:
 
 .. code-block:: python
 
@@ -262,7 +262,7 @@ the ``self`` property of any object can be used, and there is no need to strip
 out the API base URL.
 
 The ``r*`` (and ``j*`` methods as of version 5), i.e.
-:attr:`pagerduty.APISession.rget`, can also accept a dictionary object
+:attr:`pagerduty.RestApiV2Client.rget`, can also accept a dictionary object
 representing an API resource or a resource reference in place of a URL, in
 which case the URL at its ``self`` key will be used as the request target.
 
@@ -320,7 +320,7 @@ obtained:
     # Support in the event of server errors (status 5xx):
     print(response.headers['x-request-id'])
 
-If using the ``j*`` methods, i.e. :attr:`pagerduty.APISession.jget`, the return value
+If using the ``j*`` methods, i.e. :attr:`pagerduty.RestApiV2Client.jget`, the return value
 will be the full body of the response from the API after JSON-decoding, and
 the ``json`` keyword argument is not modified.
 
@@ -402,15 +402,15 @@ Wrapped-entity-aware Functions
 The following methods will automatically extract and return the wrapped content
 of API responses, and wrap request entities for the user as appropriate:
 
-* :attr:`pagerduty.APISession.dict_all`: Create a dictionary of all results from a resource collection
-* :attr:`pagerduty.APISession.find`: Find and return a specific result of a resource collection that matches a query
-* :attr:`pagerduty.APISession.iter_all`: Iterate through all results of a resource collection
-* :attr:`pagerduty.APISession.iter_cursor`: Iterate through all results of a resource collection using cursor-based pagination
-* :attr:`pagerduty.APISession.list_all`: Create a list of all results from a resource collection
-* :attr:`pagerduty.APISession.persist`: Create a resource entity with specified attributes if one that matches them does not already exist
-* :attr:`pagerduty.APISession.rget`: Get the wrapped entity or resource collection at a given endpoint
-* :attr:`pagerduty.APISession.rpost`: Send a POST request, wrapping the request entity / unwrapping the response entity
-* :attr:`pagerduty.APISession.rput`: Send a PUT request, wrapping the request entity / unwrapping the response entity
+* :attr:`pagerduty.RestApiV2Client.dict_all`: Create a dictionary of all results from a resource collection
+* :attr:`pagerduty.RestApiV2Client.find`: Find and return a specific result of a resource collection that matches a query
+* :attr:`pagerduty.RestApiV2Client.iter_all`: Iterate through all results of a resource collection
+* :attr:`pagerduty.RestApiV2Client.iter_cursor`: Iterate through all results of a resource collection using cursor-based pagination
+* :attr:`pagerduty.RestApiV2Client.list_all`: Create a list of all results from a resource collection
+* :attr:`pagerduty.RestApiV2Client.persist`: Create a resource entity with specified attributes if one that matches them does not already exist
+* :attr:`pagerduty.RestApiV2Client.rget`: Get the wrapped entity or resource collection at a given endpoint
+* :attr:`pagerduty.RestApiV2Client.rpost`: Send a POST request, wrapping the request entity / unwrapping the response entity
+* :attr:`pagerduty.RestApiV2Client.rput`: Send a PUT request, wrapping the request entity / unwrapping the response entity
 
 Classic Patterns
 ****************
@@ -483,13 +483,13 @@ entity is wrapped as appropriate. For instance:
 
 Pagination
 ----------
-The method :attr:`pagerduty.APISession.iter_all` returns an iterator that yields
+The method :attr:`pagerduty.RestApiV2Client.iter_all` returns an iterator that yields
 results from an endpoint that returns a wrapped collection of resources. By
 default it will use classic, a.k.a. numeric pagination. If the endpoint
 supports cursor-based pagination, it will use
-:attr:`pagerduty.APISession.iter_cursor` to iterate through results instead. The
-methods :attr:`pagerduty.APISession.list_all` and
-:attr:`pagerduty.APISession.dict_all` will request all pages of the collection
+:attr:`pagerduty.RestApiV2Client.iter_cursor` to iterate through results instead. The
+methods :attr:`pagerduty.RestApiV2Client.list_all` and
+:attr:`pagerduty.RestApiV2Client.dict_all` will request all pages of the collection
 and return the results as a list or dictionary, respectively.
 
 Pagination functions require that the API endpoint being requested have entity
@@ -525,7 +525,7 @@ number of results is higher.
 Moreover, if these methods are used to fetch a very large volume of data, and
 an error is encountered when this happens, the partial data set will be
 discarded when the exception is raised. To make use of partial results, use
-:attr:`pagerduty.APISession.iter_all`, perform actions on each result
+:attr:`pagerduty.RestApiV2Client.iter_all`, perform actions on each result
 yielded, and catch/handle exceptions as desired.
 
 Updating, creating or deleting while paginating
@@ -585,14 +585,14 @@ It is important to note, however, that updating incidents requires using a
 user-scoped access token or setting the ``From`` header to the login email
 address of a valid PagerDuty user. To set this, pass it through using the
 ``headers`` keyword argument, or set the
-:attr:`pagerduty.APISession.default_from` property, or pass the email address as
+:attr:`pagerduty.RestApiV2Client.default_from` property, or pass the email address as
 the ``default_from`` keyword argument when constructing the session initially.
 
 Error Handling
 --------------
 For any of the methods that do not return `requests.Response`_, when the API
 responds with a non-success HTTP status, the method will raise a
-:class:`pagerduty.PDClientError` exception. This way, these methods can always be
+:class:`pagerduty.Error` exception. This way, these methods can always be
 expected to return the same structure of data based on the API being used, and
 there is no need to differentiate between the response schema for a successful
 request and one for an error response.
@@ -603,8 +603,8 @@ specialized error handling logic in which the REST API response data (i.e.
 headers, code and body) are available in the catching scope.
 
 For instance, the following code prints "User not found" in the event of a 404,
-prints out the user's email if the user exists, raises the underlying
-exception if it's any other HTTP error code, and prints an error otherwise:
+prints out the user's email if the user exists and raises the underlying
+exception if it's any other HTTP error code:
 
 .. code-block:: python
 
@@ -612,31 +612,11 @@ exception if it's any other HTTP error code, and prints an error otherwise:
         user = session.rget("/users/PJKL678")
         print(user['email'])
 
-    except pagerduty.PDClientError as e:
-        if e.response:
-            if e.response.status_code == 404:
-                print("User not found")
-            else:
-                raise e
-        else:
-            print("Non-transient network or client error")
-
-Version 4.4.0 introduced a new error subclass, PDHTTPError, in which it can be
-assumed that the error pertains to a HTTP request and the ``response`` property
-is not ``None``:
-
-.. code-block:: python
-
-    try:
-        user = session.rget("/users/PJKL678")
-        print(user['email'])
-    except pagerduty.PDHTTPError as e:
+    except pagerduty.HttpError as e:
         if e.response.status_code == 404:
             print("User not found")
         else:
             raise e
-    except pagerduty.PDClientError as e:
-        print("Non-transient network or client error")
 
 Logging
 -------
@@ -661,7 +641,7 @@ command line output. It is used as follows:
 .. code-block:: python
 
     # Method 1: keyword argument, when constructing a new session:
-    session = pagerduty.APISession(api_key, debug=True)
+    session = pagerduty.RestApiV2Client(api_key, debug=True)
 
     # Method 2: on an existing session, by setting the property:
     session.print_debug = True
@@ -705,7 +685,7 @@ Default Behavior
 By default, after receiving a status 429 response, sessions will retry an
 unlimited number of times, increasing the wait time before retry each
 successive time.  When encountering status ``401 Unauthorized``, the client
-will immediately raise ``pagerduty.PDClientError``; this is a non-transient error
+will immediately raise ``pagerduty.Error``; this is a non-transient error
 caused by an invalid credential.
 
 For all other success or error statuses, the underlying request method in the
@@ -732,14 +712,14 @@ If ρ is nonzero:
 
 t\ :sub:`n` = a (1 + ρ r\ :sub:`n`) t\ :sub:`n-1`
 
-Setting the retry property
+Configuring Retry Behavior
 **************************
 The dictionary property :attr:`pagerduty.PDSession.retry` allows customization of
 HTTP retry limits on a per-HTTP-status basis. This includes the ability to
 override the above defaults for 401 and 429, although that is not recommended.
 
 Each key in the dictionary represents a HTTP status, and its associated value
-is the number of times that the client will retry the request if it receives
+the number of times that the client will retry the request if it receives
 that status. **Success statuses (2xx) will be ignored.**
 
 If a different error status is encountered on a retry, it won't count towards
@@ -752,8 +732,8 @@ supersede the maximum number of retries for any status defined in
 Low-level HTTP request functions in client classes, i.e. ``get``, will return
 `requests.Response`_ objects when they run out of retries. Higher-level
 functions that require a success status response, i.e.
-:attr:`pagerduty.APISession.list_all` and
-:attr:`pagerduty.EventsAPISession.trigger`, will raise exceptions that include
+:attr:`pagerduty.RestApiV2Client.list_all` and
+:attr:`pagerduty.EventsApiV2Client.trigger`, will raise exceptions that include
 the response object when they encounter error status responses, but only after
 the configured retry limits are reached in the underlying HTTP request methods.
 
@@ -779,10 +759,9 @@ the configured retry limits are reached in the underlying HTTP request methods.
 .. -----------
 
 .. _`Requests`: https://docs.python-requests.org/en/master/
- .. _`Errors`: https://developer.pagerduty.com/docs/ZG9jOjExMDI5NTYz-errors
+.. _`Errors`: https://developer.pagerduty.com/docs/ZG9jOjExMDI5NTYz-errors
 .. _`Events API v2`: https://developer.pagerduty.com/docs/ZG9jOjExMDI5NTgw-events-api-v2-overview
 .. _`PagerDuty API Reference`: https://developer.pagerduty.com/api-reference/
 .. _`REST API v2`: https://developer.pagerduty.com/docs/ZG9jOjExMDI5NTUw-rest-api-v2-overview
-.. _`setuptools`: https://pypi.org/project/setuptools/
 .. _requests.Response: https://docs.python-requests.org/en/master/api/#requests.Response
 .. _requests.Session: https://docs.python-requests.org/en/master/api/#request-sessions
