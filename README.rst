@@ -1,5 +1,5 @@
 =====================================================
-python-pagerduty: clients for PagerDuty's public APIs
+python-pagerduty: Clients for PagerDuty's public APIs
 =====================================================
 A module that supplies lightweight Python clients for the PagerDuty REST API v2 and Events API v2.
 
