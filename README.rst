@@ -92,6 +92,7 @@ Warranty
 .. -----------
 
 .. _`Requests`: https://docs.python-requests.org/en/master/
+.. _`pdpyras`: https://github.com/PagerDuty/pdpyras
 .. _`Errors`: https://developer.pagerduty.com/docs/ZG9jOjExMDI5NTYz-errors
 .. _`Events API v2`: https://developer.pagerduty.com/docs/ZG9jOjExMDI5NTgw-events-api-v2-overview
 .. _`PagerDuty API Reference`: https://developer.pagerduty.com/api-reference/
