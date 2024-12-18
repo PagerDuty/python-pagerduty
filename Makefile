@@ -9,7 +9,7 @@ docs/index.html: pagerduty.py README.rst CHANGELOG.rst sphinx/source/conf.py sph
 docs: docs/index.html
 
 install: dist
-	python setup.py install 
+	python setup.py install
 
 testpublish: dist
 	./publish-test.sh
