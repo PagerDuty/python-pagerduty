@@ -12,7 +12,7 @@ if __name__ == '__main__':
         license='MIT',
         url='https://pagerduty.github.io/python-pagerduty',
         download_url='https://pypi.org/project/pagerduty/',
-        install_requires=['requests', 'urllib3'],
+        install_requires=['certifi', 'requests', 'urllib3'],
         author='PagerDuty',
         author_email='support@pagerduty.com',
         python_requires='>=3.6'
