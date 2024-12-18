@@ -16,4 +16,3 @@ testpublish: dist
 
 publish: dist
 	twine upload dist/*.tar.gz
-
