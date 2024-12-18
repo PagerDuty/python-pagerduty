@@ -82,7 +82,7 @@
 <li class="toctree-l2"><a class="reference internal" href="#http-retry-configuration">HTTP Retry Configuration</a><ul>
 <li class="toctree-l3"><a class="reference internal" href="#default-behavior">Default Behavior</a></li>
 <li class="toctree-l3"><a class="reference internal" href="#exponential-cooldown">Exponential Cooldown</a></li>
-<li class="toctree-l3"><a class="reference internal" href="#setting-the-retry-property">Setting the retry property</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#configuring-retry-behavior">Configuring Retry Behavior</a></li>
 </ul>
 </li>
 </ul>
@@ -125,7 +125,7 @@ has in-depth documentation on client classes and methods.</p>
 <div class="highlight-shell notranslate"><div class="highlight"><pre><span></span>pip install pagerduty
 </pre></div>
 </div>
-<p>Alternately, if the dependencies (<a class="reference external" href="https://docs.python-requests.org/en/master/.._`Errors`:https://developer.pagerduty.com/docs/ZG9jOjExMDI5NTYz-errors">Requests</a> and “deprecation” Python libraries)
+<p>Alternately, if the dependencies (<a class="reference external" href="https://docs.python-requests.org/en/master/">Requests</a> and “deprecation” Python libraries)
 have been installed locally, one can download <code class="docutils literal notranslate"><span class="pre">pagerduty.py</span></code> into the directory
 where it will be used.</p>
 </section>
@@ -136,21 +136,21 @@ constructor is the secret to use for accessing the API:</p>
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">pagerduty</span>
 
 <span class="c1"># REST API v2:</span>
-<span class="n">session</span> <span class="o">=</span> <span class="n">pagerduty</span><span class="o">.</span><span class="n">APISession</span><span class="p">(</span><span class="n">API_KEY</span><span class="p">)</span>
+<span class="n">session</span> <span class="o">=</span> <span class="n">pagerduty</span><span class="o">.</span><span class="n">RestApiV2Client</span><span class="p">(</span><span class="n">API_KEY</span><span class="p">)</span>
 
 <span class="c1"># REST API v2 with an OAuth2 access token:</span>
-<span class="n">session_oauth</span> <span class="o">=</span> <span class="n">pagerduty</span><span class="o">.</span><span class="n">APISession</span><span class="p">(</span><span class="n">OAUTH_TOKEN</span><span class="p">,</span> <span class="n">auth_type</span><span class="o">=</span><span class="s1">&#39;oauth2&#39;</span><span class="p">)</span>
+<span class="n">session_oauth</span> <span class="o">=</span> <span class="n">pagerduty</span><span class="o">.</span><span class="n">RestApiV2Client</span><span class="p">(</span><span class="n">OAUTH_TOKEN</span><span class="p">,</span> <span class="n">auth_type</span><span class="o">=</span><span class="s1">&#39;oauth2&#39;</span><span class="p">)</span>
 
 <span class="c1"># Events API v2:</span>
-<span class="n">events_session</span> <span class="o">=</span> <span class="n">pagerduty</span><span class="o">.</span><span class="n">EventsAPISession</span><span class="p">(</span><span class="n">ROUTING_KEY</span><span class="p">)</span>
+<span class="n">events_session</span> <span class="o">=</span> <span class="n">pagerduty</span><span class="o">.</span><span class="n">EventsApiV2Client</span><span class="p">(</span><span class="n">ROUTING_KEY</span><span class="p">)</span>
 
 <span class="c1"># A special session class for the change events API (part of Events API v2):</span>
-<span class="n">change_events_session</span> <span class="o">=</span> <span class="n">pagerduty</span><span class="o">.</span><span class="n">ChangeEventsAPISession</span><span class="p">(</span><span class="n">ROUTING_KEY</span><span class="p">)</span>
+<span class="n">change_events_session</span> <span class="o">=</span> <span class="n">pagerduty</span><span class="o">.</span><span class="n">EventsApiV2Client</span><span class="p">(</span><span class="n">ROUTING_KEY</span><span class="p">)</span>
 </pre></div>
 </div>
 <p>Session objects, being descendants of <a class="reference external" href="https://docs.python-requests.org/en/master/api/#request-sessions">requests.Session</a>, can also be used as
 context managers. For example:</p>
-<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="k">with</span> <span class="n">pagerduty</span><span class="o">.</span><span class="n">APISession</span><span class="p">(</span><span class="n">API_KEY</span><span class="p">)</span> <span class="k">as</span> <span class="n">session</span><span class="p">:</span>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="k">with</span> <span class="n">pagerduty</span><span class="o">.</span><span class="n">RestApiV2Client</span><span class="p">(</span><span class="n">API_KEY</span><span class="p">)</span> <span class="k">as</span> <span class="n">session</span><span class="p">:</span>
     <span class="n">do_application</span><span class="p">(</span><span class="n">session</span><span class="p">)</span>
 </pre></div>
 </div>
@@ -208,7 +208,7 @@ and having them represented as a dictionary object using three different methods
 </pre></div>
 </div>
 <p><strong>Pagination with query parameters:</strong> set the <code class="docutils literal notranslate"><span class="pre">params</span></code> keyword argument, which is
-converted to URL query parameters by <a class="reference external" href="https://docs.python-requests.org/en/master/.._`Errors`:https://developer.pagerduty.com/docs/ZG9jOjExMDI5NTYz-errors">Requests</a>:</p>
+converted to URL query parameters by <a class="reference external" href="https://docs.python-requests.org/en/master/">Requests</a>:</p>
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="c1"># Get a list of all services with &quot;SN&quot; in their name:</span>
 <span class="n">services</span> <span class="o">=</span> <span class="n">session</span><span class="o">.</span><span class="n">list_all</span><span class="p">(</span><span class="s1">&#39;services&#39;</span><span class="p">,</span> <span class="n">params</span><span class="o">=</span><span class="p">{</span><span class="s1">&#39;query&#39;</span><span class="p">:</span> <span class="s1">&#39;SN&#39;</span><span class="p">})</span>
 
@@ -248,7 +248,7 @@ matching a string using the <code class="docutils literal notranslate"><span cla
         <span class="s1">&#39;type&#39;</span><span class="p">:</span><span class="s1">&#39;user&#39;</span><span class="p">,</span>
         <span class="s1">&#39;name&#39;</span><span class="p">:</span> <span class="s1">&#39;Jane Doe&#39;</span>
     <span class="p">})</span>
-<span class="k">except</span> <span class="n">PDClientError</span><span class="p">:</span>
+<span class="k">except</span> <span class="n">Error</span><span class="p">:</span>
     <span class="n">updated_user</span> <span class="o">=</span> <span class="kc">None</span>
 </pre></div>
 </div>
@@ -291,7 +291,7 @@ the paramter name to denote a set type filter. For example:</p>
 </section>
 <section id="events-api-v2">
 <h3>Events API v2<a class="headerlink" href="#events-api-v2" title="Permalink to this heading"></a></h3>
-<p><strong>Trigger and resolve an alert,</strong> getting its deduplication key from the API, using <code class="xref py py-class docutils literal notranslate"><span class="pre">EventsAPISession</span></code>:</p>
+<p><strong>Trigger and resolve an alert,</strong> getting its deduplication key from the API, using <code class="xref py py-class docutils literal notranslate"><span class="pre">EventsApiV2Client</span></code>:</p>
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">dedup_key</span> <span class="o">=</span> <span class="n">events_session</span><span class="o">.</span><span class="n">trigger</span><span class="p">(</span><span class="s2">&quot;Server is on fire&quot;</span><span class="p">,</span> <span class="s1">&#39;dusty.old.server.net&#39;</span><span class="p">)</span>
 <span class="c1"># ...</span>
 <span class="n">events_session</span><span class="o">.</span><span class="n">resolve</span><span class="p">(</span><span class="n">dedup_key</span><span class="p">)</span>
@@ -304,7 +304,7 @@ the paramter name to denote a set type filter. For example:</p>
 <span class="n">events_session</span><span class="o">.</span><span class="n">acknowledge</span><span class="p">(</span><span class="s1">&#39;abc123&#39;</span><span class="p">)</span>
 </pre></div>
 </div>
-<p><strong>Submit a change event</strong> using a <code class="xref py py-class docutils literal notranslate"><span class="pre">ChangeEventsAPISession</span></code> instance:</p>
+<p><strong>Submit a change event</strong> using a <code class="xref py py-class docutils literal notranslate"><span class="pre">EventsApiV2Client</span></code> instance:</p>
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">change_events_session</span><span class="o">.</span><span class="n">submit</span><span class="p">(</span><span class="s2">&quot;new build finished at latest HEAD&quot;</span><span class="p">,</span>
     <span class="n">source</span><span class="o">=</span><span class="s2">&quot;automation&quot;</span><span class="p">)</span>
 </pre></div>
@@ -315,17 +315,17 @@ the paramter name to denote a set type filter. For example:</p>
 <h2>Generic Client Features<a class="headerlink" href="#generic-client-features" title="Permalink to this heading"></a></h2>
 <p>Generally, all of the features of <a class="reference external" href="https://docs.python-requests.org/en/master/api/#request-sessions">requests.Session</a> are available to the user
 as they would be if using the Requests Python library directly, since
-<a class="reference internal" href="module_reference.html#pagerduty.PDSession" title="pagerduty.PDSession"><code class="xref py py-class docutils literal notranslate"><span class="pre">pagerduty.PDSession</span></code></a> and its subclasses for the REST/Events APIs are
+<code class="xref py py-class docutils literal notranslate"><span class="pre">pagerduty.PDSession</span></code> and its subclasses for the REST/Events APIs are
 descendants of it.</p>
 <p>The <code class="docutils literal notranslate"><span class="pre">get</span></code>, <code class="docutils literal notranslate"><span class="pre">post</span></code>, <code class="docutils literal notranslate"><span class="pre">put</span></code> and <code class="docutils literal notranslate"><span class="pre">delete</span></code> methods of REST/Events API
 session classes are similar to the analogous functions in <a class="reference external" href="https://docs.python-requests.org/en/master/api/#request-sessions">requests.Session</a>.
 The arguments they accept are the same and they all return <a class="reference external" href="https://docs.python-requests.org/en/master/api/#requests.Response">requests.Response</a>
 objects.</p>
 <p>Any keyword arguments passed to the <code class="docutils literal notranslate"><span class="pre">j*</span></code> or <code class="docutils literal notranslate"><span class="pre">r*</span></code> methods will be passed
-through to the analogous method in <a class="reference external" href="https://docs.python-requests.org/en/master/.._`Errors`:https://developer.pagerduty.com/docs/ZG9jOjExMDI5NTYz-errors">Requests</a>, though in some cases the
+through to the analogous method in <a class="reference external" href="https://docs.python-requests.org/en/master/">Requests</a>, though in some cases the
 arguments (i.e. <code class="docutils literal notranslate"><span class="pre">json</span></code>) are first modified.</p>
 <p>For documentation on any generic HTTP client features that are available, refer
-to the <a class="reference external" href="https://docs.python-requests.org/en/master/.._`Errors`:https://developer.pagerduty.com/docs/ZG9jOjExMDI5NTYz-errors">Requests</a> documentation.</p>
+to the <a class="reference external" href="https://docs.python-requests.org/en/master/">Requests</a> documentation.</p>
 </section>
 <section id="urls">
 <h2>URLs<a class="headerlink" href="#urls" title="Permalink to this heading"></a></h2>
@@ -338,13 +338,13 @@ a complete API URL.  For instance, one can specify <code class="docutils literal
 the <code class="docutils literal notranslate"><span class="pre">self</span></code> property of any object can be used, and there is no need to strip
 out the API base URL.</p>
 <p>The <code class="docutils literal notranslate"><span class="pre">r*</span></code> (and <code class="docutils literal notranslate"><span class="pre">j*</span></code> methods as of version 5), i.e.
-<a class="reference internal" href="module_reference.html#pagerduty.APISession.rget" title="pagerduty.APISession.rget"><code class="xref py py-attr docutils literal notranslate"><span class="pre">pagerduty.APISession.rget</span></code></a>, can also accept a dictionary object
+<a class="reference internal" href="module_reference.html#pagerduty.RestApiV2Client.rget" title="pagerduty.RestApiV2Client.rget"><code class="xref py py-attr docutils literal notranslate"><span class="pre">pagerduty.RestApiV2Client.rget</span></code></a>, can also accept a dictionary object
 representing an API resource or a resource reference in place of a URL, in
 which case the URL at its <code class="docutils literal notranslate"><span class="pre">self</span></code> key will be used as the request target.</p>
 </section>
 <section id="query-parameters">
 <h2>Query Parameters<a class="headerlink" href="#query-parameters" title="Permalink to this heading"></a></h2>
-<p>As with <a class="reference external" href="https://docs.python-requests.org/en/master/.._`Errors`:https://developer.pagerduty.com/docs/ZG9jOjExMDI5NTYz-errors">Requests</a>, there is no need to compose the query string (everything
+<p>As with <a class="reference external" href="https://docs.python-requests.org/en/master/">Requests</a>, there is no need to compose the query string (everything
 that will follow <code class="docutils literal notranslate"><span class="pre">?</span></code> in the URL). Simply set the <code class="docutils literal notranslate"><span class="pre">params</span></code> keyword argument
 to a dictionary, and each of the key/value pairs will be serialized to the
 query string in the final URL of the request:</p>
@@ -389,11 +389,11 @@ obtained:</p>
 <span class="nb">print</span><span class="p">(</span><span class="n">response</span><span class="o">.</span><span class="n">headers</span><span class="p">[</span><span class="s1">&#39;x-request-id&#39;</span><span class="p">])</span>
 </pre></div>
 </div>
-<p>If using the <code class="docutils literal notranslate"><span class="pre">j*</span></code> methods, i.e. <a class="reference internal" href="module_reference.html#pagerduty.APISession.jget" title="pagerduty.APISession.jget"><code class="xref py py-attr docutils literal notranslate"><span class="pre">pagerduty.APISession.jget</span></code></a>, the return value
+<p>If using the <code class="docutils literal notranslate"><span class="pre">j*</span></code> methods, i.e. <a class="reference internal" href="module_reference.html#pagerduty.RestApiV2Client.jget" title="pagerduty.RestApiV2Client.jget"><code class="xref py py-attr docutils literal notranslate"><span class="pre">pagerduty.RestApiV2Client.jget</span></code></a>, the return value
 will be the full body of the response from the API after JSON-decoding, and
 the <code class="docutils literal notranslate"><span class="pre">json</span></code> keyword argument is not modified.</p>
 <p>When using the <code class="docutils literal notranslate"><span class="pre">r*</span></code> methods, the <code class="docutils literal notranslate"><span class="pre">json</span></code> keyword argument is modified before
-sending to <a class="reference external" href="https://docs.python-requests.org/en/master/.._`Errors`:https://developer.pagerduty.com/docs/ZG9jOjExMDI5NTYz-errors">Requests</a>, if necessary, to encapsulate the body inside an entity
+sending to <a class="reference external" href="https://docs.python-requests.org/en/master/">Requests</a>, if necessary, to encapsulate the body inside an entity
 wrapper.  The response is the decoded body after unwrapping, if the API
 endpoint returns wrapped entities. For more details, refer to <a class="reference internal" href="#wrapping"><span class="std std-ref">Entity Wrapping</span></a>.</p>
 <section id="data-types">
@@ -462,15 +462,15 @@ schemas are said to wrap entities.</p>
 <p>The following methods will automatically extract and return the wrapped content
 of API responses, and wrap request entities for the user as appropriate:</p>
 <ul class="simple">
-<li><p><a class="reference internal" href="module_reference.html#pagerduty.APISession.dict_all" title="pagerduty.APISession.dict_all"><code class="xref py py-attr docutils literal notranslate"><span class="pre">pagerduty.APISession.dict_all</span></code></a>: Create a dictionary of all results from a resource collection</p></li>
-<li><p><a class="reference internal" href="module_reference.html#pagerduty.APISession.find" title="pagerduty.APISession.find"><code class="xref py py-attr docutils literal notranslate"><span class="pre">pagerduty.APISession.find</span></code></a>: Find and return a specific result of a resource collection that matches a query</p></li>
-<li><p><a class="reference internal" href="module_reference.html#pagerduty.APISession.iter_all" title="pagerduty.APISession.iter_all"><code class="xref py py-attr docutils literal notranslate"><span class="pre">pagerduty.APISession.iter_all</span></code></a>: Iterate through all results of a resource collection</p></li>
-<li><p><a class="reference internal" href="module_reference.html#pagerduty.APISession.iter_cursor" title="pagerduty.APISession.iter_cursor"><code class="xref py py-attr docutils literal notranslate"><span class="pre">pagerduty.APISession.iter_cursor</span></code></a>: Iterate through all results of a resource collection using cursor-based pagination</p></li>
-<li><p><a class="reference internal" href="module_reference.html#pagerduty.APISession.list_all" title="pagerduty.APISession.list_all"><code class="xref py py-attr docutils literal notranslate"><span class="pre">pagerduty.APISession.list_all</span></code></a>: Create a list of all results from a resource collection</p></li>
-<li><p><a class="reference internal" href="module_reference.html#pagerduty.APISession.persist" title="pagerduty.APISession.persist"><code class="xref py py-attr docutils literal notranslate"><span class="pre">pagerduty.APISession.persist</span></code></a>: Create a resource entity with specified attributes if one that matches them does not already exist</p></li>
-<li><p><a class="reference internal" href="module_reference.html#pagerduty.APISession.rget" title="pagerduty.APISession.rget"><code class="xref py py-attr docutils literal notranslate"><span class="pre">pagerduty.APISession.rget</span></code></a>: Get the wrapped entity or resource collection at a given endpoint</p></li>
-<li><p><a class="reference internal" href="module_reference.html#pagerduty.APISession.rpost" title="pagerduty.APISession.rpost"><code class="xref py py-attr docutils literal notranslate"><span class="pre">pagerduty.APISession.rpost</span></code></a>: Send a POST request, wrapping the request entity / unwrapping the response entity</p></li>
-<li><p><a class="reference internal" href="module_reference.html#pagerduty.APISession.rput" title="pagerduty.APISession.rput"><code class="xref py py-attr docutils literal notranslate"><span class="pre">pagerduty.APISession.rput</span></code></a>: Send a PUT request, wrapping the request entity / unwrapping the response entity</p></li>
+<li><p><a class="reference internal" href="module_reference.html#pagerduty.RestApiV2Client.dict_all" title="pagerduty.RestApiV2Client.dict_all"><code class="xref py py-attr docutils literal notranslate"><span class="pre">pagerduty.RestApiV2Client.dict_all</span></code></a>: Create a dictionary of all results from a resource collection</p></li>
+<li><p><a class="reference internal" href="module_reference.html#pagerduty.RestApiV2Client.find" title="pagerduty.RestApiV2Client.find"><code class="xref py py-attr docutils literal notranslate"><span class="pre">pagerduty.RestApiV2Client.find</span></code></a>: Find and return a specific result of a resource collection that matches a query</p></li>
+<li><p><a class="reference internal" href="module_reference.html#pagerduty.RestApiV2Client.iter_all" title="pagerduty.RestApiV2Client.iter_all"><code class="xref py py-attr docutils literal notranslate"><span class="pre">pagerduty.RestApiV2Client.iter_all</span></code></a>: Iterate through all results of a resource collection</p></li>
+<li><p><a class="reference internal" href="module_reference.html#pagerduty.RestApiV2Client.iter_cursor" title="pagerduty.RestApiV2Client.iter_cursor"><code class="xref py py-attr docutils literal notranslate"><span class="pre">pagerduty.RestApiV2Client.iter_cursor</span></code></a>: Iterate through all results of a resource collection using cursor-based pagination</p></li>
+<li><p><a class="reference internal" href="module_reference.html#pagerduty.RestApiV2Client.list_all" title="pagerduty.RestApiV2Client.list_all"><code class="xref py py-attr docutils literal notranslate"><span class="pre">pagerduty.RestApiV2Client.list_all</span></code></a>: Create a list of all results from a resource collection</p></li>
+<li><p><a class="reference internal" href="module_reference.html#pagerduty.RestApiV2Client.persist" title="pagerduty.RestApiV2Client.persist"><code class="xref py py-attr docutils literal notranslate"><span class="pre">pagerduty.RestApiV2Client.persist</span></code></a>: Create a resource entity with specified attributes if one that matches them does not already exist</p></li>
+<li><p><a class="reference internal" href="module_reference.html#pagerduty.RestApiV2Client.rget" title="pagerduty.RestApiV2Client.rget"><code class="xref py py-attr docutils literal notranslate"><span class="pre">pagerduty.RestApiV2Client.rget</span></code></a>: Get the wrapped entity or resource collection at a given endpoint</p></li>
+<li><p><a class="reference internal" href="module_reference.html#pagerduty.RestApiV2Client.rpost" title="pagerduty.RestApiV2Client.rpost"><code class="xref py py-attr docutils literal notranslate"><span class="pre">pagerduty.RestApiV2Client.rpost</span></code></a>: Send a POST request, wrapping the request entity / unwrapping the response entity</p></li>
+<li><p><a class="reference internal" href="module_reference.html#pagerduty.RestApiV2Client.rput" title="pagerduty.RestApiV2Client.rput"><code class="xref py py-attr docutils literal notranslate"><span class="pre">pagerduty.RestApiV2Client.rput</span></code></a>: Send a PUT request, wrapping the request entity / unwrapping the response entity</p></li>
 </ul>
 </section>
 <section id="classic-patterns">
@@ -541,13 +541,13 @@ entity is wrapped as appropriate. For instance:</p>
 </section>
 <section id="pagination">
 <h2>Pagination<a class="headerlink" href="#pagination" title="Permalink to this heading"></a></h2>
-<p>The method <a class="reference internal" href="module_reference.html#pagerduty.APISession.iter_all" title="pagerduty.APISession.iter_all"><code class="xref py py-attr docutils literal notranslate"><span class="pre">pagerduty.APISession.iter_all</span></code></a> returns an iterator that yields
+<p>The method <a class="reference internal" href="module_reference.html#pagerduty.RestApiV2Client.iter_all" title="pagerduty.RestApiV2Client.iter_all"><code class="xref py py-attr docutils literal notranslate"><span class="pre">pagerduty.RestApiV2Client.iter_all</span></code></a> returns an iterator that yields
 results from an endpoint that returns a wrapped collection of resources. By
 default it will use classic, a.k.a. numeric pagination. If the endpoint
 supports cursor-based pagination, it will use
-<a class="reference internal" href="module_reference.html#pagerduty.APISession.iter_cursor" title="pagerduty.APISession.iter_cursor"><code class="xref py py-attr docutils literal notranslate"><span class="pre">pagerduty.APISession.iter_cursor</span></code></a> to iterate through results instead. The
-methods <a class="reference internal" href="module_reference.html#pagerduty.APISession.list_all" title="pagerduty.APISession.list_all"><code class="xref py py-attr docutils literal notranslate"><span class="pre">pagerduty.APISession.list_all</span></code></a> and
-<a class="reference internal" href="module_reference.html#pagerduty.APISession.dict_all" title="pagerduty.APISession.dict_all"><code class="xref py py-attr docutils literal notranslate"><span class="pre">pagerduty.APISession.dict_all</span></code></a> will request all pages of the collection
+<a class="reference internal" href="module_reference.html#pagerduty.RestApiV2Client.iter_cursor" title="pagerduty.RestApiV2Client.iter_cursor"><code class="xref py py-attr docutils literal notranslate"><span class="pre">pagerduty.RestApiV2Client.iter_cursor</span></code></a> to iterate through results instead. The
+methods <a class="reference internal" href="module_reference.html#pagerduty.RestApiV2Client.list_all" title="pagerduty.RestApiV2Client.list_all"><code class="xref py py-attr docutils literal notranslate"><span class="pre">pagerduty.RestApiV2Client.list_all</span></code></a> and
+<a class="reference internal" href="module_reference.html#pagerduty.RestApiV2Client.dict_all" title="pagerduty.RestApiV2Client.dict_all"><code class="xref py py-attr docutils literal notranslate"><span class="pre">pagerduty.RestApiV2Client.dict_all</span></code></a> will request all pages of the collection
 and return the results as a list or dictionary, respectively.</p>
 <p>Pagination functions require that the API endpoint being requested have entity
 wrapping enabled, and respond with either a <code class="docutils literal notranslate"><span class="pre">more</span></code> or <code class="docutils literal notranslate"><span class="pre">cursor</span></code> property
@@ -578,7 +578,7 @@ number of results is higher.</p>
 <p>Moreover, if these methods are used to fetch a very large volume of data, and
 an error is encountered when this happens, the partial data set will be
 discarded when the exception is raised. To make use of partial results, use
-<a class="reference internal" href="module_reference.html#pagerduty.APISession.iter_all" title="pagerduty.APISession.iter_all"><code class="xref py py-attr docutils literal notranslate"><span class="pre">pagerduty.APISession.iter_all</span></code></a>, perform actions on each result
+<a class="reference internal" href="module_reference.html#pagerduty.RestApiV2Client.iter_all" title="pagerduty.RestApiV2Client.iter_all"><code class="xref py py-attr docutils literal notranslate"><span class="pre">pagerduty.RestApiV2Client.iter_all</span></code></a>, perform actions on each result
 yielded, and catch/handle exceptions as desired.</p>
 </section>
 <section id="updating-creating-or-deleting-while-paginating">
@@ -634,14 +634,14 @@ actions.</p>
 user-scoped access token or setting the <code class="docutils literal notranslate"><span class="pre">From</span></code> header to the login email
 address of a valid PagerDuty user. To set this, pass it through using the
 <code class="docutils literal notranslate"><span class="pre">headers</span></code> keyword argument, or set the
-<a class="reference internal" href="module_reference.html#pagerduty.APISession.default_from" title="pagerduty.APISession.default_from"><code class="xref py py-attr docutils literal notranslate"><span class="pre">pagerduty.APISession.default_from</span></code></a> property, or pass the email address as
+<a class="reference internal" href="module_reference.html#pagerduty.RestApiV2Client.default_from" title="pagerduty.RestApiV2Client.default_from"><code class="xref py py-attr docutils literal notranslate"><span class="pre">pagerduty.RestApiV2Client.default_from</span></code></a> property, or pass the email address as
 the <code class="docutils literal notranslate"><span class="pre">default_from</span></code> keyword argument when constructing the session initially.</p>
 </section>
 <section id="error-handling">
 <h2>Error Handling<a class="headerlink" href="#error-handling" title="Permalink to this heading"></a></h2>
 <p>For any of the methods that do not return <a class="reference external" href="https://docs.python-requests.org/en/master/api/#requests.Response">requests.Response</a>, when the API
 responds with a non-success HTTP status, the method will raise a
-<a class="reference internal" href="module_reference.html#pagerduty.PDClientError" title="pagerduty.PDClientError"><code class="xref py py-class docutils literal notranslate"><span class="pre">pagerduty.PDClientError</span></code></a> exception. This way, these methods can always be
+<a class="reference internal" href="module_reference.html#pagerduty.Error" title="pagerduty.Error"><code class="xref py py-class docutils literal notranslate"><span class="pre">pagerduty.Error</span></code></a> exception. This way, these methods can always be
 expected to return the same structure of data based on the API being used, and
 there is no need to differentiate between the response schema for a successful
 request and one for an error response.</p>
@@ -650,35 +650,17 @@ property whenever the exception pertains to a HTTP error. One can thus define
 specialized error handling logic in which the REST API response data (i.e.
 headers, code and body) are available in the catching scope.</p>
 <p>For instance, the following code prints “User not found” in the event of a 404,
-prints out the user’s email if the user exists, raises the underlying
-exception if it’s any other HTTP error code, and prints an error otherwise:</p>
+prints out the user’s email if the user exists and raises the underlying
+exception if it’s any other HTTP error code:</p>
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="k">try</span><span class="p">:</span>
     <span class="n">user</span> <span class="o">=</span> <span class="n">session</span><span class="o">.</span><span class="n">rget</span><span class="p">(</span><span class="s2">&quot;/users/PJKL678&quot;</span><span class="p">)</span>
     <span class="nb">print</span><span class="p">(</span><span class="n">user</span><span class="p">[</span><span class="s1">&#39;email&#39;</span><span class="p">])</span>
 
-<span class="k">except</span> <span class="n">pagerduty</span><span class="o">.</span><span class="n">PDClientError</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
-    <span class="k">if</span> <span class="n">e</span><span class="o">.</span><span class="n">response</span><span class="p">:</span>
-        <span class="k">if</span> <span class="n">e</span><span class="o">.</span><span class="n">response</span><span class="o">.</span><span class="n">status_code</span> <span class="o">==</span> <span class="mi">404</span><span class="p">:</span>
-            <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;User not found&quot;</span><span class="p">)</span>
-        <span class="k">else</span><span class="p">:</span>
-            <span class="k">raise</span> <span class="n">e</span>
-    <span class="k">else</span><span class="p">:</span>
-        <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Non-transient network or client error&quot;</span><span class="p">)</span>
-</pre></div>
-</div>
-<p>Version 4.4.0 introduced a new error subclass, PDHTTPError, in which it can be
-assumed that the error pertains to a HTTP request and the <code class="docutils literal notranslate"><span class="pre">response</span></code> property
-is not <code class="docutils literal notranslate"><span class="pre">None</span></code>:</p>
-<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="k">try</span><span class="p">:</span>
-    <span class="n">user</span> <span class="o">=</span> <span class="n">session</span><span class="o">.</span><span class="n">rget</span><span class="p">(</span><span class="s2">&quot;/users/PJKL678&quot;</span><span class="p">)</span>
-    <span class="nb">print</span><span class="p">(</span><span class="n">user</span><span class="p">[</span><span class="s1">&#39;email&#39;</span><span class="p">])</span>
-<span class="k">except</span> <span class="n">pagerduty</span><span class="o">.</span><span class="n">PDHTTPError</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
+<span class="k">except</span> <span class="n">pagerduty</span><span class="o">.</span><span class="n">HttpError</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
     <span class="k">if</span> <span class="n">e</span><span class="o">.</span><span class="n">response</span><span class="o">.</span><span class="n">status_code</span> <span class="o">==</span> <span class="mi">404</span><span class="p">:</span>
         <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;User not found&quot;</span><span class="p">)</span>
     <span class="k">else</span><span class="p">:</span>
         <span class="k">raise</span> <span class="n">e</span>
-<span class="k">except</span> <span class="n">pagerduty</span><span class="o">.</span><span class="n">PDClientError</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
-    <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Non-transient network or client error&quot;</span><span class="p">)</span>
 </pre></div>
 </div>
 </section>
@@ -694,13 +676,13 @@ otherwise (see <a class="reference external" href="https://docs.python.org/3/lib
 <li><p>The logger is initially not configured with any handlers. Configuring
 handlers is left to the discretion of the user (see <a class="reference external" href="https://docs.python.org/3/library/logging.handlers.html">logging.handlers</a>)</p></li>
 <li><p>The logger can be accessed and set through the property
-<a class="reference internal" href="module_reference.html#pagerduty.PDSession.log" title="pagerduty.PDSession.log"><code class="xref py py-attr docutils literal notranslate"><span class="pre">pagerduty.PDSession.log</span></code></a>.</p></li>
+<code class="xref py py-attr docutils literal notranslate"><span class="pre">pagerduty.PDSession.log</span></code>.</p></li>
 </ul>
-<p>In v5.0.0 and later, the attribute <a class="reference internal" href="module_reference.html#pagerduty.PDSession.print_debug" title="pagerduty.PDSession.print_debug"><code class="xref py py-attr docutils literal notranslate"><span class="pre">pagerduty.PDSession.print_debug</span></code></a> was
+<p>In v5.0.0 and later, the attribute <code class="xref py py-attr docutils literal notranslate"><span class="pre">pagerduty.PDSession.print_debug</span></code> was
 introduced to enable sending debug-level log messages from the client to
 command line output. It is used as follows:</p>
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="c1"># Method 1: keyword argument, when constructing a new session:</span>
-<span class="n">session</span> <span class="o">=</span> <span class="n">pagerduty</span><span class="o">.</span><span class="n">APISession</span><span class="p">(</span><span class="n">api_key</span><span class="p">,</span> <span class="n">debug</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+<span class="n">session</span> <span class="o">=</span> <span class="n">pagerduty</span><span class="o">.</span><span class="n">RestApiV2Client</span><span class="p">(</span><span class="n">api_key</span><span class="p">,</span> <span class="n">debug</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
 
 <span class="c1"># Method 2: on an existing session, by setting the property:</span>
 <span class="n">session</span><span class="o">.</span><span class="n">print_debug</span> <span class="o">=</span> <span class="kc">True</span>
@@ -730,19 +712,19 @@ production systems.</p>
 response or if they encounter a network error.</p>
 <p>This behavior is configurable through the following properties:</p>
 <ul class="simple">
-<li><p><a class="reference internal" href="module_reference.html#pagerduty.PDSession.retry" title="pagerduty.PDSession.retry"><code class="xref py py-attr docutils literal notranslate"><span class="pre">pagerduty.PDSession.retry</span></code></a>: a dictionary that allows defining per-HTTP-status retry limits</p></li>
-<li><p><a class="reference internal" href="module_reference.html#pagerduty.PDSession.max_http_attempts" title="pagerduty.PDSession.max_http_attempts"><code class="xref py py-attr docutils literal notranslate"><span class="pre">pagerduty.PDSession.max_http_attempts</span></code></a>: The maximum total number of unsuccessful requests to make in the retry loop of <a class="reference internal" href="module_reference.html#pagerduty.PDSession.request" title="pagerduty.PDSession.request"><code class="xref py py-attr docutils literal notranslate"><span class="pre">pagerduty.PDSession.request</span></code></a> before returning</p></li>
-<li><p><a class="reference internal" href="module_reference.html#pagerduty.PDSession.max_network_attempts" title="pagerduty.PDSession.max_network_attempts"><code class="xref py py-attr docutils literal notranslate"><span class="pre">pagerduty.PDSession.max_network_attempts</span></code></a>: The maximum number of retries that will be attempted in the case of network or non-HTTP error</p></li>
-<li><p><a class="reference internal" href="module_reference.html#pagerduty.PDSession.sleep_timer" title="pagerduty.PDSession.sleep_timer"><code class="xref py py-attr docutils literal notranslate"><span class="pre">pagerduty.PDSession.sleep_timer</span></code></a>: The initial cooldown factor</p></li>
-<li><p><a class="reference internal" href="module_reference.html#pagerduty.PDSession.sleep_timer_base" title="pagerduty.PDSession.sleep_timer_base"><code class="xref py py-attr docutils literal notranslate"><span class="pre">pagerduty.PDSession.sleep_timer_base</span></code></a>: Factor by which the cooldown time is increased after each unsuccessful attempt</p></li>
-<li><p><a class="reference internal" href="module_reference.html#pagerduty.PDSession.stagger_cooldown" title="pagerduty.PDSession.stagger_cooldown"><code class="xref py py-attr docutils literal notranslate"><span class="pre">pagerduty.PDSession.stagger_cooldown</span></code></a>: Randomizing factor for increasing successive cooldown wait times</p></li>
+<li><p><code class="xref py py-attr docutils literal notranslate"><span class="pre">pagerduty.PDSession.retry</span></code>: a dictionary that allows defining per-HTTP-status retry limits</p></li>
+<li><p><code class="xref py py-attr docutils literal notranslate"><span class="pre">pagerduty.PDSession.max_http_attempts</span></code>: The maximum total number of unsuccessful requests to make in the retry loop of <code class="xref py py-attr docutils literal notranslate"><span class="pre">pagerduty.PDSession.request</span></code> before returning</p></li>
+<li><p><code class="xref py py-attr docutils literal notranslate"><span class="pre">pagerduty.PDSession.max_network_attempts</span></code>: The maximum number of retries that will be attempted in the case of network or non-HTTP error</p></li>
+<li><p><code class="xref py py-attr docutils literal notranslate"><span class="pre">pagerduty.PDSession.sleep_timer</span></code>: The initial cooldown factor</p></li>
+<li><p><code class="xref py py-attr docutils literal notranslate"><span class="pre">pagerduty.PDSession.sleep_timer_base</span></code>: Factor by which the cooldown time is increased after each unsuccessful attempt</p></li>
+<li><p><code class="xref py py-attr docutils literal notranslate"><span class="pre">pagerduty.PDSession.stagger_cooldown</span></code>: Randomizing factor for increasing successive cooldown wait times</p></li>
 </ul>
 <section id="default-behavior">
 <h3>Default Behavior<a class="headerlink" href="#default-behavior" title="Permalink to this heading"></a></h3>
 <p>By default, after receiving a status 429 response, sessions will retry an
 unlimited number of times, increasing the wait time before retry each
 successive time.  When encountering status <code class="docutils literal notranslate"><span class="pre">401</span> <span class="pre">Unauthorized</span></code>, the client
-will immediately raise <code class="docutils literal notranslate"><span class="pre">pagerduty.PDClientError</span></code>; this is a non-transient error
+will immediately raise <code class="docutils literal notranslate"><span class="pre">pagerduty.Error</span></code>; this is a non-transient error
 caused by an invalid credential.</p>
 <p>For all other success or error statuses, the underlying request method in the
 client will return the <a class="reference external" href="https://docs.python-requests.org/en/master/api/#requests.Response">requests.Response</a> object.</p>
@@ -753,10 +735,10 @@ client will return the <a class="reference external" href="https://docs.python-r
 increases exponentially with each retry.</p>
 <p>Let:</p>
 <ul class="simple">
-<li><p>a = <a class="reference internal" href="module_reference.html#pagerduty.PDSession.sleep_timer_base" title="pagerduty.PDSession.sleep_timer_base"><code class="xref py py-attr docutils literal notranslate"><span class="pre">pagerduty.PDSession.sleep_timer_base</span></code></a></p></li>
+<li><p>a = <code class="xref py py-attr docutils literal notranslate"><span class="pre">pagerduty.PDSession.sleep_timer_base</span></code></p></li>
 <li><p>t<sub>0</sub> = <code class="docutils literal notranslate"><span class="pre">sleep_timer</span></code></p></li>
 <li><p>t<sub>n</sub> = Sleep time after n attempts</p></li>
-<li><p>ρ = <a class="reference internal" href="module_reference.html#pagerduty.PDSession.stagger_cooldown" title="pagerduty.PDSession.stagger_cooldown"><code class="xref py py-attr docutils literal notranslate"><span class="pre">pagerduty.PDSession.stagger_cooldown</span></code></a></p></li>
+<li><p>ρ = <code class="xref py py-attr docutils literal notranslate"><span class="pre">pagerduty.PDSession.stagger_cooldown</span></code></p></li>
 <li><p>r<sub>n</sub> = a randomly-generated real number between 0 and 1, distinct for each n-th request</p></li>
 </ul>
 <p>Assuming ρ = 0:</p>
@@ -764,25 +746,25 @@ increases exponentially with each retry.</p>
 <p>If ρ is nonzero:</p>
 <p>t<sub>n</sub> = a (1 + ρ r<sub>n</sub>) t<sub>n-1</sub></p>
 </section>
-<section id="setting-the-retry-property">
-<h3>Setting the retry property<a class="headerlink" href="#setting-the-retry-property" title="Permalink to this heading"></a></h3>
-<p>The dictionary property <a class="reference internal" href="module_reference.html#pagerduty.PDSession.retry" title="pagerduty.PDSession.retry"><code class="xref py py-attr docutils literal notranslate"><span class="pre">pagerduty.PDSession.retry</span></code></a> allows customization of
+<section id="configuring-retry-behavior">
+<h3>Configuring Retry Behavior<a class="headerlink" href="#configuring-retry-behavior" title="Permalink to this heading"></a></h3>
+<p>The dictionary property <code class="xref py py-attr docutils literal notranslate"><span class="pre">pagerduty.PDSession.retry</span></code> allows customization of
 HTTP retry limits on a per-HTTP-status basis. This includes the ability to
 override the above defaults for 401 and 429, although that is not recommended.</p>
 <p>Each key in the dictionary represents a HTTP status, and its associated value
-is the number of times that the client will retry the request if it receives
+the number of times that the client will retry the request if it receives
 that status. <strong>Success statuses (2xx) will be ignored.</strong></p>
 <p>If a different error status is encountered on a retry, it won’t count towards
 the limit of the first status, but will be counted separately. However, the
 total overall number of attempts that will be made to get a success status is
-limited by <a class="reference internal" href="module_reference.html#pagerduty.PDSession.max_http_attempts" title="pagerduty.PDSession.max_http_attempts"><code class="xref py py-attr docutils literal notranslate"><span class="pre">pagerduty.PDSession.max_http_attempts</span></code></a>. This will always
+limited by <code class="xref py py-attr docutils literal notranslate"><span class="pre">pagerduty.PDSession.max_http_attempts</span></code>. This will always
 supersede the maximum number of retries for any status defined in
-<a class="reference internal" href="module_reference.html#pagerduty.PDSession.retry" title="pagerduty.PDSession.retry"><code class="xref py py-attr docutils literal notranslate"><span class="pre">pagerduty.PDSession.retry</span></code></a> if it is lower.</p>
+<code class="xref py py-attr docutils literal notranslate"><span class="pre">pagerduty.PDSession.retry</span></code> if it is lower.</p>
 <p>Low-level HTTP request functions in client classes, i.e. <code class="docutils literal notranslate"><span class="pre">get</span></code>, will return
 <a class="reference external" href="https://docs.python-requests.org/en/master/api/#requests.Response">requests.Response</a> objects when they run out of retries. Higher-level
 functions that require a success status response, i.e.
-<a class="reference internal" href="module_reference.html#pagerduty.APISession.list_all" title="pagerduty.APISession.list_all"><code class="xref py py-attr docutils literal notranslate"><span class="pre">pagerduty.APISession.list_all</span></code></a> and
-<a class="reference internal" href="module_reference.html#pagerduty.EventsAPISession.trigger" title="pagerduty.EventsAPISession.trigger"><code class="xref py py-attr docutils literal notranslate"><span class="pre">pagerduty.EventsAPISession.trigger</span></code></a>, will raise exceptions that include
+<a class="reference internal" href="module_reference.html#pagerduty.RestApiV2Client.list_all" title="pagerduty.RestApiV2Client.list_all"><code class="xref py py-attr docutils literal notranslate"><span class="pre">pagerduty.RestApiV2Client.list_all</span></code></a> and
+<a class="reference internal" href="module_reference.html#pagerduty.EventsApiV2Client.trigger" title="pagerduty.EventsApiV2Client.trigger"><code class="xref py py-attr docutils literal notranslate"><span class="pre">pagerduty.EventsApiV2Client.trigger</span></code></a>, will raise exceptions that include
 the response object when they encounter error status responses, but only after
 the configured retry limits are reached in the underlying HTTP request methods.</p>
 <p><strong>Example:</strong></p>
