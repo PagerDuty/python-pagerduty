@@ -223,7 +223,7 @@ Events API v2
     # ...
     events_session.acknowledge('abc123')
 
-**Submit a change event** using a :class:`EventsApiV2Client` instance:
+**Submit a change event** using an :class:`EventsApiV2Client` instance:
 
 .. code-block:: python
 
@@ -234,7 +234,7 @@ Generic Client Features
 -----------------------
 Generally, all of the features of `requests.Session`_ are available to the user
 as they would be if using the Requests Python library directly, since
-:class:`pagerduty.PDSession` and its subclasses for the REST/Events APIs are
+:class:`pagerduty.ApiSession` and its subclasses for the REST/Events APIs are
 descendants of it. 
 
 The ``get``, ``post``, ``put`` and ``delete`` methods of REST/Events API

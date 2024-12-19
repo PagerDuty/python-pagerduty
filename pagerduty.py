@@ -51,403 +51,19 @@ TEXT_LEN_LIMIT = 100
 The longest permissible length of API content to include in error messages.
 """
 
-# List of canonical API paths
-#
-# Supporting a new API for entity wrapping will require adding its patterns to
-# this list. If it doesn't follow standard naming conventions, it will also
-# require one or more new entries in ENTITY_WRAPPER_CONFIG.
-#
-# To generate new definitions for CANONICAL_PATHS and
-# CURSOR_BASED_PAGINATION_PATHS based on the API documentation's source code,
-# use scripts/get_path_list/get_path_list.py
-
-CANONICAL_PATHS = [
-    '/{entity_type}/{id}/change_tags',
-    '/{entity_type}/{id}/tags',
-    '/abilities',
-    '/abilities/{id}',
-    '/addons',
-    '/addons/{id}',
-    '/analytics/metrics/incidents/all',
-    '/analytics/metrics/incidents/services',
-    '/analytics/metrics/incidents/teams',
-    '/analytics/raw/incidents',
-    '/analytics/raw/incidents/{id}',
-    '/analytics/raw/incidents/{id}/responses',
-    '/audit/records',
-    '/automation_actions/actions',
-    '/automation_actions/actions/{id}',
-    '/automation_actions/actions/{id}/invocations',
-    '/automation_actions/actions/{id}/services',
-    '/automation_actions/actions/{id}/services/{service_id}',
-    '/automation_actions/actions/{id}/teams',
-    '/automation_actions/actions/{id}/teams/{team_id}',
-    '/automation_actions/invocations',
-    '/automation_actions/invocations/{id}',
-    '/automation_actions/runners',
-    '/automation_actions/runners/{id}',
-    '/automation_actions/runners/{id}/teams',
-    '/automation_actions/runners/{id}/teams/{team_id}',
-    '/business_services',
-    '/business_services/{id}',
-    '/business_services/{id}/account_subscription',
-    '/business_services/{id}/subscribers',
-    '/business_services/{id}/supporting_services/impacts',
-    '/business_services/{id}/unsubscribe',
-    '/business_services/impactors',
-    '/business_services/impacts',
-    '/business_services/priority_thresholds',
-    '/change_events',
-    '/change_events/{id}',
-    '/customfields/fields',
-    '/customfields/fields/{field_id}',
-    '/customfields/fields/{field_id}/field_options',
-    '/customfields/fields/{field_id}/field_options/{field_option_id}',
-    '/customfields/fields/{field_id}/schemas',
-    '/customfields/schema_assignments',
-    '/customfields/schema_assignments/{id}',
-    '/customfields/schemas',
-    '/customfields/schemas/{schema_id}',
-    '/customfields/schemas/{schema_id}/field_configurations',
-    '/customfields/schemas/{schema_id}/field_configurations/{field_configuration_id}',
-    '/escalation_policies',
-    '/escalation_policies/{id}',
-    '/escalation_policies/{id}/audit/records',
-    '/event_orchestrations',
-    '/event_orchestrations/{id}',
-    '/event_orchestrations/{id}/router',
-    '/event_orchestrations/{id}/unrouted',
-    '/event_orchestrations/services/{id}',
-    '/event_orchestrations/services/{id}/active',
-    '/extension_schemas',
-    '/extension_schemas/{id}',
-    '/extensions',
-    '/extensions/{id}',
-    '/extensions/{id}/enable',
-    '/incident_workflows',
-    '/incident_workflows/{id}',
-    '/incident_workflows/{id}/instances',
-    '/incident_workflows/actions',
-    '/incident_workflows/actions/{id}',
-    '/incident_workflows/triggers',
-    '/incident_workflows/triggers/{id}',
-    '/incident_workflows/triggers/{id}/services',
-    '/incident_workflows/triggers/{trigger_id}/services/{service_id}',
-    '/incidents',
-    '/incidents/{id}',
-    '/incidents/{id}/alerts',
-    '/incidents/{id}/alerts/{alert_id}',
-    '/incidents/{id}/business_services/{business_service_id}/impacts',
-    '/incidents/{id}/business_services/impacts',
-    '/incidents/{id}/field_values',
-    '/incidents/{id}/field_values/schema',
-    '/incidents/{id}/log_entries',
-    '/incidents/{id}/merge',
-    '/incidents/{id}/notes',
-    '/incidents/{id}/outlier_incident',
-    '/incidents/{id}/past_incidents',
-    '/incidents/{id}/related_change_events',
-    '/incidents/{id}/related_incidents',
-    '/incidents/{id}/responder_requests',
-    '/incidents/{id}/snooze',
-    '/incidents/{id}/status_updates',
-    '/incidents/{id}/status_updates/subscribers',
-    '/incidents/{id}/status_updates/unsubscribe',
-    '/incidents/count',
-    '/license_allocations',
-    '/licenses',
-    '/log_entries',
-    '/log_entries/{id}',
-    '/log_entries/{id}/channel',
-    '/maintenance_windows',
-    '/maintenance_windows/{id}',
-    '/notifications',
-    '/oncalls',
-    '/paused_incident_reports/alerts',
-    '/paused_incident_reports/counts',
-    '/priorities',
-    '/response_plays',
-    '/response_plays/{id}',
-    '/response_plays/{response_play_id}/run',
-    '/rulesets',
-    '/rulesets/{id}',
-    '/rulesets/{id}/rules',
-    '/rulesets/{id}/rules/{rule_id}',
-    '/schedules',
-    '/schedules/{id}',
-    '/schedules/{id}/audit/records',
-    '/schedules/{id}/overrides',
-    '/schedules/{id}/overrides/{override_id}',
-    '/schedules/{id}/users',
-    '/schedules/preview',
-    '/service_dependencies/associate',
-    '/service_dependencies/business_services/{id}',
-    '/service_dependencies/disassociate',
-    '/service_dependencies/technical_services/{id}',
-    '/services',
-    '/services/{id}',
-    '/services/{id}/audit/records',
-    '/services/{id}/change_events',
-    '/services/{id}/integrations',
-    '/services/{id}/integrations/{integration_id}',
-    '/services/{id}/rules',
-    '/services/{id}/rules/{rule_id}',
-    '/status_dashboards',
-    '/status_dashboards/{id}',
-    '/status_dashboards/{id}/service_impacts',
-    '/status_dashboards/url_slugs/{url_slug}',
-    '/status_dashboards/url_slugs/{url_slug}/service_impacts',
-    '/tags',
-    '/tags/{id}',
-    '/tags/{id}/users',
-    '/tags/{id}/teams',
-    '/tags/{id}/escalation_policies',
-    '/teams',
-    '/teams/{id}',
-    '/teams/{id}/audit/records',
-    '/teams/{id}/escalation_policies/{escalation_policy_id}',
-    '/teams/{id}/members',
-    '/teams/{id}/notification_subscriptions',
-    '/teams/{id}/notification_subscriptions/unsubscribe',
-    '/teams/{id}/users/{user_id}',
-    '/templates',
-    '/templates/{id}',
-    '/templates/{id}/render',
-    '/users',
-    '/users/{id}',
-    '/users/{id}/audit/records',
-    '/users/{id}/contact_methods',
-    '/users/{id}/contact_methods/{contact_method_id}',
-    '/users/{id}/license',
-    '/users/{id}/notification_rules',
-    '/users/{id}/notification_rules/{notification_rule_id}',
-    '/users/{id}/notification_subscriptions',
-    '/users/{id}/notification_subscriptions/unsubscribe',
-    '/users/{id}/oncall_handoff_notification_rules',
-    '/users/{id}/oncall_handoff_notification_rules/{oncall_handoff_notification_rule_id}',
-    '/users/{id}/sessions',
-    '/users/{id}/sessions/{type}/{session_id}',
-    '/users/{id}/status_update_notification_rules',
-    '/users/{id}/status_update_notification_rules/{status_update_notification_rule_id}',
-    '/users/me',
-    '/vendors',
-    '/vendors/{id}',
-    '/webhook_subscriptions',
-    '/webhook_subscriptions/{id}',
-    '/webhook_subscriptions/{id}/enable',
-    '/webhook_subscriptions/{id}/ping',
-]
-"""
-Explicit list of supported canonical REST API v2 paths
-
-:meta hide-value:
-"""
-
-CURSOR_BASED_PAGINATION_PATHS = [
-    '/audit/records',
-    '/automation_actions/actions',
-    '/automation_actions/runners',
-    '/escalation_policies/{id}/audit/records',
-    '/incident_workflows/actions',
-    '/incident_workflows/triggers',
-    '/schedules/{id}/audit/records',
-    '/services/{id}/audit/records',
-    '/teams/{id}/audit/records',
-    '/users/{id}/audit/records',
-]
-"""
-Explicit list of paths that support cursor-based pagination
-
-:meta hide-value:
-"""
-
-ENTITY_WRAPPER_CONFIG = {
-    # Analytics
-    '* /analytics/metrics/incidents/all': None,
-    '* /analytics/metrics/incidents/services': None,
-    '* /analytics/metrics/incidents/teams': None,
-    '* /analytics/raw/incidents': None,
-    '* /analytics/raw/incidents/{id}': None,
-    '* /analytics/raw/incidents/{id}/responses': None,
-
-    # Automation Actions
-    'POST /automation_actions/actions/{id}/invocations': (None,'invocation'),
-
-    # Paused Incident Reports
-    'GET /paused_incident_reports/alerts': 'paused_incident_reporting_counts',
-    'GET /paused_incident_reports/counts': 'paused_incident_reporting_counts',
-
-    # Business Services
-    '* /business_services/{id}/account_subscription': None,
-    'POST /business_services/{id}/subscribers': ('subscribers', 'subscriptions'),
-    'POST /business_services/{id}/unsubscribe': ('subscribers', None),
-    '* /business_services/priority_thresholds': None,
-    'GET /business_services/impacts': 'services',
-    'GET /business_services/{id}/supporting_services/impacts': 'services',
-
-    # Change Events
-    'POST /change_events': None, # why not just use EventsApiV2Client?
-    'GET /incidents/{id}/related_change_events': 'change_events',
-
-    # Event Orchestrations
-    '* /event_orchestrations': 'orchestrations',
-    '* /event_orchestrations/{id}': 'orchestration',
-    '* /event_orchestrations/{id}/router': 'orchestration_path',
-    '* /event_orchestrations/{id}/unrouted': 'orchestration_path',
-    '* /event_orchestrations/services/{id}': 'orchestration_path',
-    '* /event_orchestrations/services/{id}/active': None,
-
-    # Extensions
-    'POST /extensions/{id}/enable': (None, 'extension'),
-
-    # Incidents
-    'PUT /incidents': 'incidents', # Multi-update
-    'PUT /incidents/{id}/merge': ('source_incidents', 'incident'),
-    'POST /incidents/{id}/responder_requests': (None, 'responder_request'),
-    'POST /incidents/{id}/snooze': (None, 'incident'),
-    'POST /incidents/{id}/status_updates': (None, 'status_update'),
-    'POST /incidents/{id}/status_updates/subscribers': ('subscribers', 'subscriptions'),
-    'POST /incidents/{id}/status_updates/unsubscribe': ('subscribers', None),
-    'GET /incidents/{id}/business_services/impacts': 'services',
-    'PUT /incidents/{id}/business_services/{business_service_id}/impacts': None,
-
-    # Incident Workflows
-    'POST /incident_workflows/{id}/instances': 'incident_workflow_instance',
-    'POST /incident_workflows/triggers/{id}/services': ('service', 'trigger'),
-
-    # Response Plays
-    'POST /response_plays/{response_play_id}/run': None, # (deprecated)
-
-    # Schedules
-    'POST /schedules/{id}/overrides': ('overrides', None),
-
-    # Service Dependencies
-    'POST /service_dependencies/associate': 'relationships',
-
-    # Webhooks
-    'POST /webhook_subscriptions/{id}/enable': (None, 'webhook_subscription'),
-    'POST /webhook_subscriptions/{id}/ping': None,
-
-    # Status Dashboards
-    'GET /status_dashboards/{id}/service_impacts': 'services',
-    'GET /status_dashboards/url_slugs/{url_slug}': 'status_dashboard',
-    'GET /status_dashboards/url_slugs/{url_slug}/service_impacts': 'services',
-
-    # Tags
-    'POST /{entity_type}/{id}/change_tags': None,
-
-    # Teams
-    'PUT /teams/{id}/escalation_policies/{escalation_policy_id}': None,
-    'POST /teams/{id}/notification_subscriptions': ('subscribables', 'subscriptions'),
-    'POST /teams/{id}/notification_subscriptions/unsubscribe': ('subscribables', None),
-    'PUT /teams/{id}/users/{user_id}': None,
-    'GET /teams/{id}/notification_subscriptions': 'subscriptions',
-
-    # Templates
-    'POST /templates/{id}/render': None,
-
-    # Users
-    '* /users/{id}/notification_subscriptions': ('subscribables', 'subscriptions'),
-    'POST /users/{id}/notification_subscriptions/unsubscribe': ('subscribables', None),
-    'GET /users/{id}/sessions': 'user_sessions',
-    'GET /users/{id}/sessions/{type}/{session_id}': 'user_session',
-    'GET /users/me': 'user',
-} #: :meta hide-value:
-"""
-Wrapped entities antipattern handling configuration.
-
-When trying to determine the entity wrapper name, this dictionary is first
-checked for keys that apply to a given request method and canonical API path
-based on a matching logic. If no keys are found that match, it is assumed that
-the API endpoint follows classic entity wrapping conventions, and the wrapper
-name can be inferred based on those conventions (see
-:attr:`infer_entity_wrapper`). Any new API that does not follow these
-conventions should therefore be given an entry in this dictionary in order to
-properly support it for entity wrapping.
-
-Each of the keys should be a capitalized HTTP method (or ``*`` to match any
-method), followed by a space, followed by a canonical path i.e. as returned by
-:attr:`canonical_path` and included in :attr:`CANONICAL_PATHS`. Each value
-is either a tuple with request and response body wrappers (if they differ), a
-string (if they are the same for both cases) or ``None`` (if wrapping is
-disabled and the data is to be marshaled or unmarshaled as-is). Values in tuples
-can also be None to denote that either the request or response is unwrapped.
-
-An endpoint, under the design logic of this client, is said to have entity
-wrapping if the body (request or response) has only one property containing
-the content requested or transmitted, apart from properties used for
-pagination. If there are any secondary content-bearing properties (other than
-those used for pagination), entity wrapping should be disabled to avoid
-discarding those properties from responses or preventing the use of those
-properties in request bodies.
-
-:meta hide-value:
-"""
-
 
 ####################
 ### URL HANDLING ###
 ####################
 
-def canonical_path(base_url: str, url: str) -> str:
-    """
-    The canonical path from the API documentation corresponding to a URL
-
-    This is used to identify and classify URLs according to which particular API
-    within REST API v2 it belongs to.
-
-    Explicitly supported canonical paths are defined in the list
-    :attr:`CANONICAL_PATHS` and are the path part of any given API's URL. The
-    path for a given API is what is shown at the top of its reference page, i.e.
-    ``/users/{id}/contact_methods`` for retrieving a user's contact methods
-    (GET) or creating a new one (POST).
-
-    :param base_url: The base URL of the API
-    :param url: A non-normalized URL (a path or full URL)
-    :returns:
-        The canonical REST API v2 path corresponding to a URL.
-    """
-    full_url = normalize_url(base_url, url)
-    # Starting with / after hostname before the query string:
-    url_path = full_url.replace(base_url.rstrip('/'), '').split('?')[0]
-    # Root node (blank) counts so we include it:
-    n_nodes = url_path.count('/')
-    # First winnow the list down to paths with the same number of nodes:
-    patterns = list(filter(
-        lambda p: p.count('/') == n_nodes,
-        CANONICAL_PATHS
-    ))
-    # Match against each node, skipping index zero because the root node always
-    # matches, and using the adjusted index "j":
-    for i, node in enumerate(url_path.split('/')[1:]):
-        j = i+1
-        patterns = list(filter(
-            lambda p: p.split('/')[j] == node or is_path_param(p.split('/')[j]),
-            patterns
-        ))
-        # Don't break early if len(patterns) == 1, but require an exact match...
-
-    if len(patterns) == 0:
-        raise UrlError(f"URL {url} does not match any canonical API path " \
-            'supported by this client.')
-    elif len(patterns) > 1:
-        # If there's multiple matches but one matches exactly, return that.
-        if url_path in patterns:
-            return url_path
-
-        # ...otherwise this is ambiguous.
-        raise Exception(f"Ambiguous URL {url} matches more than one " \
-            "canonical path pattern: "+', '.join(patterns)+'; this is likely ' \
-            'a bug.')
-    else:
-        return patterns[0]
-
 def endpoint_matches(endpoint_pattern: str, method: str, path: str) -> bool:
     """
     Whether an endpoint (method and canonical path) matches a given pattern
 
-    This is the filtering logic  used for finding the appropriate entry in
-    :attr:`ENTITY_WRAPPER_CONFIG` to use for a given method and API path.
+    This is the filtering logic used for finding the appropriate entry in an API
+    client's entity wrapper configuration (e.g.
+    :attr:`RestApiV2Client.ENTITY_WRAPPER_CONFIG`) to use for a given method and API
+    path.
 
     :param endpoint_pattern:
         The endpoint pattern in the form ``METHOD PATH`` where ``METHOD`` is the
@@ -456,7 +72,7 @@ def endpoint_matches(endpoint_pattern: str, method: str, path: str) -> bool:
     :param method:
         The HTTP method.
     :param path:
-        The canonical API path (i.e. as returned by :func:`canonical_path`)
+        The canonical API path.
     :returns:
         True or False based on whether the pattern matches the endpoint
     """
@@ -499,57 +115,6 @@ def normalize_url(base_url: str, url: str) -> str:
 #######################
 ### ENTITY WRAPPING ###
 #######################
-
-def entity_wrappers(method: str, path: str) -> tuple:
-    """
-    Obtains entity wrapping information for a given endpoint (path and method)
-
-    :param method: The HTTP method
-    :param path: A canonical API path i.e. as returned by ``canonical_path``
-    :returns:
-        A 2-tuple. The first element is the wrapper name that should be used for
-        the request body, and the second is the wrapper name to be used for the
-        response body. For either elements, if ``None`` is returned, that
-        signals to disable wrapping and pass the user-supplied request body or
-        API response body object unmodified.
-    """
-    m = method.upper()
-    endpoint = "%s %s"%(m, path)
-    match = list(filter(
-        lambda k: endpoint_matches(k, m, path),
-        ENTITY_WRAPPER_CONFIG.keys()
-    ))
-
-    if len(match) == 1:
-        # Look up entity wrapping info from the global dictionary and validate:
-        wrapper = ENTITY_WRAPPER_CONFIG[match[0]]
-        invalid_config_error = 'Invalid entity wrapping configuration for ' \
-                    f"{endpoint}: {wrapper}; this is most likely a bug."
-        if wrapper is not None and type(wrapper) not in (tuple, str):
-            raise Exception(invalid_config_error)
-        elif wrapper is None or type(wrapper) is str:
-            # Both request and response have the same wrapping at this endpoint.
-            return (wrapper, wrapper)
-        elif type(wrapper) is tuple and len(wrapper) == 2:
-            # Endpoint uses different wrapping for request and response bodies.
-            #
-            # Both elements must be either str or None. The first element is the
-            # request body wrapper and the second is the response body wrapper.
-            # If a value is None, that indicates that the request or response
-            # value should be encoded and decoded as-is without modifications.
-            if False in [w is None or type(w) is str for w in wrapper]:
-                raise Exception(invalid_config_error)
-            return wrapper
-    elif len(match) == 0:
-        # Nothing in entity wrapper config matches. In this case it is assumed
-        # that the endpoint follows classic API patterns and the wrapper name
-        # can be inferred from the URL and request method:
-        wrapper = infer_entity_wrapper(method, path)
-        return (wrapper, wrapper)
-    else:
-        matches_str = ', '.join(match)
-        raise Exception(f"{endpoint} matches more than one pattern:" + \
-            f"{matches_str}; this is most likely a bug.")
 
 def infer_entity_wrapper(method: str, path: str) -> str:
     """
@@ -697,9 +262,9 @@ def wrapped_entities(method):
     doc = method.__doc__
     def call(self, url, **kw):
         pass_kw = deepcopy(kw) # Make a copy for modification
-        path = canonical_path(self.url, url)
+        path = self.canonical_path(self.url, url)
         endpoint = "%s %s"%(http_method.upper(), path)
-        req_w, res_w = entity_wrappers(http_method, path)
+        req_w, res_w = self.entity_wrappers(http_method, path)
         # Validate the abbreviated (or full) request payload, and automatically
         # wrap the request entity for the implementer if necessary:
         if req_w is not None and http_method in ('post', 'put') \
@@ -1505,94 +1070,64 @@ class EventsApiV2Client(ApiClient):
             event['links'] = links
         return self.send_event('trigger', dedup_key=dedup_key, **event)
 
-class RestApiV2Client(ApiClient):
+class GenericRestIshApiClient(ApiClient):
     """
-    PagerDuty REST API v2 client class.
+    A client class for all "REST-ish" public APIs.
 
-    Implements the most generic and oft-implemented aspects of PagerDuty's REST
-    API v2 as an opinionated wrapper of `requests.Session`_.
+    This class was made for encompassing the standard, original REST API v2 used for
+    most PagerDuty resources as well as the newer product integration APIs that have
+    antipatterns such as using a different hostname (the Slack Integration API uses
+    ``app.pagerduty.com`` instead of ``api.pagerduty.com``), requiring a different
+    Authorization header format (Jira Cloud integration uses ``Authorization:
+    <api_key>`` instead of ``Authorization: Token token=<api_key>``), etc.
 
-    Inherits from :class:`ApiClient`.
-
-    :param api_key:
-        REST API access token to use for HTTP requests
-    :param default_from:
-        The default email address to use in the ``From`` header when making
-        API calls using an account-level API access key.
-    :param auth_type:
-        The type of credential in use. If authenticating with an OAuth access
-        token, this must be set to ``oauth2`` or ``bearer``.
-    :param debug:
-        Sets :attr:`print_debug`. Set to True to enable verbose command line
-        output.
-    :type token: str
-    :type name: str or None
-    :type default_from: str or None
-    :type debug: bool
-
-    :members:
+    This facilitates supporting conventions in those APIs that, despite other
+    antipatterns, have been successfully exported to them, such as classic pagination,
+    and to a limited extent, entity wrapping.
     """
 
-    api_call_counts = None
-    """A dict object recording the number of API calls per endpoint"""
-
-    api_time = None
-    """A dict object recording the total time of API calls to each endpoint"""
-
-    default_from = None
-    """The default value to use as the ``From`` request header"""
-
-    default_page_size = 100
+    CANONICAL_PATHS = []
     """
-    This will be the default number of results requested in each page when
-    iterating/querying an index (the ``limit`` parameter).
+    Explicit list of canonical URL paths supported by the API
     """
 
-    permitted_methods = ('GET', 'POST', 'PUT', 'DELETE')
+    CURSOR_BASED_PAGINATION_PATHS = []
+    """
+    Explicit list of paths that support cursor-based pagination
+    """
 
-    url = 'https://api.pagerduty.com'
-    """Base URL of the REST API"""
+    ENTITY_WRAPPER_CONFIG = {}
+    """
+    Wrapped entities antipattern handling configuration.
 
-    def __init__(self, api_key: str, default_from=None,
-            auth_type='token', debug=False):
-        self.api_call_counts = {}
-        self.api_time = {}
-        self.auth_type = auth_type
-        super(RestApiV2Client, self).__init__(api_key, debug=debug)
-        self.default_from = default_from
-        self.headers.update({
-            'Accept': 'application/vnd.pagerduty+json;version=2',
-        })
+    When trying to determine the entity wrapper name, this dictionary is first
+    checked for keys that apply to a given request method and canonical API path
+    based on a matching logic. If no keys are found that match, it is assumed that
+    the API endpoint follows classic entity wrapping conventions, and the wrapper
+    name can be inferred based on those conventions (see
+    :attr:`infer_entity_wrapper`). Any new API that does not follow these
+    conventions should therefore be given an entry in this dictionary in order to
+    properly support it for entity wrapping.
 
-    def after_set_api_key(self):
-        self._subdomain = None
+    Each of the keys should be a capitalized HTTP method (or ``*`` to match any
+    method), followed by a space, followed by a canonical path i.e. as returned by
+    :attr:`canonical_path` and included in :attr:`CANONICAL_PATHS`. Each value
+    is either a tuple with request and response body wrappers (if they differ), a
+    string (if they are the same for both cases) or ``None`` (if wrapping is
+    disabled and the data is to be marshaled or unmarshaled as-is). Values in tuples
+    can also be None to denote that either the request or response is unwrapped.
 
-    @property
-    def api_key_access(self) -> str:
-        """
-        Memoized API key access type getter.
+    An endpoint, under the design logic of this client, is said to have entity
+    wrapping if the body (request or response) has only one property containing
+    the content requested or transmitted, apart from properties used for
+    pagination. If there are any secondary content-bearing properties (other than
+    those used for pagination), entity wrapping should be disabled to avoid
+    discarding those properties from responses or preventing the use of those
+    properties in request bodies.
+    """
 
-        Will be "user" if the API key is a user-level token (all users should
-        have permission to create an API key with the same permissions as they
-        have in the PagerDuty web UI).
-
-        If the API key in use is an account-level API token (as only a global
-        administrator user can create), this property will be "account".
-        """
-        if not hasattr(self, '_api_key_access') or self._api_key_access is None:
-            response = self.get('/users/me')
-            if response.status_code == 400:
-                message = try_decoding(response).get('error', '')
-                if 'account-level access token' in message:
-                    self._api_key_access = 'account'
-                else:
-                    self._api_key_access = None
-                    self.log.error("Failed to obtain API key access level; "
-                        "the API did not respond as expected.")
-                    self.log.debug("Body = %s", truncate_text(response.text))
-            else:
-                self._api_key_access = 'user'
-        return self._api_key_access
+    SUPPORTED_AUTH_TYPES = []
+    """A list of authorization types supported for API authentication"""
 
     @property
     def auth_type(self) -> str:
@@ -1605,17 +1140,64 @@ class RestApiV2Client(ApiClient):
 
     @auth_type.setter
     def auth_type(self, value: str):
-        if value not in ('token', 'bearer', 'oauth2'):
-            raise AttributeError("auth_type value must be \"token\" (default) "
-                "or \"bearer\" or \"oauth\" to use OAuth2 authentication.")
+        if value not in self.SUPPORTED_AUTH_TYPES:
+            raise AttributeError(
+                "auth_type value must be one of " + ", ".join(self.SUPPORTED_AUTH_TYPES)
+            )
         self._auth_type = value
 
-    @property
-    def auth_header(self) -> dict:
-        if self.auth_type in ('bearer', 'oauth2'):
-            return {"Authorization": "Bearer "+self.api_key}
+    def canonical_path(self, base_url: str, url: str) -> str:
+        """
+        The canonical path from the API documentation corresponding to a URL
+
+        This is used to identify and classify URLs according to which particular API
+        within API it belongs to.
+
+        Explicitly supported canonical paths are defined in the list
+        :attr:`GenericRestIshApiClient.CANONICAL_PATHS` and are the path part of any
+        given API's URL. The path for a given API is what is shown at the top of its
+        reference page, i.e.  ``/users/{id}/contact_methods`` for retrieving a user's
+        contact methods (GET) or creating a new one (POST) in REST API v2.
+
+        :param base_url: The base URL of the API
+        :param url: A non-normalized URL (a path or full URL)
+        :returns:
+            The canonical path corresponding to a URL.
+        """
+        full_url = normalize_url(base_url, url)
+        # Starting with / after hostname before the query string:
+        url_path = full_url.replace(base_url.rstrip('/'), '').split('?')[0]
+        # Root node (blank) counts so we include it:
+        n_nodes = url_path.count('/')
+        # First winnow the list down to paths with the same number of nodes:
+        patterns = list(filter(
+            lambda p: p.count('/') == n_nodes,
+            self.CANONICAL_PATHS
+        ))
+        # Match against each node, skipping index zero because the root node always
+        # matches, and using the adjusted index "j":
+        for i, node in enumerate(url_path.split('/')[1:]):
+            j = i+1
+            patterns = list(filter(
+                lambda p: p.split('/')[j] == node or is_path_param(p.split('/')[j]),
+                patterns
+            ))
+            # Don't break early if len(patterns) == 1, but require an exact match...
+
+        if len(patterns) == 0:
+            raise UrlError(f"URL {url} does not match any canonical API path " \
+                'supported by this client.')
+        elif len(patterns) > 1:
+            # If there's multiple matches but one matches exactly, return that.
+            if url_path in patterns:
+                return url_path
+
+            # ...otherwise this is ambiguous.
+            raise Exception(f"Ambiguous URL {url} matches more than one " \
+                "canonical path pattern: "+', '.join(patterns)+'; this is likely ' \
+                'a bug.')
         else:
-            return {"Authorization": "Token token="+self.api_key}
+            return patterns[0]
 
     def dict_all(self, path: str, **kw) -> dict:
         """
@@ -1638,59 +1220,57 @@ class RestApiV2Client(ApiClient):
         iterator = self.iter_all(path, **kw)
         return {obj[by]:obj for obj in iterator}
 
-    def find(self, resource, query, attribute='name', params=None) \
-            -> Union[dict, None]:
+    def entity_wrappers(self, method: str, path: str) -> tuple:
         """
-        Finds an object of a given resource type exactly matching a query.
+        Obtains entity wrapping information for a given endpoint (path and method)
 
-        Works by querying a given resource index endpoint using the ``query``
-        parameter. To use this function on any given resource, the resource's
-        index must support the ``query`` parameter; otherwise, the function may
-        not work as expected. If the index ignores the parameter, for instance,
-        this function will take much longer to return; results will not be
-        constrained to those matching the query, and so every result in the
-        index will be downloaded and compared against the query up until a
-        matching result is found or all results have been checked.
-
-        The comparison between the query and matching results is case-insenitive. When
-        determining uniqueness, APIs are mostly case-insensitive, and therefore objects
-        with similar characters but differing case can't even exist. All results (and
-        the search query) are for this reason reduced pre-comparison to a common form
-        (all-lowercase strings) so that case doesn't need to match in the query argument
-        (which is also interpreted by the API as case-insensitive).
-
-        If said behavior differs for a given API, i.e. the uniqueness constraint on a
-        field is case-sensitive, it should still return the correct results because the
-        search term sent to the index in the querystring is not lower-cased.
-
-        :param resource:
-            The name of the resource endpoint to query, i.e.
-            ``escalation_policies``
-        :param query:
-            The string to query for in the the index.
-        :param attribute:
-            The property of each result to compare against the query value when
-            searching for an exact match. By default it is ``name``, but when
-            searching for user by email (for example) it can be set to ``email``
-        :param params:
-            Optional additional parameters to use when querying.
-        :type resource: str
-        :type query: str
-        :type attribute: str
-        :type params: dict or None
+        :param method: The HTTP method
+        :param path: A canonical API path i.e. as returned by
+            :attr:`GenericRestIshApiClient.canonical_path`
         :returns:
-            The dictionary representation of the result, if found; ``None`` will
-            be returned if there is no exact match result.
+            A 2-tuple. The first element is the wrapper name that should be used for
+            the request body, and the second is the wrapper name to be used for the
+            response body. For either elements, if ``None`` is returned, that
+            signals to disable wrapping and pass the user-supplied request body or
+            API response body object unmodified.
         """
-        query_params = {}
-        if params is not None:
-            query_params.update(params)
-        query_params.update({'query':query})
-        simplify = lambda s: str(s).lower()
-        search_term = simplify(query)
-        equiv = lambda s: simplify(s[attribute]) == search_term
-        obj_iter = self.iter_all(resource, params=query_params)
-        return next(iter(filter(equiv, obj_iter)), None)
+        m = method.upper()
+        endpoint = "%s %s"%(m, path)
+        match = list(filter(
+            lambda k: endpoint_matches(k, m, path),
+            self.ENTITY_WRAPPER_CONFIG.keys()
+        ))
+
+        if len(match) == 1:
+            # Look up entity wrapping info from the global dictionary and validate:
+            wrapper = self.ENTITY_WRAPPER_CONFIG[match[0]]
+            invalid_config_error = 'Invalid entity wrapping configuration for ' \
+                        f"{endpoint}: {wrapper}; this should be considered a bug."
+            if wrapper is not None and type(wrapper) not in (tuple, str):
+                raise Exception(invalid_config_error)
+            elif wrapper is None or type(wrapper) is str:
+                # Both request and response have the same wrapping at this endpoint.
+                return (wrapper, wrapper)
+            elif type(wrapper) is tuple and len(wrapper) == 2:
+                # Endpoint uses different wrapping for request and response bodies.
+                #
+                # Both elements must be either str or None. The first element is the
+                # request body wrapper and the second is the response body wrapper.
+                # If a value is None, that indicates that the request or response
+                # value should be encoded and decoded as-is without modifications.
+                if False in [w is None or type(w) is str for w in wrapper]:
+                    raise Exception(invalid_config_error)
+                return wrapper
+        elif len(match) == 0:
+            # Nothing in entity wrapper config matches. In this case it is assumed
+            # that the endpoint follows classic API patterns and the wrapper name
+            # can be inferred from the URL and request method:
+            wrapper = infer_entity_wrapper(method, path)
+            return (wrapper, wrapper)
+        else:
+            matches_str = ', '.join(match)
+            raise Exception(f"{endpoint} matches more than one pattern:" + \
+                f"{matches_str}; this is most likely a bug.")
 
     def iter_all(self, url, params=None, page_size=None, item_hook=None,
             total=False) -> Iterator[dict]:
@@ -1740,11 +1320,11 @@ class RestApiV2Client(ApiClient):
         """
         # Get entity wrapping and validate that the URL being requested is
         # likely to support pagination:
-        path = canonical_path(self.url, url)
+        path = self.canonical_path(self.url, url)
         endpoint = f"GET {path}"
 
         # Short-circuit to cursor-based pagination if appropriate:
-        if path in CURSOR_BASED_PAGINATION_PATHS:
+        if path in self.CURSOR_BASED_PAGINATION_PATHS:
             return self.iter_cursor(url, params=params)
 
         nodes = path.split('/')
@@ -1757,7 +1337,7 @@ class RestApiV2Client(ApiClient):
             raise UrlError(f"Path {path} (URL={url}) is formatted like an " \
                 "individual resource versus a resource collection. It is " \
                 "therefore assumed to not support pagination.")
-        _, wrapper = entity_wrappers('GET', path)
+        _, wrapper = self.entity_wrappers('GET', path)
 
         if wrapper is None:
             raise UrlError(f"Pagination is not supported for {endpoint}.")
@@ -1850,10 +1430,10 @@ class RestApiV2Client(ApiClient):
         :param item_hook:
             A callable object that accepts 3 positional arguments; see
         """
-        path = canonical_path(self.url, url)
-        if path not in CURSOR_BASED_PAGINATION_PATHS:
+        path = self.canonical_path(self.url, url)
+        if path not in self.CURSOR_BASED_PAGINATION_PATHS:
             raise UrlError(f"{path} does not support cursor-based pagination.")
-        _, wrapper = entity_wrappers('GET', path)
+        _, wrapper = self.entity_wrappers('GET', path)
         user_params = {}
         if isinstance(params, (dict, list)):
             # Override defaults with values given:
@@ -1884,6 +1464,453 @@ class RestApiV2Client(ApiClient):
             next_cursor = body.get('next_cursor', None)
             more = bool(next_cursor)
 
+    def list_all(self, url, **kw) -> list:
+        """
+        Returns a list of all objects from a given index endpoint.
+
+        All keyword arguments passed to this function are also passed directly
+        to :attr:`iter_all`; see the documentation on that method for details.
+
+        :param url:
+            The index endpoint URL to use.
+        """
+        return list(self.iter_all(url, **kw))
+
+class RestApiV2Client(GenericRestIshApiClient):
+    """
+    PagerDuty REST API v2 client class.
+
+    Implements the most generic and oft-implemented aspects of PagerDuty's REST
+    API v2 as an opinionated wrapper of `requests.Session`_.
+
+    Inherits from :class:`ApiClient`.
+
+    :param api_key:
+        REST API access token to use for HTTP requests
+    :param default_from:
+        The default email address to use in the ``From`` header when making
+        API calls using an account-level API access key.
+    :param auth_type:
+        The type of credential in use. If authenticating with an OAuth access
+        token, this must be set to ``oauth2`` or ``bearer``.
+    :param debug:
+        Sets :attr:`print_debug`. Set to True to enable verbose command line
+        output.
+    :type token: str
+    :type name: str or None
+    :type default_from: str or None
+    :type debug: bool
+
+    :members:
+    """
+
+    CANONICAL_PATHS = [
+        '/{entity_type}/{id}/change_tags',
+        '/{entity_type}/{id}/tags',
+        '/abilities',
+        '/abilities/{id}',
+        '/addons',
+        '/addons/{id}',
+        '/analytics/metrics/incidents/all',
+        '/analytics/metrics/incidents/services',
+        '/analytics/metrics/incidents/teams',
+        '/analytics/raw/incidents',
+        '/analytics/raw/incidents/{id}',
+        '/analytics/raw/incidents/{id}/responses',
+        '/audit/records',
+        '/automation_actions/actions',
+        '/automation_actions/actions/{id}',
+        '/automation_actions/actions/{id}/invocations',
+        '/automation_actions/actions/{id}/services',
+        '/automation_actions/actions/{id}/services/{service_id}',
+        '/automation_actions/actions/{id}/teams',
+        '/automation_actions/actions/{id}/teams/{team_id}',
+        '/automation_actions/invocations',
+        '/automation_actions/invocations/{id}',
+        '/automation_actions/runners',
+        '/automation_actions/runners/{id}',
+        '/automation_actions/runners/{id}/teams',
+        '/automation_actions/runners/{id}/teams/{team_id}',
+        '/business_services',
+        '/business_services/{id}',
+        '/business_services/{id}/account_subscription',
+        '/business_services/{id}/subscribers',
+        '/business_services/{id}/supporting_services/impacts',
+        '/business_services/{id}/unsubscribe',
+        '/business_services/impactors',
+        '/business_services/impacts',
+        '/business_services/priority_thresholds',
+        '/change_events',
+        '/change_events/{id}',
+        '/customfields/fields',
+        '/customfields/fields/{field_id}',
+        '/customfields/fields/{field_id}/field_options',
+        '/customfields/fields/{field_id}/field_options/{field_option_id}',
+        '/customfields/fields/{field_id}/schemas',
+        '/customfields/schema_assignments',
+        '/customfields/schema_assignments/{id}',
+        '/customfields/schemas',
+        '/customfields/schemas/{schema_id}',
+        '/customfields/schemas/{schema_id}/field_configurations',
+        '/customfields/schemas/{schema_id}/field_configurations/{field_configuration_id}',
+        '/escalation_policies',
+        '/escalation_policies/{id}',
+        '/escalation_policies/{id}/audit/records',
+        '/event_orchestrations',
+        '/event_orchestrations/{id}',
+        '/event_orchestrations/{id}/router',
+        '/event_orchestrations/{id}/unrouted',
+        '/event_orchestrations/services/{id}',
+        '/event_orchestrations/services/{id}/active',
+        '/extension_schemas',
+        '/extension_schemas/{id}',
+        '/extensions',
+        '/extensions/{id}',
+        '/extensions/{id}/enable',
+        '/incident_workflows',
+        '/incident_workflows/{id}',
+        '/incident_workflows/{id}/instances',
+        '/incident_workflows/actions',
+        '/incident_workflows/actions/{id}',
+        '/incident_workflows/triggers',
+        '/incident_workflows/triggers/{id}',
+        '/incident_workflows/triggers/{id}/services',
+        '/incident_workflows/triggers/{trigger_id}/services/{service_id}',
+        '/incidents',
+        '/incidents/{id}',
+        '/incidents/{id}/alerts',
+        '/incidents/{id}/alerts/{alert_id}',
+        '/incidents/{id}/business_services/{business_service_id}/impacts',
+        '/incidents/{id}/business_services/impacts',
+        '/incidents/{id}/field_values',
+        '/incidents/{id}/field_values/schema',
+        '/incidents/{id}/log_entries',
+        '/incidents/{id}/merge',
+        '/incidents/{id}/notes',
+        '/incidents/{id}/outlier_incident',
+        '/incidents/{id}/past_incidents',
+        '/incidents/{id}/related_change_events',
+        '/incidents/{id}/related_incidents',
+        '/incidents/{id}/responder_requests',
+        '/incidents/{id}/snooze',
+        '/incidents/{id}/status_updates',
+        '/incidents/{id}/status_updates/subscribers',
+        '/incidents/{id}/status_updates/unsubscribe',
+        '/incidents/count',
+        '/license_allocations',
+        '/licenses',
+        '/log_entries',
+        '/log_entries/{id}',
+        '/log_entries/{id}/channel',
+        '/maintenance_windows',
+        '/maintenance_windows/{id}',
+        '/notifications',
+        '/oncalls',
+        '/paused_incident_reports/alerts',
+        '/paused_incident_reports/counts',
+        '/priorities',
+        '/response_plays',
+        '/response_plays/{id}',
+        '/response_plays/{response_play_id}/run',
+        '/rulesets',
+        '/rulesets/{id}',
+        '/rulesets/{id}/rules',
+        '/rulesets/{id}/rules/{rule_id}',
+        '/schedules',
+        '/schedules/{id}',
+        '/schedules/{id}/audit/records',
+        '/schedules/{id}/overrides',
+        '/schedules/{id}/overrides/{override_id}',
+        '/schedules/{id}/users',
+        '/schedules/preview',
+        '/service_dependencies/associate',
+        '/service_dependencies/business_services/{id}',
+        '/service_dependencies/disassociate',
+        '/service_dependencies/technical_services/{id}',
+        '/services',
+        '/services/{id}',
+        '/services/{id}/audit/records',
+        '/services/{id}/change_events',
+        '/services/{id}/integrations',
+        '/services/{id}/integrations/{integration_id}',
+        '/services/{id}/rules',
+        '/services/{id}/rules/{rule_id}',
+        '/status_dashboards',
+        '/status_dashboards/{id}',
+        '/status_dashboards/{id}/service_impacts',
+        '/status_dashboards/url_slugs/{url_slug}',
+        '/status_dashboards/url_slugs/{url_slug}/service_impacts',
+        '/tags',
+        '/tags/{id}',
+        '/tags/{id}/users',
+        '/tags/{id}/teams',
+        '/tags/{id}/escalation_policies',
+        '/teams',
+        '/teams/{id}',
+        '/teams/{id}/audit/records',
+        '/teams/{id}/escalation_policies/{escalation_policy_id}',
+        '/teams/{id}/members',
+        '/teams/{id}/notification_subscriptions',
+        '/teams/{id}/notification_subscriptions/unsubscribe',
+        '/teams/{id}/users/{user_id}',
+        '/templates',
+        '/templates/{id}',
+        '/templates/{id}/render',
+        '/users',
+        '/users/{id}',
+        '/users/{id}/audit/records',
+        '/users/{id}/contact_methods',
+        '/users/{id}/contact_methods/{contact_method_id}',
+        '/users/{id}/license',
+        '/users/{id}/notification_rules',
+        '/users/{id}/notification_rules/{notification_rule_id}',
+        '/users/{id}/notification_subscriptions',
+        '/users/{id}/notification_subscriptions/unsubscribe',
+        '/users/{id}/oncall_handoff_notification_rules',
+        '/users/{id}/oncall_handoff_notification_rules/{oncall_handoff_notification_rule_id}',
+        '/users/{id}/sessions',
+        '/users/{id}/sessions/{type}/{session_id}',
+        '/users/{id}/status_update_notification_rules',
+        '/users/{id}/status_update_notification_rules/{status_update_notification_rule_id}',
+        '/users/me',
+        '/vendors',
+        '/vendors/{id}',
+        '/webhook_subscriptions',
+        '/webhook_subscriptions/{id}',
+        '/webhook_subscriptions/{id}/enable',
+        '/webhook_subscriptions/{id}/ping',
+    ] #: :meta hide-value:
+
+    CURSOR_BASED_PAGINATION_PATHS = [
+        '/audit/records',
+        '/automation_actions/actions',
+        '/automation_actions/runners',
+        '/escalation_policies/{id}/audit/records',
+        '/incident_workflows/actions',
+        '/incident_workflows/triggers',
+        '/schedules/{id}/audit/records',
+        '/services/{id}/audit/records',
+        '/teams/{id}/audit/records',
+        '/users/{id}/audit/records',
+    ] #: :meta hide-value:
+
+    ENTITY_WRAPPER_CONFIG = {
+        # Analytics
+        '* /analytics/metrics/incidents/all': None,
+        '* /analytics/metrics/incidents/services': None,
+        '* /analytics/metrics/incidents/teams': None,
+        '* /analytics/raw/incidents': None,
+        '* /analytics/raw/incidents/{id}': None,
+        '* /analytics/raw/incidents/{id}/responses': None,
+
+        # Automation Actions
+        'POST /automation_actions/actions/{id}/invocations': (None,'invocation'),
+
+        # Paused Incident Reports
+        'GET /paused_incident_reports/alerts': 'paused_incident_reporting_counts',
+        'GET /paused_incident_reports/counts': 'paused_incident_reporting_counts',
+
+        # Business Services
+        '* /business_services/{id}/account_subscription': None,
+        'POST /business_services/{id}/subscribers': ('subscribers', 'subscriptions'),
+        'POST /business_services/{id}/unsubscribe': ('subscribers', None),
+        '* /business_services/priority_thresholds': None,
+        'GET /business_services/impacts': 'services',
+        'GET /business_services/{id}/supporting_services/impacts': 'services',
+
+        # Change Events
+        'POST /change_events': None, # why not just use EventsApiV2Client?
+        'GET /incidents/{id}/related_change_events': 'change_events',
+
+        # Event Orchestrations
+        '* /event_orchestrations': 'orchestrations',
+        '* /event_orchestrations/{id}': 'orchestration',
+        '* /event_orchestrations/{id}/router': 'orchestration_path',
+        '* /event_orchestrations/{id}/unrouted': 'orchestration_path',
+        '* /event_orchestrations/services/{id}': 'orchestration_path',
+        '* /event_orchestrations/services/{id}/active': None,
+
+        # Extensions
+        'POST /extensions/{id}/enable': (None, 'extension'),
+
+        # Incidents
+        'PUT /incidents': 'incidents', # Multi-update
+        'PUT /incidents/{id}/merge': ('source_incidents', 'incident'),
+        'POST /incidents/{id}/responder_requests': (None, 'responder_request'),
+        'POST /incidents/{id}/snooze': (None, 'incident'),
+        'POST /incidents/{id}/status_updates': (None, 'status_update'),
+        'POST /incidents/{id}/status_updates/subscribers': ('subscribers', 'subscriptions'),
+        'POST /incidents/{id}/status_updates/unsubscribe': ('subscribers', None),
+        'GET /incidents/{id}/business_services/impacts': 'services',
+        'PUT /incidents/{id}/business_services/{business_service_id}/impacts': None,
+
+        # Incident Workflows
+        'POST /incident_workflows/{id}/instances': 'incident_workflow_instance',
+        'POST /incident_workflows/triggers/{id}/services': ('service', 'trigger'),
+
+        # Response Plays
+        'POST /response_plays/{response_play_id}/run': None, # (deprecated)
+
+        # Schedules
+        'POST /schedules/{id}/overrides': ('overrides', None),
+
+        # Service Dependencies
+        'POST /service_dependencies/associate': 'relationships',
+
+        # Webhooks
+        'POST /webhook_subscriptions/{id}/enable': (None, 'webhook_subscription'),
+        'POST /webhook_subscriptions/{id}/ping': None,
+
+        # Status Dashboards
+        'GET /status_dashboards/{id}/service_impacts': 'services',
+        'GET /status_dashboards/url_slugs/{url_slug}': 'status_dashboard',
+        'GET /status_dashboards/url_slugs/{url_slug}/service_impacts': 'services',
+
+        # Tags
+        'POST /{entity_type}/{id}/change_tags': None,
+
+        # Teams
+        'PUT /teams/{id}/escalation_policies/{escalation_policy_id}': None,
+        'POST /teams/{id}/notification_subscriptions': ('subscribables', 'subscriptions'),
+        'POST /teams/{id}/notification_subscriptions/unsubscribe': ('subscribables', None),
+        'PUT /teams/{id}/users/{user_id}': None,
+        'GET /teams/{id}/notification_subscriptions': 'subscriptions',
+
+        # Templates
+        'POST /templates/{id}/render': None,
+
+        # Users
+        '* /users/{id}/notification_subscriptions': ('subscribables', 'subscriptions'),
+        'POST /users/{id}/notification_subscriptions/unsubscribe': ('subscribables', None),
+        'GET /users/{id}/sessions': 'user_sessions',
+        'GET /users/{id}/sessions/{type}/{session_id}': 'user_session',
+        'GET /users/me': 'user',
+    } #: :meta hide-value:
+
+    SUPPORTED_AUTH_TYPES = ['token', 'bearer', 'oauth2']
+
+    api_call_counts = None
+    """A dict object recording the number of API calls per endpoint"""
+
+    api_time = None
+    """A dict object recording the total time of API calls to each endpoint"""
+
+    default_from = None
+    """The default value to use as the ``From`` request header"""
+
+    default_page_size = 100
+    """
+    This will be the default number of results requested in each page when
+    iterating/querying an index (the ``limit`` parameter).
+    """
+
+    permitted_methods = ('GET', 'POST', 'PUT', 'DELETE')
+
+    url = 'https://api.pagerduty.com'
+    """Base URL of the REST API"""
+
+    def __init__(self, api_key: str, default_from=None,
+            auth_type='token', debug=False):
+        self.api_call_counts = {}
+        self.api_time = {}
+        self.auth_type = auth_type
+        super(RestApiV2Client, self).__init__(api_key, debug=debug)
+        self.default_from = default_from
+        self.headers.update({
+            'Accept': 'application/vnd.pagerduty+json;version=2',
+        })
+
+    def after_set_api_key(self):
+        self._subdomain = None
+
+    @property
+    def api_key_access(self) -> str:
+        """
+        Memoized API key access type getter.
+
+        Will be "user" if the API key is a user-level token (all users should
+        have permission to create an API key with the same permissions as they
+        have in the PagerDuty web UI).
+
+        If the API key in use is an account-level API token (as only a global
+        administrator user can create), this property will be "account".
+        """
+        if not hasattr(self, '_api_key_access') or self._api_key_access is None:
+            response = self.get('/users/me')
+            if response.status_code == 400:
+                message = try_decoding(response).get('error', '')
+                if 'account-level access token' in message:
+                    self._api_key_access = 'account'
+                else:
+                    self._api_key_access = None
+                    self.log.error("Failed to obtain API key access level; "
+                        "the API did not respond as expected.")
+                    self.log.debug("Body = %s", truncate_text(response.text))
+            else:
+                self._api_key_access = 'user'
+        return self._api_key_access
+
+    @property
+    def auth_header(self) -> dict:
+        if self.auth_type in ('bearer', 'oauth2'):
+            return {"Authorization": "Bearer "+self.api_key}
+        else:
+            return {"Authorization": "Token token="+self.api_key}
+
+    def find(self, resource, query, attribute='name', params=None) \
+            -> Union[dict, None]:
+        """
+        Finds an object of a given resource type exactly matching a query.
+
+        Works by querying a given resource index endpoint using the ``query``
+        parameter. To use this function on any given resource, the resource's
+        index must support the ``query`` parameter; otherwise, the function may
+        not work as expected. If the index ignores the parameter, for instance,
+        this function will take much longer to return; results will not be
+        constrained to those matching the query, and so every result in the
+        index will be downloaded and compared against the query up until a
+        matching result is found or all results have been checked.
+
+        The comparison between the query and matching results is case-insenitive. When
+        determining uniqueness, APIs are mostly case-insensitive, and therefore objects
+        with similar characters but differing case can't even exist. All results (and
+        the search query) are for this reason reduced pre-comparison to a common form
+        (all-lowercase strings) so that case doesn't need to match in the query argument
+        (which is also interpreted by the API as case-insensitive).
+
+        If said behavior differs for a given API, i.e. the uniqueness constraint on a
+        field is case-sensitive, it should still return the correct results because the
+        search term sent to the index in the querystring is not lower-cased.
+
+        :param resource:
+            The name of the resource endpoint to query, i.e.
+            ``escalation_policies``
+        :param query:
+            The string to query for in the the index.
+        :param attribute:
+            The property of each result to compare against the query value when
+            searching for an exact match. By default it is ``name``, but when
+            searching for user by email (for example) it can be set to ``email``
+        :param params:
+            Optional additional parameters to use when querying.
+        :type resource: str
+        :type query: str
+        :type attribute: str
+        :type params: dict or None
+        :returns:
+            The dictionary representation of the result, if found; ``None`` will
+            be returned if there is no exact match result.
+        """
+        query_params = {}
+        if params is not None:
+            query_params.update(params)
+        query_params.update({'query':query})
+        simplify = lambda s: str(s).lower()
+        search_term = simplify(query)
+        equiv = lambda s: simplify(s[attribute]) == search_term
+        obj_iter = self.iter_all(resource, params=query_params)
+        return next(iter(filter(equiv, obj_iter)), None)
+
     @resource_url
     @auto_json
     def jget(self, url, **kw) -> Union[dict, list]:
@@ -1907,18 +1934,6 @@ class RestApiV2Client(ApiClient):
         Performs a PUT request, returning the JSON-decoded body as a dictionary
         """
         return self.put(url, **kw)
-
-    def list_all(self, url, **kw) -> list:
-        """
-        Returns a list of all objects from a given index endpoint.
-
-        All keyword arguments passed to this function are also passed directly
-        to :attr:`iter_all`; see the documentation on that method for details.
-
-        :param url:
-            The index endpoint URL to use.
-        """
-        return list(self.iter_all(url, **kw))
 
     def persist(self, resource, attr, values, update=False):
         """
@@ -1985,7 +2000,7 @@ class RestApiV2Client(ApiClient):
         request_time = response.elapsed.total_seconds()
 
         try:
-            endpoint = "%s %s"%(method, canonical_path(self.url, url))
+            endpoint = "%s %s"%(method, self.canonical_path(self.url, url))
         except UrlError:
             # This is necessary so that profiling can also support using the
             # basic get / post / put / delete methods with APIs that are not yet
