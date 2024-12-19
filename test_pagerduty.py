@@ -62,6 +62,7 @@ class Response(object):
 class URLHandlingTest(unittest.TestCase):
 
     def test_canonical_path(self):
+        sess = pagerduty.RestApiV2Client('some-key')
         identified_urls = [
             (
                 '/services/{id}',
@@ -86,7 +87,7 @@ class URLHandlingTest(unittest.TestCase):
         ]
         for (pattern, url) in identified_urls:
             base_url = 'https://api.pagerduty.com'
-            self.assertEqual(pattern, pagerduty.canonical_path(base_url, url))
+            self.assertEqual(pattern, sess.canonical_path(base_url, url))
 
     def test_is_path_param(self):
         self.assertTrue(pagerduty.is_path_param('{id}'))
@@ -126,11 +127,12 @@ class URLHandlingTest(unittest.TestCase):
             )
         ]
         for args in invalid_input:
-            self.assertRaises(pagerduty.URLError, pagerduty.normalize_url, *args)
+            self.assertRaises(pagerduty.UrlError, pagerduty.normalize_url, *args)
 
 class EntityWrappingTest(unittest.TestCase):
 
     def test_entity_wrappers(self):
+        sess = pagerduty.RestApiV2Client('some-key')
         io_expected = [
             # Special endpoint (broken support v5.0.0 - 5.1.x) managed by script
             (('get', '/tags/{id}/users'), ('users', 'users')),
@@ -159,7 +161,7 @@ class EntityWrappingTest(unittest.TestCase):
             (('post', '/analytics/raw/incidents'), (None, None)),
         ]
         for ((method, path), rval) in io_expected:
-            self.assertEqual(rval, pagerduty.entity_wrappers(method, path))
+            self.assertEqual(rval, sess.entity_wrappers(method, path))
 
     def test_infer_entity_wrapper(self):
         io_expected = [
@@ -177,10 +179,10 @@ class EntityWrappingTest(unittest.TestCase):
     def test_unwrap(self):
         # Response has unexpected type, raise:
         r = Response(200, json.dumps([]))
-        self.assertRaises(pagerduty.PDServerError, pagerduty.unwrap, r, 'foo')
+        self.assertRaises(pagerduty.ServerHttpError, pagerduty.unwrap, r, 'foo')
         # Response has unexpected structure, raise:
         r = Response(200, json.dumps({'foo_1': {'bar':1}, 'foo_2': 'bar2'}))
-        self.assertRaises(pagerduty.PDServerError, pagerduty.unwrap, r, 'foo')
+        self.assertRaises(pagerduty.ServerHttpError, pagerduty.unwrap, r, 'foo')
         # Response has the expected structure, return the wrapped entity:
         foo_entity = {'type':'foo_reference', 'id': 'PFOOBAR'}
         r = Response(200, json.dumps({'foo': foo_entity}))
@@ -210,12 +212,10 @@ class FunctionDecoratorsTest(unittest.TestCase):
         response = MagicMock()
         do_http_things.return_value = response
         session = pagerduty.RestApiV2Client('some_key')
-        dummy_session = MagicMock()
         def reset_mocks():
             do_http_things.reset_mock()
             response.reset_mock()
             do_http_things.return_value = response
-            dummy_session.reset_mock()
 
         # OK response, good JSON: JSON-decode and unpack response
         response.ok = True
@@ -232,7 +232,7 @@ class FunctionDecoratorsTest(unittest.TestCase):
         response.ok = True
         do_http_things.__name__ = 'rput' # just for instance
         response.json.side_effect = [ValueError('Bad JSON!')]
-        self.assertRaises(pagerduty.PDClientError,
+        self.assertRaises(pagerduty.Error,
             pagerduty.wrapped_entities(do_http_things), session, '/services')
         reset_mocks()
 
@@ -244,7 +244,7 @@ class FunctionDecoratorsTest(unittest.TestCase):
         do_http_things.return_value = response
         do_http_things.__name__ = 'rput' # just for instance
         response.json.return_value = {'nope': 'nopenope'}
-        self.assertRaises(pagerduty.PDHTTPError,
+        self.assertRaises(pagerduty.HttpError,
             pagerduty.wrapped_entities(do_http_things), session, '/services')
         reset_mocks()
 
@@ -252,7 +252,7 @@ class FunctionDecoratorsTest(unittest.TestCase):
         response.reset_mock()
         response.ok = False
         do_http_things.__name__ = 'rput' # just for instance
-        self.assertRaises(pagerduty.PDClientError,
+        self.assertRaises(pagerduty.Error,
             pagerduty.wrapped_entities(do_http_things), session, '/services')
         reset_mocks()
 
@@ -261,10 +261,8 @@ class FunctionDecoratorsTest(unittest.TestCase):
         users_array = [{"type":"user","email":"user@example.com",
             "summary":"User McUserson"}]
         response.json.return_value = {'users': users_array}
-        do_http_things.__name__ = 'rget'
-        dummy_session.url = 'https://api.pagerduty.com'
         self.assertEqual(users_array,
-            pagerduty.wrapped_entities(do_http_things)(dummy_session, '/users',
+            pagerduty.wrapped_entities(do_http_things)(session, '/users',
                 query='user'))
         reset_mocks()
 
@@ -273,9 +271,9 @@ class FunctionDecoratorsTest(unittest.TestCase):
         do_http_things.__name__ = 'rpost'
         user_payload = {'email':'user@example.com', 'name':'User McUserson'}
         self.assertRaises(
-            pagerduty.PDClientError,
+            pagerduty.Error,
             pagerduty.wrapped_entities(do_http_things),
-            dummy_session, '/users', json=user_payload
+            session, '/users', json=user_payload
         )
         reset_mocks()
         # Add type property; should work now and automatically pack the user
@@ -288,10 +286,10 @@ class FunctionDecoratorsTest(unittest.TestCase):
         response.json.return_value = {'user':created_user}
         self.assertEqual(
             created_user,
-            pagerduty.wrapped_entities(do_http_things)(dummy_session, '/users',
+            pagerduty.wrapped_entities(do_http_things)(session, '/users',
                 json=user_payload)
         )
-        do_http_things.assert_called_with(dummy_session, '/users',
+        do_http_things.assert_called_with(session, '/users',
             json={'user':user_payload})
 
         reset_mocks()
@@ -303,7 +301,7 @@ class FunctionDecoratorsTest(unittest.TestCase):
         response.json.return_value = {'incidents': updated_incidents}
         self.assertEqual(
             updated_incidents,
-            pagerduty.wrapped_entities(do_http_things)(dummy_session,
+            pagerduty.wrapped_entities(do_http_things)(session,
                 '/incidents', json=incidents)
         )
         # The final value of the json parameter passed to the method (which goes
@@ -330,9 +328,9 @@ class HelperFunctionsTest(unittest.TestCase):
             )
 
     def test_successful_response(self):
-        self.assertRaises(pagerduty.PDClientError, pagerduty.successful_response,
+        self.assertRaises(pagerduty.Error, pagerduty.successful_response,
             Response(400, json.dumps({})))
-        self.assertRaises(pagerduty.PDServerError, pagerduty.successful_response,
+        self.assertRaises(pagerduty.ServerHttpError, pagerduty.successful_response,
             Response(500, json.dumps({})))
 
 class EventsApiV2ClientTest(SessionTest):
@@ -578,22 +576,22 @@ class RestApiV2ClientTest(SessionTest):
         # Test: user uses iter_all on an endpoint that supports cursor-based
         # pagination, short-circuit to iter_cursor
         path = '/audit/records'
-        cpath = pagerduty.canonical_path('https://api.pagerduty.com', path)
-        self.assertTrue(cpath in pagerduty.CURSOR_BASED_PAGINATION_PATHS)
+        cpath = sess.canonical_path('https://api.pagerduty.com', path)
+        self.assertTrue(cpath in sess.CURSOR_BASED_PAGINATION_PATHS)
         iter_cursor.return_value = []
         self.assertEqual([], list(sess.iter_all('/audit/records')))
         iter_cursor.assert_called_once_with('/audit/records', params=None)
 
         # Test: user tries to use iter_all on a singular resource, raise error:
         self.assertRaises(
-            pagerduty.URLError,
+            pagerduty.UrlError,
             lambda p: list(sess.iter_all(p)),
             'users/PABC123'
         )
         # Test: user tries to use iter_all on an endpoint that doesn't actually
         # support pagination, raise error:
         self.assertRaises(
-            pagerduty.URLError,
+            pagerduty.UrlError,
             lambda p: list(sess.iter_all(p)),
             '/analytics/raw/incidents/Q3R8ZN19Z8K083/responses'
         )
@@ -641,7 +639,7 @@ class RestApiV2ClientTest(SessionTest):
             Response(200, json.dumps(page(4, 50, 10))),
         ]
         get.side_effect = copy.deepcopy(error_encountered)
-        self.assertRaises(pagerduty.PDClientError, list, sess.iter_all(weirdurl))
+        self.assertRaises(pagerduty.Error, list, sess.iter_all(weirdurl))
 
         # Test reaching the iteration limit:
         get.reset_mock()
@@ -678,7 +676,7 @@ class RestApiV2ClientTest(SessionTest):
         })
         # Test: user tries to use iter_cursor where it won't work, raise:
         self.assertRaises(
-            pagerduty.URLError,
+            pagerduty.UrlError,
             lambda p: list(sess.iter_cursor(p)),
             'incidents', # Maybe some glorious day, but not as of this writing
         )
@@ -800,7 +798,7 @@ class RestApiV2ClientTest(SessionTest):
             parent.request = request
             # Test bad request method
             self.assertRaises(
-                pagerduty.PDClientError,
+                pagerduty.Error,
                 sess.request,
                 *['poke', '/something']
             )
@@ -889,7 +887,7 @@ class RestApiV2ClientTest(SessionTest):
                     'message': "You shall not pass.",
                 }
             }))
-            self.assertRaises(pagerduty.PDClientError, sess.request, 'get',
+            self.assertRaises(pagerduty.Error, sess.request, 'get',
                 '/services')
             request.reset_mock()
 
@@ -922,7 +920,7 @@ class RestApiV2ClientTest(SessionTest):
                     sess.get('/users')
                     self.assertTrue(False, msg='Exception not raised after ' \
                         'retry maximum count reached')
-                except pagerduty.PDClientError as e:
+                except pagerduty.Error as e:
                     self.assertEqual(e.__cause__, raises[-1])
                 except Exception as e:
                     self.assertTrue(False, msg='Raised exception not of the ' \
@@ -969,7 +967,7 @@ class RestApiV2ClientTest(SessionTest):
         response404 = Response(404, '{"user": {"email": "user@example.com"}}')
         get.reset_mock()
         get.return_value = response404
-        self.assertRaises(pagerduty.PDClientError, s.rget, '/users/P123ABC')
+        self.assertRaises(pagerduty.Error, s.rget, '/users/P123ABC')
 
     @patch.object(pagerduty.RestApiV2Client, 'rget')
     def test_subdomain(self, rget):

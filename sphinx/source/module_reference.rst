@@ -47,14 +47,14 @@ URL Handling
 URL related functions.
 
 .. automodule:: pagerduty
-    :members: canonical_path, endpoint_matches, is_path_param, normalize_url
+    :members: endpoint_matches, is_path_param, normalize_url
 
 Entity Wrapping
 ***************
 Functions that implement entity wrapping logic.
 
 .. automodule:: pagerduty
-    :members: entity_wrappers, infer_entity_wrapper, unwrap
+    :members: infer_entity_wrapper, unwrap
 
 Function Decorators
 *******************

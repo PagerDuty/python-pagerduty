@@ -1,9 +1,16 @@
 #!/usr/bin/env python
 
-# Usage: get_path_list.py PATH
-#
-#   PATH must be a path to "reference/v2/Index.yaml" within a clone of the API
-#   source code repository.
+"""
+Usage: get_path_list.py PATH
+
+  Generates a CANONICAL_PATHS attribute declaration for updating the client source code.
+
+  PATH must be a path to "reference/v2/Index.yaml" within a clone of the API reference
+  source code repository to re-generate canonical paths for REST API v2. One can also
+  replace "v2" with the name of the "REST-ish" API within the "reference" directory,
+  i.e. integration-slack-service, to generate CANONICAL_PATHS for the desired subclass
+  of GenericRestIshApiClient.
+"""
 
 # This script is not part of the python-pagerduty library. Rather, it can be used for
 # the by PagerDuty engineers to assist with its development and maintenance.  It
@@ -38,6 +45,9 @@ except ImportError:
     from yaml import Loader, Dumper
 
 def main():
+    if len(sys.argv) < 2:
+        print(__doc__)
+        return
     file = sys.argv[1]
     api_ref = load(open(file, 'r'), Loader)
     public_endpoints = list(map(lambda kv: kv[0], filter(
@@ -49,26 +59,26 @@ def main():
         api_ref['paths'].items()
     )))
 
-    print('CANONICAL_PATHS = [')
+    print('    CANONICAL_PATHS = [')
     for path in public_endpoints:
         print_paths = EXPAND_PATHS.get(path, [path])
         for path in print_paths:
-            print(f"    '{path}',")
-    print("]")
-    print('"""'+"\nExplicit list of supported canonical REST API v2 paths")
-    print("\n:meta hide-value:\n"+'"""'+"\n")
+            print(f"        '{path}',")
+    print("    ]")
+    print('    """'+"\n    Explicit list of supported canonical paths")
+    print("\n    :meta hide-value:\n"+'    """'+"\n")
 
-    print('CURSOR_BASED_PAGINATION_PATHS = [')
+    print('    CURSOR_BASED_PAGINATION_PATHS = [')
     cursor_param_ref = '../common/models/Parameters.yaml#/cursor_cursor'
     for (path, spec) in public_endpoints_dict.items():
         getspec = spec.get('get', {})
         getparams = getspec.get('parameters', [])
         for param in getparams:
             if cursor_param_ref in param.values():
-                print(f"    '{path}',")
-    print(']')
-    print('"""'+"\nExplicit list of paths that support cursor-based pagination")
-    print("\n:meta hide-value:\n"+'"""')
+                print(f"        '{path}',")
+    print('    ]')
+    print('    """'+"\n    Explicit list of paths that support cursor-based pagination")
+    print("\n    :meta hide-value:\n"+'    """')
 
 
 if __name__ == '__main__':
