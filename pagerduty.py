@@ -719,17 +719,23 @@ def wrapped_entities(method):
 ### HELPER FUNCTIONS ###
 ########################
 
-def deprecated_kwarg(deprecated_name: str, details=None):
+def deprecated_kwarg(deprecated_name: str, details=None, method=None):
     """
     Raises a warning if a deprecated keyword argument is used.
 
     :param deprecated_name: The name of the deprecated function
     :param details: An optional message to append to the deprecation message
+    :param method: An optional method name
     """
     details_msg = ''
+    method_msg = ''
+    if method is not None:
+        method_msg = f" of {method}"
     if details is not None:
         details_msg = f" {details}"
-    warn(f"Keyword argument \"{deprecated_name}\" is deprecated.{details_msg}")
+    warn(
+        f"Keyword argument \"{deprecated_name}\"{method_msg} is deprecated."+details_msg
+    )
 
 def http_error_message(r: Response, context=None) -> str:
     """
@@ -1286,6 +1292,16 @@ class EventsApiV2Client(ApiClient):
     def event_timestamp(self) -> str:
         return datetime.utcnow().isoformat()+'Z'
 
+    def post(self, *args, **kw) -> Response:
+        """
+        Override of ``requests.Session.post``
+
+        Adds the ``routing_key`` parameter to the body before sending.
+        """
+        if 'json' in kw and hasattr(kw['json'], 'update'):
+            kw['json'].update({'routing_key': self.api_key})
+        return super(EventsApiV2Client, self).post(*args, **kw)
+
     def prepare_headers(self, method, user_headers={}) -> dict:
         """
         Add user agent and content type headers for Events API requests.
@@ -1312,34 +1328,35 @@ class EventsApiV2Client(ApiClient):
         """
         return self.send_event('resolve', dedup_key=dedup_key)
 
-    def send_change_event(self, **properties):
+    def send_change_event(self, payload={}, links=[], routing_key=None):
         """
         Send a change event to the v2 Change Events API.
 
         See: https://developer.pagerduty.com/docs/events-api-v2/send-change-events/
 
-        :param **properties:
-            Properties to set, i.e. ``payload`` and ``links``
+        :param payload:
+            A dictionary object with keys ``summary``, ``source``, ``timestamp`` and
+            ``custom_details`` as described in the above documentation.
+        :param links:
+            A list of dictionary objects each with keys ``href`` and ``text``
+            representing the target and display text of each link
+        :param routing_key:
+            (Deprecated) the routing key. The parameter is set automatically to the
+            :attr:`api_key` property in the final payload and this argument is ignored.
         :returns:
             The response ID
         """
-        event = deepcopy(properties)
+        if routing_key is not None:
+            deprecated_kwarg(
+                'routing_key',
+                method='EventsApiV2Client.send_change_event'
+            )
+        event = {'payload': deepcopy(payload), 'links': deepcopy(links)}
         response = self.post('/v2/change/enqueue', json=event)
         response_body = try_decoding(successful_response(
             response,
             context="submitting change event",
         ))
-        return response_body.get("id", None)
-
-    def post(self, *args, **kw) -> Response:
-        """
-        Override of ``requests.Session.post``
-
-        Adds the ``routing_key`` parameter to the body before sending.
-        """
-        if 'json' in kw and hasattr(kw['json'], 'update'):
-            kw['json'].update({'routing_key': self.api_key})
-        return super(EventsApiV2Client, self).post(*args, **kw)
 
     def send_event(self, action, dedup_key=None, **properties) -> str:
         """
@@ -1389,16 +1406,19 @@ class EventsApiV2Client(ApiClient):
     def submit(self, summary, source=None, custom_details=None, links=None,
             timestamp=None) -> str:
         """
-        Submit an incident change
+        Submit a change event.
+
+        See: https://developer.pagerduty.com/docs/send-change-event
 
         :param summary:
-            Summary / brief description of the change.
+            Summary / brief description of the change, for ``payload.summary``.
         :param source:
-            A human-readable name identifying the source of the change.
+            A human-readable name identifying the source of the change, for the
+            ``payload.source`` event property.
         :param custom_details:
-            The ``payload.custom_details`` property of the payload.
+            A dictionary object to use as the ``payload.custom_details`` property.
         :param links:
-            Set the ``links`` property of the event.
+            A list of dict objects to use as the ``links`` property of the event.
         :param timestamp:
             Specifies an event timestamp. Must be an ISO8601-format date/time.
         :type summary: str
@@ -1415,7 +1435,6 @@ class EventsApiV2Client(ApiClient):
         if timestamp is None:
             timestamp = self.event_timestamp
         event = {
-                'routing_key': self.api_key,
                 'payload': {
                     'summary': summary,
                     'timestamp': timestamp,
