@@ -1180,6 +1180,27 @@ class GenericRestIshApiClient(ApiClient):
         else:
             return patterns[0]
 
+    def dict_all(self, path: str, **kw) -> dict:
+        """
+        Dictionary representation of resource collection results
+
+        With the exception of ``by``, all keyword arguments passed to this
+        method are also passed to :attr:`iter_all`; see the documentation on
+        that method for further details.
+
+        :param path:
+            The index endpoint URL to use.
+        :param by:
+            The attribute of each object to use for the key values of the
+            dictionary. This is ``id`` by default. Please note, there is no
+            uniqueness validation, so if you use an attribute that is not
+            distinct for the data set, this function will omit some data in the
+            results.
+        """
+        by = kw.pop('by', 'id')
+        iterator = self.iter_all(path, **kw)
+        return {obj[by]:obj for obj in iterator}
+
     def entity_wrappers(self, method: str, path: str) -> tuple:
         """
         Obtains entity wrapping information for a given endpoint (path and method)
@@ -1231,6 +1252,210 @@ class GenericRestIshApiClient(ApiClient):
             matches_str = ', '.join(match)
             raise Exception(f"{endpoint} matches more than one pattern:" + \
                 f"{matches_str}; this is most likely a bug.")
+
+    def iter_all(self, url, params=None, page_size=None, item_hook=None,
+            total=False) -> Iterator[dict]:
+        """
+        Iterator for the contents of an index endpoint or query.
+
+        Automatically paginates and yields the results in each page, until all
+        matching results have been yielded or a HTTP error response is received.
+
+        If the URL to use supports cursor-based pagintation, then this will
+        return :attr:`iter_cursor` with the same keyword arguments. Otherwise,
+        it implements classic pagination, a.k.a. numeric pagination.
+
+        Each yielded value is a dict object representing a result returned from
+        the index. For example, if requesting the ``/users`` endpoint, each
+        yielded value will be an entry of the ``users`` array property in the
+        response.
+
+        :param url:
+            The index endpoint URL to use.
+        :param params:
+            Additional URL parameters to include.
+        :param page_size:
+            If set, the ``page_size`` argument will override the
+            ``default_page_size`` parameter on the session and set the ``limit``
+            parameter to a custom value (default is 100), altering the number of
+            pagination results. The actual number of results in the response
+            will still take precedence, if it differs; this parameter and
+            ``default_page_size`` only dictate what is requested of the API.
+        :param item_hook:
+            Callable object that will be invoked for each iteration, i.e. for
+            printing progress. It will be called with three parameters: a dict
+            representing a given result in the iteration, an int representing
+            the number of the item in the series, and an int (or str, as of
+            v5.0.0) representing the total number of items in the series. If the
+            total isn't knowable, the value passed is "?".
+        :param total:
+            If True, the ``total`` parameter will be included in API calls, and
+            the value for the third parameter to the item hook will be the total
+            count of records that match the query. Leaving this as False confers
+            a small performance advantage, as the API in this case does not have
+            to compute the total count of results in the query.
+        :type url: str
+        :type params: dict or None
+        :type page_size: int or None
+        :type total: bool
+        """
+        # Get entity wrapping and validate that the URL being requested is
+        # likely to support pagination:
+        path = self.canonical_path(self.url, url)
+        endpoint = f"GET {path}"
+
+        # Short-circuit to cursor-based pagination if appropriate:
+        if path in self.CURSOR_BASED_PAGINATION_PATHS:
+            return self.iter_cursor(url, params=params)
+
+        nodes = path.split('/')
+        if is_path_param(nodes[-1]):
+            # NOTE: If this happens for a newer API, the path might need to be
+            # added to the EXPAND_PATHS dictionary in
+            # scripts/get_path_list/get_path_list.py, after which
+            # CANONICAL_PATHS will then need to be updated accordingly based on
+            # the new output of the script.
+            raise UrlError(f"Path {path} (URL={url}) is formatted like an " \
+                "individual resource versus a resource collection. It is " \
+                "therefore assumed to not support pagination.")
+        _, wrapper = self.entity_wrappers('GET', path)
+
+        if wrapper is None:
+            raise UrlError(f"Pagination is not supported for {endpoint}.")
+
+        # Parameters to send:
+        data = {}
+        if page_size is None:
+            data['limit'] = self.default_page_size
+        else:
+            data['limit'] = page_size
+        if total:
+            data['total'] = 1
+        if isinstance(params, (dict, list)):
+            # Override defaults with values given:
+            data.update(dict(params))
+
+        more = True
+        offset = 0
+        if params is not None:
+            offset = int(params.get('offset', 0))
+        n = 0
+        while more:
+            # Check the offset and limit:
+            data['offset'] = offset
+            highest_record_index = int(data['offset']) + int(data['limit'])
+            if highest_record_index > ITERATION_LIMIT:
+                iter_limit = '%d'%ITERATION_LIMIT
+                warn(
+                    f"Stopping iter_all on {endpoint} at " \
+                    f"limit+offset={highest_record_index} " \
+                    'as this exceeds the maximum permitted by the API ' \
+                    f"({iter_limit}). The set of results may be incomplete."
+                )
+                return
+
+            # Make the request and validate/unpack the response:
+            r = successful_response(
+                self.get(url, params=data.copy()),
+                context='classic pagination'
+            )
+            body = try_decoding(r)
+            results = unwrap(r, wrapper)
+
+            # Validate and update pagination parameters
+            #
+            # Note, the number of the results in the actual response is always
+            # the most appropriate amount to increment the offset by after
+            # receiving each page. If this is the last page, agination should
+            # stop anyways because the ``more`` parameter should evaluate to
+            # false.
+            #
+            # In short, the reasons why we don't trust the echoed ``limit``
+            # value or stick to the limit requested and hope the server honors
+            # it is that it could potentially result in skipping results or
+            # yielding duplicates if there's a mismatch, or potentially issues
+            # like #61
+            data['limit'] = len(results)
+            offset += data['limit']
+            more = False
+            total_count = '?'
+            if 'more' in body:
+                more = body['more']
+            else:
+                warn(
+                    f"Endpoint GET {path} responded with no \"more\" property" \
+                    ' in the response, so pagination is not supported ' \
+                    '(or this is an API bug). Only results from the first ' \
+                    'request will be yielded. You can use rget with this ' \
+                    'endpoint instead to avoid this warning.'
+                )
+            if 'total' in body:
+                total_count = body['total']
+
+            # Perform per-page actions on the response data
+            for result in results:
+                n += 1
+                # Call a callable object for each item, i.e. to print progress:
+                if hasattr(item_hook, '__call__'):
+                    item_hook(result, n, total_count)
+                yield result
+
+    def iter_cursor(self, url, params=None, item_hook=None) -> Iterator[dict]:
+        """
+        Iterator for results from an endpoint using cursor-based pagination.
+
+        :param url:
+            The index endpoint URL to use.
+        :param params:
+            Query parameters to include in the request.
+        :param item_hook:
+            A callable object that accepts 3 positional arguments; see
+        """
+        path = self.canonical_path(self.url, url)
+        if path not in self.CURSOR_BASED_PAGINATION_PATHS:
+            raise UrlError(f"{path} does not support cursor-based pagination.")
+        _, wrapper = self.entity_wrappers('GET', path)
+        user_params = {}
+        if isinstance(params, (dict, list)):
+            # Override defaults with values given:
+            user_params.update(dict(params))
+
+        more = True
+        next_cursor = None
+        total = 0
+
+        while more:
+            # Update parameters and request a new page:
+            if next_cursor:
+                user_params.update({'cursor': next_cursor})
+            r = successful_response(
+                self.get(url, params=user_params),
+                context='cursor-based pagination',
+            )
+
+            # Unpack and yield results
+            body = try_decoding(r)
+            results = unwrap(r, wrapper)
+            for result in results:
+                total += 1
+                if hasattr(item_hook, '__call__'):
+                    item_hook(result, total, '?')
+                yield result
+            # Advance to the next page
+            next_cursor = body.get('next_cursor', None)
+            more = bool(next_cursor)
+
+    def list_all(self, url, **kw) -> list:
+        """
+        Returns a list of all objects from a given index endpoint.
+
+        All keyword arguments passed to this function are also passed directly
+        to :attr:`iter_all`; see the documentation on that method for details.
+
+        :param url:
+            The index endpoint URL to use.
+        """
+        return list(self.iter_all(url, **kw))
 
 class RestApiV2Client(GenericRestIshApiClient):
     """
@@ -1613,27 +1838,6 @@ class RestApiV2Client(GenericRestIshApiClient):
         else:
             return {"Authorization": "Token token="+self.api_key}
 
-    def dict_all(self, path: str, **kw) -> dict:
-        """
-        Dictionary representation of resource collection results
-
-        With the exception of ``by``, all keyword arguments passed to this
-        method are also passed to :attr:`iter_all`; see the documentation on
-        that method for further details.
-
-        :param path:
-            The index endpoint URL to use.
-        :param by:
-            The attribute of each object to use for the key values of the
-            dictionary. This is ``id`` by default. Please note, there is no
-            uniqueness validation, so if you use an attribute that is not
-            distinct for the data set, this function will omit some data in the
-            results.
-        """
-        by = kw.pop('by', 'id')
-        iterator = self.iter_all(path, **kw)
-        return {obj[by]:obj for obj in iterator}
-
     def find(self, resource, query, attribute='name', params=None) \
             -> Union[dict, None]:
         """
@@ -1688,198 +1892,6 @@ class RestApiV2Client(GenericRestIshApiClient):
         obj_iter = self.iter_all(resource, params=query_params)
         return next(iter(filter(equiv, obj_iter)), None)
 
-    def iter_all(self, url, params=None, page_size=None, item_hook=None,
-            total=False) -> Iterator[dict]:
-        """
-        Iterator for the contents of an index endpoint or query.
-
-        Automatically paginates and yields the results in each page, until all
-        matching results have been yielded or a HTTP error response is received.
-
-        If the URL to use supports cursor-based pagintation, then this will
-        return :attr:`iter_cursor` with the same keyword arguments. Otherwise,
-        it implements classic pagination, a.k.a. numeric pagination.
-
-        Each yielded value is a dict object representing a result returned from
-        the index. For example, if requesting the ``/users`` endpoint, each
-        yielded value will be an entry of the ``users`` array property in the
-        response.
-
-        :param url:
-            The index endpoint URL to use.
-        :param params:
-            Additional URL parameters to include.
-        :param page_size:
-            If set, the ``page_size`` argument will override the
-            ``default_page_size`` parameter on the session and set the ``limit``
-            parameter to a custom value (default is 100), altering the number of
-            pagination results. The actual number of results in the response
-            will still take precedence, if it differs; this parameter and
-            ``default_page_size`` only dictate what is requested of the API.
-        :param item_hook:
-            Callable object that will be invoked for each iteration, i.e. for
-            printing progress. It will be called with three parameters: a dict
-            representing a given result in the iteration, an int representing
-            the number of the item in the series, and an int (or str, as of
-            v5.0.0) representing the total number of items in the series. If the
-            total isn't knowable, the value passed is "?".
-        :param total:
-            If True, the ``total`` parameter will be included in API calls, and
-            the value for the third parameter to the item hook will be the total
-            count of records that match the query. Leaving this as False confers
-            a small performance advantage, as the API in this case does not have
-            to compute the total count of results in the query.
-        :type url: str
-        :type params: dict or None
-        :type page_size: int or None
-        :type total: bool
-        """
-        # Get entity wrapping and validate that the URL being requested is
-        # likely to support pagination:
-        path = self.canonical_path(self.url, url)
-        endpoint = f"GET {path}"
-
-        # Short-circuit to cursor-based pagination if appropriate:
-        if path in self.CURSOR_BASED_PAGINATION_PATHS:
-            return self.iter_cursor(url, params=params)
-
-        nodes = path.split('/')
-        if is_path_param(nodes[-1]):
-            # NOTE: If this happens for a newer API, the path might need to be
-            # added to the EXPAND_PATHS dictionary in
-            # scripts/get_path_list/get_path_list.py, after which
-            # CANONICAL_PATHS will then need to be updated accordingly based on
-            # the new output of the script.
-            raise UrlError(f"Path {path} (URL={url}) is formatted like an " \
-                "individual resource versus a resource collection. It is " \
-                "therefore assumed to not support pagination.")
-        _, wrapper = self.entity_wrappers('GET', path)
-
-        if wrapper is None:
-            raise UrlError(f"Pagination is not supported for {endpoint}.")
-
-        # Parameters to send:
-        data = {}
-        if page_size is None:
-            data['limit'] = self.default_page_size
-        else:
-            data['limit'] = page_size
-        if total:
-            data['total'] = 1
-        if isinstance(params, (dict, list)):
-            # Override defaults with values given:
-            data.update(dict(params))
-
-        more = True
-        offset = 0
-        if params is not None:
-            offset = int(params.get('offset', 0))
-        n = 0
-        while more:
-            # Check the offset and limit:
-            data['offset'] = offset
-            highest_record_index = int(data['offset']) + int(data['limit'])
-            if highest_record_index > ITERATION_LIMIT:
-                iter_limit = '%d'%ITERATION_LIMIT
-                warn(
-                    f"Stopping iter_all on {endpoint} at " \
-                    f"limit+offset={highest_record_index} " \
-                    'as this exceeds the maximum permitted by the API ' \
-                    f"({iter_limit}). The set of results may be incomplete."
-                )
-                return
-
-            # Make the request and validate/unpack the response:
-            r = successful_response(
-                self.get(url, params=data.copy()),
-                context='classic pagination'
-            )
-            body = try_decoding(r)
-            results = unwrap(r, wrapper)
-
-            # Validate and update pagination parameters
-            #
-            # Note, the number of the results in the actual response is always
-            # the most appropriate amount to increment the offset by after
-            # receiving each page. If this is the last page, agination should
-            # stop anyways because the ``more`` parameter should evaluate to
-            # false.
-            #
-            # In short, the reasons why we don't trust the echoed ``limit``
-            # value or stick to the limit requested and hope the server honors
-            # it is that it could potentially result in skipping results or
-            # yielding duplicates if there's a mismatch, or potentially issues
-            # like #61
-            data['limit'] = len(results)
-            offset += data['limit']
-            more = False
-            total_count = '?'
-            if 'more' in body:
-                more = body['more']
-            else:
-                warn(
-                    f"Endpoint GET {path} responded with no \"more\" property" \
-                    ' in the response, so pagination is not supported ' \
-                    '(or this is an API bug). Only results from the first ' \
-                    'request will be yielded. You can use rget with this ' \
-                    'endpoint instead to avoid this warning.'
-                )
-            if 'total' in body:
-                total_count = body['total']
-
-            # Perform per-page actions on the response data
-            for result in results:
-                n += 1
-                # Call a callable object for each item, i.e. to print progress:
-                if hasattr(item_hook, '__call__'):
-                    item_hook(result, n, total_count)
-                yield result
-
-    def iter_cursor(self, url, params=None, item_hook=None) -> Iterator[dict]:
-        """
-        Iterator for results from an endpoint using cursor-based pagination.
-
-        :param url:
-            The index endpoint URL to use.
-        :param params:
-            Query parameters to include in the request.
-        :param item_hook:
-            A callable object that accepts 3 positional arguments; see
-        """
-        path = self.canonical_path(self.url, url)
-        if path not in self.CURSOR_BASED_PAGINATION_PATHS:
-            raise UrlError(f"{path} does not support cursor-based pagination.")
-        _, wrapper = self.entity_wrappers('GET', path)
-        user_params = {}
-        if isinstance(params, (dict, list)):
-            # Override defaults with values given:
-            user_params.update(dict(params))
-
-        more = True
-        next_cursor = None
-        total = 0
-
-        while more:
-            # Update parameters and request a new page:
-            if next_cursor:
-                user_params.update({'cursor': next_cursor})
-            r = successful_response(
-                self.get(url, params=user_params),
-                context='cursor-based pagination',
-            )
-
-            # Unpack and yield results
-            body = try_decoding(r)
-            results = unwrap(r, wrapper)
-            for result in results:
-                total += 1
-                if hasattr(item_hook, '__call__'):
-                    item_hook(result, total, '?')
-                yield result
-            # Advance to the next page
-            next_cursor = body.get('next_cursor', None)
-            more = bool(next_cursor)
-
     @resource_url
     @auto_json
     def jget(self, url, **kw) -> Union[dict, list]:
@@ -1903,18 +1915,6 @@ class RestApiV2Client(GenericRestIshApiClient):
         Performs a PUT request, returning the JSON-decoded body as a dictionary
         """
         return self.put(url, **kw)
-
-    def list_all(self, url, **kw) -> list:
-        """
-        Returns a list of all objects from a given index endpoint.
-
-        All keyword arguments passed to this function are also passed directly
-        to :attr:`iter_all`; see the documentation on that method for details.
-
-        :param url:
-            The index endpoint URL to use.
-        """
-        return list(self.iter_all(url, **kw))
 
     def persist(self, resource, attr, values, update=False):
         """
