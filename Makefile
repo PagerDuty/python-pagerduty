@@ -1,7 +1,7 @@
 %: dist
 
 dist: pagerduty.py setup.py
-	rm -f dist/* && python setup.py sdist
+	rm -f dist/* && python setup.py sdist bdist_wheel --universal
 
 docs/index.html: pagerduty.py README.rst CHANGELOG.rst sphinx/source/conf.py sphinx/source/*.rst
 	rm -fr ./docs && cd sphinx && make html && cd .. && mv sphinx/build/html ./docs && touch ./docs/.nojekyll
@@ -15,4 +15,4 @@ testpublish: dist
 	./publish-test.sh
 
 publish: dist
-	twine upload dist/*.tar.gz
+	twine upload dist/*.tar.gz dist/*.whl
