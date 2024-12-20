@@ -20,7 +20,7 @@
     <link rel="index" title="Index" href="genindex.html" />
     <link rel="search" title="Search" href="search.html" />
     <link rel="next" title="Contribution Guide" href="contributing.html" />
-    <link rel="prev" title="User Guide" href="user_guide.html" /> 
+    <link rel="prev" title="PDPYRAS Migration Guide" href="pdpyras_migration_guide.html" /> 
 </head>
 
 <body class="wy-body-for-nav"> 
@@ -45,6 +45,7 @@
               <ul class="current">
 <li class="toctree-l1"><a class="reference internal" href="changelog.html">Changelog</a></li>
 <li class="toctree-l1"><a class="reference internal" href="user_guide.html">User Guide</a></li>
+<li class="toctree-l1"><a class="reference internal" href="pdpyras_migration_guide.html">PDPYRAS Migration Guide</a></li>
 <li class="toctree-l1 current"><a class="current reference internal" href="#">Module Reference</a><ul>
 <li class="toctree-l2"><a class="reference internal" href="#api-client-classes">API Client Classes</a><ul>
 <li class="toctree-l3"><a class="reference internal" href="#pagerduty.ApiClient"><code class="docutils literal notranslate"><span class="pre">ApiClient</span></code></a><ul>
@@ -89,6 +90,7 @@
 <li class="toctree-l4"><a class="reference internal" href="#pagerduty.RestApiV2Client.postprocess"><code class="docutils literal notranslate"><span class="pre">RestApiV2Client.postprocess()</span></code></a></li>
 <li class="toctree-l4"><a class="reference internal" href="#pagerduty.RestApiV2Client.rdelete"><code class="docutils literal notranslate"><span class="pre">RestApiV2Client.rdelete()</span></code></a></li>
 <li class="toctree-l4"><a class="reference internal" href="#pagerduty.RestApiV2Client.rget"><code class="docutils literal notranslate"><span class="pre">RestApiV2Client.rget()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#pagerduty.RestApiV2Client.rpatch"><code class="docutils literal notranslate"><span class="pre">RestApiV2Client.rpatch()</span></code></a></li>
 <li class="toctree-l4"><a class="reference internal" href="#pagerduty.RestApiV2Client.rpost"><code class="docutils literal notranslate"><span class="pre">RestApiV2Client.rpost()</span></code></a></li>
 <li class="toctree-l4"><a class="reference internal" href="#pagerduty.RestApiV2Client.rput"><code class="docutils literal notranslate"><span class="pre">RestApiV2Client.rput()</span></code></a></li>
 <li class="toctree-l4"><a class="reference internal" href="#pagerduty.RestApiV2Client.subdomain"><code class="docutils literal notranslate"><span class="pre">RestApiV2Client.subdomain</span></code></a></li>
@@ -742,6 +744,17 @@ whose value is the URL of the resource.</p></li>
 </dd></dl>
 
 <dl class="py method">
+<dt class="sig sig-object py" id="pagerduty.RestApiV2Client.rpatch">
+<span class="sig-name descname"><span class="pre">rpatch</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">url</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kw</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#pagerduty.RestApiV2Client.rpatch" title="Permalink to this definition"></a></dt>
+<dd><p>Wrapped-entity-aware PATCH function.</p>
+<p>Currently the only API endpoint that uses or supports this method is “Update
+Workflow Integration Connection”: <code class="docutils literal notranslate"><span class="pre">PATCH</span>
+<span class="pre">/workflows/integrations/{integration_id}/connections/{id}</span></code></p>
+<p>It cannot use the <a class="reference internal" href="#pagerduty.resource_url" title="pagerduty.resource_url"><code class="xref py py-attr docutils literal notranslate"><span class="pre">resource_url</span></code></a> decorator because the schema in that case has no
+<code class="docutils literal notranslate"><span class="pre">self</span></code> property, and so the URL or path must be supplied.</p>
+</dd></dl>
+
+<dl class="py method">
 <dt class="sig sig-object py" id="pagerduty.RestApiV2Client.rpost">
 <span class="sig-name descname"><span class="pre">rpost</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">url</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kw</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#pagerduty.RestApiV2Client.rpost" title="Permalink to this definition"></a></dt>
 <dd><p>Wrapped-entity-aware POST function.</p>
@@ -874,13 +887,19 @@ details on usage of this API, refer to the <a class="reference external" href="h
 
 <dl class="py method">
 <dt class="sig sig-object py" id="pagerduty.EventsApiV2Client.send_change_event">
-<span class="sig-name descname"><span class="pre">send_change_event</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">properties</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#pagerduty.EventsApiV2Client.send_change_event" title="Permalink to this definition"></a></dt>
+<span class="sig-name descname"><span class="pre">send_change_event</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">payload</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">{}</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">links</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">[]</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">routing_key</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#pagerduty.EventsApiV2Client.send_change_event" title="Permalink to this definition"></a></dt>
 <dd><p>Send a change event to the v2 Change Events API.</p>
 <p>See: <a class="reference external" href="https://developer.pagerduty.com/docs/events-api-v2/send-change-events/">https://developer.pagerduty.com/docs/events-api-v2/send-change-events/</a></p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
-<dd class="field-odd"><p><strong>**properties</strong> – <p>Properties to set, i.e. <code class="docutils literal notranslate"><span class="pre">payload</span></code> and <code class="docutils literal notranslate"><span class="pre">links</span></code></p>
-</p>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>payload</strong> – A dictionary object with keys <code class="docutils literal notranslate"><span class="pre">summary</span></code>, <code class="docutils literal notranslate"><span class="pre">source</span></code>, <code class="docutils literal notranslate"><span class="pre">timestamp</span></code> and
+<code class="docutils literal notranslate"><span class="pre">custom_details</span></code> as described in the above documentation.</p></li>
+<li><p><strong>links</strong> – A list of dictionary objects each with keys <code class="docutils literal notranslate"><span class="pre">href</span></code> and <code class="docutils literal notranslate"><span class="pre">text</span></code>
+representing the target and display text of each link</p></li>
+<li><p><strong>routing_key</strong> – (Deprecated) the routing key. The parameter is set automatically to the
+<code class="xref py py-attr docutils literal notranslate"><span class="pre">api_key</span></code> property in the final payload and this argument is ignored.</p></li>
+</ul>
 </dd>
 <dt class="field-even">Returns<span class="colon">:</span></dt>
 <dd class="field-even"><p>The response ID</p>
@@ -914,14 +933,16 @@ this would include <code class="docutils literal notranslate"><span class="pre">
 <dl class="py method">
 <dt class="sig sig-object py" id="pagerduty.EventsApiV2Client.submit">
 <span class="sig-name descname"><span class="pre">submit</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">summary</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">source</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">custom_details</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">links</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">timestamp</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">str</span></span></span><a class="headerlink" href="#pagerduty.EventsApiV2Client.submit" title="Permalink to this definition"></a></dt>
-<dd><p>Submit an incident change</p>
+<dd><p>Submit a change event.</p>
+<p>See: <a class="reference external" href="https://developer.pagerduty.com/docs/send-change-event">https://developer.pagerduty.com/docs/send-change-event</a></p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
-<li><p><strong>summary</strong> (<em>str</em>) – Summary / brief description of the change.</p></li>
-<li><p><strong>source</strong> (<em>str</em>) – A human-readable name identifying the source of the change.</p></li>
-<li><p><strong>custom_details</strong> (<em>dict</em>) – The <code class="docutils literal notranslate"><span class="pre">payload.custom_details</span></code> property of the payload.</p></li>
-<li><p><strong>links</strong> (<em>list</em>) – Set the <code class="docutils literal notranslate"><span class="pre">links</span></code> property of the event.</p></li>
+<li><p><strong>summary</strong> (<em>str</em>) – Summary / brief description of the change, for <code class="docutils literal notranslate"><span class="pre">payload.summary</span></code>.</p></li>
+<li><p><strong>source</strong> (<em>str</em>) – A human-readable name identifying the source of the change, for the
+<code class="docutils literal notranslate"><span class="pre">payload.source</span></code> event property.</p></li>
+<li><p><strong>custom_details</strong> (<em>dict</em>) – A dictionary object to use as the <code class="docutils literal notranslate"><span class="pre">payload.custom_details</span></code> property.</p></li>
+<li><p><strong>links</strong> (<em>list</em>) – A list of dict objects to use as the <code class="docutils literal notranslate"><span class="pre">links</span></code> property of the event.</p></li>
 <li><p><strong>timestamp</strong> (<em>str</em>) – Specifies an event timestamp. Must be an ISO8601-format date/time.</p></li>
 </ul>
 </dd>
@@ -1321,13 +1342,14 @@ prepended.</p>
 <p>Miscellaneous functions</p>
 <span class="target" id="module-3"></span><dl class="py function">
 <dt class="sig sig-object py" id="pagerduty.deprecated_kwarg">
-<span class="sig-prename descclassname"><span class="pre">pagerduty.</span></span><span class="sig-name descname"><span class="pre">deprecated_kwarg</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">deprecated_name</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">details</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#pagerduty.deprecated_kwarg" title="Permalink to this definition"></a></dt>
+<span class="sig-prename descclassname"><span class="pre">pagerduty.</span></span><span class="sig-name descname"><span class="pre">deprecated_kwarg</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">deprecated_name</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">details</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">method</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#pagerduty.deprecated_kwarg" title="Permalink to this definition"></a></dt>
 <dd><p>Raises a warning if a deprecated keyword argument is used.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
 <li><p><strong>deprecated_name</strong> – The name of the deprecated function</p></li>
 <li><p><strong>details</strong> – An optional message to append to the deprecation message</p></li>
+<li><p><strong>method</strong> – An optional method name</p></li>
 </ul>
 </dd>
 </dl>
@@ -1429,7 +1451,7 @@ otherwise.</p>
            </div>
           </div>
           <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
-        <a href="user_guide.html" class="btn btn-neutral float-left" title="User Guide" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+        <a href="pdpyras_migration_guide.html" class="btn btn-neutral float-left" title="PDPYRAS Migration Guide" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
         <a href="contributing.html" class="btn btn-neutral float-right" title="Contribution Guide" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
     </div>
 

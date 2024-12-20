@@ -17,5 +17,6 @@ Table of Contents
 
    changelog
    user_guide
+   pdpyras_migration_guide
    module_reference
    contributing

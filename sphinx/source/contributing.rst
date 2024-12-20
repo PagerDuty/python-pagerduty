@@ -35,6 +35,82 @@ the root path of the repository will run the unit test suite:
 
     ./test_pagerduty.py
 
+Maintaining Entity Wrapper Configuration
+----------------------------------------
+Typically, but not for all endpoints, the key ("wrapper name") in the request
+or response schema can be inferred from the last or second to last node of the
+endpoint URL's path. The wrapper name is a singular noun for an individual
+resource or plural for a collection of resources.
+
+When new endpoints are added to REST API v2, and they don't follow this
+orthodox schema pattern, the client's pagination and entity wrapping methods
+have no a-priori way of supporting them because the wrapper name cannot be
+inferred from the endpoint path.
+
+Introduction
+************
+To support the growing list of schema antipatterns in the PagerDuty product
+REST API v2, a system was created (originally in `pdpyras`_ version 5.0.0) to
+work around them and codify the deviations from orthodox patterns with minimal
+hard-coded changes to the client. This system works by identifying endpoints
+according to their "canonical path", that is to say the path portion of the
+endpoint URL with ``{name}`` placeholders for variable/identifiers. The
+canonical path is then used as an identifier to perform a hash lookup of
+antipattern-handling configuration.
+
+This system requires two global variables that must be manually maintained:
+
+* :attr:`CANONICAL_PATHS`, the list of canonical paths
+* :attr:`ENTITY_WRAPPER_CONFIG`, a dictionary of exceptions to entity wrapping and schema conventions
+
+Limitations
+***********
+There are three main categories of antipatterns:
+
+1. Entity wrapping is present but doesn't follow the original schema convention
+2. There may or may not be wrapping but pagination is not implemented according to standards
+3. There is no entity wrapping
+
+In the first case, If the endpoint's schema wraps entities but the wrapper name
+doesn't follow from the path, entity wrapping can still be supported. If
+classic pagination or cursor-based pagination is correctly implemented in the
+new API, the automatic pagination methods can also support it once the
+antipattern configuration entry is added.
+
+However, if there is no entity wrapping, or pagination is not implemented
+according to documented standards, automatic pagination cannot be supported for
+resource collection endpoints.
+
+Adding Support for New Endpoints
+********************************
+The first step for adding support for new APIs is to have a copy of the API
+Reference source code (this is a private GitHub repository owned by the
+PagerDuty org). The script ``scripts/get_path_list/get_path_list.py`` can then
+be used to automatically generate definitions of the global variables
+:attr:`CANONICAL_PATHS` and :attr:`CURSOR_BASED_PAGINATION_PATHS` that can be
+copied into the source code to replace the existing definitions. The script
+takes one argument: a path to the file ``reference/v2/Index.yaml`` within the
+reference source repository.
+
+The next step is to look at the documentation, for each new endpoint added to
+the canonical path list, to see if it follows classic schema conventions for
+entity wrapping. If any new path does not, adding support for it will also
+require adding entries to :attr:`pagerduty.ENTITY_WRAPPER_CONFIG`.
+
+Following the same examples as given in the :ref:`user_guide`:  the entry in
+:attr:`ENTITY_WRAPPER_CONFIG` to handle the "Create Business Service
+Subscribers" looks like this:
+
+.. code-block:: python
+
+    'POST /business_services/{id}/subscribers': ('subscribers', 'subscriptions'),
+
+The "Create one or more overrides" API endpoint entry looks like this:
+
+.. code-block:: python
+
+    'POST /schedules/{id}/overrides': ('overrides', None),
+
 
 Updating Documentation
 ----------------------
