@@ -21,7 +21,7 @@ where it will be used.
 
 Authentication
 --------------
-The first step is to construct a session object. The first argument to the
+The first step is to construct a client object. The first argument to the
 constructor is the secret to use for accessing the API:
 
 .. code-block:: python
@@ -29,28 +29,28 @@ constructor is the secret to use for accessing the API:
     import pagerduty
 
     # REST API v2:
-    session = pagerduty.RestApiV2Client(API_KEY)
+    client = pagerduty.RestApiV2Client(API_KEY)
 
     # REST API v2 with an OAuth2 access token:
-    session_oauth = pagerduty.RestApiV2Client(OAUTH_TOKEN, auth_type='oauth2')
+    client_oauth = pagerduty.RestApiV2Client(OAUTH_TOKEN, auth_type='oauth2')
 
     # Events API v2:
-    events_session = pagerduty.EventsApiV2Client(ROUTING_KEY)
+    events_client = pagerduty.EventsApiV2Client(ROUTING_KEY)
 
-    # A special session class for the change events API (part of Events API v2):
-    change_events_session = pagerduty.EventsApiV2Client(ROUTING_KEY)
+    # A special client class for the change events API (part of Events API v2):
+    change_events_client = pagerduty.EventsApiV2Client(ROUTING_KEY)
 
 Session objects, being descendants of `requests.Session`_, can also be used as
 context managers. For example:
 
 .. code-block:: python
 
-    with pagerduty.RestApiV2Client(API_KEY) as session:
-        do_application(session)
+    with pagerduty.RestApiV2Client(API_KEY) as client:
+        do_application(client)
 
 The From header
 ***************
-If the `REST API v2`_ session will be used for API endpoints that require a
+If the `REST API v2`_ client will be used for API endpoints that require a
 ``From`` header, such as those that take actions on incidents, and if it is
 using an account-level API key (created by an administrator via the "API Access
 Keys" page in the "Integrations" menu), the user must also supply the
@@ -71,9 +71,9 @@ documented `API Access URLs
 .. code-block:: python
 
     # REST API
-    session.url = 'https://api.eu.pagerduty.com'
+    client.url = 'https://api.eu.pagerduty.com'
     # Events API:
-    events_session.url = 'https://events.eu.pagerduty.com'
+    events_client.url = 'https://events.eu.pagerduty.com'
 
 Basic Usage Examples
 --------------------
@@ -87,16 +87,16 @@ and having them represented as a dictionary object using three different methods
 .. code-block:: python
 
     # Using get:
-    response = session.get('/users/PABC123')
+    response = client.get('/users/PABC123')
     user = None
     if response.ok:
         user = response.json()['user']
 
     # Using jget (return the full body after decoding):
-    user = session.jget('/users/PABC123')['user']
+    user = client.jget('/users/PABC123')['user']
 
     # Using rget (return the response entity after unwrapping):
-    user = session.rget('/users/PABC123')
+    user = client.rget('/users/PABC123')
 
     # >>> user
     # {"type": "user", "email": "user@example.com", ... }
@@ -107,7 +107,7 @@ and having them represented as a dictionary object using three different methods
 .. code-block:: python
 
     # Print each user's email address and name:
-    for user in session.iter_all('users'):
+    for user in client.iter_all('users'):
         print(user['id'], user['email'], user['name'])
 
 **Pagination with query parameters:** set the ``params`` keyword argument, which is 
@@ -116,7 +116,7 @@ converted to URL query parameters by Requests_:
 .. code-block:: python
 
     # Get a list of all services with "SN" in their name:
-    services = session.list_all('services', params={'query': 'SN'})
+    services = client.list_all('services', params={'query': 'SN'})
 
     # >>> services
     # [{'type':'service', ...}, ...]
@@ -127,7 +127,7 @@ matching a string using the ``query`` parameter on an index endpoint:
 .. code-block:: python
 
     # Find the user with email address "jane@example35.com"
-    user = session.find('users', 'jane@example35.com', attribute='email')
+    user = client.find('users', 'jane@example35.com', attribute='email')
 
     # >>> user
     # {'type': 'user', 'email': 'jane@example35.com', ...}
@@ -141,7 +141,7 @@ matching a string using the ``query`` parameter on an index endpoint:
 
     # (1) using put directly:
     updated_user = None
-    response = session.put(user['self'], json={
+    response = client.put(user['self'], json={
         'user': {
             'type':'user',
             'name': 'Jane Doe'
@@ -154,7 +154,7 @@ matching a string using the ``query`` parameter on an index endpoint:
     #   - The URL argument can be the dictionary representation
     #   - The json argument doesn't have to include the "user" wrapper dict
     try:
-        updated_user = session.rput(user, json={
+        updated_user = client.rput(user, json={
             'type':'user',
             'name': 'Jane Doe'
         })
@@ -169,7 +169,7 @@ matching a string using the ``query`` parameter on an index endpoint:
     # user_data, using the 'email' key as the uniquely identifying property,
     # and update it if it exists and differs from user_data:
     user_data = {'email': 'user123@example.com', 'name': 'User McUserson'}
-    updated_user = session.persist('users', 'email', user_data, update=True)
+    updated_user = client.persist('users', 'email', user_data, update=True)
 
 **Using multi-valued set filters:** set the value in the ``params`` dictionary
 at the appropriate key to a list. Square brackets will then be automatically
@@ -180,7 +180,7 @@ the paramter name to denote a set type filter. For example:
 .. code-block:: python
 
     # Query all open incidents assigned to a user
-    incidents = session.list_all(
+    incidents = client.list_all(
         'incidents',
         params={
           'user_ids[]':['PHIJ789'], # (Necessary in < 4.4.0, compatible with >= 4.4.0)
@@ -196,13 +196,13 @@ the paramter name to denote a set type filter. For example:
 .. code-block:: python
 
     # Acknowledge all triggered incidents assigned to a user:
-    incidents = session.list_all(
+    incidents = client.list_all(
         'incidents',
         params={'user_ids':['PHIJ789'],'statuses':['triggered']}
     )
     for i in incidents:
         i['status'] = 'acknowledged'
-    updated_incidents = session.rput('incidents', json=incidents)
+    updated_incidents = client.rput('incidents', json=incidents)
 
 Events API v2
 *************
@@ -210,35 +210,35 @@ Events API v2
 
 .. code-block:: python
 
-    dedup_key = events_session.trigger("Server is on fire", 'dusty.old.server.net') 
+    dedup_key = events_client.trigger("Server is on fire", 'dusty.old.server.net') 
     # ...
-    events_session.resolve(dedup_key)
+    events_client.resolve(dedup_key)
 
 **Trigger an alert and acknowledge it** using a custom deduplication key:
 
 .. code-block:: python
 
-    events_session.trigger("Server is on fire", 'dusty.old.server.net',
+    events_client.trigger("Server is on fire", 'dusty.old.server.net',
         dedup_key='abc123')
     # ...
-    events_session.acknowledge('abc123')
+    events_client.acknowledge('abc123')
 
 **Submit a change event** using a :class:`EventsApiV2Client` instance:
 
 .. code-block:: python
 
-    change_events_session.submit("new build finished at latest HEAD",
+    change_events_client.submit("new build finished at latest HEAD",
         source="automation")
 
 Generic Client Features
 -----------------------
 Generally, all of the features of `requests.Session`_ are available to the user
 as they would be if using the Requests Python library directly, since
-:class:`pagerduty.PDSession` and its subclasses for the REST/Events APIs are
+:class:`pagerduty.ApiClient` and its subclasses for the REST/Events APIs are
 descendants of it. 
 
 The ``get``, ``post``, ``put`` and ``delete`` methods of REST/Events API
-session classes are similar to the analogous functions in `requests.Session`_.
+client classes are similar to the analogous functions in `requests.Session`_.
 The arguments they accept are the same and they all return `requests.Response`_
 objects.
 
@@ -251,7 +251,7 @@ to the Requests_ documentation.
 
 URLs
 ----
-The first argument to most of the session methods is the URL. However, there is
+The first argument to most of the client methods is the URL. However, there is
 no need to specify a complete API URL. Any path relative to the root of the
 API, whether or not it includes a leading slash, is automatically normalized to
 a complete API URL.  For instance, one can specify ``users/PABC123`` or
@@ -275,7 +275,7 @@ query string in the final URL of the request:
 
 .. code-block:: python
 
-    first_dan = session.rget('users', params={
+    first_dan = client.rget('users', params={
         'query': 'Dan',
         'limit': 1,
         'offset': 0,
@@ -291,7 +291,7 @@ then ``[]`` will be automatically appended to the parameter name.
 
     # If there are 82 services with name matching "foo" this will return all of
     # them as a list:
-    foo_services = session.list_all('services', params={
+    foo_services = client.list_all('services', params={
         'query': 'foo',
         'include': ['escalation_policies', 'teams'],
         'limit': 50,
@@ -315,7 +315,7 @@ obtained:
 
 .. code-block:: python
 
-    response = session.get('incidents')
+    response = client.get('incidents')
     # The UUID of the API request, which can be supplied to PagerDuty Customer
     # Support in the event of server errors (status 5xx):
     print(response.headers['x-request-id'])
@@ -376,9 +376,9 @@ Using the example given in the API reference page:
     }
     ep['escalation_rules'].append(new_rule)
     # Save changes:
-    session.rput(ep, json=ep)
+    client.rput(ep, json=ep)
 
-Resource schemas
+Resource Schemas
 ****************
 Main article: `Resource Schemas <https://developer.pagerduty.com/docs/ZG9jOjExMDI5NTU5-resource-schemas>`_
 
@@ -502,16 +502,16 @@ For example:
 
     # Example: Find all users with "Dav" in their name/email (i.e. Dave/David)
     # in the PagerDuty account:
-    for dave in session.iter_all('users', params={'query':"Dav"}):
+    for dave in client.iter_all('users', params={'query':"Dav"}):
         print("%s <%s>"%(dave['name'], dave['email']))
 
     # Example: Get a dictionary of all users, keyed by email, and use it to
     # find the ID of the user whose email is ``bob@example.com``
-    users = session.dict_all('users', by='email')
+    users = client.dict_all('users', by='email')
     print(users['bob@example.com']['id'])
 
     # Same as above, but using ``find``:
-    bob = session.find('users', 'bob@example.com', attribute='email')
+    bob = client.find('users', 'bob@example.com', attribute='email')
     print(bob['id'])
 
 Performance and Completeness of Results
@@ -570,7 +570,7 @@ For instance, to resolve two incidents with IDs ``PABC123`` and ``PDEF456``:
 
 .. code-block:: python
 
-    session.rput(
+    client.rput(
         "incidents",
         json=[
             {'id':'PABC123','type':'incident_reference', 'status':'resolved'},
@@ -586,7 +586,7 @@ user-scoped access token or setting the ``From`` header to the login email
 address of a valid PagerDuty user. To set this, pass it through using the
 ``headers`` keyword argument, or set the
 :attr:`pagerduty.RestApiV2Client.default_from` property, or pass the email address as
-the ``default_from`` keyword argument when constructing the session initially.
+the ``default_from`` keyword argument when constructing the client initially.
 
 Error Handling
 --------------
@@ -609,7 +609,7 @@ exception if it's any other HTTP error code:
 .. code-block:: python
 
     try:
-        user = session.rget("/users/PJKL678")
+        user = client.rget("/users/PJKL678")
         print(user['email'])
 
     except pagerduty.HttpError as e:
@@ -620,7 +620,7 @@ exception if it's any other HTTP error code:
 
 Logging
 -------
-When a session is created, a
+When a client object is instantiated, a
 `Logger object <https://docs.python.org/3/library/logging.html#logger-objects>`_
 is created as follows:
 
@@ -632,28 +632,28 @@ is created as follows:
   handlers is left to the discretion of the user (see `logging.handlers
   <https://docs.python.org/3/library/logging.handlers.html>`_)
 * The logger can be accessed and set through the property
-  :attr:`pagerduty.PDSession.log`.
+  :attr:`pagerduty.ApiClient.log`.
 
-In v5.0.0 and later, the attribute :attr:`pagerduty.PDSession.print_debug` was
-introduced to enable sending debug-level log messages from the client to
-command line output. It is used as follows:
+The attribute :attr:`pagerduty.ApiClient.print_debug` enables sending
+debug-level log messages from the client to command line output. It is used as
+follows:
 
 .. code-block:: python
 
-    # Method 1: keyword argument, when constructing a new session:
-    session = pagerduty.RestApiV2Client(api_key, debug=True)
+    # Method 1: keyword argument, when constructing a new client:
+    client = pagerduty.RestApiV2Client(api_key, debug=True)
 
-    # Method 2: on an existing session, by setting the property:
-    session.print_debug = True
+    # Method 2: on an existing client, by setting the property:
+    client.print_debug = True
 
     # to disable:
-    session.print_debug = False
+    client.print_debug = False
 
 What this does is assign a `logging.StreamHandler
 <https://docs.python.org/3/library/logging.handlers.html#streamhandler>`_
-directly to the session's logger and set the log level to ``logging.DEBUG``.
+directly to the client's logger and set the log level to ``logging.DEBUG``.
 All log messages are then sent directly to ``sys.stderr``. The default value
-for all sessions is ``False``, and it is recommended to keep it that way in
+for all clients is ``False``, and it is recommended to keep it that way in
 production systems.
 
 Using a Proxy Server
@@ -664,7 +664,7 @@ To configure the client to use a host as a proxy for HTTPS traffic, update the
 .. code-block:: python
 
     # Host 10.42.187.3 port 4012 protocol https:
-    session.proxies.update({'https': '10.42.187.3:4012'})
+    client.proxies.update({'https': '10.42.187.3:4012'})
 
 HTTP Retry Configuration
 ------------------------
@@ -673,19 +673,19 @@ response or if they encounter a network error.
 
 This behavior is configurable through the following properties:
 
-* :attr:`pagerduty.PDSession.retry`: a dictionary that allows defining per-HTTP-status retry limits
-* :attr:`pagerduty.PDSession.max_http_attempts`: The maximum total number of unsuccessful requests to make in the retry loop of :attr:`pagerduty.PDSession.request` before returning
-* :attr:`pagerduty.PDSession.max_network_attempts`: The maximum number of retries that will be attempted in the case of network or non-HTTP error
-* :attr:`pagerduty.PDSession.sleep_timer`: The initial cooldown factor
-* :attr:`pagerduty.PDSession.sleep_timer_base`: Factor by which the cooldown time is increased after each unsuccessful attempt
-* :attr:`pagerduty.PDSession.stagger_cooldown`: Randomizing factor for increasing successive cooldown wait times
+* :attr:`pagerduty.ApiClient.retry`: a dictionary that allows defining per-HTTP-status retry limits
+* :attr:`pagerduty.ApiClient.max_http_attempts`: The maximum total number of unsuccessful requests to make in the retry loop of :attr:`pagerduty.ApiClient.request` before returning
+* :attr:`pagerduty.ApiClient.max_network_attempts`: The maximum number of retries that will be attempted in the case of network or non-HTTP error
+* :attr:`pagerduty.ApiClient.sleep_timer`: The initial cooldown factor
+* :attr:`pagerduty.ApiClient.sleep_timer_base`: Factor by which the cooldown time is increased after each unsuccessful attempt
+* :attr:`pagerduty.ApiClient.stagger_cooldown`: Randomizing factor for increasing successive cooldown wait times
 
 Default Behavior
 ****************
-By default, after receiving a status 429 response, sessions will retry an
+By default, after receiving a status 429 response, clients will retry an
 unlimited number of times, increasing the wait time before retry each
 successive time.  When encountering status ``401 Unauthorized``, the client
-will immediately raise ``pagerduty.Error``; this is a non-transient error
+will immediately raise :attr:`pagerduty.HttpError`; this is a non-transient error
 caused by an invalid credential.
 
 For all other success or error statuses, the underlying request method in the
@@ -698,10 +698,10 @@ increases exponentially with each retry.
 
 Let:
 
-* a = :attr:`pagerduty.PDSession.sleep_timer_base`
+* a = :attr:`pagerduty.ApiClient.sleep_timer_base`
 * t\ :sub:`0` = ``sleep_timer``
 * t\ :sub:`n` = Sleep time after n attempts
-* ρ = :attr:`pagerduty.PDSession.stagger_cooldown`
+* ρ = :attr:`pagerduty.ApiClient.stagger_cooldown`
 * r\ :sub:`n` = a randomly-generated real number between 0 and 1, distinct for each n-th request
 
 Assuming ρ = 0:
@@ -714,7 +714,7 @@ t\ :sub:`n` = a (1 + ρ r\ :sub:`n`) t\ :sub:`n-1`
 
 Configuring Retry Behavior
 **************************
-The dictionary property :attr:`pagerduty.PDSession.retry` allows customization of
+The dictionary property :attr:`pagerduty.ApiClient.retry` allows customization of
 HTTP retry limits on a per-HTTP-status basis. This includes the ability to
 override the above defaults for 401 and 429, although that is not recommended.
 
@@ -725,9 +725,9 @@ that status. **Success statuses (2xx) will be ignored.**
 If a different error status is encountered on a retry, it won't count towards
 the limit of the first status, but will be counted separately. However, the
 total overall number of attempts that will be made to get a success status is
-limited by :attr:`pagerduty.PDSession.max_http_attempts`. This will always
+limited by :attr:`pagerduty.ApiClient.max_http_attempts`. This will always
 supersede the maximum number of retries for any status defined in
-:attr:`pagerduty.PDSession.retry` if it is lower.
+:attr:`pagerduty.ApiClient.retry` if it is lower.
 
 Low-level HTTP request functions in client classes, i.e. ``get``, will return
 `requests.Response`_ objects when they run out of retries. Higher-level
@@ -744,16 +744,16 @@ the configured retry limits are reached in the underlying HTTP request methods.
     # This will take about 30 seconds plus API request time, carrying out four
     # attempts with 2, 4, 8 and 16 second pauses between them, before finally
     # returning the status 404 response object for the user that doesn't exist:
-    session.max_http_attempts = 4 # lower value takes effect
-    session.retry[404] = 5 # this won't take effect
-    session.sleep_timer = 1
-    session.sleep_timer_base = 2
-    response = session.get('/users/PNOEXST')
+    client.max_http_attempts = 4 # lower value takes effect
+    client.retry[404] = 5 # this won't take effect
+    client.sleep_timer = 1
+    client.sleep_timer_base = 2
+    response = client.get('/users/PNOEXST')
 
     # Same as the above, but with the per-status limit taking precedence, so
     # the total wait time is 62 seconds:
-    session.max_http_attempts = 6
-    response = session.get('/users/PNOEXST')
+    client.max_http_attempts = 6
+    response = client.get('/users/PNOEXST')
 
 .. References:
 .. -----------
