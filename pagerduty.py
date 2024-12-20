@@ -68,12 +68,22 @@ CANONICAL_PATHS = [
     '/abilities/{id}',
     '/addons',
     '/addons/{id}',
+    '/alert_grouping_settings',
+    '/alert_grouping_settings/{id}',
     '/analytics/metrics/incidents/all',
+    '/analytics/metrics/incidents/escalation_policies',
+    '/analytics/metrics/incidents/escalation_policies/all',
     '/analytics/metrics/incidents/services',
+    '/analytics/metrics/incidents/services/all',
     '/analytics/metrics/incidents/teams',
+    '/analytics/metrics/incidents/teams/all',
+    '/analytics/metrics/pd_advance_usage/features',
+    '/analytics/metrics/responders/all',
+    '/analytics/metrics/responders/teams',
     '/analytics/raw/incidents',
     '/analytics/raw/incidents/{id}',
     '/analytics/raw/incidents/{id}/responses',
+    '/analytics/raw/responders/{responder_id}/incidents',
     '/audit/records',
     '/automation_actions/actions',
     '/automation_actions/actions/{id}',
@@ -99,26 +109,23 @@ CANONICAL_PATHS = [
     '/business_services/priority_thresholds',
     '/change_events',
     '/change_events/{id}',
-    '/customfields/fields',
-    '/customfields/fields/{field_id}',
-    '/customfields/fields/{field_id}/field_options',
-    '/customfields/fields/{field_id}/field_options/{field_option_id}',
-    '/customfields/fields/{field_id}/schemas',
-    '/customfields/schema_assignments',
-    '/customfields/schema_assignments/{id}',
-    '/customfields/schemas',
-    '/customfields/schemas/{schema_id}',
-    '/customfields/schemas/{schema_id}/field_configurations',
-    '/customfields/schemas/{schema_id}/field_configurations/{field_configuration_id}',
     '/escalation_policies',
     '/escalation_policies/{id}',
     '/escalation_policies/{id}/audit/records',
     '/event_orchestrations',
     '/event_orchestrations/{id}',
+    '/event_orchestrations/{id}/integrations',
+    '/event_orchestrations/{id}/integrations/{integration_id}',
+    '/event_orchestrations/{id}/integrations/migration',
+    '/event_orchestrations/{id}/global',
     '/event_orchestrations/{id}/router',
     '/event_orchestrations/{id}/unrouted',
-    '/event_orchestrations/services/{id}',
-    '/event_orchestrations/services/{id}/active',
+    '/event_orchestrations/services/{service_id}',
+    '/event_orchestrations/services/{service_id}/active',
+    '/event_orchestrations/{id}/cache_variables',
+    '/event_orchestrations/{id}/cache_variables/{cache_variable_id}',
+    '/event_orchestrations/services/{service_id}/cache_variables',
+    '/event_orchestrations/services/{service_id}/cache_variables/{cache_variable_id}',
     '/extension_schemas',
     '/extension_schemas/{id}',
     '/extensions',
@@ -139,8 +146,7 @@ CANONICAL_PATHS = [
     '/incidents/{id}/alerts/{alert_id}',
     '/incidents/{id}/business_services/{business_service_id}/impacts',
     '/incidents/{id}/business_services/impacts',
-    '/incidents/{id}/field_values',
-    '/incidents/{id}/field_values/schema',
+    '/incidents/{id}/custom_fields/values',
     '/incidents/{id}/log_entries',
     '/incidents/{id}/merge',
     '/incidents/{id}/notes',
@@ -154,6 +160,10 @@ CANONICAL_PATHS = [
     '/incidents/{id}/status_updates/subscribers',
     '/incidents/{id}/status_updates/unsubscribe',
     '/incidents/count',
+    '/incidents/custom_fields',
+    '/incidents/custom_fields/{field_id}',
+    '/incidents/custom_fields/{field_id}/field_options',
+    '/incidents/custom_fields/{field_id}/field_options/{field_option_id}',
     '/license_allocations',
     '/licenses',
     '/log_entries',
@@ -162,6 +172,8 @@ CANONICAL_PATHS = [
     '/maintenance_windows',
     '/maintenance_windows/{id}',
     '/notifications',
+    '/oauth_delegations',
+    '/oauth_delegations/revocation_requests/status',
     '/oncalls',
     '/paused_incident_reports/alerts',
     '/paused_incident_reports/counts',
@@ -191,12 +203,33 @@ CANONICAL_PATHS = [
     '/services/{id}/integrations',
     '/services/{id}/integrations/{integration_id}',
     '/services/{id}/rules',
+    '/services/{id}/rules/convert',
     '/services/{id}/rules/{rule_id}',
+    '/standards',
+    '/standards/{id}',
+    '/standards/scores/{resource_type}',
+    '/standards/scores/{resource_type}/{id}',
     '/status_dashboards',
     '/status_dashboards/{id}',
     '/status_dashboards/{id}/service_impacts',
     '/status_dashboards/url_slugs/{url_slug}',
     '/status_dashboards/url_slugs/{url_slug}/service_impacts',
+    '/status_pages',
+    '/status_pages/{id}/impacts',
+    '/status_pages/{id}/impacts/{impact_id}',
+    '/status_pages/{id}/services',
+    '/status_pages/{id}/services/{service_id}',
+    '/status_pages/{id}/severities',
+    '/status_pages/{id}/severities/{severity_id}',
+    '/status_pages/{id}/statuses',
+    '/status_pages/{id}/statuses/{status_id}',
+    '/status_pages/{id}/posts',
+    '/status_pages/{id}/posts/{post_id}',
+    '/status_pages/{id}/posts/{post_id}/post_updates',
+    '/status_pages/{id}/posts/{post_id}/post_updates/{post_update_id}',
+    '/status_pages/{id}/posts/{post_id}/postmortem',
+    '/status_pages/{id}/subscriptions',
+    '/status_pages/{id}/subscriptions/{subscription_id}',
     '/tags',
     '/tags/{id}',
     '/tags/{id}/users',
@@ -213,6 +246,7 @@ CANONICAL_PATHS = [
     '/templates',
     '/templates/{id}',
     '/templates/{id}/render',
+    '/templates/fields',
     '/users',
     '/users/{id}',
     '/users/{id}/audit/records',
@@ -236,6 +270,11 @@ CANONICAL_PATHS = [
     '/webhook_subscriptions/{id}',
     '/webhook_subscriptions/{id}/enable',
     '/webhook_subscriptions/{id}/ping',
+    '/workflows/integrations',
+    '/workflows/integrations/{id}',
+    '/workflows/integrations/connections',
+    '/workflows/integrations/{integration_id}/connections',
+    '/workflows/integrations/{integration_id}/connections/{id}',
 ]
 """
 Explicit list of supported canonical REST API v2 paths
@@ -254,6 +293,9 @@ CURSOR_BASED_PAGINATION_PATHS = [
     '/services/{id}/audit/records',
     '/teams/{id}/audit/records',
     '/users/{id}/audit/records',
+    '/workflows/integrations',
+    '/workflows/integrations/connections',
+    '/workflows/integrations/{integration_id}/connections',
 ]
 """
 Explicit list of paths that support cursor-based pagination
@@ -264,8 +306,15 @@ Explicit list of paths that support cursor-based pagination
 ENTITY_WRAPPER_CONFIG = {
     # Analytics
     '* /analytics/metrics/incidents/all': None,
+    '* /analytics/metrics/incidents/escalation_policies': None,
+    '* /analytics/metrics/incidents/escalation_policies/all': None,
     '* /analytics/metrics/incidents/services': None,
+    '* /analytics/metrics/incidents/services/all': None,
     '* /analytics/metrics/incidents/teams': None,
+    '* /analytics/metrics/incidents/teams/all': None,
+    '* /analytics/metrics/pd_advance_usage/features': None,
+    '* /analytics/metrics/responders/all': None,
+    '* /analytics/metrics/responders/teams': None,
     '* /analytics/raw/incidents': None,
     '* /analytics/raw/incidents/{id}': None,
     '* /analytics/raw/incidents/{id}/responses': None,
@@ -291,11 +340,13 @@ ENTITY_WRAPPER_CONFIG = {
 
     # Event Orchestrations
     '* /event_orchestrations': 'orchestrations',
-    '* /event_orchestrations/{id}': 'orchestration',
-    '* /event_orchestrations/{id}/router': 'orchestration_path',
-    '* /event_orchestrations/{id}/unrouted': 'orchestration_path',
     '* /event_orchestrations/services/{id}': 'orchestration_path',
     '* /event_orchestrations/services/{id}/active': None,
+    '* /event_orchestrations/{id}': 'orchestration',
+    '* /event_orchestrations/{id}/global': 'orchestration_path',
+    '* /event_orchestrations/{id}/integrations/migration': None,
+    '* /event_orchestrations/{id}/router': 'orchestration_path',
+    '* /event_orchestrations/{id}/unrouted': 'orchestration_path',
 
     # Extensions
     'POST /extensions/{id}/enable': (None, 'extension'),
@@ -310,6 +361,16 @@ ENTITY_WRAPPER_CONFIG = {
     'POST /incidents/{id}/status_updates/unsubscribe': ('subscribers', None),
     'GET /incidents/{id}/business_services/impacts': 'services',
     'PUT /incidents/{id}/business_services/{business_service_id}/impacts': None,
+    '* /incidents/{id}/custom_fields/values': 'custom_fields',
+    'POST /incidents/{id}/responder_requests': None,
+
+    # Incident Custom Fields
+    '* /incidents/custom_fields': ('field', 'fields'),
+    '* /incidents/custom_fields/{field_id}': 'field',
+
+    # Incident Types
+    # TODO: Update after this is GA and no longer early-access (for now we are manually
+    # excluding the canonical paths in the update)
 
     # Incident Workflows
     'POST /incident_workflows/{id}/instances': 'incident_workflow_instance',
@@ -333,6 +394,9 @@ ENTITY_WRAPPER_CONFIG = {
     'GET /status_dashboards/url_slugs/{url_slug}': 'status_dashboard',
     'GET /status_dashboards/url_slugs/{url_slug}/service_impacts': 'services',
 
+    # Status Pages
+    # Adheres to orthodox API conventions / fully supported via inference from path
+
     # Tags
     'POST /{entity_type}/{id}/change_tags': None,
 
@@ -352,6 +416,12 @@ ENTITY_WRAPPER_CONFIG = {
     'GET /users/{id}/sessions': 'user_sessions',
     'GET /users/{id}/sessions/{type}/{session_id}': 'user_session',
     'GET /users/me': 'user',
+
+    # Workflow Integrations
+    # Adheres to orthodox API conventions / fully supported via inference from path
+
+    # OAuth Delegations
+    'GET /oauth_delegations/revocation_requests/status': None
 } #: :meta hide-value:
 """
 Wrapped entities antipattern handling configuration.
@@ -654,10 +724,19 @@ def resource_url(method):
     need to re-construct the resource URL or hold it in a temporary variable.
     """
     doc = method.__doc__
+    name = method.__name__
     def call(self, resource, **kw):
         url = resource
-        if type(resource) is dict and 'self' in resource: # passing an object
-            url = resource['self']
+        if type(resource) is dict:
+            if 'self' in resource: # passing an object
+                url = resource['self']
+            else:
+                # Unsupported APIs for this feature:
+                raise UrlError(f"The dict object passed to {name} in place of a URL "
+                    "has no 'self' key and cannot be used in place of an API resource "
+                    "URL. The schema of the API endpoint in use probably does not "
+                    "include this property, in which case this feature does not "
+                    "support that endpoint.")
         elif type(resource) is not str:
             name = method.__name__
             raise UrlError(f"Value passed to {name} is not a str or dict with "
@@ -2053,6 +2132,19 @@ class RestApiV2Client(ApiClient):
         :type resource: str or dict
         """
         return self.get(resource, **kw)
+
+    @wrapped_entities
+    def rpatch(self, path, **kw) -> dict:
+        """
+        Wrapped-entity-aware PATCH function.
+
+        Currently the only API endpoint that uses or supports this method is "Update
+        Workflow Integration Connection": ``PATCH
+        /workflows/integrations/{integration_id}/connections/{id}``
+
+        It cannot use the :attr:`resource_url` decorator because the schema in that case has no
+        ``self`` property, and so the URL or path must be supplied.
+        """
 
     @wrapped_entities
     def rpost(self, path, **kw) -> Union[dict, list]:
