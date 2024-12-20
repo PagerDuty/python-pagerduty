@@ -403,7 +403,7 @@ Identifying Wrapped-entity Endpoints
 property that contains all of the content of the API resource, the endpoint is
 said to wrap entities.* In resource collection endpoints that support
 pagination, the response schema contains additional pagination-related
-properties such as ``more`` (for Classic Pagination) or ``next_cursor`` (for
+properties such as ``more`` (for classic pagination) or ``next_cursor`` (for
 cursor-based pagination) and no other content-bearing properties.
 
 Wrapped-entity-aware Functions
@@ -429,7 +429,7 @@ all such endpoints, the results for a given ``r*`` method would be the same if
 using the equivalent ``j*`` method, and the details of request and response
 schemas are are left to the end user to extract and use as desired. Moreover,
 on all endpoints that lack entity wrapping, pagination is not supported, i.e.
-:attr`pagerduty.RestAPIV2Client.iter_all` cannot be used with them.
+:attr`pagerduty.RestApiV2Client.iter_all` cannot be used with them.
 
 Examples
 ********
