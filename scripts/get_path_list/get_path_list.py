@@ -1,9 +1,12 @@
 #!/usr/bin/env python
+"""
+Usage: get_path_list.py PATH
 
-# Usage: get_path_list.py PATH
-#
-#   PATH must be a path to "reference/v2/Index.yaml" within a clone of the API
-#   source code repository.
+  PATH must be a path to "reference/v2/Index.yaml" within a clone of the API reference
+  source code repository.
+
+  See source comments for additional usage details.
+"""
 
 # This script is not part of the python-pagerduty library. Rather, it can be used for
 # the by PagerDuty engineers to assist with its development and maintenance.  It
@@ -38,6 +41,9 @@ except ImportError:
     from yaml import Loader, Dumper
 
 def main():
+    if len(sys.argv) < 2:
+        print(__doc__)
+        return
     file = sys.argv[1]
     api_ref = load(open(file, 'r'), Loader)
     public_endpoints = list(map(lambda kv: kv[0], filter(
