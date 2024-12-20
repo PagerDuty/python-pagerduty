@@ -395,7 +395,16 @@ Most of PagerDuty's REST API v2 endpoints respond with their content wrapped
 inside of another object with a single key at the root level of the
 (JSON-encoded) response body, and/or require the request body be wrapped in
 another object that contains a single key. Endpoints with such request/response
-schemas are said to wrap entities.
+schemas are generally supported for pagination.
+
+Identifying Wrapped-entity Endpoints
+************************************
+*If the endpoint's response schema or expected request schema contains only one
+property that contains all of the content of the API resource, the endpoint is
+said to wrap entities.* In resource collection endpoints that support
+pagination, the response schema contains additional pagination-related
+properties such as ``more`` (for Classic Pagination) or ``next_cursor`` (for
+cursor-based pagination) and no other content-bearing properties.
 
 Wrapped-entity-aware Functions
 ******************************
@@ -412,50 +421,38 @@ of API responses, and wrap request entities for the user as appropriate:
 * :attr:`pagerduty.RestApiV2Client.rpost`: Send a POST request, wrapping the request entity / unwrapping the response entity
 * :attr:`pagerduty.RestApiV2Client.rput`: Send a PUT request, wrapping the request entity / unwrapping the response entity
 
-Classic Patterns
-****************
-Typically (but not for all endpoints), the key ("wrapper name") is named after
-the last or second to last node of the URL's path. The wrapper name is a
-singular noun for an individual resource or plural for a collection of
-resources. As of v5.0.0, the above methods support endpoints where that pattern
-does not apply. In versions prior to v5.0.0, they may only be used on APIs that
-follow these conventions, and will run into ``KeyError`` when used on endpoints
-that do not.
-
 Special Cases
 *************
-On endpoints that do not wrap entities, however, the results for a given ``r*``
-method would be the same if using the equivalent ``j*`` method. This is
-necessary to avoid discarding features of the response schema.
+There are some API endpoints that do not follow preexisting API schema
+conventions for entity wrapping, and are said to not have entity wrapping. On
+all such endpoints, the results for a given ``r*`` method would be the same if
+using the equivalent ``j*`` method, and the details of request and response
+schemas are are left to the end user to extract and use as desired. Moreover,
+on all endpoints that lack entity wrapping, pagination is not supported, i.e.
+:attr`pagerduty.RestAPIV2Client.iter_all` cannot be used with them.
 
-The configuration that this client uses to decide if entity wrapping is enabled
-for an endpoint or not is stored in the module variable
-:attr:`pagerduty.ENTITY_WRAPPER_CONFIG` and generally follows this rule: *If the
-endpoint's response body or expected request body contains only one property
-that points to all the content of the requested resource, entity wrapping is
-enabled for the endpoint.* The only exception is for resource collection
-endpoints that support pagination, where response bodies have additional
-pagination control properties like ``more`` but only one content-bearing
-property that wraps the collection of results.
-
-This rule also applies to endpoints like ``POST
-/business_services/{id}/subscribers`` where the response is wrapped differently
-than the request. One can still pass the content to be wrapped via the ``json``
+Examples
+********
+The endpoint "Create Business Service Subscribers", or ``POST
+/business_services/{id}/subscribers``, wraps the response differently from the
+request. The end user can still pass the content to be wrapped via the ``json``
 argument without the ``subscribers`` wrapper, while the return value is the
 list representing the content inside of the ``subscriptions`` wrapper in the
-response, and there is no need to incorporate any particular endpoint's wrapper
-name into the implementation.
+response, and there is no need to hard-code any particular endpoint's wrapper
+name into the usage of the client.
 
 Some endpoints are unusual in that the request must be wrapped but the response
 is not wrapped or vice versa, i.e. creating Schedule overrides (``POST
 /schedules/{id}/overrides``) or to create a status update on an incient (``POST
-/incidents/{id}/status_updates``). In all such cases, the user still does not
+/incidents/{id}/status_updates``).  In all such cases, the user still does not
 need to account for this, as the content will be returned and the request
-entity is wrapped as appropriate. For instance:
+entity is wrapped as appropriate.
+
+What that looks like, for the "Create one or more overrides" endpoint:
 
 .. code-block:: python
 
-    created_overrides = session.rpost('/schedules/PGHI789/overrides', json=[
+    created_overrides = client.rpost('/schedules/PGHI789/overrides', json=[
         {
             "start": "2023-07-01T00:00:00-04:00",
             "end": "2023-07-02T00:00:00-04:00",
@@ -481,16 +478,17 @@ entity is wrapped as appropriate. For instance:
     #     {'status': 400, 'errors': ['Override must end after its start'], 'override': {...}}
     # ]
 
+
 Pagination
 ----------
-The method :attr:`pagerduty.RestApiV2Client.iter_all` returns an iterator that yields
-results from an endpoint that returns a wrapped collection of resources. By
-default it will use classic, a.k.a. numeric pagination. If the endpoint
+The method :attr:`pagerduty.RestApiV2Client.iter_all` returns an iterator that
+yields results from an endpoint that returns a wrapped collection of resources.
+By default it will use classic, a.k.a. numeric pagination. If the endpoint
 supports cursor-based pagination, it will use
-:attr:`pagerduty.RestApiV2Client.iter_cursor` to iterate through results instead. The
-methods :attr:`pagerduty.RestApiV2Client.list_all` and
-:attr:`pagerduty.RestApiV2Client.dict_all` will request all pages of the collection
-and return the results as a list or dictionary, respectively.
+:attr:`pagerduty.RestApiV2Client.iter_cursor` to iterate through results
+instead. The methods :attr:`pagerduty.RestApiV2Client.list_all` and
+:attr:`pagerduty.RestApiV2Client.dict_all` will request all pages of the
+collection and return the results as a list or dictionary, respectively.
 
 Pagination functions require that the API endpoint being requested have entity
 wrapping enabled, and respond with either a ``more`` or ``cursor`` property
