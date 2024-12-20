@@ -734,9 +734,7 @@ def resource_url(method):
                 # Unsupported APIs for this feature:
                 raise UrlError(f"The dict object passed to {name} in place of a URL "
                     "has no 'self' key and cannot be used in place of an API resource "
-                    "URL. The schema of the API endpoint in use probably does not "
-                    "include this property, in which case this feature does not "
-                    "support that endpoint.")
+                    "path/URL.")
         elif type(resource) is not str:
             name = method.__name__
             raise UrlError(f"Value passed to {name} is not a str or dict with "
