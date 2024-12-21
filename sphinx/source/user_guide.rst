@@ -7,18 +7,6 @@ User Guide
 This is a topical guide to general API client usage. :ref:`module_reference`
 has in-depth documentation on client classes and methods.
 
-Installation
-------------
-If ``pip`` is available, it can be installed via:
-
-.. code-block:: shell
-
-    pip install pagerduty
-
-Alternately, if the dependencies (Requests_ and "deprecation" Python libraries)
-have been installed locally, one can download ``pagerduty.py`` into the directory
-where it will be used.
-
 Authentication
 --------------
 The first step is to construct a client object. The first argument to the
@@ -48,22 +36,8 @@ context managers. For example:
     with pagerduty.RestApiV2Client(API_KEY) as client:
         do_application(client)
 
-The From header
-***************
-If the `REST API v2`_ client will be used for API endpoints that require a
-``From`` header, such as those that take actions on incidents, and if it is
-using an account-level API key (created by an administrator via the "API Access
-Keys" page in the "Integrations" menu), the user must also supply the
-``default_from`` keyword argument. Otherwise, a HTTP 400 response will result
-when making requests to such endpoints.
-
-Otherwise, if using a user's API key (created under "API Access" in the "User
-Settings" tab of the user's profile), the user will be derived from the key
-itself and ``default_from`` is not necessary.
-
 Using Non-US Service Regions
 ****************************
-
 If your PagerDuty account is in the EU or other service region outside the US, set the ``url`` attribute according to the
 documented `API Access URLs
 <https://support.pagerduty.com/docs/service-regions#api-access-urls>`_, i.e. for the EU:
@@ -74,6 +48,27 @@ documented `API Access URLs
     client.url = 'https://api.eu.pagerduty.com'
     # Events API:
     events_client.url = 'https://events.eu.pagerduty.com'
+
+The From header
+***************
+If using an account-level API key (created by an administrator via the "API
+Access Keys" page in the "Integrations" menu), a ``From`` header must be
+supplied in certain endpoints to attribute the action to a user, e.g.
+acknowledging or resolving an incident, or the API will respond with status
+400. The value of the header must correspond to a PagerDuty user. The header
+can be set for all requests using the attribute
+:attr:`pagerduty.RestApiV2Client.default_from` property, which can be set
+directly or through the ``default_from`` keyword argument when instantiating
+the client object.
+
+.. code-block:: python
+
+    client = pagerduty.RestApiV2Client(API_KEY, default_from="admin@example.com")
+
+Otherwise, if using a user's API key (created under "API Access" in the "User
+Settings" tab of the user's profile), the user will be derived from the key
+itself and it is not necessary to set ``default_from`` or supply a ``From``
+header.
 
 Basic Usage Examples
 --------------------
@@ -173,9 +168,7 @@ matching a string using the ``query`` parameter on an index endpoint:
 
 **Using multi-valued set filters:** set the value in the ``params`` dictionary
 at the appropriate key to a list. Square brackets will then be automatically
-appended to the names of list-type-value parameters as necessary. Ordinarily
-(and in pagerduty versions prior to 4.4.0) one must include ``[]`` at the end of
-the paramter name to denote a set type filter. For example:
+appended to the names of list-type-value parameters as necessary. For example:
 
 .. code-block:: python
 
@@ -183,8 +176,9 @@ the paramter name to denote a set type filter. For example:
     incidents = client.list_all(
         'incidents',
         params={
-          'user_ids[]':['PHIJ789'], # (Necessary in < 4.4.0, compatible with >= 4.4.0)
-          'statuses':['triggered', 'acknowledged'] # (>= 4.4.0)
+          # Both of the following parameter names are valid:
+          'user_ids[]': ['PHIJ789'],
+          'statuses': ['triggered', 'acknowledged'] # "[]" will be automatically appended
         }
     )
     # API calls will look like the following:
@@ -261,10 +255,11 @@ One can also pass the full URL of an API endpoint and it will still work, i.e.
 the ``self`` property of any object can be used, and there is no need to strip
 out the API base URL.
 
-The ``r*`` (and ``j*`` methods as of version 5), i.e.
-:attr:`pagerduty.RestApiV2Client.rget`, can also accept a dictionary object
-representing an API resource or a resource reference in place of a URL, in
-which case the URL at its ``self`` key will be used as the request target.
+The ``r*`` and ``j*`` methods, i.e.  :attr:`pagerduty.RestApiV2Client.rget`,
+can also accept a dictionary object representing an API resource or a resource
+reference in place of a URL, in which case the value at its ``self`` key will
+be used as the request URL. This allows `resource references`_ (for instance)
+to be used directly as the first argument.
 
 Query Parameters
 ----------------
@@ -283,9 +278,9 @@ query string in the final URL of the request:
     # GET https://api.pagerduty.com/users?query=Dan&limit=1&offset=0
 
 To specify a multi-value parameter, i.e. ``include[]``, set the argument to a
-list. As of v4.4.0, if a list is given, and the key name does not end with
-``[]`` (which is required for all such multi-valued parameters in REST API v2),
-then ``[]`` will be automatically appended to the parameter name.
+list. If a list is given, and the key name does not end with ``[]`` (which is
+required for all such multi-valued parameters in REST API v2), then ``[]`` will
+be automatically appended to the parameter name. For example:
 
 .. code-block:: python
 
@@ -423,13 +418,14 @@ of API responses, and wrap request entities for the user as appropriate:
 
 Special Cases
 *************
-There are some API endpoints that do not follow preexisting API schema
-conventions for entity wrapping, and are said to not have entity wrapping. On
-all such endpoints, the results for a given ``r*`` method would be the same if
-using the equivalent ``j*`` method, and the details of request and response
-schemas are are left to the end user to extract and use as desired. Moreover,
-on all endpoints that lack entity wrapping, pagination is not supported, i.e.
-:attr`pagerduty.RestApiV2Client.iter_all` cannot be used with them.
+There are some API endpoints that do not follow API schema conventions for
+entity wrapping. Some do not wrap entities at all. On all endpoints that do not
+wrap entities, the results for a given ``r*`` method would be the same if using
+the equivalent ``j*`` method, and the details of request and response schemas
+are are left to the end user to extract and use as desired. Moreover, on all
+endpoints that completely lack entity wrapping, pagination is not supported,
+i.e. :attr:`pagerduty.RestApiV2Client.iter_all` will raise
+:attr:`pagerduty.UrlError` if used with them.
 
 Examples
 ********
@@ -492,7 +488,10 @@ collection and return the results as a list or dictionary, respectively.
 
 Pagination functions require that the API endpoint being requested have entity
 wrapping enabled, and respond with either a ``more`` or ``cursor`` property
-indicating how and if to fetch the next page of results.
+indicating how and if to fetch the next page of results. Only classic and
+cursor-based pagination are currently supported; see `Pagination
+<https://developer.pagerduty.com/docs/pagination>`_ for details on these
+pagination types.
 
 For example:
 
@@ -557,14 +556,8 @@ returned more than once, because they get bumped to the next group of 100 pages.
 
 Multi-updating
 --------------
-Multi-update actions can be performed using ``rput``. As of this writing,
-multi-update support includes the following endpoints:
-
-* `PUT /incidents <https://developer.pagerduty.com/api-reference/b3A6Mjc0ODEzOQ-manage-incidents>`_
-* `PUT /incidents/{id}/alerts <https://developer.pagerduty.com/api-reference/b3A6Mjc0ODE0NA-manage-alerts>`_
-* PUT /priorities (documentation not yet published as of 2023-04-26, but the endpoint is functional)
-
-For instance, to resolve two incidents with IDs ``PABC123`` and ``PDEF456``:
+Multi-update actions can be performed using ``rput`` with some endpoints. For
+instance, to resolve two incidents with IDs ``PABC123`` and ``PDEF456``:
 
 .. code-block:: python
 
@@ -583,24 +576,29 @@ It is important to note, however, that updating incidents requires using a
 user-scoped access token or setting the ``From`` header to the login email
 address of a valid PagerDuty user. To set this, pass it through using the
 ``headers`` keyword argument, or set the
-:attr:`pagerduty.RestApiV2Client.default_from` property, or pass the email address as
-the ``default_from`` keyword argument when constructing the client initially.
+:attr:`pagerduty.RestApiV2Client.default_from` property, or pass the email
+address as the ``default_from`` keyword argument when constructing the client
+initially.
 
 Error Handling
 --------------
-For any of the methods that do not return `requests.Response`_, when the API
-responds with a non-success HTTP status, the method will raise a
-:class:`pagerduty.Error` exception. This way, these methods can always be
-expected to return the same structure of data based on the API being used, and
-there is no need to differentiate between the response schema for a successful
-request and one for an error response.
+The :class:`pagerduty.UrlError` is raised prior to making API calls, and it indicates
+unsupported URLs and/or malformed input.
 
-The exception class has the `requests.Response`_ object as its ``response``
-property whenever the exception pertains to a HTTP error. One can thus define
-specialized error handling logic in which the REST API response data (i.e.
-headers, code and body) are available in the catching scope.
+The base exception class for all errors encountered when making requests is
+:class:`pagerduty.Error`. This includes network / transport issues where there
+is no response from the API, in which case the exception will inherit from the
+exception raised by the underlying HTTP library.
 
-For instance, the following code prints "User not found" in the event of a 404,
+All errors that involve a response from the API are instances of
+:class:`pagerduty.HttpError` and will have a ``response`` property containing
+the `requests.Response`_ object. Its subclass
+:class:`pagerduty.HttpServerError` is used for special cases when the API is
+responding in an unexpected way.
+
+One can thus define specialized error handling logic in which the REST API
+response data (i.e.  headers, code and body) are available in the catching
+scope. For example, the following code prints "User not found" in the event of a 404,
 prints out the user's email if the user exists and raises the underlying
 exception if it's any other HTTP error code:
 
@@ -731,9 +729,9 @@ Low-level HTTP request functions in client classes, i.e. ``get``, will return
 `requests.Response`_ objects when they run out of retries. Higher-level
 functions that require a success status response, i.e.
 :attr:`pagerduty.RestApiV2Client.list_all` and
-:attr:`pagerduty.EventsApiV2Client.trigger`, will raise exceptions that include
-the response object when they encounter error status responses, but only after
-the configured retry limits are reached in the underlying HTTP request methods.
+:attr:`pagerduty.EventsApiV2Client.trigger`, will raise instances of
+:class:`pagerduty.HttpError`, but only after the configured retry limits are
+reached in the underlying HTTP request methods.
 
 **Example:**
 
@@ -763,3 +761,4 @@ the configured retry limits are reached in the underlying HTTP request methods.
 .. _`REST API v2`: https://developer.pagerduty.com/docs/ZG9jOjExMDI5NTUw-rest-api-v2-overview
 .. _requests.Response: https://docs.python-requests.org/en/master/api/#requests.Response
 .. _requests.Session: https://docs.python-requests.org/en/master/api/#request-sessions
+.. _`resource references`: https://developer.pagerduty.com/docs/resource-references

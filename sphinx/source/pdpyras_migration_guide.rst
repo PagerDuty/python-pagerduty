@@ -5,7 +5,7 @@ PDPYRAS Migration Guide
 =======================
 
 In addition to renaming the module from ``pdpyras`` to ``pagerduty``, version
-1.0 of ``python-pagerduty`` includes some forward-looking class name refactors
+1.0 of ``python-pagerduty`` includes some forward-looking class name changes
 from the original `pdpyras`_ source code. This was done so that nomenclature
 clearly reflects the hierarchy of APIs and errors, and to make the relationship
 between  API clients and the APIs they were designed for more clear.
@@ -28,12 +28,6 @@ Exception Classes
 * ``s/PDClientError/Error/g``
 * ``s/PDServerError/ServerHttpError/g``
 * ``s/PDHTTPError/HttpError/g``
+* ``s/URLError/UrlError/g``
 
-Minor Non-breaking Changes
---------------------------
-Note also the following minor non-breaking changes:
-
-* New endpoints are now supported in the following APIs:
-  * Workflow Integrations
-  * Status Pages
-
+.. _`pdpyras`: https://github.com/PagerDuty/pdpyras
