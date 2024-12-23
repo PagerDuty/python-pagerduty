@@ -22,11 +22,8 @@ constructor is the secret to use for accessing the API:
     # REST API v2 with an OAuth2 access token:
     client_oauth = pagerduty.RestApiV2Client(OAUTH_TOKEN, auth_type='oauth2')
 
-    # Events API v2:
+    # Events API v2, including change events:
     events_client = pagerduty.EventsApiV2Client(ROUTING_KEY)
-
-    # A special client class for the change events API (part of Events API v2):
-    change_events_client = pagerduty.EventsApiV2Client(ROUTING_KEY)
 
 Session objects, being descendants of `requests.Session`_, can also be used as
 context managers. For example:
@@ -221,7 +218,7 @@ Events API v2
 
 .. code-block:: python
 
-    change_events_client.submit("new build finished at latest HEAD",
+    events_client.submit("new build finished at latest HEAD",
         source="automation")
 
 Generic Client Features
