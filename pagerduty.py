@@ -20,7 +20,7 @@ from requests import __version__ as REQUESTS_VERSION
 from urllib3.exceptions import HTTPError, PoolError
 from requests.exceptions import RequestException
 
-__version__ = '0.1.0'
+__version__ = '0.9.0'
 
 #######################
 ### CLIENT DEFAULTS ###
