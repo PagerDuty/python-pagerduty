@@ -1,3 +1,4 @@
-**2024-12-20: (placeholder)**
+**2025-01-03: Migrate from PDPYRAS - Version v0.9.0**
 
-* This is the start of the Changelog so that the makefile target works. It will be updated when version 1.0.0 is released.
+* **BREAKING CHANGE:** class names have changed from what they were in ``pdpyras``; see :ref:`pdpyras_migration_guide` for details.
+* The REST API client now supports new status page, event orchestrations, custom incident fields, OAuth delegations and alert grouping settings APIs.
