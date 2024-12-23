@@ -60,8 +60,8 @@ antipattern-handling configuration.
 
 This system requires two global variables that must be manually maintained:
 
-* :attr:`CANONICAL_PATHS`, the list of canonical paths
-* :attr:`ENTITY_WRAPPER_CONFIG`, a dictionary of exceptions to entity wrapping and schema conventions
+* :attr:`pagerduty.CANONICAL_PATHS`, the list of canonical paths
+* :attr:`pagerduty.ENTITY_WRAPPER_CONFIG`, a dictionary of exceptions to entity wrapping and schema conventions
 
 Limitations
 ***********

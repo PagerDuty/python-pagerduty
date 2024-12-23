@@ -29,6 +29,12 @@ three should be done in the order shown, so as to avoid name overlap issues:**
 3. ``s/APISession/RestApiV2Client/g``
 4. ``s/PDSession/ApiClient/g``
 
+The Change Events API client has been merged into the Events API v2 client
+because the differences between these two APIs are trivial enough to support
+them both under the same client class, and there is no method or property name
+overlap between the client classes. Their respective APIs are also documented
+under the same API reference.
+
 Exception Classes
 -----------------
 The exception classes have been renamed as follows:
