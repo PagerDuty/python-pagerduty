@@ -81,24 +81,65 @@ However, if there is no entity wrapping, or pagination is not implemented
 according to documented standards, automatic pagination cannot be supported for
 resource collection endpoints.
 
-Adding Support for New Endpoints
-********************************
+Updating the Canonical Path Set
+*******************************
 The first step for adding support for new APIs is to have a copy of the API
 Reference source code (this is a private GitHub repository owned by the
 PagerDuty org). The script ``scripts/get_path_list/get_path_list.py`` can then
 be used to automatically generate definitions of the global variables
-:attr:`CANONICAL_PATHS` and :attr:`CURSOR_BASED_PAGINATION_PATHS` that can be
-copied into the source code to replace the existing definitions. The script
-takes one argument: a path to the file ``reference/v2/Index.yaml`` within the
-reference source repository.
+:attr:`pagerduty.CANONICAL_PATHS` and
+:attr:`pagerduty.CURSOR_BASED_PAGINATION_PATHS` that can be copied into the
+source code to replace the existing definitions. The script takes one argument:
+a path to the file ``reference/v2/Index.yaml`` within the reference source
+repository.
 
-The next step is to look at the documentation, for each new endpoint added to
-the canonical path list, to see if it follows classic schema conventions for
-entity wrapping. If any new path does not, adding support for it will also
-require adding entries to :attr:`pagerduty.ENTITY_WRAPPER_CONFIG`.
+Evaluating New Endpoints For Support
+************************************
+The next step is to look at the request and response schemas in the API
+reference for each new endpoint added to the canonical path list, to see if it
+follows classic schema conventions for entity wrapping. If any new path does
+not, adding support for it will also require adding entries to
+:attr:`pagerduty.ENTITY_WRAPPER_CONFIG`. "Classic schema conventions" refers to
+the logic codified in :attr:`pagerduty.infer_entity_wrapper` and
+:attr:`pagerduty.unwrap` (where a "node" is a component of the path component
+of the URL, separated by forward slashes):
 
-Following the same examples as given in the :ref:`user_guide`:  the entry in
-:attr:`ENTITY_WRAPPER_CONFIG` to handle the "Create Business Service
+**1:** If the last node of the path is an opaque identifier, then the path corresponds
+to an individual PagerDuty resource, and the request and response wrapper names
+are both the singular form of the second-to-last node. Examples: ``PUT
+/escalation_policies/{id}`` (wrapper = ``escalation_policy``), ``GET
+/users/{id}`` (wrapper = ``user``).
+
+**2:** If the last node of the path is not an opaque identifier, and the
+request method is POST, then the request and response wrapper names are both
+the singular form of the last node. Examples: ``POST /schedules`` (wrapper =
+``schedule``), ``POST /incidents`` (wrapper = ``incident``)
+
+**3:** Otherwise (the last node of the path is not an opaque identifier and the
+request method is not POST), the request and response wrapper names are both
+the same as the last node of the path. Examples: ``GET /services`` (wrapper =
+``services``), ``PUT /incidents`` (wrapper = ``incidents``)
+
+If all of the above apply to new endpoints for all request methods, then no new
+entries need to be added to :attr:`pagerduty.ENTITY_WRAPPER_CONFIG` to support
+them; they are supported automatically by virtue of following preexisting
+already-supported API patterns and having corresponding entries in
+:attr:`pagerduty.CANONICAL_PATHS`.
+
+Adding Support for Non-Conforming Endpoints
+*******************************************
+If the new endpoints do not follow classic schema conventions for entity
+wrapping, entries for them must be added to
+:attr:`pagerduty.ENTITY_WRAPPER_CONFIG` in order to support them. As described
+in the documentation of that attribute, each key is a combination of the
+request method (or "*" for the configuration entry to apply to all methods) and
+the canonical path in question, and each value is a string (for the same
+wrapper name in the request and response bodies), ``None`` if entity wrapping
+is not applicable, and a tuple if the entity wrapping differs between the
+request and response bodies.
+
+Following the same examples as given in the :ref:`user_guide`: the entry in
+:attr:`pagerduty.ENTITY_WRAPPER_CONFIG` to handle the "Create Business Service
 Subscribers" looks like this:
 
 .. code-block:: python
@@ -110,7 +151,6 @@ The "Create one or more overrides" API endpoint entry looks like this:
 .. code-block:: python
 
     'POST /schedules/{id}/overrides': ('overrides', None),
-
 
 Updating Documentation
 ----------------------
