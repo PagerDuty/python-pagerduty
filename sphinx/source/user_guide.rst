@@ -105,7 +105,7 @@ and having them represented as a dictionary object using three different methods
     for user in client.iter_all('users'):
         print(user['id'], user['email'], user['name'])
 
-**Pagination with query parameters:** set the ``params`` keyword argument, which is 
+**Pagination with query parameters:** set the ``params`` keyword argument, which is
 converted to URL query parameters by Requests_:
 
 .. code-block:: python
@@ -257,9 +257,8 @@ out the API base URL.
 
 The ``r*`` and ``j*`` methods, i.e.  :attr:`pagerduty.RestApiV2Client.rget`,
 can also accept a dictionary object representing an API resource or a resource
-reference in place of a URL, in which case the value at its ``self`` key will
-be used as the request URL. This allows `resource references`_ (for instance)
-to be used directly as the first argument.
+reference (see: `resource references`_) in place of a URL, in which case the
+value at its ``self`` key will be used as the request URL.
 
 Query Parameters
 ----------------
@@ -326,23 +325,21 @@ endpoint returns wrapped entities. For more details, refer to :ref:`wrapping`.
 
 Data types
 **********
-Main article: `Types <https://developer.pagerduty.com/docs/ZG9jOjExMDI5NTU1-types>`_
+Main article: `Types <https://developer.pagerduty.com/docs/types>`_
 
 Note these analogues in structure between the JSON schema and the object
 in Python:
 
 * If the data type documented in the schema is
-  `"object" <https://developer.pagerduty.com/docs/ZG9jOjExMDI5NTU1-types#object>`_,
-  then the corresponding type of the Python object will be ``dict``.
+  "object", then the corresponding type of the Python object will be ``dict``.
 * If the data type documented in the schema is
-  `array <https://developer.pagerduty.com/docs/ZG9jOjExMDI5NTU1-types#array>`_,
-  then the corresponding type of the Python object will be ``list``.
+  "array", then the corresponding type of the Python object will be ``list``.
 * Generally speaking, the data type in the decoded object is according to the
   design of the `json <https://docs.python.org/3/library/json.html>`_ Python library.
 
 For example, consider the example structure of an escalation policy as given in
 the API reference page for ``GET /escalation_policies/{id}`` ("Get an
-escalation policy").. To access the name of the second target in level 1,
+escalation policy"). To access the name of the second target in level 1,
 assuming the variable ``ep`` represents the unwrapped escalation policy object:
 
 .. code-block:: python
@@ -390,7 +387,7 @@ Most of PagerDuty's REST API v2 endpoints respond with their content wrapped
 inside of another object with a single key at the root level of the
 (JSON-encoded) response body, and/or require the request body be wrapped in
 another object that contains a single key. Endpoints with such request/response
-schemas are generally supported for pagination.
+schemas usually (with few exceptions) support pagination.
 
 Identifying Wrapped-entity Endpoints
 ************************************
@@ -477,23 +474,20 @@ What that looks like, for the "Create one or more overrides" endpoint:
 
 Pagination
 ----------
+Main article: `Pagination <https://developer.pagerduty.com/docs/pagination>`_
+
+Only classic and cursor-based pagination are currently supported. Pagination
+functions require that the API endpoint being requested have entity wrapping
+enabled, and respond with either a ``more`` or ``cursor`` property indicating
+how and if to fetch the next page of results.
+
 The method :attr:`pagerduty.RestApiV2Client.iter_all` returns an iterator that
-yields results from an endpoint that returns a wrapped collection of resources.
-By default it will use classic, a.k.a. numeric pagination. If the endpoint
-supports cursor-based pagination, it will use
-:attr:`pagerduty.RestApiV2Client.iter_cursor` to iterate through results
-instead. The methods :attr:`pagerduty.RestApiV2Client.list_all` and
+yields results from an endpoint that features pagination. The methods
+:attr:`pagerduty.RestApiV2Client.list_all` and
 :attr:`pagerduty.RestApiV2Client.dict_all` will request all pages of the
 collection and return the results as a list or dictionary, respectively.
 
-Pagination functions require that the API endpoint being requested have entity
-wrapping enabled, and respond with either a ``more`` or ``cursor`` property
-indicating how and if to fetch the next page of results. Only classic and
-cursor-based pagination are currently supported; see `Pagination
-<https://developer.pagerduty.com/docs/pagination>`_ for details on these
-pagination types.
-
-For example:
+Examples:
 
 .. code-block:: python
 
@@ -510,6 +504,11 @@ For example:
     # Same as above, but using ``find``:
     bob = client.find('users', 'bob@example.com', attribute='email')
     print(bob['id'])
+
+By default, classic, a.k.a. numeric pagination, will be used. If the endpoint
+supports cursor-based pagination, it will call out to
+:attr:`pagerduty.RestApiV2Client.iter_cursor` to iterate through results
+instead.
 
 Performance and Completeness of Results
 ***************************************

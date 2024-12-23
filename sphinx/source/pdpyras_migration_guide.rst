@@ -21,6 +21,7 @@ three should be done in the order shown, so as to avoid name overlap issues:**
 1. ``s/ChangeEventsAPISession/EventsApiV2Client/g``
 2. ``s/EventsAPISession/EventsApiV2Client/g``
 3. ``s/APISession/RestApiV2Client/g``
+4. ``s/PDSession/ApiClient/g``
 
 Exception Classes
 -----------------
