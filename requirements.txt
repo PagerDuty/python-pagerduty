@@ -1,2 +1,3 @@
-requests >= 2.27.1
-deprecation >= 2.0.6
+certifi
+requests
+urllib3
