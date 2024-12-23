@@ -500,8 +500,7 @@ class EventsApiV2ClientTest(SessionTest):
                     'payload':{
                         'summary': 'testing 123',
                         'timestamp': '2020-03-25T00:00:00Z',
-                    },
-                    'links': []
+                    }
                 },
                 parent.request.call_args[1]['json'])
 

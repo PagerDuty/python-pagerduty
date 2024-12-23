@@ -547,15 +547,17 @@ def is_path_param(path_node: str) -> bool:
 
 def normalize_url(base_url: str, url: str) -> str:
     """
-    Normalize a URL to a complete API URL.
+    Normalize a URL or path to be a complete API URL before query parameters.
 
     The ``url`` argument may be a path relative to the base URL or a full URL.
 
-    :param url: The URL to normalize
-    :param baseurl:
+    :param url:
+        The URL or path to normalize to a full URL.
+    :param base_url:
         The base API URL, excluding any trailing slash, i.e.
         "https://api.pagerduty.com"
-    :returns: The full API endpoint URL
+    :returns:
+        The full API URL.
     """
     if url.startswith(base_url):
         return url
@@ -632,7 +634,7 @@ def infer_entity_wrapper(method: str, path: str) -> str:
     given path in :attr:`ENTITY_WRAPPER_CONFIG`.
 
     :param method: The HTTP method
-    :param path: A canonical API path i.e. as returned by ``canonical_path``
+    :param path: A canonical API path i.e. from :attr:`CANONICAL_PATHS`
     """
     m = method.upper()
     path_nodes = path.split('/')
@@ -975,9 +977,9 @@ class ApiClient(Session):
     log = None
     """
     A ``logging.Logger`` object for logging messages. By default it is
-    configured without any handlers and so no messages will be emitted. See
-    `logger objects
-    <https://docs.python.org/3/library/logging.html#logger-objects>`_
+    configured without any handlers and so no messages will be emitted. See:
+    `Logger Objects
+    <https://docs.python.org/3/library/logging.html#logger-objects>`_.
     """
 
     max_http_attempts = 10
@@ -1067,9 +1069,7 @@ class ApiClient(Session):
     @property
     def api_key(self) -> str:
         """
-        API Key property getter.
-
-        Returns the _api_key attribute's value.
+        Property representing the credential used for accessing the given API.
         """
         return self._api_key
 
@@ -1419,7 +1419,7 @@ class EventsApiV2Client(ApiClient):
             representing the target and display text of each link
         :param routing_key:
             (Deprecated) the routing key. The parameter is set automatically to the
-            :attr:`api_key` property in the final payload and this argument is ignored.
+            :attr:`ApiClient.api_key` property in the final payload and this argument is ignored.
         :returns:
             The response ID
         """
@@ -1678,7 +1678,8 @@ class RestApiV2Client(ApiClient):
         """
         Defines the method of API authentication.
 
-        By default this is "token"; if "oauth2", the API key will be used.
+        This value determines how the Authorization header will be set. By default this
+        is "token", which will result in the format ``Token token=<api_key>``.
         """
         return self._auth_type
 
@@ -1698,38 +1699,36 @@ class RestApiV2Client(ApiClient):
 
     def dict_all(self, path: str, **kw) -> dict:
         """
-        Dictionary representation of resource collection results
+        Dictionary representation of all results from a resource collection.
 
-        With the exception of ``by``, all keyword arguments passed to this
-        method are also passed to :attr:`iter_all`; see the documentation on
-        that method for further details.
+        With the exception of ``by``, all keyword arguments passed to this method are
+        also passed to :attr:`iter_all`; see the documentation on that method for
+        further details.
 
         :param path:
             The index endpoint URL to use.
         :param by:
-            The attribute of each object to use for the key values of the
-            dictionary. This is ``id`` by default. Please note, there is no
-            uniqueness validation, so if you use an attribute that is not
-            distinct for the data set, this function will omit some data in the
-            results.
+            The attribute of each object to use for the key values of the dictionary.
+            This is ``id`` by default. Please note, there is no uniqueness validation,
+            so if you use an attribute that is not distinct for the data set, this
+            function will omit some data in the results.
         """
         by = kw.pop('by', 'id')
         iterator = self.iter_all(path, **kw)
         return {obj[by]:obj for obj in iterator}
 
-    def find(self, resource, query, attribute='name', params=None) \
+    def find(self, resource: str, query, attribute='name', params=None) \
             -> Union[dict, None]:
         """
         Finds an object of a given resource type exactly matching a query.
 
-        Works by querying a given resource index endpoint using the ``query``
-        parameter. To use this function on any given resource, the resource's
-        index must support the ``query`` parameter; otherwise, the function may
-        not work as expected. If the index ignores the parameter, for instance,
-        this function will take much longer to return; results will not be
-        constrained to those matching the query, and so every result in the
-        index will be downloaded and compared against the query up until a
-        matching result is found or all results have been checked.
+        Works by querying a given resource index endpoint using the ``query`` parameter.
+        To use this function on any given resource, the resource's index must support
+        the ``query`` parameter; otherwise, the function may not work as expected. If
+        the index ignores the parameter, for instance, this function will take much
+        longer to return; results will not be constrained to those matching the query,
+        and so every result in the index will be downloaded and compared against the
+        query up until a matching result is found or all results have been checked.
 
         The comparison between the query and matching results is case-insenitive. When
         determining uniqueness, APIs are mostly case-insensitive, and therefore objects
@@ -1753,8 +1752,6 @@ class RestApiV2Client(ApiClient):
             searching for user by email (for example) it can be set to ``email``
         :param params:
             Optional additional parameters to use when querying.
-        :type resource: str
-        :type query: str
         :type attribute: str
         :type params: dict or None
         :returns:
@@ -1800,12 +1797,13 @@ class RestApiV2Client(ApiClient):
             will still take precedence, if it differs; this parameter and
             ``default_page_size`` only dictate what is requested of the API.
         :param item_hook:
-            Callable object that will be invoked for each iteration, i.e. for
+            Callable object that will be invoked for each item yielded, i.e. for
             printing progress. It will be called with three parameters: a dict
-            representing a given result in the iteration, an int representing
-            the number of the item in the series, and an int (or str, as of
-            v5.0.0) representing the total number of items in the series. If the
-            total isn't knowable, the value passed is "?".
+            representing a given result in the iteration, an int representing the number
+            of the item in the series, and a value representing the total number of
+            items in the series. If the total isn't knowable, i.e. the ``total``
+            parameter is ``False`` or omitted, the value passed in for the third
+            argument will be the string value ``"?"``.
         :param total:
             If True, the ``total`` parameter will be included in API calls, and
             the value for the third parameter to the item hook will be the total
@@ -1884,7 +1882,7 @@ class RestApiV2Client(ApiClient):
             #
             # Note, the number of the results in the actual response is always
             # the most appropriate amount to increment the offset by after
-            # receiving each page. If this is the last page, agination should
+            # receiving each page. If this is the last page, pagination should
             # stop anyways because the ``more`` parameter should evaluate to
             # false.
             #
@@ -1892,23 +1890,23 @@ class RestApiV2Client(ApiClient):
             # value or stick to the limit requested and hope the server honors
             # it is that it could potentially result in skipping results or
             # yielding duplicates if there's a mismatch, or potentially issues
-            # like #61
+            # like PagerDuty/pdpyras#61
             data['limit'] = len(results)
             offset += data['limit']
             more = False
-            total_count = '?'
+            if 'total' in body:
+                total_count = body['total']
+            else:
+                total_count = '?'
             if 'more' in body:
                 more = body['more']
             else:
                 warn(
-                    f"Endpoint GET {path} responded with no \"more\" property" \
-                    ' in the response, so pagination is not supported ' \
-                    '(or this is an API bug). Only results from the first ' \
-                    'request will be yielded. You can use rget with this ' \
-                    'endpoint instead to avoid this warning.'
+                    f"Response from endpoint GET {path} lacks a \"more\" property and "
+                    "therefore does not support pagination. Only results from the "
+                    "first request will be yielded. You can use \"rget\" with this "
+                    "endpoint instead to avoid this warning."
                 )
-            if 'total' in body:
-                total_count = body['total']
 
             # Perform per-page actions on the response data
             for result in results:
@@ -1927,7 +1925,8 @@ class RestApiV2Client(ApiClient):
         :param params:
             Query parameters to include in the request.
         :param item_hook:
-            A callable object that accepts 3 positional arguments; see
+            A callable object that accepts 3 positional arguments; see :attr:`iter_all`
+            for details on how this argument is used.
         """
         path = canonical_path(self.url, url)
         if path not in CURSOR_BASED_PAGINATION_PATHS:
@@ -2281,11 +2280,10 @@ class HttpError(Error):
 
 class ServerHttpError(HttpError):
     """
-    Error class representing failed expectations made of the server
+    Error class representing failed expectations made of the server.
 
-    This is raised in cases where the response schema differs from the expected
-    schema because of an API bug, or because it's an early access endpoint and
-    changes before GA, or in cases of HTTP status 5xx where a successful
-    response is required.
+    This is raised in cases where the response schema differs from the expected schema
+    because of an API bug, or because it's an early access endpoint and changes before
+    GA, or in cases of HTTP status 5xx where a successful response is required.
     """
     pass

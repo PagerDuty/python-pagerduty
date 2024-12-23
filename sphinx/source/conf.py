@@ -128,7 +128,7 @@ latex_documents = [
 # One entry per manual page. List of tuples
 # (source start file, name, description, authors, manual section).
 man_pages = [
-    (master_doc, 'python-pagerduty', "python-pagerduty: a basic API Client for PagerDuty's public APIs",
+    (master_doc, 'python-pagerduty', "python-pagerduty: Clients for PagerDuty's APIs",
      [author], 1)
 ]
 

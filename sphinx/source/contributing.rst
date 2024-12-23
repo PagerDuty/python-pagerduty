@@ -226,3 +226,5 @@ details:
 * Name the release after the major and minor version, i.e. 5.1, and very brief
   summary of changes.
 * Compose a description from the pull requests whose changes are included.
+
+.. _`pdpyras`: https://github.com/PagerDuty/pdpyras

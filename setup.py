@@ -6,7 +6,7 @@ if __name__ == '__main__':
     setup(
         name='pagerduty',
         description="python-pagerduty",
-        long_description="Clients for PagerDuty's public APIs",
+        long_description="Clients for PagerDuty's APIs",
         py_modules=['pagerduty'],
         version=__version__,
         license='MIT',
