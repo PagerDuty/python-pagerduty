@@ -3,12 +3,8 @@ python-pagerduty: Clients for PagerDuty's APIs
 ==============================================
 A module that supplies lightweight Python clients for the PagerDuty REST API v2 and Events API v2.
 
-**This library is currently a work in progress.**
-
 For how-to, refer to the `User Guide
 <https://pagerduty.github.io/python-pagerduty/user_guide.html>`_.
-
-|circleci-build|
 
 Overview
 --------
@@ -55,7 +51,7 @@ control over how API calls were made.
 
 License
 -------
-All the code in this distribution is Copyright (c) 2023 PagerDuty.
+All the code in this distribution is Copyright (c) 2025 PagerDuty.
 
 ``python-pagerduty`` is made available under the MIT License:
 
@@ -100,6 +96,3 @@ Warranty
 .. _`setuptools`: https://pypi.org/project/setuptools/
 .. _requests.Response: https://docs.python-requests.org/en/master/api/#requests.Response
 .. _requests.Session: https://docs.python-requests.org/en/master/api/#request-sessions
-
-.. |circleci-build| image:: https://circleci.com/gh/PagerDuty/python-pagerduty.svg?style=svg
-    :target: https://circleci.com/gh/PagerDuty/python-pagerduty
