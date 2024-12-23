@@ -1895,9 +1895,9 @@ class RestApiV2Client(ApiClient):
             offset += data['limit']
             more = False
             if 'total' in body:
-                total_count = '?'
-            else:
                 total_count = body['total']
+            else:
+                total_count = '?'
             if 'more' in body:
                 more = body['more']
             else:
