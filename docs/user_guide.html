@@ -132,11 +132,8 @@ constructor is the secret to use for accessing the API:</p>
 <span class="c1"># REST API v2 with an OAuth2 access token:</span>
 <span class="n">client_oauth</span> <span class="o">=</span> <span class="n">pagerduty</span><span class="o">.</span><span class="n">RestApiV2Client</span><span class="p">(</span><span class="n">OAUTH_TOKEN</span><span class="p">,</span> <span class="n">auth_type</span><span class="o">=</span><span class="s1">&#39;oauth2&#39;</span><span class="p">)</span>
 
-<span class="c1"># Events API v2:</span>
+<span class="c1"># Events API v2, including change events:</span>
 <span class="n">events_client</span> <span class="o">=</span> <span class="n">pagerduty</span><span class="o">.</span><span class="n">EventsApiV2Client</span><span class="p">(</span><span class="n">ROUTING_KEY</span><span class="p">)</span>
-
-<span class="c1"># A special client class for the change events API (part of Events API v2):</span>
-<span class="n">change_events_client</span> <span class="o">=</span> <span class="n">pagerduty</span><span class="o">.</span><span class="n">EventsApiV2Client</span><span class="p">(</span><span class="n">ROUTING_KEY</span><span class="p">)</span>
 </pre></div>
 </div>
 <p>Session objects, being descendants of <a class="reference external" href="https://docs.python-requests.org/en/master/api/#request-sessions">requests.Session</a>, can also be used as
