@@ -101,6 +101,11 @@ three should be done in the order shown, so as to avoid name overlap issues:</st
 <li><p><code class="docutils literal notranslate"><span class="pre">s/APISession/RestApiV2Client/g</span></code></p></li>
 <li><p><code class="docutils literal notranslate"><span class="pre">s/PDSession/ApiClient/g</span></code></p></li>
 </ol>
+<p>The Change Events API client has been merged into the Events API v2 client
+because the differences between these two APIs are trivial enough to support
+them both under the same client class, and there is no method or property name
+overlap between the client classes. Their respective APIs are also documented
+under the same API reference.</p>
 </section>
 <section id="exception-classes">
 <h2>Exception Classes<a class="headerlink" href="#exception-classes" title="Permalink to this heading"></a></h2>
