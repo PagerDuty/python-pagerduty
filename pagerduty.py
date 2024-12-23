@@ -634,7 +634,7 @@ def infer_entity_wrapper(method: str, path: str) -> str:
     given path in :attr:`ENTITY_WRAPPER_CONFIG`.
 
     :param method: The HTTP method
-    :param path: A canonical API path i.e. as returned by ``canonical_path``
+    :param path: A canonical API path i.e. from :attr:`CANONICAL_PATHS`
     """
     m = method.upper()
     path_nodes = path.split('/')
