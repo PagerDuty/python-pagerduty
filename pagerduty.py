@@ -352,7 +352,6 @@ ENTITY_WRAPPER_CONFIG = {
     'POST /extensions/{id}/enable': (None, 'extension'),
 
     # Incidents
-    'PUT /incidents': 'incidents', # Multi-update
     'PUT /incidents/{id}/merge': ('source_incidents', 'incident'),
     'POST /incidents/{id}/responder_requests': (None, 'responder_request'),
     'POST /incidents/{id}/snooze': (None, 'incident'),
