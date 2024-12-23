@@ -45,10 +45,9 @@
               <ul class="current">
 <li class="toctree-l1"><a class="reference internal" href="changelog.html">Changelog</a></li>
 <li class="toctree-l1 current"><a class="current reference internal" href="#">User Guide</a><ul>
-<li class="toctree-l2"><a class="reference internal" href="#installation">Installation</a></li>
 <li class="toctree-l2"><a class="reference internal" href="#authentication">Authentication</a><ul>
-<li class="toctree-l3"><a class="reference internal" href="#the-from-header">The From header</a></li>
 <li class="toctree-l3"><a class="reference internal" href="#using-non-us-service-regions">Using Non-US Service Regions</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#the-from-header">The From header</a></li>
 </ul>
 </li>
 <li class="toctree-l2"><a class="reference internal" href="#basic-usage-examples">Basic Usage Examples</a><ul>
@@ -121,16 +120,6 @@
 <span id="id1"></span><h1>User Guide<a class="headerlink" href="#user-guide" title="Permalink to this heading"></a></h1>
 <p>This is a topical guide to general API client usage. <a class="reference internal" href="module_reference.html#module-reference"><span class="std std-ref">Module Reference</span></a>
 has in-depth documentation on client classes and methods.</p>
-<section id="installation">
-<h2>Installation<a class="headerlink" href="#installation" title="Permalink to this heading"></a></h2>
-<p>If <code class="docutils literal notranslate"><span class="pre">pip</span></code> is available, it can be installed via:</p>
-<div class="highlight-shell notranslate"><div class="highlight"><pre><span></span>pip install pagerduty
-</pre></div>
-</div>
-<p>Alternately, if the dependencies (<a class="reference external" href="https://docs.python-requests.org/en/master/">Requests</a> and “deprecation” Python libraries)
-have been installed locally, one can download <code class="docutils literal notranslate"><span class="pre">pagerduty.py</span></code> into the directory
-where it will be used.</p>
-</section>
 <section id="authentication">
 <h2>Authentication<a class="headerlink" href="#authentication" title="Permalink to this heading"></a></h2>
 <p>The first step is to construct a client object. The first argument to the
@@ -156,18 +145,6 @@ context managers. For example:</p>
     <span class="n">do_application</span><span class="p">(</span><span class="n">client</span><span class="p">)</span>
 </pre></div>
 </div>
-<section id="the-from-header">
-<h3>The From header<a class="headerlink" href="#the-from-header" title="Permalink to this heading"></a></h3>
-<p>If the <a class="reference external" href="https://developer.pagerduty.com/docs/ZG9jOjExMDI5NTUw-rest-api-v2-overview">REST API v2</a> client will be used for API endpoints that require a
-<code class="docutils literal notranslate"><span class="pre">From</span></code> header, such as those that take actions on incidents, and if it is
-using an account-level API key (created by an administrator via the “API Access
-Keys” page in the “Integrations” menu), the user must also supply the
-<code class="docutils literal notranslate"><span class="pre">default_from</span></code> keyword argument. Otherwise, a HTTP 400 response will result
-when making requests to such endpoints.</p>
-<p>Otherwise, if using a user’s API key (created under “API Access” in the “User
-Settings” tab of the user’s profile), the user will be derived from the key
-itself and <code class="docutils literal notranslate"><span class="pre">default_from</span></code> is not necessary.</p>
-</section>
 <section id="using-non-us-service-regions">
 <h3>Using Non-US Service Regions<a class="headerlink" href="#using-non-us-service-regions" title="Permalink to this heading"></a></h3>
 <p>If your PagerDuty account is in the EU or other service region outside the US, set the <code class="docutils literal notranslate"><span class="pre">url</span></code> attribute according to the
@@ -178,6 +155,25 @@ documented <a class="reference external" href="https://support.pagerduty.com/doc
 <span class="n">events_client</span><span class="o">.</span><span class="n">url</span> <span class="o">=</span> <span class="s1">&#39;https://events.eu.pagerduty.com&#39;</span>
 </pre></div>
 </div>
+</section>
+<section id="the-from-header">
+<h3>The From header<a class="headerlink" href="#the-from-header" title="Permalink to this heading"></a></h3>
+<p>If using an account-level API key (created by an administrator via the “API
+Access Keys” page in the “Integrations” menu), a <code class="docutils literal notranslate"><span class="pre">From</span></code> header must be
+supplied in certain endpoints to attribute the action to a user, e.g.
+acknowledging or resolving an incident, or the API will respond with status
+400. The value of the header must correspond to a PagerDuty user. The header
+can be set for all requests using the attribute
+<a class="reference internal" href="module_reference.html#pagerduty.RestApiV2Client.default_from" title="pagerduty.RestApiV2Client.default_from"><code class="xref py py-attr docutils literal notranslate"><span class="pre">pagerduty.RestApiV2Client.default_from</span></code></a> property, which can be set
+directly or through the <code class="docutils literal notranslate"><span class="pre">default_from</span></code> keyword argument when instantiating
+the client object.</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">client</span> <span class="o">=</span> <span class="n">pagerduty</span><span class="o">.</span><span class="n">RestApiV2Client</span><span class="p">(</span><span class="n">API_KEY</span><span class="p">,</span> <span class="n">default_from</span><span class="o">=</span><span class="s2">&quot;admin@example.com&quot;</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>Otherwise, if using a user’s API key (created under “API Access” in the “User
+Settings” tab of the user’s profile), the user will be derived from the key
+itself and it is not necessary to set <code class="docutils literal notranslate"><span class="pre">default_from</span></code> or supply a <code class="docutils literal notranslate"><span class="pre">From</span></code>
+header.</p>
 </section>
 </section>
 <section id="basic-usage-examples">
@@ -264,15 +260,14 @@ matching a string using the <code class="docutils literal notranslate"><span cla
 </div>
 <p><strong>Using multi-valued set filters:</strong> set the value in the <code class="docutils literal notranslate"><span class="pre">params</span></code> dictionary
 at the appropriate key to a list. Square brackets will then be automatically
-appended to the names of list-type-value parameters as necessary. Ordinarily
-(and in pagerduty versions prior to 4.4.0) one must include <code class="docutils literal notranslate"><span class="pre">[]</span></code> at the end of
-the paramter name to denote a set type filter. For example:</p>
+appended to the names of list-type-value parameters as necessary. For example:</p>
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="c1"># Query all open incidents assigned to a user</span>
 <span class="n">incidents</span> <span class="o">=</span> <span class="n">client</span><span class="o">.</span><span class="n">list_all</span><span class="p">(</span>
     <span class="s1">&#39;incidents&#39;</span><span class="p">,</span>
     <span class="n">params</span><span class="o">=</span><span class="p">{</span>
-      <span class="s1">&#39;user_ids[]&#39;</span><span class="p">:[</span><span class="s1">&#39;PHIJ789&#39;</span><span class="p">],</span> <span class="c1"># (Necessary in &lt; 4.4.0, compatible with &gt;= 4.4.0)</span>
-      <span class="s1">&#39;statuses&#39;</span><span class="p">:[</span><span class="s1">&#39;triggered&#39;</span><span class="p">,</span> <span class="s1">&#39;acknowledged&#39;</span><span class="p">]</span> <span class="c1"># (&gt;= 4.4.0)</span>
+      <span class="c1"># Both of the following parameter names are valid:</span>
+      <span class="s1">&#39;user_ids[]&#39;</span><span class="p">:</span> <span class="p">[</span><span class="s1">&#39;PHIJ789&#39;</span><span class="p">],</span>
+      <span class="s1">&#39;statuses&#39;</span><span class="p">:</span> <span class="p">[</span><span class="s1">&#39;triggered&#39;</span><span class="p">,</span> <span class="s1">&#39;acknowledged&#39;</span><span class="p">]</span> <span class="c1"># &quot;[]&quot; will be automatically appended</span>
     <span class="p">}</span>
 <span class="p">)</span>
 <span class="c1"># API calls will look like the following:</span>
@@ -339,10 +334,10 @@ a complete API URL.  For instance, one can specify <code class="docutils literal
 <p>One can also pass the full URL of an API endpoint and it will still work, i.e.
 the <code class="docutils literal notranslate"><span class="pre">self</span></code> property of any object can be used, and there is no need to strip
 out the API base URL.</p>
-<p>The <code class="docutils literal notranslate"><span class="pre">r*</span></code> (and <code class="docutils literal notranslate"><span class="pre">j*</span></code> methods as of version 5), i.e.
-<a class="reference internal" href="module_reference.html#pagerduty.RestApiV2Client.rget" title="pagerduty.RestApiV2Client.rget"><code class="xref py py-attr docutils literal notranslate"><span class="pre">pagerduty.RestApiV2Client.rget</span></code></a>, can also accept a dictionary object
-representing an API resource or a resource reference in place of a URL, in
-which case the URL at its <code class="docutils literal notranslate"><span class="pre">self</span></code> key will be used as the request target.</p>
+<p>The <code class="docutils literal notranslate"><span class="pre">r*</span></code> and <code class="docutils literal notranslate"><span class="pre">j*</span></code> methods, i.e.  <a class="reference internal" href="module_reference.html#pagerduty.RestApiV2Client.rget" title="pagerduty.RestApiV2Client.rget"><code class="xref py py-attr docutils literal notranslate"><span class="pre">pagerduty.RestApiV2Client.rget</span></code></a>,
+can also accept a dictionary object representing an API resource or a resource
+reference (see: <a class="reference external" href="https://developer.pagerduty.com/docs/resource-references">resource references</a>) in place of a URL, in which case the
+value at its <code class="docutils literal notranslate"><span class="pre">self</span></code> key will be used as the request URL.</p>
 </section>
 <section id="query-parameters">
 <h2>Query Parameters<a class="headerlink" href="#query-parameters" title="Permalink to this heading"></a></h2>
@@ -359,9 +354,9 @@ query string in the final URL of the request:</p>
 </pre></div>
 </div>
 <p>To specify a multi-value parameter, i.e. <code class="docutils literal notranslate"><span class="pre">include[]</span></code>, set the argument to a
-list. As of v4.4.0, if a list is given, and the key name does not end with
-<code class="docutils literal notranslate"><span class="pre">[]</span></code> (which is required for all such multi-valued parameters in REST API v2),
-then <code class="docutils literal notranslate"><span class="pre">[]</span></code> will be automatically appended to the parameter name.</p>
+list. If a list is given, and the key name does not end with <code class="docutils literal notranslate"><span class="pre">[]</span></code> (which is
+required for all such multi-valued parameters in REST API v2), then <code class="docutils literal notranslate"><span class="pre">[]</span></code> will
+be automatically appended to the parameter name. For example:</p>
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="c1"># If there are 82 services with name matching &quot;foo&quot; this will return all of</span>
 <span class="c1"># them as a list:</span>
 <span class="n">foo_services</span> <span class="o">=</span> <span class="n">client</span><span class="o">.</span><span class="n">list_all</span><span class="p">(</span><span class="s1">&#39;services&#39;</span><span class="p">,</span> <span class="n">params</span><span class="o">=</span><span class="p">{</span>
@@ -400,22 +395,20 @@ wrapper.  The response is the decoded body after unwrapping, if the API
 endpoint returns wrapped entities. For more details, refer to <a class="reference internal" href="#wrapping"><span class="std std-ref">Entity Wrapping</span></a>.</p>
 <section id="data-types">
 <h3>Data types<a class="headerlink" href="#data-types" title="Permalink to this heading"></a></h3>
-<p>Main article: <a class="reference external" href="https://developer.pagerduty.com/docs/ZG9jOjExMDI5NTU1-types">Types</a></p>
+<p>Main article: <a class="reference external" href="https://developer.pagerduty.com/docs/types">Types</a></p>
 <p>Note these analogues in structure between the JSON schema and the object
 in Python:</p>
 <ul class="simple">
 <li><p>If the data type documented in the schema is
-<a class="reference external" href="https://developer.pagerduty.com/docs/ZG9jOjExMDI5NTU1-types#object">“object”</a>,
-then the corresponding type of the Python object will be <code class="docutils literal notranslate"><span class="pre">dict</span></code>.</p></li>
+“object”, then the corresponding type of the Python object will be <code class="docutils literal notranslate"><span class="pre">dict</span></code>.</p></li>
 <li><p>If the data type documented in the schema is
-<a class="reference external" href="https://developer.pagerduty.com/docs/ZG9jOjExMDI5NTU1-types#array">array</a>,
-then the corresponding type of the Python object will be <code class="docutils literal notranslate"><span class="pre">list</span></code>.</p></li>
+“array”, then the corresponding type of the Python object will be <code class="docutils literal notranslate"><span class="pre">list</span></code>.</p></li>
 <li><p>Generally speaking, the data type in the decoded object is according to the
 design of the <a class="reference external" href="https://docs.python.org/3/library/json.html">json</a> Python library.</p></li>
 </ul>
 <p>For example, consider the example structure of an escalation policy as given in
 the API reference page for <code class="docutils literal notranslate"><span class="pre">GET</span> <span class="pre">/escalation_policies/{id}</span></code> (“Get an
-escalation policy”).. To access the name of the second target in level 1,
+escalation policy”). To access the name of the second target in level 1,
 assuming the variable <code class="docutils literal notranslate"><span class="pre">ep</span></code> represents the unwrapped escalation policy object:</p>
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">ep</span><span class="p">[</span><span class="s1">&#39;escalation_rules&#39;</span><span class="p">][</span><span class="mi">0</span><span class="p">][</span><span class="s1">&#39;targets&#39;</span><span class="p">][</span><span class="mi">1</span><span class="p">][</span><span class="s1">&#39;summary&#39;</span><span class="p">]</span>
 <span class="c1"># &quot;Daily Engineering Rotation&quot;</span>
@@ -458,14 +451,14 @@ Most of PagerDuty’s REST API v2 endpoints respond with their content wrapped
 inside of another object with a single key at the root level of the
 (JSON-encoded) response body, and/or require the request body be wrapped in
 another object that contains a single key. Endpoints with such request/response
-schemas are generally supported for pagination.</p>
+schemas usually (with few exceptions) support pagination.</p>
 <section id="identifying-wrapped-entity-endpoints">
 <h3>Identifying Wrapped-entity Endpoints<a class="headerlink" href="#identifying-wrapped-entity-endpoints" title="Permalink to this heading"></a></h3>
 <p><em>If the endpoint’s response schema or expected request schema contains only one
 property that contains all of the content of the API resource, the endpoint is
 said to wrap entities.</em> In resource collection endpoints that support
 pagination, the response schema contains additional pagination-related
-properties such as <code class="docutils literal notranslate"><span class="pre">more</span></code> (for Classic Pagination) or <code class="docutils literal notranslate"><span class="pre">next_cursor</span></code> (for
+properties such as <code class="docutils literal notranslate"><span class="pre">more</span></code> (for classic pagination) or <code class="docutils literal notranslate"><span class="pre">next_cursor</span></code> (for
 cursor-based pagination) and no other content-bearing properties.</p>
 </section>
 <section id="wrapped-entity-aware-functions">
@@ -486,13 +479,14 @@ of API responses, and wrap request entities for the user as appropriate:</p>
 </section>
 <section id="special-cases">
 <h3>Special Cases<a class="headerlink" href="#special-cases" title="Permalink to this heading"></a></h3>
-<p>There are some API endpoints that do not follow preexisting API schema
-conventions for entity wrapping, and are said to not have entity wrapping. On
-all such endpoints, the results for a given <code class="docutils literal notranslate"><span class="pre">r*</span></code> method would be the same if
-using the equivalent <code class="docutils literal notranslate"><span class="pre">j*</span></code> method, and the details of request and response
-schemas are are left to the end user to extract and use as desired. Moreover,
-on all endpoints that lack entity wrapping, pagination is not supported, i.e.
-:attr`pagerduty.RestAPIV2Client.iter_all` cannot be used with them.</p>
+<p>There are some API endpoints that do not follow API schema conventions for
+entity wrapping. Some do not wrap entities at all. On all endpoints that do not
+wrap entities, the results for a given <code class="docutils literal notranslate"><span class="pre">r*</span></code> method would be the same if using
+the equivalent <code class="docutils literal notranslate"><span class="pre">j*</span></code> method, and the details of request and response schemas
+are are left to the end user to extract and use as desired. Moreover, on all
+endpoints that completely lack entity wrapping, pagination is not supported,
+i.e. <a class="reference internal" href="module_reference.html#pagerduty.RestApiV2Client.iter_all" title="pagerduty.RestApiV2Client.iter_all"><code class="xref py py-attr docutils literal notranslate"><span class="pre">pagerduty.RestApiV2Client.iter_all</span></code></a> will raise
+<a class="reference internal" href="module_reference.html#pagerduty.UrlError" title="pagerduty.UrlError"><code class="xref py py-attr docutils literal notranslate"><span class="pre">pagerduty.UrlError</span></code></a> if used with them.</p>
 </section>
 <section id="examples">
 <h3>Examples<a class="headerlink" href="#examples" title="Permalink to this heading"></a></h3>
@@ -541,18 +535,17 @@ entity is wrapped as appropriate.</p>
 </section>
 <section id="pagination">
 <h2>Pagination<a class="headerlink" href="#pagination" title="Permalink to this heading"></a></h2>
+<p>Main article: <a class="reference external" href="https://developer.pagerduty.com/docs/pagination">Pagination</a></p>
+<p>Only classic and cursor-based pagination are currently supported. Pagination
+functions require that the API endpoint being requested have entity wrapping
+enabled, and respond with either a <code class="docutils literal notranslate"><span class="pre">more</span></code> or <code class="docutils literal notranslate"><span class="pre">cursor</span></code> property indicating
+how and if to fetch the next page of results.</p>
 <p>The method <a class="reference internal" href="module_reference.html#pagerduty.RestApiV2Client.iter_all" title="pagerduty.RestApiV2Client.iter_all"><code class="xref py py-attr docutils literal notranslate"><span class="pre">pagerduty.RestApiV2Client.iter_all</span></code></a> returns an iterator that
-yields results from an endpoint that returns a wrapped collection of resources.
-By default it will use classic, a.k.a. numeric pagination. If the endpoint
-supports cursor-based pagination, it will use
-<a class="reference internal" href="module_reference.html#pagerduty.RestApiV2Client.iter_cursor" title="pagerduty.RestApiV2Client.iter_cursor"><code class="xref py py-attr docutils literal notranslate"><span class="pre">pagerduty.RestApiV2Client.iter_cursor</span></code></a> to iterate through results
-instead. The methods <a class="reference internal" href="module_reference.html#pagerduty.RestApiV2Client.list_all" title="pagerduty.RestApiV2Client.list_all"><code class="xref py py-attr docutils literal notranslate"><span class="pre">pagerduty.RestApiV2Client.list_all</span></code></a> and
+yields results from an endpoint that features pagination. The methods
+<a class="reference internal" href="module_reference.html#pagerduty.RestApiV2Client.list_all" title="pagerduty.RestApiV2Client.list_all"><code class="xref py py-attr docutils literal notranslate"><span class="pre">pagerduty.RestApiV2Client.list_all</span></code></a> and
 <a class="reference internal" href="module_reference.html#pagerduty.RestApiV2Client.dict_all" title="pagerduty.RestApiV2Client.dict_all"><code class="xref py py-attr docutils literal notranslate"><span class="pre">pagerduty.RestApiV2Client.dict_all</span></code></a> will request all pages of the
 collection and return the results as a list or dictionary, respectively.</p>
-<p>Pagination functions require that the API endpoint being requested have entity
-wrapping enabled, and respond with either a <code class="docutils literal notranslate"><span class="pre">more</span></code> or <code class="docutils literal notranslate"><span class="pre">cursor</span></code> property
-indicating how and if to fetch the next page of results.</p>
-<p>For example:</p>
+<p>Examples:</p>
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="c1"># Example: Find all users with &quot;Dav&quot; in their name/email (i.e. Dave/David)</span>
 <span class="c1"># in the PagerDuty account:</span>
 <span class="k">for</span> <span class="n">dave</span> <span class="ow">in</span> <span class="n">client</span><span class="o">.</span><span class="n">iter_all</span><span class="p">(</span><span class="s1">&#39;users&#39;</span><span class="p">,</span> <span class="n">params</span><span class="o">=</span><span class="p">{</span><span class="s1">&#39;query&#39;</span><span class="p">:</span><span class="s2">&quot;Dav&quot;</span><span class="p">}):</span>
@@ -568,6 +561,10 @@ indicating how and if to fetch the next page of results.</p>
 <span class="nb">print</span><span class="p">(</span><span class="n">bob</span><span class="p">[</span><span class="s1">&#39;id&#39;</span><span class="p">])</span>
 </pre></div>
 </div>
+<p>By default, classic, a.k.a. numeric pagination, will be used. If the endpoint
+supports cursor-based pagination, it will call out to
+<a class="reference internal" href="module_reference.html#pagerduty.RestApiV2Client.iter_cursor" title="pagerduty.RestApiV2Client.iter_cursor"><code class="xref py py-attr docutils literal notranslate"><span class="pre">pagerduty.RestApiV2Client.iter_cursor</span></code></a> to iterate through results
+instead.</p>
 <section id="performance-and-completeness-of-results">
 <h3>Performance and Completeness of Results<a class="headerlink" href="#performance-and-completeness-of-results" title="Permalink to this heading"></a></h3>
 <p>Because HTTP requests are made synchronously and not in multiple threads,
@@ -611,14 +608,8 @@ returned more than once, because they get bumped to the next group of 100 pages.
 </section>
 <section id="multi-updating">
 <h2>Multi-updating<a class="headerlink" href="#multi-updating" title="Permalink to this heading"></a></h2>
-<p>Multi-update actions can be performed using <code class="docutils literal notranslate"><span class="pre">rput</span></code>. As of this writing,
-multi-update support includes the following endpoints:</p>
-<ul class="simple">
-<li><p><a class="reference external" href="https://developer.pagerduty.com/api-reference/b3A6Mjc0ODEzOQ-manage-incidents">PUT /incidents</a></p></li>
-<li><p><a class="reference external" href="https://developer.pagerduty.com/api-reference/b3A6Mjc0ODE0NA-manage-alerts">PUT /incidents/{id}/alerts</a></p></li>
-<li><p>PUT /priorities (documentation not yet published as of 2023-04-26, but the endpoint is functional)</p></li>
-</ul>
-<p>For instance, to resolve two incidents with IDs <code class="docutils literal notranslate"><span class="pre">PABC123</span></code> and <code class="docutils literal notranslate"><span class="pre">PDEF456</span></code>:</p>
+<p>Multi-update actions can be performed using <code class="docutils literal notranslate"><span class="pre">rput</span></code> with some endpoints. For
+instance, to resolve two incidents with IDs <code class="docutils literal notranslate"><span class="pre">PABC123</span></code> and <code class="docutils literal notranslate"><span class="pre">PDEF456</span></code>:</p>
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">client</span><span class="o">.</span><span class="n">rput</span><span class="p">(</span>
     <span class="s2">&quot;incidents&quot;</span><span class="p">,</span>
     <span class="n">json</span><span class="o">=</span><span class="p">[</span>
@@ -634,22 +625,26 @@ actions.</p>
 user-scoped access token or setting the <code class="docutils literal notranslate"><span class="pre">From</span></code> header to the login email
 address of a valid PagerDuty user. To set this, pass it through using the
 <code class="docutils literal notranslate"><span class="pre">headers</span></code> keyword argument, or set the
-<a class="reference internal" href="module_reference.html#pagerduty.RestApiV2Client.default_from" title="pagerduty.RestApiV2Client.default_from"><code class="xref py py-attr docutils literal notranslate"><span class="pre">pagerduty.RestApiV2Client.default_from</span></code></a> property, or pass the email address as
-the <code class="docutils literal notranslate"><span class="pre">default_from</span></code> keyword argument when constructing the client initially.</p>
+<a class="reference internal" href="module_reference.html#pagerduty.RestApiV2Client.default_from" title="pagerduty.RestApiV2Client.default_from"><code class="xref py py-attr docutils literal notranslate"><span class="pre">pagerduty.RestApiV2Client.default_from</span></code></a> property, or pass the email
+address as the <code class="docutils literal notranslate"><span class="pre">default_from</span></code> keyword argument when constructing the client
+initially.</p>
 </section>
 <section id="error-handling">
 <h2>Error Handling<a class="headerlink" href="#error-handling" title="Permalink to this heading"></a></h2>
-<p>For any of the methods that do not return <a class="reference external" href="https://docs.python-requests.org/en/master/api/#requests.Response">requests.Response</a>, when the API
-responds with a non-success HTTP status, the method will raise a
-<a class="reference internal" href="module_reference.html#pagerduty.Error" title="pagerduty.Error"><code class="xref py py-class docutils literal notranslate"><span class="pre">pagerduty.Error</span></code></a> exception. This way, these methods can always be
-expected to return the same structure of data based on the API being used, and
-there is no need to differentiate between the response schema for a successful
-request and one for an error response.</p>
-<p>The exception class has the <a class="reference external" href="https://docs.python-requests.org/en/master/api/#requests.Response">requests.Response</a> object as its <code class="docutils literal notranslate"><span class="pre">response</span></code>
-property whenever the exception pertains to a HTTP error. One can thus define
-specialized error handling logic in which the REST API response data (i.e.
-headers, code and body) are available in the catching scope.</p>
-<p>For instance, the following code prints “User not found” in the event of a 404,
+<p>The <a class="reference internal" href="module_reference.html#pagerduty.UrlError" title="pagerduty.UrlError"><code class="xref py py-class docutils literal notranslate"><span class="pre">pagerduty.UrlError</span></code></a> is raised prior to making API calls, and it indicates
+unsupported URLs and/or malformed input.</p>
+<p>The base exception class for all errors encountered when making requests is
+<a class="reference internal" href="module_reference.html#pagerduty.Error" title="pagerduty.Error"><code class="xref py py-class docutils literal notranslate"><span class="pre">pagerduty.Error</span></code></a>. This includes network / transport issues where there
+is no response from the API, in which case the exception will inherit from the
+exception raised by the underlying HTTP library.</p>
+<p>All errors that involve a response from the API are instances of
+<a class="reference internal" href="module_reference.html#pagerduty.HttpError" title="pagerduty.HttpError"><code class="xref py py-class docutils literal notranslate"><span class="pre">pagerduty.HttpError</span></code></a> and will have a <code class="docutils literal notranslate"><span class="pre">response</span></code> property containing
+the <a class="reference external" href="https://docs.python-requests.org/en/master/api/#requests.Response">requests.Response</a> object. Its subclass
+<code class="xref py py-class docutils literal notranslate"><span class="pre">pagerduty.HttpServerError</span></code> is used for special cases when the API is
+responding in an unexpected way.</p>
+<p>One can thus define specialized error handling logic in which the REST API
+response data (i.e.  headers, code and body) are available in the catching
+scope. For example, the following code prints “User not found” in the event of a 404,
 prints out the user’s email if the user exists and raises the underlying
 exception if it’s any other HTTP error code:</p>
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="k">try</span><span class="p">:</span>
@@ -764,9 +759,9 @@ supersede the maximum number of retries for any status defined in
 <a class="reference external" href="https://docs.python-requests.org/en/master/api/#requests.Response">requests.Response</a> objects when they run out of retries. Higher-level
 functions that require a success status response, i.e.
 <a class="reference internal" href="module_reference.html#pagerduty.RestApiV2Client.list_all" title="pagerduty.RestApiV2Client.list_all"><code class="xref py py-attr docutils literal notranslate"><span class="pre">pagerduty.RestApiV2Client.list_all</span></code></a> and
-<a class="reference internal" href="module_reference.html#pagerduty.EventsApiV2Client.trigger" title="pagerduty.EventsApiV2Client.trigger"><code class="xref py py-attr docutils literal notranslate"><span class="pre">pagerduty.EventsApiV2Client.trigger</span></code></a>, will raise exceptions that include
-the response object when they encounter error status responses, but only after
-the configured retry limits are reached in the underlying HTTP request methods.</p>
+<a class="reference internal" href="module_reference.html#pagerduty.EventsApiV2Client.trigger" title="pagerduty.EventsApiV2Client.trigger"><code class="xref py py-attr docutils literal notranslate"><span class="pre">pagerduty.EventsApiV2Client.trigger</span></code></a>, will raise instances of
+<a class="reference internal" href="module_reference.html#pagerduty.HttpError" title="pagerduty.HttpError"><code class="xref py py-class docutils literal notranslate"><span class="pre">pagerduty.HttpError</span></code></a>, but only after the configured retry limits are
+reached in the underlying HTTP request methods.</p>
 <p><strong>Example:</strong></p>
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="c1"># This will take about 30 seconds plus API request time, carrying out four</span>
 <span class="c1"># attempts with 2, 4, 8 and 16 second pauses between them, before finally</span>
