@@ -7,6 +7,17 @@ User Guide
 This is a topical guide to general API client usage. :ref:`module_reference`
 has in-depth documentation on client classes and methods.
 
+
+
+Installation
+------------
+This library is available on PyPI as [pagerduty](https://pypi.org/project/pagerduty/), e.g.: 
+
+.. code-block:: bash
+
+    pip install pagerduty
+
+
 Authentication
 --------------
 The first step is to construct a client object. The first argument to the
