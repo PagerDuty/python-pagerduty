@@ -6,6 +6,14 @@ A module that supplies lightweight Python clients for the PagerDuty REST API v2 
 For how-to, refer to the `User Guide
 <https://pagerduty.github.io/python-pagerduty/user_guide.html>`_.
 
+Installation
+------------
+This library is available on PyPI as [pagerduty](https://pypi.org/project/pagerduty/), e.g.: 
+
+```
+pip install pagerduty
+```
+
 Overview
 --------
 This library supplies classes extending `requests.Session`_ from the Requests_
