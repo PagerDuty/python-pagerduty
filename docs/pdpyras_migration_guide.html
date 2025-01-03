@@ -85,15 +85,18 @@
 from the original <a class="reference external" href="https://github.com/PagerDuty/pdpyras">pdpyras</a> source code. This was done so that nomenclature
 clearly reflects the hierarchy of APIs and errors, and to make the relationship
 between API clients and their respective APIs more clear.</p>
-<p>The following replacements are expressed in <a class="reference external" href="https://www.gnu.org/software/sed/manual/html_node/The-_0022s_0022-Command.html">sed-style substitution format</a>,
-i.e. if replacing all instances of <code class="docutils literal notranslate"><span class="pre">{{pattern}}</span></code> with <code class="docutils literal notranslate"><span class="pre">{{replacement}}</span></code>:</p>
-<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">s</span><span class="o">/</span><span class="p">{{</span><span class="n">pattern</span><span class="p">}}</span><span class="o">/</span><span class="p">{{</span><span class="n">replacement</span><span class="p">}}</span><span class="o">/</span><span class="n">g</span>
+<p>Replacements are expressed in <a class="reference external" href="https://www.gnu.org/software/sed/manual/html_node/The-_0022s_0022-Command.html">sed-style substitution format</a>,
+i.e. if replacing all instances of <code class="docutils literal notranslate"><span class="pre">{{pattern}}</span></code> with <code class="docutils literal notranslate"><span class="pre">{{replacement}}</span></code>,
+the pattern is <code class="docutils literal notranslate"><span class="pre">s/{{pattern}}/{{replacement}}/g</span></code>.</p>
+<p>The first substitution that should be made is <code class="docutils literal notranslate"><span class="pre">s/pdpyras/pagerduty/g</span></code>, i.e.</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="o">-</span> <span class="kn">import</span> <span class="nn">pdpyras</span>
+<span class="o">+</span> <span class="kn">import</span> <span class="nn">pagerduty</span>
 </pre></div>
 </div>
 <section id="client-classes">
 <h2>Client Classes<a class="headerlink" href="#client-classes" title="Permalink to this heading"></a></h2>
-<p>In downstream code that uses <a class="reference external" href="https://github.com/PagerDuty/pdpyras">pdpyras</a>, the following name replacements
-should be made in order to switch to using <cite>python-pagerduty</cite>. <strong>The first
+<p>In code that uses <a class="reference external" href="https://github.com/PagerDuty/pdpyras">pdpyras</a>, the following class name replacements should be
+made to switch to using their equivalents in <cite>python-pagerduty</cite>. <strong>The first
 three should be done in the order shown, so as to avoid name overlap issues:</strong></p>
 <ol class="arabic simple">
 <li><p><code class="docutils literal notranslate"><span class="pre">s/ChangeEventsAPISession/EventsApiV2Client/g</span></code></p></li>
@@ -101,7 +104,7 @@ three should be done in the order shown, so as to avoid name overlap issues:</st
 <li><p><code class="docutils literal notranslate"><span class="pre">s/APISession/RestApiV2Client/g</span></code></p></li>
 <li><p><code class="docutils literal notranslate"><span class="pre">s/PDSession/ApiClient/g</span></code></p></li>
 </ol>
-<p>The Change Events API client has been merged into the Events API v2 client
+<p>Note, the Change Events API client has been merged into the Events API v2 client
 because the former API is effectively a component of the latter. The
 differences are trivial enough to support both use cases with a single client
 class, and there are no method or property name collisions between the two

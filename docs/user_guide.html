@@ -123,7 +123,7 @@
 has in-depth documentation on client classes and methods.</p>
 <section id="installation">
 <h2>Installation<a class="headerlink" href="#installation" title="Permalink to this heading"></a></h2>
-<p>This library is available on PyPI as <a class="reference external" href="https://pypi.org/project/pagerduty/">pagerduty</a>, e.g.:</p>
+<p>This library is available on the Python Package Index as <a class="reference external" href="https://pypi.org/project/pagerduty/">pagerduty</a>, e.g.:</p>
 <div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>pip install pagerduty
 </pre></div>
 </div>
@@ -736,13 +736,13 @@ client will return the <a class="reference external" href="https://docs.python-r
 increases exponentially with each retry.</p>
 <p>Let:</p>
 <ul class="simple">
-<li><p>a = <a class="reference internal" href="module_reference.html#pagerduty.ApiClient.sleep_timer_base" title="pagerduty.ApiClient.sleep_timer_base"><code class="xref py py-attr docutils literal notranslate"><span class="pre">pagerduty.ApiClient.sleep_timer_base</span></code></a></p></li>
-<li><p>t<sub>0</sub> = <code class="docutils literal notranslate"><span class="pre">sleep_timer</span></code></p></li>
+<li><p>a = <a class="reference internal" href="module_reference.html#pagerduty.ApiClient.sleep_timer_base" title="pagerduty.ApiClient.sleep_timer_base"><code class="xref py py-attr docutils literal notranslate"><span class="pre">pagerduty.ApiClient.sleep_timer_base</span></code></a> (base of the exponent, default value <code class="docutils literal notranslate"><span class="pre">2</span></code>)</p></li>
+<li><p>t<sub>0</sub> = <a class="reference internal" href="module_reference.html#pagerduty.ApiClient.sleep_timer" title="pagerduty.ApiClient.sleep_timer"><code class="xref py py-attr docutils literal notranslate"><span class="pre">pagerduty.ApiClient.sleep_timer</span></code></a> (initial sleep timer, default value <code class="docutils literal notranslate"><span class="pre">1.5</span></code>)</p></li>
 <li><p>t<sub>n</sub> = Sleep time after n attempts</p></li>
 <li><p>ρ = <a class="reference internal" href="module_reference.html#pagerduty.ApiClient.stagger_cooldown" title="pagerduty.ApiClient.stagger_cooldown"><code class="xref py py-attr docutils literal notranslate"><span class="pre">pagerduty.ApiClient.stagger_cooldown</span></code></a></p></li>
 <li><p>r<sub>n</sub> = a randomly-generated real number between 0 and 1, distinct for each n-th request</p></li>
 </ul>
-<p>Assuming ρ = 0:</p>
+<p>Assuming ρ = 0 (the default value):</p>
 <p>t<sub>n</sub> = t<sub>0</sub> a<sup>n</sup></p>
 <p>If ρ is nonzero:</p>
 <p>t<sub>n</sub> = a (1 + ρ r<sub>n</sub>) t<sub>n-1</sub></p>

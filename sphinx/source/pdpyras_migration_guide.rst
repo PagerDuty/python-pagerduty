@@ -9,19 +9,22 @@ from the original `pdpyras`_ source code. This was done so that nomenclature
 clearly reflects the hierarchy of APIs and errors, and to make the relationship
 between API clients and their respective APIs more clear.
 
-The following replacements are expressed in `sed-style substitution format
+Replacements are expressed in `sed-style substitution format
 <https://www.gnu.org/software/sed/manual/html_node/The-_0022s_0022-Command.html>`_,
-i.e. if replacing all instances of ``{{pattern}}`` with ``{{replacement}}``:
+i.e. if replacing all instances of ``{{pattern}}`` with ``{{replacement}}``,
+the pattern is ``s/{{pattern}}/{{replacement}}/g``.
+
+The first substitution that should be made is ``s/pdpyras/pagerduty/g``, i.e.
 
 ::
 
-   s/{{pattern}}/{{replacement}}/g
-
+    - import pdpyras
+    + import pagerduty
 
 Client Classes
 --------------
-In downstream code that uses `pdpyras`_, the following name replacements
-should be made in order to switch to using `python-pagerduty`. **The first
+In code that uses `pdpyras`_, the following class name replacements should be
+made to switch to using their equivalents in `python-pagerduty`. **The first
 three should be done in the order shown, so as to avoid name overlap issues:**
 
 1. ``s/ChangeEventsAPISession/EventsApiV2Client/g``
@@ -29,7 +32,7 @@ three should be done in the order shown, so as to avoid name overlap issues:**
 3. ``s/APISession/RestApiV2Client/g``
 4. ``s/PDSession/ApiClient/g``
 
-The Change Events API client has been merged into the Events API v2 client
+Note, the Change Events API client has been merged into the Events API v2 client
 because the former API is effectively a component of the latter. The
 differences are trivial enough to support both use cases with a single client
 class, and there are no method or property name collisions between the two
