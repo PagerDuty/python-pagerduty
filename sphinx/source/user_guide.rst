@@ -376,7 +376,7 @@ Using the example given in the API reference page:
     }
     ep['escalation_rules'].append(new_rule)
     # Save changes:
-    client.rput(ep, json=ep)
+    ep = client.rput(ep, json=ep)
 
 Resource Schemas
 ****************

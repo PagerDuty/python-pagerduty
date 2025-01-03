@@ -437,7 +437,7 @@ Using the example given in the API reference page:</p>
 <span class="p">}</span>
 <span class="n">ep</span><span class="p">[</span><span class="s1">&#39;escalation_rules&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">new_rule</span><span class="p">)</span>
 <span class="c1"># Save changes:</span>
-<span class="n">client</span><span class="o">.</span><span class="n">rput</span><span class="p">(</span><span class="n">ep</span><span class="p">,</span> <span class="n">json</span><span class="o">=</span><span class="n">ep</span><span class="p">)</span>
+<span class="n">ep</span> <span class="o">=</span> <span class="n">client</span><span class="o">.</span><span class="n">rput</span><span class="p">(</span><span class="n">ep</span><span class="p">,</span> <span class="n">json</span><span class="o">=</span><span class="n">ep</span><span class="p">)</span>
 </pre></div>
 </div>
 </section>
