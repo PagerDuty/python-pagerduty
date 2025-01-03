@@ -11,7 +11,7 @@ has in-depth documentation on client classes and methods.
 
 Installation
 ------------
-This library is available on PyPI as `pagerduty <https://pypi.org/project/pagerduty/>`_, e.g.: 
+This library is available on the Python Package Index as `pagerduty <https://pypi.org/project/pagerduty/>`_, e.g.: 
 
 .. code-block:: bash
 
@@ -705,13 +705,13 @@ increases exponentially with each retry.
 
 Let:
 
-* a = :attr:`pagerduty.ApiClient.sleep_timer_base`
-* t\ :sub:`0` = ``sleep_timer``
+* a = :attr:`pagerduty.ApiClient.sleep_timer_base` (base of the exponent, default value ``2``)
+* t\ :sub:`0` = :attr:`pagerduty.ApiClient.sleep_timer` (initial sleep timer, default value ``1.5``)
 * t\ :sub:`n` = Sleep time after n attempts
 * ρ = :attr:`pagerduty.ApiClient.stagger_cooldown`
 * r\ :sub:`n` = a randomly-generated real number between 0 and 1, distinct for each n-th request
 
-Assuming ρ = 0:
+Assuming ρ = 0 (the default value):
 
 t\ :sub:`n` = t\ :sub:`0` a\ :sup:`n`
 
