@@ -130,8 +130,9 @@ converted to URL query parameters by Requests_:
     # >>> services
     # [{'type':'service', ...}, ...]
 
-**Searching resource collections:** use ``find`` to look up a resource exactly
-matching a string using the ``query`` parameter on an index endpoint:
+**Searching resource collections:** use ``find`` to look up a resource (a user,
+in this example) exactly matching a string using the ``query`` parameter on an
+index endpoint:
 
 .. code-block:: python
 
@@ -168,13 +169,13 @@ matching a string using the ``query`` parameter on an index endpoint:
         'name': 'Jane Doe'
     })
 
-**Idempotent create/update:**
+**Idempotent create/update:** create a user if one doesn't already exist based
+on the dictionary object ``user_data``, using the "email" key/property as the
+uniquely identifying attribute, and update it if it exists and differs from
+``user_data``:
 
 .. code-block:: python
 
-    # Create a user if one doesn't already exist based on the dictionary object
-    # user_data, using the 'email' key as the uniquely identifying property,
-    # and update it if it exists and differs from user_data:
     user_data = {'email': 'user123@example.com', 'name': 'User McUserson'}
     updated_user = client.persist('users', 'email', user_data, update=True)
 
@@ -196,6 +197,30 @@ appended to the names of list-type-value parameters as necessary. For example:
     # API calls will look like the following:
     # GET /incidents?user_ids%5B%5D=PHIJ789&statuses%5B%5D=triggered&statuses%5B%5D=acknowledged&offset=0&limit=100
 
+**Get a list of all incident notes submitted by a team:** Incident notes are
+recorded as *log entries* of type ``annotate_log_entry``, so with that in mind:
+
+* Use ``iter_all`` on the "List log entries" endpoint
+* Use the query parameter ``team_ids[]`` to filter by team ID
+* Use the ``since`` and ``until`` query parameters to select a time range
+* Use ``filter`` to limit the results to incident notes
+
+.. code-block:: python
+
+    notes = list(filter(
+        lambda ile: ile['type'] == 'annotate_log_entry',
+        client.iter_all(
+            'log_entries',
+            params={
+                'team_ids':['PN1T34M'], 
+                'since': '2024-01-01',
+                'until': '2025-01-01'
+            }
+        )
+    ))
+
+    # >>> notes
+    # [{'type': 'annotate_log_entry', 'summary': 'Resolved by reboot' ... }, ... ]
 
 **Performing multi-update:** for endpoints that support it only, i.e. ``PUT /incidents``:
 
