@@ -163,22 +163,25 @@ documented <a class="reference external" href="https://support.pagerduty.com/doc
 </section>
 <section id="the-from-header">
 <h3>The From header<a class="headerlink" href="#the-from-header" title="Permalink to this heading"></a></h3>
-<p>If using an account-level API key (created by an administrator via the “API
-Access Keys” page in the “Integrations” menu), a <code class="docutils literal notranslate"><span class="pre">From</span></code> header must be
-supplied in certain endpoints to attribute the action to a user, e.g.
-acknowledging or resolving an incident, or the API will respond with status
-400. The value of the header must correspond to a PagerDuty user. The header
-can be set for all requests using the attribute
-<a class="reference internal" href="module_reference.html#pagerduty.RestApiV2Client.default_from" title="pagerduty.RestApiV2Client.default_from"><code class="xref py py-attr docutils literal notranslate"><span class="pre">pagerduty.RestApiV2Client.default_from</span></code></a> property, which can be set
-directly or through the <code class="docutils literal notranslate"><span class="pre">default_from</span></code> keyword argument when instantiating
-the client object.</p>
+<p>This request header can be set for all requests using the attribute
+<a class="reference internal" href="module_reference.html#pagerduty.RestApiV2Client.default_from" title="pagerduty.RestApiV2Client.default_from"><code class="xref py py-attr docutils literal notranslate"><span class="pre">pagerduty.RestApiV2Client.default_from</span></code></a> property, either directly or
+through the <code class="docutils literal notranslate"><span class="pre">default_from</span></code> keyword argument when instantiating the client
+object:</p>
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">client</span> <span class="o">=</span> <span class="n">pagerduty</span><span class="o">.</span><span class="n">RestApiV2Client</span><span class="p">(</span><span class="n">API_KEY</span><span class="p">,</span> <span class="n">default_from</span><span class="o">=</span><span class="s2">&quot;admin@example.com&quot;</span><span class="p">)</span>
 </pre></div>
 </div>
+<p>If using an account-level API key, created by an administrator via the “API
+Access Keys” page in the “Integrations” menu, a <code class="docutils literal notranslate"><span class="pre">From</span></code> header must be set in
+requests to certain API endpoints, e.g. acknowledging or resolving incidents.
+Its value must be the email address of a valid PagerDuty user.</p>
 <p>Otherwise, if using a user’s API key (created under “API Access” in the “User
 Settings” tab of the user’s profile), the user will be derived from the key
 itself and it is not necessary to set <code class="docutils literal notranslate"><span class="pre">default_from</span></code> or supply a <code class="docutils literal notranslate"><span class="pre">From</span></code>
 header.</p>
+<p>If the source of the API key is unknown, the value of the client object’s
+property <a class="reference internal" href="module_reference.html#pagerduty.RestApiV2Client.api_key_access" title="pagerduty.RestApiV2Client.api_key_access"><code class="xref py py-attr docutils literal notranslate"><span class="pre">pagerduty.RestApiV2Client.api_key_access</span></code></a> can be used. It will
+be <code class="docutils literal notranslate"><span class="pre">account</span></code> if its API secret is an account-level API key, and it will be
+<code class="docutils literal notranslate"><span class="pre">user</span></code> for a user-level API key.</p>
 </section>
 </section>
 <section id="basic-usage-examples">

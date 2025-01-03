@@ -59,24 +59,30 @@ documented `API Access URLs
 
 The From header
 ***************
-If using an account-level API key (created by an administrator via the "API
-Access Keys" page in the "Integrations" menu), a ``From`` header must be
-supplied in certain endpoints to attribute the action to a user, e.g.
-acknowledging or resolving an incident, or the API will respond with status
-400. The value of the header must correspond to a PagerDuty user. The header
-can be set for all requests using the attribute
-:attr:`pagerduty.RestApiV2Client.default_from` property, which can be set
-directly or through the ``default_from`` keyword argument when instantiating
-the client object.
+This request header can be set for all requests using the attribute
+:attr:`pagerduty.RestApiV2Client.default_from` property, either directly or
+through the ``default_from`` keyword argument when instantiating the client
+object:
 
 .. code-block:: python
 
     client = pagerduty.RestApiV2Client(API_KEY, default_from="admin@example.com")
 
+If using an account-level API key, created by an administrator via the "API
+Access Keys" page in the "Integrations" menu, a ``From`` header must be set in
+requests to certain API endpoints, e.g. acknowledging or resolving incidents.
+Its value must be the email address of a valid PagerDuty user. 
+
 Otherwise, if using a user's API key (created under "API Access" in the "User
 Settings" tab of the user's profile), the user will be derived from the key
 itself and it is not necessary to set ``default_from`` or supply a ``From``
 header.
+
+If the source of the API key is unknown, the value of the client object's
+property :attr:`pagerduty.RestApiV2Client.api_key_access` can be used. It will
+be ``account`` if its API secret is an account-level API key, and it will be
+``user`` for a user-level API key.
+
 
 Basic Usage Examples
 --------------------
