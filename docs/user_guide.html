@@ -222,8 +222,9 @@ converted to URL query parameters by <a class="reference external" href="https:/
 <span class="c1"># [{&#39;type&#39;:&#39;service&#39;, ...}, ...]</span>
 </pre></div>
 </div>
-<p><strong>Searching resource collections:</strong> use <code class="docutils literal notranslate"><span class="pre">find</span></code> to look up a resource exactly
-matching a string using the <code class="docutils literal notranslate"><span class="pre">query</span></code> parameter on an index endpoint:</p>
+<p><strong>Searching resource collections:</strong> use <code class="docutils literal notranslate"><span class="pre">find</span></code> to look up a resource (a user,
+in this example) exactly matching a string using the <code class="docutils literal notranslate"><span class="pre">query</span></code> parameter on an
+index endpoint:</p>
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="c1"># Find the user with email address &quot;jane@example35.com&quot;</span>
 <span class="n">user</span> <span class="o">=</span> <span class="n">client</span><span class="o">.</span><span class="n">find</span><span class="p">(</span><span class="s1">&#39;users&#39;</span><span class="p">,</span> <span class="s1">&#39;jane@example35.com&#39;</span><span class="p">,</span> <span class="n">attribute</span><span class="o">=</span><span class="s1">&#39;email&#39;</span><span class="p">)</span>
 
@@ -256,11 +257,11 @@ matching a string using the <code class="docutils literal notranslate"><span cla
 <span class="p">})</span>
 </pre></div>
 </div>
-<p><strong>Idempotent create/update:</strong></p>
-<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="c1"># Create a user if one doesn&#39;t already exist based on the dictionary object</span>
-<span class="c1"># user_data, using the &#39;email&#39; key as the uniquely identifying property,</span>
-<span class="c1"># and update it if it exists and differs from user_data:</span>
-<span class="n">user_data</span> <span class="o">=</span> <span class="p">{</span><span class="s1">&#39;email&#39;</span><span class="p">:</span> <span class="s1">&#39;user123@example.com&#39;</span><span class="p">,</span> <span class="s1">&#39;name&#39;</span><span class="p">:</span> <span class="s1">&#39;User McUserson&#39;</span><span class="p">}</span>
+<p><strong>Idempotent create/update:</strong> create a user if one doesn’t already exist based
+on the dictionary object <code class="docutils literal notranslate"><span class="pre">user_data</span></code>, using the “email” key/property as the
+uniquely identifying attribute, and update it if it exists and differs from
+<code class="docutils literal notranslate"><span class="pre">user_data</span></code>:</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">user_data</span> <span class="o">=</span> <span class="p">{</span><span class="s1">&#39;email&#39;</span><span class="p">:</span> <span class="s1">&#39;user123@example.com&#39;</span><span class="p">,</span> <span class="s1">&#39;name&#39;</span><span class="p">:</span> <span class="s1">&#39;User McUserson&#39;</span><span class="p">}</span>
 <span class="n">updated_user</span> <span class="o">=</span> <span class="n">client</span><span class="o">.</span><span class="n">persist</span><span class="p">(</span><span class="s1">&#39;users&#39;</span><span class="p">,</span> <span class="s1">&#39;email&#39;</span><span class="p">,</span> <span class="n">user_data</span><span class="p">,</span> <span class="n">update</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
 </pre></div>
 </div>
@@ -278,6 +279,30 @@ appended to the names of list-type-value parameters as necessary. For example:</
 <span class="p">)</span>
 <span class="c1"># API calls will look like the following:</span>
 <span class="c1"># GET /incidents?user_ids%5B%5D=PHIJ789&amp;statuses%5B%5D=triggered&amp;statuses%5B%5D=acknowledged&amp;offset=0&amp;limit=100</span>
+</pre></div>
+</div>
+<p><strong>Get a list of all incident notes submitted by a team:</strong> Incident notes are
+recorded as <em>log entries</em> of type <code class="docutils literal notranslate"><span class="pre">annotate_log_entry</span></code>, so with that in mind:</p>
+<ul class="simple">
+<li><p>Use <code class="docutils literal notranslate"><span class="pre">iter_all</span></code> on the “List log entries” endpoint</p></li>
+<li><p>Use the query parameter <code class="docutils literal notranslate"><span class="pre">team_ids[]</span></code> to filter by team ID</p></li>
+<li><p>Use the <code class="docutils literal notranslate"><span class="pre">since</span></code> and <code class="docutils literal notranslate"><span class="pre">until</span></code> query parameters to select a time range</p></li>
+<li><p>Use <code class="docutils literal notranslate"><span class="pre">filter</span></code> to limit the results to incident notes</p></li>
+</ul>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">notes</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="nb">filter</span><span class="p">(</span>
+    <span class="k">lambda</span> <span class="n">ile</span><span class="p">:</span> <span class="n">ile</span><span class="p">[</span><span class="s1">&#39;type&#39;</span><span class="p">]</span> <span class="o">==</span> <span class="s1">&#39;annotate_log_entry&#39;</span><span class="p">,</span>
+    <span class="n">client</span><span class="o">.</span><span class="n">iter_all</span><span class="p">(</span>
+        <span class="s1">&#39;log_entries&#39;</span><span class="p">,</span>
+        <span class="n">params</span><span class="o">=</span><span class="p">{</span>
+            <span class="s1">&#39;team_ids&#39;</span><span class="p">:[</span><span class="s1">&#39;PN1T34M&#39;</span><span class="p">],</span>
+            <span class="s1">&#39;since&#39;</span><span class="p">:</span> <span class="s1">&#39;2024-01-01&#39;</span><span class="p">,</span>
+            <span class="s1">&#39;until&#39;</span><span class="p">:</span> <span class="s1">&#39;2025-01-01&#39;</span>
+        <span class="p">}</span>
+    <span class="p">)</span>
+<span class="p">))</span>
+
+<span class="c1"># &gt;&gt;&gt; notes</span>
+<span class="c1"># [{&#39;type&#39;: &#39;annotate_log_entry&#39;, &#39;summary&#39;: &#39;Resolved by reboot&#39; ... }, ... ]</span>
 </pre></div>
 </div>
 <p><strong>Performing multi-update:</strong> for endpoints that support it only, i.e. <code class="docutils literal notranslate"><span class="pre">PUT</span> <span class="pre">/incidents</span></code>:</p>
