@@ -11,7 +11,7 @@ has in-depth documentation on client classes and methods.
 
 Installation
 ------------
-This library is available on PyPI as [pagerduty](https://pypi.org/project/pagerduty/), e.g.: 
+This library is available on PyPI as `pagerduty <https://pypi.org/project/pagerduty/>`_, e.g.: 
 
 .. code-block:: bash
 

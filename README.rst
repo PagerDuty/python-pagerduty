@@ -8,7 +8,7 @@ For in-depth usage documentation, refer to the `User Guide
 
 Installation
 ------------
-This library is available on PyPI as [pagerduty](https://pypi.org/project/pagerduty/), e.g.: 
+This library is available on PyPI as `pagerduty <https://pypi.org/project/pagerduty/>`_, e.g.: 
 
 .. code-block:: bash
 
