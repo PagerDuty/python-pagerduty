@@ -163,22 +163,25 @@ documented <a class="reference external" href="https://support.pagerduty.com/doc
 </section>
 <section id="the-from-header">
 <h3>The From header<a class="headerlink" href="#the-from-header" title="Permalink to this heading"></a></h3>
-<p>If using an account-level API key (created by an administrator via the “API
-Access Keys” page in the “Integrations” menu), a <code class="docutils literal notranslate"><span class="pre">From</span></code> header must be
-supplied in certain endpoints to attribute the action to a user, e.g.
-acknowledging or resolving an incident, or the API will respond with status
-400. The value of the header must correspond to a PagerDuty user. The header
-can be set for all requests using the attribute
-<a class="reference internal" href="module_reference.html#pagerduty.RestApiV2Client.default_from" title="pagerduty.RestApiV2Client.default_from"><code class="xref py py-attr docutils literal notranslate"><span class="pre">pagerduty.RestApiV2Client.default_from</span></code></a> property, which can be set
-directly or through the <code class="docutils literal notranslate"><span class="pre">default_from</span></code> keyword argument when instantiating
-the client object.</p>
+<p>This request header can be set for all requests using the attribute
+<a class="reference internal" href="module_reference.html#pagerduty.RestApiV2Client.default_from" title="pagerduty.RestApiV2Client.default_from"><code class="xref py py-attr docutils literal notranslate"><span class="pre">pagerduty.RestApiV2Client.default_from</span></code></a> property, either directly or
+through the <code class="docutils literal notranslate"><span class="pre">default_from</span></code> keyword argument when instantiating the client
+object:</p>
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">client</span> <span class="o">=</span> <span class="n">pagerduty</span><span class="o">.</span><span class="n">RestApiV2Client</span><span class="p">(</span><span class="n">API_KEY</span><span class="p">,</span> <span class="n">default_from</span><span class="o">=</span><span class="s2">&quot;admin@example.com&quot;</span><span class="p">)</span>
 </pre></div>
 </div>
+<p>If using an account-level API key, created by an administrator via the “API
+Access Keys” page in the “Integrations” menu, a <code class="docutils literal notranslate"><span class="pre">From</span></code> header must be set in
+requests to certain API endpoints, e.g. acknowledging or resolving incidents.
+Its value must be the email address of a valid PagerDuty user.</p>
 <p>Otherwise, if using a user’s API key (created under “API Access” in the “User
 Settings” tab of the user’s profile), the user will be derived from the key
 itself and it is not necessary to set <code class="docutils literal notranslate"><span class="pre">default_from</span></code> or supply a <code class="docutils literal notranslate"><span class="pre">From</span></code>
 header.</p>
+<p>If the source of the API key is unknown, the value of the client object’s
+property <a class="reference internal" href="module_reference.html#pagerduty.RestApiV2Client.api_key_access" title="pagerduty.RestApiV2Client.api_key_access"><code class="xref py py-attr docutils literal notranslate"><span class="pre">pagerduty.RestApiV2Client.api_key_access</span></code></a> can be used. It will
+be <code class="docutils literal notranslate"><span class="pre">account</span></code> if its API secret is an account-level API key, and it will be
+<code class="docutils literal notranslate"><span class="pre">user</span></code> for a user-level API key.</p>
 </section>
 </section>
 <section id="basic-usage-examples">
@@ -228,9 +231,9 @@ matching a string using the <code class="docutils literal notranslate"><span cla
 <span class="c1"># {&#39;type&#39;: &#39;user&#39;, &#39;email&#39;: &#39;jane@example35.com&#39;, ...}</span>
 </pre></div>
 </div>
-<p><strong>Updating a resource:</strong> use the <code class="docutils literal notranslate"><span class="pre">json</span></code> keyword argument to set the body:</p>
-<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="c1"># Assuming there is a variable &quot;user&quot; defined that is a dictionary</span>
-<span class="c1"># representation of a PagerDuty user, i.e. as returned by rget or find:</span>
+<p><strong>Updating a resource:</strong> use the <code class="docutils literal notranslate"><span class="pre">json</span></code> keyword argument to set the body of the request:</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="c1"># &gt;&gt;&gt; user</span>
+<span class="c1"># {&#39;self&#39;:&#39;https://api.pagerduty.com/users/PABC123&#39;, &#39;type&#39;: &#39;user&#39;, ...}</span>
 
 <span class="c1"># (1) using put directly:</span>
 <span class="n">updated_user</span> <span class="o">=</span> <span class="kc">None</span>
@@ -244,15 +247,13 @@ matching a string using the <code class="docutils literal notranslate"><span cla
     <span class="n">updated_user</span> <span class="o">=</span> <span class="n">response</span><span class="o">.</span><span class="n">json</span><span class="p">()[</span><span class="s1">&#39;user&#39;</span><span class="p">]</span>
 
 <span class="c1"># (2) using rput:</span>
-<span class="c1">#   - The URL argument can be the dictionary representation</span>
+<span class="c1">#   - The URL argument may also be a resource / resource reference dict</span>
 <span class="c1">#   - The json argument doesn&#39;t have to include the &quot;user&quot; wrapper dict</span>
-<span class="k">try</span><span class="p">:</span>
-    <span class="n">updated_user</span> <span class="o">=</span> <span class="n">client</span><span class="o">.</span><span class="n">rput</span><span class="p">(</span><span class="n">user</span><span class="p">,</span> <span class="n">json</span><span class="o">=</span><span class="p">{</span>
-        <span class="s1">&#39;type&#39;</span><span class="p">:</span><span class="s1">&#39;user&#39;</span><span class="p">,</span>
-        <span class="s1">&#39;name&#39;</span><span class="p">:</span> <span class="s1">&#39;Jane Doe&#39;</span>
-    <span class="p">})</span>
-<span class="k">except</span> <span class="n">Error</span><span class="p">:</span>
-    <span class="n">updated_user</span> <span class="o">=</span> <span class="kc">None</span>
+<span class="c1">#   - If an HTTP error is encountered, it will raise an exception</span>
+<span class="n">updated_user</span> <span class="o">=</span> <span class="n">client</span><span class="o">.</span><span class="n">rput</span><span class="p">(</span><span class="n">user</span><span class="p">,</span> <span class="n">json</span><span class="o">=</span><span class="p">{</span>
+    <span class="s1">&#39;type&#39;</span><span class="p">:</span><span class="s1">&#39;user&#39;</span><span class="p">,</span>
+    <span class="s1">&#39;name&#39;</span><span class="p">:</span> <span class="s1">&#39;Jane Doe&#39;</span>
+<span class="p">})</span>
 </pre></div>
 </div>
 <p><strong>Idempotent create/update:</strong></p>
@@ -437,7 +438,7 @@ Using the example given in the API reference page:</p>
 <span class="p">}</span>
 <span class="n">ep</span><span class="p">[</span><span class="s1">&#39;escalation_rules&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">new_rule</span><span class="p">)</span>
 <span class="c1"># Save changes:</span>
-<span class="n">client</span><span class="o">.</span><span class="n">rput</span><span class="p">(</span><span class="n">ep</span><span class="p">,</span> <span class="n">json</span><span class="o">=</span><span class="n">ep</span><span class="p">)</span>
+<span class="n">ep</span> <span class="o">=</span> <span class="n">client</span><span class="o">.</span><span class="n">rput</span><span class="p">(</span><span class="n">ep</span><span class="p">,</span> <span class="n">json</span><span class="o">=</span><span class="n">ep</span><span class="p">)</span>
 </pre></div>
 </div>
 </section>
