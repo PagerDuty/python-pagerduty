@@ -3,16 +3,17 @@ python-pagerduty: Clients for PagerDuty's APIs
 ==============================================
 A module that supplies lightweight Python clients for the PagerDuty REST API v2 and Events API v2.
 
-For how-to, refer to the `User Guide
+For in-depth usage documentation, refer to the `User Guide
 <https://pagerduty.github.io/python-pagerduty/user_guide.html>`_.
 
 Installation
 ------------
-This library is available on PyPI as [pagerduty](https://pypi.org/project/pagerduty/), e.g.: 
+This library is available on PyPI as `pagerduty <https://pypi.org/project/pagerduty/>`_, e.g.: 
 
-```
-pip install pagerduty
-```
+.. code-block:: bash
+
+    pip install pagerduty
+
 
 Overview
 --------
