@@ -135,12 +135,12 @@ matching a string using the ``query`` parameter on an index endpoint:
     # >>> user
     # {'type': 'user', 'email': 'jane@example35.com', ...}
 
-**Updating a resource:** use the ``json`` keyword argument to set the body:
+**Updating a resource:** use the ``json`` keyword argument to set the body of the request:
 
 .. code-block:: python
 
-    # Assuming there is a variable "user" defined that is a dictionary
-    # representation of a PagerDuty user, i.e. as returned by rget or find:
+    # >>> user
+    # {'self':'https://api.pagerduty.com/users/PABC123', 'type': 'user', ...}
 
     # (1) using put directly:
     updated_user = None
@@ -154,15 +154,13 @@ matching a string using the ``query`` parameter on an index endpoint:
         updated_user = response.json()['user']
 
     # (2) using rput:
-    #   - The URL argument can be the dictionary representation
+    #   - The URL argument may also be a resource / resource reference dict
     #   - The json argument doesn't have to include the "user" wrapper dict
-    try:
-        updated_user = client.rput(user, json={
-            'type':'user',
-            'name': 'Jane Doe'
-        })
-    except Error:
-        updated_user = None
+    #   - If an HTTP error is encountered, it will raise an exception
+    updated_user = client.rput(user, json={
+        'type':'user',
+        'name': 'Jane Doe'
+    })
 
 **Idempotent create/update:**
 
