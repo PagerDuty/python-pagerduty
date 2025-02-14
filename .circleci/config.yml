@@ -9,7 +9,7 @@ test: &test
     python -V
     which pip
     pip -V
-    pip install -r requirements.txt
+    pip install .
     python ./test_pagerduty.py
 
 jobs:
