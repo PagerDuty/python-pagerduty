@@ -11,6 +11,7 @@ from . events_api_v2_client import EventsApiV2Client
 
 from . rest_api_v2_client import (
     RestApiV2Client,
+    auto_json,
     canonical_path,
     endpoint_matches,
     entity_wrappers,
@@ -26,7 +27,6 @@ from . common import (
     HttpError,
     ServerHttpError,
     UrlError,
-    auto_json,
     deprecated_kwarg,
     http_error_message,
     plural_name,

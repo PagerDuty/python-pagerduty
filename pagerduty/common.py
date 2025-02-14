@@ -18,19 +18,6 @@ The longest permissible length of API content to include in error messages.
 ### HELPER FUNCTIONS ###
 ########################
 
-def auto_json(method):
-    """
-    Makes methods return the full response body object after decoding from JSON.
-
-    Intended for use on functions that take a URL positional argument followed
-    by keyword arguments and return a `requests.Response`_ object.
-    """
-    doc = method.__doc__
-    def call(self, url, **kw):
-        return try_decoding(successful_response(method(self, url, **kw)))
-    call.__doc__ = doc
-    return call
-
 def deprecated_kwarg(deprecated_name: str, details=None, method=None):
     """
     Raises a warning if a deprecated keyword argument is used.
