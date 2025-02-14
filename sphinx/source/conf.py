@@ -7,7 +7,7 @@ sys.path.insert(0, os.path.abspath(os.path.join(
     os.path.dirname(__file__),
     '..', '..'
 )))
-from setup import __version__
+from pagerduty import __version__
 import pagerduty
 
 # -- Project information -----------------------------------------------------
