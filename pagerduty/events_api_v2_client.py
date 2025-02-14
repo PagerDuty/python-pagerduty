@@ -1,4 +1,5 @@
 # Core
+from copy import deepcopy
 from datetime import datetime
 
 # PyPI

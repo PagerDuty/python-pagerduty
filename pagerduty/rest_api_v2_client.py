@@ -1361,5 +1361,6 @@ class RestApiV2Client(ApiClient):
 
     @property
     def trunc_token(self) -> str:
-        """Truncated token for secure display/identification purposes."""
+        """Truncated API key for secure display/identification purposes."""
+        warn("Property trunc_token is deprecated. Use trunc_key instead.")
         return self.trunc_key

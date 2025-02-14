@@ -579,7 +579,9 @@ class RestApiV2ClientTest(SessionTest):
         # pagination, short-circuit to iter_cursor
         path = '/audit/records'
         cpath = pagerduty.canonical_path('https://api.pagerduty.com', path)
-        self.assertTrue(cpath in pagerduty.CURSOR_BASED_PAGINATION_PATHS)
+        self.assertTrue(
+            cpath in pagerduty.rest_api_v2_client.CURSOR_BASED_PAGINATION_PATHS
+        )
         iter_cursor.return_value = []
         self.assertEqual([], list(sess.iter_all('/audit/records')))
         iter_cursor.assert_called_once_with('/audit/records', params=None)
@@ -874,7 +876,7 @@ class RestApiV2ClientTest(SessionTest):
                 Response(429, json.dumps({'error': {'message': 'chill out'}})),
                 Response(200, json.dumps({'user': user})),
             ]
-            with patch.object(pagerduty.time, 'sleep') as sleep:
+            with patch.object(pagerduty.api_client.time, 'sleep') as sleep:
                 r = sess.get('/users')
                 self.assertTrue(r.ok) # should only return after success
                 self.assertEqual(3, request.call_count)
@@ -894,10 +896,10 @@ class RestApiV2ClientTest(SessionTest):
             request.reset_mock()
 
             # Test retry logic:
-            with patch.object(pagerduty.time, 'sleep') as sleep:
+            with patch.object(pagerduty.api_client.time, 'sleep') as sleep:
                 # Test getting a connection error and succeeding the final time.
                 returns = [
-                    pagerduty.HTTPError("D'oh!")
+                    pagerduty.api_client.Urllib3HttpError("D'oh!")
                 ]*sess.max_network_attempts
                 returns.append(Response(200, json.dumps({'user': user})))
                 request.side_effect = returns
@@ -915,7 +917,7 @@ class RestApiV2ClientTest(SessionTest):
                 # Now test handling a non-transient error when the client
                 # library itself hits odd issues that it can't handle, i.e.
                 # network, and that the raised exception includes context:
-                raises = [pagerduty.RequestException("D'oh!")]*(
+                raises = [pagerduty.api_client.RequestException("D'oh!")]*(
                     sess.max_network_attempts+1)
                 request.side_effect = raises
                 try:

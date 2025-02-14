@@ -2,6 +2,7 @@ from . version import __version__
 
 from . api_client import (
     ApiClient,
+    TIMEOUT,
     last_4,
     normalize_url
 )

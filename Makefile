@@ -1,9 +1,9 @@
 %: dist
 
-dist: pagerduty.py setup.py
+dist: pagerduty/* pyproject.toml
 	rm -f dist/* && python setup.py sdist bdist_wheel --universal
 
-docs/index.html: pagerduty.py README.rst CHANGELOG.rst sphinx/source/conf.py sphinx/source/*.rst
+docs/index.html: pagerduty/* README.rst CHANGELOG.rst sphinx/source/conf.py sphinx/source/*.rst
 	rm -fr ./docs && cd sphinx && make html && cd .. && mv sphinx/build/html ./docs && touch ./docs/.nojekyll
 
 docs: docs/index.html

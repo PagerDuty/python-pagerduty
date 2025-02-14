@@ -1,5 +1,6 @@
 # Core
 from typing import Union
+from warnings import warn
 
 # PyPI
 from requests import Response
