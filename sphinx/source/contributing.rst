@@ -167,12 +167,17 @@ To force a rebuild, run ``touch CHANGELOG.rst`` first.
 Releasing a New Version
 -----------------------
 
-You will first need valid user accounts on both ``pypi.org`` and ``test.pypi.org``
+You will need valid user accounts on both ``pypi.org`` and ``test.pypi.org``
 that have the "Maintainer" role on the project, as well as the requirements
 installed (see above).
 
 It is strongly recommended that you `use an API token
-<https://pypi.org/help/#apitoken>`_ to upload new releases to PyPI.
+<https://pypi.org/help/#apitoken>`_ to upload new releases to PyPI. The token
+must have write access to the project.
+
+Before merging the branch of the new version, change the version number in both
+``pyproject.toml`` and ``pagerduty/version.py``, rebuild the documentation, and
+commit the changes.
 
 Perform end-to-end publish and installation testing
 ***************************************************
@@ -184,7 +189,7 @@ project as on ``pypi.org``.
 Note, once a release is uploaded, it is no longer possible to upload a release
 with the same version number, even if that release is deleted. For that reason,
 it is a good idea to first add a suffix, i.e. ``-dev001``, to ``__version__``
-in ``setup.py`` while testing.
+in ``pagerduty/version.py`` and  ``pyproject.toml`` while testing.
 
 To perform end-to-end tests, run the following, entering credentials for
 ``test.pypi.org`` when prompted:
@@ -195,7 +200,7 @@ To perform end-to-end tests, run the following, entering credentials for
 
 The make target ``testpublish`` performs the following:
 
-* Build the Python egg in ``dist/``
+* Build the Python package
 * Upload the new library to ``test.pypi.org``
 * Test-install the library from ``test.pypi.org`` into a temporary Python
   virtualenv that does not already have the library installed, to test
