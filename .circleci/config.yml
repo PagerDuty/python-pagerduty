@@ -10,7 +10,9 @@ test: &test
     which pip
     pip -V
     pip install .
-    python ./test_pagerduty.py
+    pushd tests
+    python ./test.py
+    popd
 
 jobs:
 
