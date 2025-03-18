@@ -84,6 +84,7 @@ workflows:
   version: 2.1
   run_tests:
     jobs:
+      - py3_6
       - py3_7
       - py3_8
       - py3_9

@@ -33,7 +33,7 @@ implementer to make.
 Features
 --------
 - Uses Requests' automatic HTTP connection pooling and persistence
-- Tested in / support for Python 3.7 through 3.13
+- Tested in / support for Python 3.6 through 3.13
 - Abstraction layer for authentication, pagination, filtering and wrapped
   entities
 - Configurable cooldown/reattempt logic for handling rate limiting and
