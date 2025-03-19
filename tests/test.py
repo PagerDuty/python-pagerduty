@@ -2,13 +2,6 @@
 
 """
 Unit tests for pagerduty
-
-Python 3, or the backport of unittest.mock for Python 2, is required.
-
-See:
-
-https://docs.python.org/3.5/library/unittest.mock.html
-https://pypi.org/project/backports.unittest_mock/1.3/
 """
 import argparse
 import sys
