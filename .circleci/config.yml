@@ -22,7 +22,18 @@ jobs:
     steps:
       - checkout
       - run:
-          <<: *test
+        name: Setup Virtualenv, install dependencies and test (specialized for Python 3.6)
+        command: |
+          virtualenv .python
+          . .python/bin/activate
+          which python
+          python -V
+          which pip
+          pip -V
+          pip install -r requirements.txt
+          pushd tests
+          python ./test.py
+          popd
 
   py3_7:
     docker:
