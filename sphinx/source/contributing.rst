@@ -175,10 +175,6 @@ It is strongly recommended that you `use an API token
 <https://pypi.org/help/#apitoken>`_ to upload new releases to PyPI. The token
 must have write access to the project.
 
-Before merging the branch of the new version, change the version number in both
-``pyproject.toml`` and ``pagerduty/version.py``, rebuild the documentation, and
-commit the changes.
-
 Perform end-to-end publish and installation testing
 ***************************************************
 
@@ -188,8 +184,8 @@ project as on ``pypi.org``.
 
 Note, once a release is uploaded, it is no longer possible to upload a release
 with the same version number, even if that release is deleted. For that reason,
-it is a good idea to first add a suffix, i.e. ``-dev001``, to ``__version__``
-in ``pagerduty/version.py`` and  ``pyproject.toml`` while testing.
+it is a good idea to first add a suffix, i.e. ``-dev001``, to the version in
+``pyproject.tom`` while testing.
 
 To perform end-to-end tests, run the following, entering credentials for
 ``test.pypi.org`` when prompted:
@@ -210,8 +206,8 @@ The make target ``testpublish`` performs the following:
 
 If any errors are encountered, the script should immediately exit. Errors
 should be investigated and mitigated before publishing. To test again,
-temporarily change ``__version__`` so that it counts as a new release
-and gets uploaded, and set it to the desired version before the actual
+temporarily change the version in ``pyproject.toml`` so that it counts as a new
+release and gets uploaded, and set it to the desired version before the actual
 release.
 
 Merge changes and tag
@@ -220,11 +216,8 @@ Merge changes and tag
 A pull request for releasing a new version should be created, which along with
 the functional changes should also include at least:
 
-* An update to the changelog, where all items corresponding to community
-  contributions end with (in parentheses) the GitHub user handle of the
-  contributor, a slash, and a link to the pull request (see CHANGELOG.rst for
-  preexisting examples).
-* A change in the version number in both setup.py and pagerduty.py, to a new
+* An update to ``CHANGELOG.rst`` describing the changes in the new release
+* A change in the version number in ``pyproject.toml`` to a new
   version that follows `Semantic Versioning <https://semver.org/>`_.
 * Rebuilt HTML documentation
 
