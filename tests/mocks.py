@@ -10,7 +10,7 @@ class Session(object):
     headers = None
 
 class Response(object):
-    """Mock class for emulating requests.Response objects
+    """Specialized mock class for emulating requests.Response objects
 
     Look for existing use of this class for examples on how to use.
     """
