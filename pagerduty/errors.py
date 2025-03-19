@@ -41,8 +41,7 @@ class HttpError(Error):
 
     Whereas, the more generic :class:`Error` could also be used
     to denote such things as non-transient network errors wherein no response
-    was recevied from the API.
-
+    was received from the API.
     For instance, instead of this:
 
     ::
