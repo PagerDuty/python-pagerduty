@@ -23,10 +23,6 @@ from . rest_api_v2_client import (
 )
 
 from . common import (
-    Error,
-    HttpError,
-    ServerHttpError,
-    UrlError,
     deprecated_kwarg,
     http_error_message,
     plural_name,
@@ -35,4 +31,11 @@ from . common import (
     successful_response,
     truncate_text,
     try_decoding
+)
+
+from . errors import (
+    Error,
+    HttpError,
+    ServerHttpError,
+    UrlError
 )

@@ -15,7 +15,7 @@ from urllib3.exceptions import HTTPError as Urllib3HttpError
  
 # Local
 from . version import __version__
-from . common import (
+from . errors import (
     Error,
     HttpError,
     UrlError

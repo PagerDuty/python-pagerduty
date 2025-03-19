@@ -14,6 +14,8 @@ from . common import (
     successful_response,
     truncate_text,
     try_decoding,
+)
+from . errors import (
     ServerHttpError,
     UrlError
 )
