@@ -185,7 +185,7 @@ project as on ``pypi.org``.
 Note, once a release is uploaded, it is no longer possible to upload a release
 with the same version number, even if that release is deleted. For that reason,
 it is a good idea to first add a suffix, i.e. ``-dev001``, to the version in
-``pyproject.tom`` while testing.
+``pyproject.toml`` while testing.
 
 To perform end-to-end tests, run the following, entering credentials for
 ``test.pypi.org`` when prompted:
