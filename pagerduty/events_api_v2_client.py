@@ -66,7 +66,7 @@ class EventsApiV2Client(ApiClient):
             kw['json'].update({'routing_key': self.api_key})
         return super(EventsApiV2Client, self).post(*args, **kw)
 
-    def prepare_headers(self, method, user_headers={}) -> dict:
+    def prepare_headers(self, method, user_headers=None) -> dict:
         """
         Add user agent and content type headers for Events API requests.
 
@@ -80,7 +80,8 @@ class EventsApiV2Client(ApiClient):
             'Content-Type': 'application/json',
             'User-Agent': self.user_agent,
         })
-        headers.update(user_headers)
+        if user_headers is not None:
+            headers.update(user_headers)
         return headers
 
     def resolve(self, dedup_key) -> str:
@@ -92,7 +93,7 @@ class EventsApiV2Client(ApiClient):
         """
         return self.send_event('resolve', dedup_key=dedup_key)
 
-    def send_change_event(self, payload={}, links=[], routing_key=None):
+    def send_change_event(self, payload=None, links=None, routing_key=None):
         """
         Send a change event to the v2 Change Events API.
 
@@ -110,6 +111,10 @@ class EventsApiV2Client(ApiClient):
         :returns:
             The response ID
         """
+        if payload is None:
+            payload = {}
+        if links is None:
+            links = []
         if routing_key is not None:
             deprecated_kwarg(
                 'routing_key',
