@@ -1435,6 +1435,8 @@ class EventsApiV2Client(ApiClient):
             response,
             context="submitting change event",
         ))
+        return response_body.get("id", None)
+
 
     def send_event(self, action, dedup_key=None, **properties) -> str:
         """
