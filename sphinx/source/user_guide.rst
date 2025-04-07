@@ -254,7 +254,7 @@ Events API v2
     # ...
     events_client.acknowledge('abc123')
 
-**Submit a change event** using a :class:`EventsApiV2Client` instance:
+**Submit a change event** using an :class:`EventsApiV2Client` instance:
 
 .. code-block:: python
 
