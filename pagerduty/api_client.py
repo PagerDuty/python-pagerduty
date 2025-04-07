@@ -448,7 +448,7 @@ class ApiClient(Session):
 
     @property
     def user_agent(self) -> str:
-        return 'pagerduty/%s python-requests/%s Python/%d.%d'%(
+        return 'python-pagerduty/%s python-requests/%s Python/%d.%d'%(
             __version__,
             REQUESTS_VERSION,
             sys.version_info.major,

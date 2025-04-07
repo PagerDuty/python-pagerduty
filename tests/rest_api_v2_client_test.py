@@ -509,7 +509,7 @@ class RestApiV2ClientTest(SessionTest):
         headers_get = {
             'Accept': 'application/vnd.pagerduty+json;version=2',
             'Authorization': 'Token token=12345',
-            'User-Agent': 'pagerduty/%s python-requests/%s Python/%d.%d'%(
+            'User-Agent': 'python-pagerduty/%s python-requests/%s Python/%d.%d'%(
                 pagerduty.__version__,
                 requests.__version__,
                 sys.version_info.major,
