@@ -108,8 +108,6 @@ class EventsApiV2Client(ApiClient):
         :param routing_key:
             (Deprecated) the routing key. The parameter is set automatically to the
             :attr:`ApiClient.api_key` property in the final payload and this argument is ignored.
-        :returns:
-            The response ID
         """
         if payload is None:
             payload = {}
@@ -123,12 +121,11 @@ class EventsApiV2Client(ApiClient):
         event = {'payload': deepcopy(payload)}
         if links:
             event['links'] = deepcopy(links)
-        response = self.post('/v2/change/enqueue', json=event)
-        response_body = try_decoding(successful_response(
-            response,
+        successful_response(
+            self.post('/v2/change/enqueue', json=event),
             context="submitting change event",
-        ))
-        return response_body.get("id", None)
+        )
+        return None
 
     def send_event(self, action, dedup_key=None, **properties) -> str:
         """
