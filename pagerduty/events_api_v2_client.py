@@ -125,7 +125,6 @@ class EventsApiV2Client(ApiClient):
             self.post('/v2/change/enqueue', json=event),
             context="submitting change event",
         )
-        return None
 
     def send_event(self, action, dedup_key=None, **properties) -> str:
         """
