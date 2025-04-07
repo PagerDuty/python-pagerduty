@@ -1,8 +1,9 @@
 **2025-03-20: Multi-file refactor - Version 2.0.0**
 
-A no-op with respect to features, this release includes major structural changes to the module and how it is built and tested.
-
-These changes were made for long-term maintainability of the codebase, which previously was all contained within a single ``.py`` file.
+* Major structural changes to the module and how it is built and tested. These changes were made for long-term maintainability of the codebase, which previously was all contained within a single ``.py`` file.
+* Add a return statement originally in ``pdpyras`` back to a function (``EventsApiV2Client.send_change_event``) that is expected to always return ``None``.
+* User-Agent header update: the prefix has been changed from ``pagerduty`` to ``python-pagerduty``.
+* The version number (``pagerduty.__version__``) in Python versions prior to 3.8 (before package metadata introspection was added to ``importlib``) is ``2.?.?``, and in unit tests (if no package has been built locally) it is ``?.?.?-LOCAL-IMPORT-UNIT-TEST``.
 
 **2025-01-02: Migrate from PDPYRAS - Version 1.0.0**
 
