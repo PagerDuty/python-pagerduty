@@ -415,13 +415,13 @@ checked for keys that apply to a given request method and canonical API path
 based on a matching logic. If no keys are found that match, it is assumed that
 the API endpoint follows classic entity wrapping conventions, and the wrapper
 name can be inferred based on those conventions (see
-:attr:`infer_entity_wrapper`). Any new API that does not follow these
+:attr:`pagerduty.infer_entity_wrapper`). Any new API that does not follow these
 conventions should therefore be given an entry in this dictionary in order to
 properly support it for entity wrapping.
 
 Each of the keys should be a capitalized HTTP method (or ``*`` to match any method),
 followed by a space, followed by a canonical path i.e. as returned by
-:attr:`canonical_path` and included in
+:attr:`pagerduty.canonical_path` and included in
 :attr:`pagerduty.rest_api_v2_client.CANONICAL_PATHS`. Each value is either a tuple with
 request and response body wrappers (if they differ), a string (if they are the same for
 both cases) or ``None`` (if wrapping is disabled and the data is to be marshaled or
