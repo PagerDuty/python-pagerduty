@@ -30,10 +30,18 @@ testing locally:
     pip install .
     pip install -r requirements-publish.txt 
 
-Running Unit Tests
-------------------
-Assuming that all dependencies are installed, running ``test.sh`` in
-the root path of the repository will run the unit test suite locally.
+If asdf-vm was used to install Python locally, run the following after the above:
+
+.. code-block:: shell
+
+    asdf reshim python
+
+Finally, run ``test.sh`` in the root path of the repository to run the unit
+test suite locally, or run this command by itself:
+
+.. code-block:: shell
+
+    python -m unittest discover -p '*_test.py' -s tests
 
 Maintaining Entity Wrapper Configuration
 ----------------------------------------
