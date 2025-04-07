@@ -2,6 +2,7 @@ from unittest.mock import Mock, MagicMock, patch, call
 
 from common_test import SessionTest
 from mocks import Response
+
 import pagerduty
 
 EVENT_TIMESTAMP = '2020-03-25T00:00:00Z'
