@@ -16,24 +16,24 @@ Initial Setup
 To be able to rebuild the documentation and release a new version, first make
 sure you have `make <https://www.gnu.org/software/make/>`_ and `pip
 <https://pip.pypa.io/en/stable/installation/>`_ installed in your shell
-environment.
+environment, as well as Python version 3.11 or later.
+
+The recommended way of setting up the Python environment is using `asdf-vm
+<https://asdf-vm.com/>`, i.e. run ``asdf install`` in your clone of the
+repository.
 
 Next, install Python dependencies for building and publishing as well as
 testing locally:
 
 .. code-block:: shell
 
-    pip install -r requirements.txt
+    pip install .
     pip install -r requirements-publish.txt 
 
 Running Unit Tests
 ------------------
-Assuming that all dependencies are installed, running ``test_pagerduty.py`` in
-the root path of the repository will run the unit test suite:
-
-.. code-block:: shell
-
-    ./test_pagerduty.py
+Assuming that all dependencies are installed, running ``test.sh`` in
+the root path of the repository will run the unit test suite locally.
 
 Maintaining Entity Wrapper Configuration
 ----------------------------------------
@@ -163,6 +163,10 @@ lives. To rebuild the HTML documentation from the source, run:
     make docs
 
 To force a rebuild, run ``touch CHANGELOG.rst`` first.
+
+**NOTE:** Python version 3.13 or later must be used when rebuilding
+documentation, or the version number in the documentation will be
+``2.?.?-metadata-unavailable``.
 
 Releasing a New Version
 -----------------------

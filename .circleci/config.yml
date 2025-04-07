@@ -9,7 +9,6 @@ test: &test
     python -V
     which pip
     pip -V
-    pip install .
     ./test.sh
 
 jobs:
@@ -20,16 +19,7 @@ jobs:
     steps:
       - checkout
       - run:
-          name: Setup Virtualenv, install dependencies and test (specialized for Python 3.6)
-          command: |
-            virtualenv .python
-            . .python/bin/activate
-            which python
-            python -V
-            which pip
-            pip -V
-            pip install -r requirements.txt
-            ./test.sh
+          <<: *test
 
   py3_7:
     docker:
