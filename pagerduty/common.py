@@ -143,7 +143,7 @@ def successful_response(r: Response, context=None) -> Response:
         raise Error(http_error_message(r, context=context))
 
 def truncate_text(text: str) -> str:
-    """Truncates a string longer than :attr:`TEXT_LEN_LIMIT`
+    """Truncates a string longer than :attr:`pagerduty.common.TEXT_LEN_LIMIT`
 
     :param text: The string to truncate if longer than the limit.
     """

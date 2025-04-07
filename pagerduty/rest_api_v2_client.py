@@ -419,13 +419,14 @@ name can be inferred based on those conventions (see
 conventions should therefore be given an entry in this dictionary in order to
 properly support it for entity wrapping.
 
-Each of the keys should be a capitalized HTTP method (or ``*`` to match any
-method), followed by a space, followed by a canonical path i.e. as returned by
-:attr:`canonical_path` and included in :attr:`CANONICAL_PATHS`. Each value
-is either a tuple with request and response body wrappers (if they differ), a
-string (if they are the same for both cases) or ``None`` (if wrapping is
-disabled and the data is to be marshaled or unmarshaled as-is). Values in tuples
-can also be None to denote that either the request or response is unwrapped.
+Each of the keys should be a capitalized HTTP method (or ``*`` to match any method),
+followed by a space, followed by a canonical path i.e. as returned by
+:attr:`canonical_path` and included in
+:attr:`pagerduty.rest_api_v2_client.CANONICAL_PATHS`. Each value is either a tuple with
+request and response body wrappers (if they differ), a string (if they are the same for
+both cases) or ``None`` (if wrapping is disabled and the data is to be marshaled or
+unmarshaled as-is). Values in tuples can also be None to denote that either the request
+or response is unwrapped.
 
 An endpoint, under the design logic of this client, is said to have entity
 wrapping if the body (request or response) has only one property containing
@@ -451,9 +452,9 @@ def canonical_path(base_url: str, url: str) -> str:
     within REST API v2 it belongs to.
 
     Explicitly supported canonical paths are defined in the list
-    :attr:`CANONICAL_PATHS` and are the path part of any given API's URL. The
-    path for a given API is what is shown at the top of its reference page, i.e.
-    ``/users/{id}/contact_methods`` for retrieving a user's contact methods
+    :attr:`pagerduty.rest_api_v2.CANONICAL_PATHS` and are the path part of any given
+    API's URL. The path for a given API is what is shown at the top of its reference
+    page, i.e.  ``/users/{id}/contact_methods`` for retrieving a user's contact methods
     (GET) or creating a new one (POST).
 
     :param base_url: The base URL of the API
@@ -500,8 +501,9 @@ def endpoint_matches(endpoint_pattern: str, method: str, path: str) -> bool:
     """
     Whether an endpoint (method and canonical path) matches a given pattern
 
-    This is the filtering logic  used for finding the appropriate entry in
-    :attr:`ENTITY_WRAPPER_CONFIG` to use for a given method and API path.
+    This is the filtering logic used for finding the appropriate entry in
+    :attr:`pagerduty.rest_api_v2_client.ENTITY_WRAPPER_CONFIG` to use for a given method
+    and API path.
 
     :param endpoint_pattern:
         The endpoint pattern in the form ``METHOD PATH`` where ``METHOD`` is the
@@ -592,10 +594,13 @@ def infer_entity_wrapper(method: str, path: str) -> str:
     the v2 REST API, where the wrapper name is predictable from the path and
     method. This is the default logic applied to determine the wrapper name
     based on the path if there is no explicit entity wrapping defined for the
-    given path in :attr:`ENTITY_WRAPPER_CONFIG`.
+    given path in :attr:`pagerduty.rest_api_v2_client.ENTITY_WRAPPER_CONFIG`.
 
-    :param method: The HTTP method
-    :param path: A canonical API path i.e. from :attr:`CANONICAL_PATHS`
+    :param method:
+        The HTTP method
+    :param path:
+        A canonical API path i.e. from
+        :attr:`pagerduty.rest_api_v2_client.CANONICAL_PATHS`
     """
     m = method.upper()
     path_nodes = path.split('/')

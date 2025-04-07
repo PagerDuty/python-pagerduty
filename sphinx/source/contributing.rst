@@ -68,8 +68,8 @@ antipattern-handling configuration.
 
 This system requires two global variables that must be manually maintained:
 
-* :attr:`pagerduty.CANONICAL_PATHS`, the list of canonical paths
-* :attr:`pagerduty.ENTITY_WRAPPER_CONFIG`, a dictionary of exceptions to entity wrapping and schema conventions
+* :attr:`pagerduty.rest_api_v2_client.CANONICAL_PATHS`, the list of canonical paths
+* :attr:`pagerduty.rest_api_v2_client.ENTITY_WRAPPER_CONFIG`, a dictionary of exceptions to entity wrapping and schema conventions
 
 Limitations
 ***********
@@ -95,8 +95,8 @@ The first step for adding support for new APIs is to have a copy of the API
 Reference source code (this is a private GitHub repository owned by the
 PagerDuty org). The script ``scripts/get_path_list/get_path_list.py`` can then
 be used to automatically generate definitions of the global variables
-:attr:`pagerduty.CANONICAL_PATHS` and
-:attr:`pagerduty.CURSOR_BASED_PAGINATION_PATHS` that can be copied into the
+:attr:`pagerduty.rest_api_v2_client.CANONICAL_PATHS` and
+:attr:`pagerduty.rest_api_v2_client.CURSOR_BASED_PAGINATION_PATHS` that can be copied into the
 source code to replace the existing definitions. The script takes one argument:
 a path to the file ``reference/v2/Index.yaml`` within the reference source
 repository.
@@ -107,7 +107,7 @@ The next step is to look at the request and response schemas in the API
 reference for each new endpoint added to the canonical path list, to see if it
 follows classic schema conventions for entity wrapping. If any new path does
 not, adding support for it will also require adding entries to
-:attr:`pagerduty.ENTITY_WRAPPER_CONFIG`. "Classic schema conventions" refers to
+:attr:`pagerduty.rest_api_v2_client.ENTITY_WRAPPER_CONFIG`. "Classic schema conventions" refers to
 the logic codified in :attr:`pagerduty.infer_entity_wrapper` and
 :attr:`pagerduty.unwrap` (where a "node" is a component of the path component
 of the URL, separated by forward slashes):
@@ -129,16 +129,16 @@ the same as the last node of the path. Examples: ``GET /services`` (wrapper =
 ``services``), ``PUT /incidents`` (wrapper = ``incidents``)
 
 If all of the above apply to new endpoints for all request methods, then no new
-entries need to be added to :attr:`pagerduty.ENTITY_WRAPPER_CONFIG` to support
+entries need to be added to :attr:`pagerduty.rest_api_v2_client.ENTITY_WRAPPER_CONFIG` to support
 them; they are supported automatically by virtue of following preexisting
 already-supported API patterns and having corresponding entries in
-:attr:`pagerduty.CANONICAL_PATHS`.
+:attr:`pagerduty.rest_api_v2_client.CANONICAL_PATHS`.
 
 Adding Support for Non-Conforming Endpoints
 *******************************************
 If the new endpoints do not follow classic schema conventions for entity
 wrapping, entries for them must be added to
-:attr:`pagerduty.ENTITY_WRAPPER_CONFIG` in order to support them. As described
+:attr:`pagerduty.rest_api_v2_client.ENTITY_WRAPPER_CONFIG` in order to support them. As described
 in the documentation of that attribute, each key is a combination of the
 request method (or "*" for the configuration entry to apply to all methods) and
 the canonical path in question, and each value is a string (for the same
@@ -147,7 +147,7 @@ is not applicable, and a tuple if the entity wrapping differs between the
 request and response bodies.
 
 Following the same examples as given in the :ref:`user_guide`: the entry in
-:attr:`pagerduty.ENTITY_WRAPPER_CONFIG` to handle the "Create Business Service
+:attr:`pagerduty.rest_api_v2_client.ENTITY_WRAPPER_CONFIG` to handle the "Create Business Service
 Subscribers" looks like this:
 
 .. code-block:: python

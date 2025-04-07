@@ -27,6 +27,7 @@ from . rest_api_v2_client import (
 )
 
 from . common import (
+    TEXT_LEN_LIMIT,
     deprecated_kwarg,
     http_error_message,
     plural_name,

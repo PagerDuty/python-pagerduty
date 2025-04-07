@@ -33,8 +33,12 @@ Client Defaults
 These are properties of the module that configure default behavior for the API
 client. There should be no need for the end user to modify them.
 
-.. automodule:: pagerduty
-    :members: ITERATION_LIMIT, TEXT_LEN_LIMIT, TIMEOUT, ENTITY_WRAPPER_CONFIG, CANONICAL_PATHS, CURSOR_BASED_PAGINATION_PATHS
+.. automodule:: pagerduty.rest_api_v2_client
+    :members: ITERATION_LIMIT, ENTITY_WRAPPER_CONFIG, CANONICAL_PATHS, CURSOR_BASED_PAGINATION_PATHS
+.. automodule:: pagerduty.common
+    :members: TEXT_LEN_LIMIT
+.. automodule:: pagerduty.api_client
+    :members: TIMEOUT
 
 Functions
 ---------
