@@ -19,7 +19,7 @@ sure you have `make <https://www.gnu.org/software/make/>`_ and `pip
 environment, as well as Python version 3.11 or later.
 
 The recommended way of setting up the Python environment is using `asdf-vm
-<https://asdf-vm.com/>`, i.e. run ``asdf install`` in your clone of the
+<https://asdf-vm.com/>`_, i.e. run ``asdf install`` in your clone of the
 repository.
 
 Next, install Python dependencies for building and publishing as well as
