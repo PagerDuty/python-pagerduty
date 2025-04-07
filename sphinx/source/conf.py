@@ -11,8 +11,10 @@ from pagerduty import __version__
 import pagerduty
 
 # -- Project information -----------------------------------------------------
+import datetime
+year = datetime.datetime.now(datetime.UTC).year
 project = u'python-pagerduty'
-copyright = u'2025, PagerDuty Inc.'
+copyright = f'{year} PagerDuty, Inc'
 author = u'Demitri Morgan <demitri@pagerduty.com>'
 
 # The short X.Y version
