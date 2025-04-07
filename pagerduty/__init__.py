@@ -10,6 +10,10 @@ from . api_client import (
 from . events_api_v2_client import EventsApiV2Client
 
 from . rest_api_v2_client import (
+    CANONICAL_PATHS,
+    CURSOR_BASED_PAGINATION_PATHS,
+    ENTITY_WRAPPER_CONFIG,
+    ITERATION_LIMIT,
     RestApiV2Client,
     auto_json,
     canonical_path,
