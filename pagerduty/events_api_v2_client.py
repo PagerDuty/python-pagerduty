@@ -179,6 +179,10 @@ class EventsApiV2Client(ApiClient):
 
         See: https://developer.pagerduty.com/docs/send-change-event
 
+        This is a wrapper method for :attr:`send_change_event` that composes an event
+        payload from keyword arguments and an auto-generated event timestamp. To send an
+        event with a wholly custom payload, use :attr:`send_change_event` instead.
+
         :param summary:
             Summary / brief description of the change, for ``payload.summary``.
         :param source:
