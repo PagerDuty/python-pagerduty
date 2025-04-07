@@ -173,7 +173,7 @@ class EventsApiV2Client(ApiClient):
         return response_body['dedup_key']
 
     def submit(self, summary, source=None, custom_details=None, links=None,
-            timestamp=None) -> str:
+            timestamp=None):
         """
         Submit a change event.
 
@@ -195,8 +195,6 @@ class EventsApiV2Client(ApiClient):
         :type custom_details: dict
         :type links: list
         :type timestamp: str
-        :returns:
-            The response ID
         """
         local_var = locals()['custom_details']
         if not (local_var is None or isinstance(local_var, dict)):
