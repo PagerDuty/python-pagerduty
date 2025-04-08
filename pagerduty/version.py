@@ -32,6 +32,4 @@ def get_version():
                 # Use tomllib so the correct version number goes into the doc build:
                 return get_version_via_tomllib()
 
-
-
 __version__ = get_version()
