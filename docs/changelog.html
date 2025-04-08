@@ -1,21 +1,21 @@
 
 
 <!DOCTYPE html>
-<html class="writer-html5" lang="en">
+<html class="writer-html5" lang="en" data-content_root="./">
 <head>
-  <meta charset="utf-8" /><meta name="generator" content="Docutils 0.19: https://docutils.sourceforge.io/" />
+  <meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" />
 
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Changelog &mdash; python-pagerduty 1.0.0 documentation</title>
-      <link rel="stylesheet" type="text/css" href="_static/pygments.css?v=b76e3c8a" />
+  <title>Changelog &mdash; python-pagerduty 2.0.0 documentation</title>
+      <link rel="stylesheet" type="text/css" href="_static/pygments.css?v=03e43079" />
       <link rel="stylesheet" type="text/css" href="_static/css/theme.css?v=e59714d7" />
 
   
       <script src="_static/jquery.js?v=5d32c60e"></script>
       <script src="_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
-      <script data-url_root="./" id="documentation_options" src="_static/documentation_options.js?v=af2ce170"></script>
-      <script src="_static/doctools.js?v=888ff710"></script>
-      <script src="_static/sphinx_highlight.js?v=4825356b"></script>
+      <script src="_static/documentation_options.js?v=51b770b3"></script>
+      <script src="_static/doctools.js?v=9bcbadda"></script>
+      <script src="_static/sphinx_highlight.js?v=dc90522c"></script>
     <script src="_static/js/theme.js"></script>
     <link rel="index" title="Index" href="genindex.html" />
     <link rel="search" title="Search" href="search.html" />
@@ -75,7 +75,15 @@
            <div itemprop="articleBody">
              
   <section id="changelog">
-<h1>Changelog<a class="headerlink" href="#changelog" title="Permalink to this heading"></a></h1>
+<h1>Changelog<a class="headerlink" href="#changelog" title="Link to this heading"></a></h1>
+<p><strong>2025-04-08: Multi-file refactor - Version 2.0.0</strong></p>
+<p>This release introduces major structural changes to the module and how it is built and tested. These changes were made for long-term maintainability of the codebase. Previously, it was all contained within a monolithic <code class="docutils literal notranslate"><span class="pre">.py</span></code> file (with a single Python script for all unit tests); now it is organized into smaller, appropriately-named Python files.</p>
+<p>Some lesser changes are also included:</p>
+<ul class="simple">
+<li><p>The docstrings for the <code class="docutils literal notranslate"><span class="pre">submit</span></code> and <code class="docutils literal notranslate"><span class="pre">send_change_event</span></code> methods of <code class="docutils literal notranslate"><span class="pre">EventsApiV2Client</span></code> have been updated to reflect how they are expected to always return <code class="docutils literal notranslate"><span class="pre">None</span></code>; this was causing Airflow build failures.</p></li>
+<li><p>The default user agent header has been updated: the prefix has been changed from <code class="docutils literal notranslate"><span class="pre">pagerduty</span></code> to <code class="docutils literal notranslate"><span class="pre">python-pagerduty</span></code>.</p></li>
+<li><p>The version number <code class="docutils literal notranslate"><span class="pre">pagerduty.__version__</span></code> is now maintained in <code class="docutils literal notranslate"><span class="pre">pyproject.toml</span></code> and discovered through package metadata introspection at import time. In Python versions prior to 3.8, the version will be <code class="docutils literal notranslate"><span class="pre">2.*.*</span></code> because the new <code class="docutils literal notranslate"><span class="pre">importlib</span></code> feature required for it is unavailable.</p></li>
+</ul>
 <p><strong>2025-01-02: Migrate from PDPYRAS - Version 1.0.0</strong></p>
 <ul class="simple">
 <li><p><strong>BREAKING CHANGE:</strong> class names have changed from what they were in <code class="docutils literal notranslate"><span class="pre">pdpyras</span></code>; see: <a class="reference external" href="https://pagerduty.github.io/python-pagerduty/pdpyras_migration_guide.html">PDPYRAS Migration Guide</a></p></li>
@@ -94,7 +102,7 @@
   <hr/>
 
   <div role="contentinfo">
-    <p>&#169; Copyright 2025, PagerDuty Inc..</p>
+    <p>&#169; Copyright 2025 PagerDuty, Inc.</p>
   </div>
 
   Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a

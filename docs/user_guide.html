@@ -1,21 +1,21 @@
 
 
 <!DOCTYPE html>
-<html class="writer-html5" lang="en">
+<html class="writer-html5" lang="en" data-content_root="./">
 <head>
-  <meta charset="utf-8" /><meta name="generator" content="Docutils 0.19: https://docutils.sourceforge.io/" />
+  <meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" />
 
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>User Guide &mdash; python-pagerduty 1.0.0 documentation</title>
-      <link rel="stylesheet" type="text/css" href="_static/pygments.css?v=b76e3c8a" />
+  <title>User Guide &mdash; python-pagerduty 2.0.0 documentation</title>
+      <link rel="stylesheet" type="text/css" href="_static/pygments.css?v=03e43079" />
       <link rel="stylesheet" type="text/css" href="_static/css/theme.css?v=e59714d7" />
 
   
       <script src="_static/jquery.js?v=5d32c60e"></script>
       <script src="_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
-      <script data-url_root="./" id="documentation_options" src="_static/documentation_options.js?v=af2ce170"></script>
-      <script src="_static/doctools.js?v=888ff710"></script>
-      <script src="_static/sphinx_highlight.js?v=4825356b"></script>
+      <script src="_static/documentation_options.js?v=51b770b3"></script>
+      <script src="_static/doctools.js?v=9bcbadda"></script>
+      <script src="_static/sphinx_highlight.js?v=dc90522c"></script>
     <script src="_static/js/theme.js"></script>
     <link rel="index" title="Index" href="genindex.html" />
     <link rel="search" title="Search" href="search.html" />
@@ -118,21 +118,21 @@
            <div itemprop="articleBody">
              
   <section id="user-guide">
-<span id="id1"></span><h1>User Guide<a class="headerlink" href="#user-guide" title="Permalink to this heading"></a></h1>
+<span id="id1"></span><h1>User Guide<a class="headerlink" href="#user-guide" title="Link to this heading"></a></h1>
 <p>This is a topical guide to general API client usage. <a class="reference internal" href="module_reference.html#module-reference"><span class="std std-ref">Module Reference</span></a>
 has in-depth documentation on client classes and methods.</p>
 <section id="installation">
-<h2>Installation<a class="headerlink" href="#installation" title="Permalink to this heading"></a></h2>
+<h2>Installation<a class="headerlink" href="#installation" title="Link to this heading"></a></h2>
 <p>This library is available on the Python Package Index as <a class="reference external" href="https://pypi.org/project/pagerduty/">pagerduty</a>, e.g.:</p>
-<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>pip install pagerduty
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>pip<span class="w"> </span>install<span class="w"> </span>pagerduty
 </pre></div>
 </div>
 </section>
 <section id="authentication">
-<h2>Authentication<a class="headerlink" href="#authentication" title="Permalink to this heading"></a></h2>
+<h2>Authentication<a class="headerlink" href="#authentication" title="Link to this heading"></a></h2>
 <p>The first step is to construct a client object. The first argument to the
 constructor is the secret to use for accessing the API:</p>
-<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">pagerduty</span>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span><span class="w"> </span><span class="nn">pagerduty</span>
 
 <span class="c1"># REST API v2:</span>
 <span class="n">client</span> <span class="o">=</span> <span class="n">pagerduty</span><span class="o">.</span><span class="n">RestApiV2Client</span><span class="p">(</span><span class="n">API_KEY</span><span class="p">)</span>
@@ -151,7 +151,7 @@ context managers. For example:</p>
 </pre></div>
 </div>
 <section id="using-non-us-service-regions">
-<h3>Using Non-US Service Regions<a class="headerlink" href="#using-non-us-service-regions" title="Permalink to this heading"></a></h3>
+<h3>Using Non-US Service Regions<a class="headerlink" href="#using-non-us-service-regions" title="Link to this heading"></a></h3>
 <p>If your PagerDuty account is in the EU or other service region outside the US, set the <code class="docutils literal notranslate"><span class="pre">url</span></code> attribute according to the
 documented <a class="reference external" href="https://support.pagerduty.com/docs/service-regions#api-access-urls">API Access URLs</a>, i.e. for the EU:</p>
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="c1"># REST API</span>
@@ -162,7 +162,7 @@ documented <a class="reference external" href="https://support.pagerduty.com/doc
 </div>
 </section>
 <section id="the-from-header">
-<h3>The From header<a class="headerlink" href="#the-from-header" title="Permalink to this heading"></a></h3>
+<h3>The From header<a class="headerlink" href="#the-from-header" title="Link to this heading"></a></h3>
 <p>This request header can be set for all requests using the attribute
 <a class="reference internal" href="module_reference.html#pagerduty.RestApiV2Client.default_from" title="pagerduty.RestApiV2Client.default_from"><code class="xref py py-attr docutils literal notranslate"><span class="pre">pagerduty.RestApiV2Client.default_from</span></code></a> property, either directly or
 through the <code class="docutils literal notranslate"><span class="pre">default_from</span></code> keyword argument when instantiating the client
@@ -185,9 +185,9 @@ be <code class="docutils literal notranslate"><span class="pre">account</span></
 </section>
 </section>
 <section id="basic-usage-examples">
-<h2>Basic Usage Examples<a class="headerlink" href="#basic-usage-examples" title="Permalink to this heading"></a></h2>
+<h2>Basic Usage Examples<a class="headerlink" href="#basic-usage-examples" title="Link to this heading"></a></h2>
 <section id="rest-api-v2">
-<h3>REST API v2<a class="headerlink" href="#rest-api-v2" title="Permalink to this heading"></a></h3>
+<h3>REST API v2<a class="headerlink" href="#rest-api-v2" title="Link to this heading"></a></h3>
 <p><strong>Making a request and decoding the response:</strong> obtaining a resource’s contents
 and having them represented as a dictionary object using three different methods:</p>
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="c1"># Using get:</span>
@@ -318,8 +318,8 @@ recorded as <em>log entries</em> of type <code class="docutils literal notransla
 </div>
 </section>
 <section id="events-api-v2">
-<h3>Events API v2<a class="headerlink" href="#events-api-v2" title="Permalink to this heading"></a></h3>
-<p><strong>Trigger and resolve an alert,</strong> getting its deduplication key from the API, using <code class="xref py py-class docutils literal notranslate"><span class="pre">EventsApiV2Client</span></code>:</p>
+<h3>Events API v2<a class="headerlink" href="#events-api-v2" title="Link to this heading"></a></h3>
+<p><strong>Trigger and resolve an alert,</strong> getting its deduplication key from the API, using <a class="reference internal" href="module_reference.html#pagerduty.EventsApiV2Client" title="pagerduty.EventsApiV2Client"><code class="xref py py-class docutils literal notranslate"><span class="pre">pagerduty.EventsApiV2Client</span></code></a>:</p>
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">dedup_key</span> <span class="o">=</span> <span class="n">events_client</span><span class="o">.</span><span class="n">trigger</span><span class="p">(</span><span class="s2">&quot;Server is on fire&quot;</span><span class="p">,</span> <span class="s1">&#39;dusty.old.server.net&#39;</span><span class="p">)</span>
 <span class="c1"># ...</span>
 <span class="n">events_client</span><span class="o">.</span><span class="n">resolve</span><span class="p">(</span><span class="n">dedup_key</span><span class="p">)</span>
@@ -332,7 +332,7 @@ recorded as <em>log entries</em> of type <code class="docutils literal notransla
 <span class="n">events_client</span><span class="o">.</span><span class="n">acknowledge</span><span class="p">(</span><span class="s1">&#39;abc123&#39;</span><span class="p">)</span>
 </pre></div>
 </div>
-<p><strong>Submit a change event</strong> using a <code class="xref py py-class docutils literal notranslate"><span class="pre">EventsApiV2Client</span></code> instance:</p>
+<p><strong>Submit a change event</strong> using a <a class="reference internal" href="module_reference.html#pagerduty.EventsApiV2Client" title="pagerduty.EventsApiV2Client"><code class="xref py py-class docutils literal notranslate"><span class="pre">pagerduty.EventsApiV2Client</span></code></a> instance:</p>
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">events_client</span><span class="o">.</span><span class="n">submit</span><span class="p">(</span><span class="s2">&quot;new build finished at latest HEAD&quot;</span><span class="p">,</span>
     <span class="n">source</span><span class="o">=</span><span class="s2">&quot;automation&quot;</span><span class="p">)</span>
 </pre></div>
@@ -340,7 +340,7 @@ recorded as <em>log entries</em> of type <code class="docutils literal notransla
 </section>
 </section>
 <section id="generic-client-features">
-<h2>Generic Client Features<a class="headerlink" href="#generic-client-features" title="Permalink to this heading"></a></h2>
+<h2>Generic Client Features<a class="headerlink" href="#generic-client-features" title="Link to this heading"></a></h2>
 <p>Generally, all of the features of <a class="reference external" href="https://docs.python-requests.org/en/master/api/#request-sessions">requests.Session</a> are available to the user
 as they would be if using the Requests Python library directly, since
 <a class="reference internal" href="module_reference.html#pagerduty.ApiClient" title="pagerduty.ApiClient"><code class="xref py py-class docutils literal notranslate"><span class="pre">pagerduty.ApiClient</span></code></a> and its subclasses for the REST/Events APIs are
@@ -356,7 +356,7 @@ arguments (i.e. <code class="docutils literal notranslate"><span class="pre">jso
 to the <a class="reference external" href="https://docs.python-requests.org/en/master/">Requests</a> documentation.</p>
 </section>
 <section id="urls">
-<h2>URLs<a class="headerlink" href="#urls" title="Permalink to this heading"></a></h2>
+<h2>URLs<a class="headerlink" href="#urls" title="Link to this heading"></a></h2>
 <p>The first argument to most of the client methods is the URL. However, there is
 no need to specify a complete API URL. Any path relative to the root of the
 API, whether or not it includes a leading slash, is automatically normalized to
@@ -371,7 +371,7 @@ reference (see: <a class="reference external" href="https://developer.pagerduty.
 value at its <code class="docutils literal notranslate"><span class="pre">self</span></code> key will be used as the request URL.</p>
 </section>
 <section id="query-parameters">
-<h2>Query Parameters<a class="headerlink" href="#query-parameters" title="Permalink to this heading"></a></h2>
+<h2>Query Parameters<a class="headerlink" href="#query-parameters" title="Link to this heading"></a></h2>
 <p>As with <a class="reference external" href="https://docs.python-requests.org/en/master/">Requests</a>, there is no need to compose the query string (everything
 that will follow <code class="docutils literal notranslate"><span class="pre">?</span></code> in the URL). Simply set the <code class="docutils literal notranslate"><span class="pre">params</span></code> keyword argument
 to a dictionary, and each of the key/value pairs will be serialized to the
@@ -403,7 +403,7 @@ be automatically appended to the parameter name. For example:</p>
 </div>
 </section>
 <section id="requests-and-responses">
-<h2>Requests and Responses<a class="headerlink" href="#requests-and-responses" title="Permalink to this heading"></a></h2>
+<h2>Requests and Responses<a class="headerlink" href="#requests-and-responses" title="Link to this heading"></a></h2>
 <p>To set the request body in a post or put request, pass as the <code class="docutils literal notranslate"><span class="pre">json</span></code> keyword
 argument an object that will be JSON-encoded as the body.</p>
 <p>To obtain the response from the API, if using plain <code class="docutils literal notranslate"><span class="pre">get</span></code>, <code class="docutils literal notranslate"><span class="pre">post</span></code>, <code class="docutils literal notranslate"><span class="pre">put</span></code>
@@ -425,7 +425,7 @@ sending to <a class="reference external" href="https://docs.python-requests.org/
 wrapper.  The response is the decoded body after unwrapping, if the API
 endpoint returns wrapped entities. For more details, refer to <a class="reference internal" href="#wrapping"><span class="std std-ref">Entity Wrapping</span></a>.</p>
 <section id="data-types">
-<h3>Data types<a class="headerlink" href="#data-types" title="Permalink to this heading"></a></h3>
+<h3>Data types<a class="headerlink" href="#data-types" title="Link to this heading"></a></h3>
 <p>Main article: <a class="reference external" href="https://developer.pagerduty.com/docs/types">Types</a></p>
 <p>Note these analogues in structure between the JSON schema and the object
 in Python:</p>
@@ -468,7 +468,7 @@ Using the example given in the API reference page:</p>
 </div>
 </section>
 <section id="resource-schemas">
-<h3>Resource Schemas<a class="headerlink" href="#resource-schemas" title="Permalink to this heading"></a></h3>
+<h3>Resource Schemas<a class="headerlink" href="#resource-schemas" title="Link to this heading"></a></h3>
 <p>Main article: <a class="reference external" href="https://developer.pagerduty.com/docs/ZG9jOjExMDI5NTU5-resource-schemas">Resource Schemas</a></p>
 <p>The details of any given resource’s schema can be found in the request and
 response examples from the <a class="reference external" href="https://developer.pagerduty.com/api-reference/">PagerDuty API Reference</a> pages for the resource’s
@@ -476,7 +476,7 @@ respective API, as well as the page documenting the resource type itself.</p>
 </section>
 </section>
 <section id="entity-wrapping">
-<span id="wrapping"></span><h2>Entity Wrapping<a class="headerlink" href="#entity-wrapping" title="Permalink to this heading"></a></h2>
+<span id="wrapping"></span><h2>Entity Wrapping<a class="headerlink" href="#entity-wrapping" title="Link to this heading"></a></h2>
 <p>See also: <a class="reference external" href="https://developer.pagerduty.com/docs/ZG9jOjExMDI5NTYx-wrapped-entities">Wrapped Entities</a>.
 Most of PagerDuty’s REST API v2 endpoints respond with their content wrapped
 inside of another object with a single key at the root level of the
@@ -484,7 +484,7 @@ inside of another object with a single key at the root level of the
 another object that contains a single key. Endpoints with such request/response
 schemas usually (with few exceptions) support pagination.</p>
 <section id="identifying-wrapped-entity-endpoints">
-<h3>Identifying Wrapped-entity Endpoints<a class="headerlink" href="#identifying-wrapped-entity-endpoints" title="Permalink to this heading"></a></h3>
+<h3>Identifying Wrapped-entity Endpoints<a class="headerlink" href="#identifying-wrapped-entity-endpoints" title="Link to this heading"></a></h3>
 <p><em>If the endpoint’s response schema or expected request schema contains only one
 property that contains all of the content of the API resource, the endpoint is
 said to wrap entities.</em> In resource collection endpoints that support
@@ -493,7 +493,7 @@ properties such as <code class="docutils literal notranslate"><span class="pre">
 cursor-based pagination) and no other content-bearing properties.</p>
 </section>
 <section id="wrapped-entity-aware-functions">
-<h3>Wrapped-entity-aware Functions<a class="headerlink" href="#wrapped-entity-aware-functions" title="Permalink to this heading"></a></h3>
+<h3>Wrapped-entity-aware Functions<a class="headerlink" href="#wrapped-entity-aware-functions" title="Link to this heading"></a></h3>
 <p>The following methods will automatically extract and return the wrapped content
 of API responses, and wrap request entities for the user as appropriate:</p>
 <ul class="simple">
@@ -509,7 +509,7 @@ of API responses, and wrap request entities for the user as appropriate:</p>
 </ul>
 </section>
 <section id="special-cases">
-<h3>Special Cases<a class="headerlink" href="#special-cases" title="Permalink to this heading"></a></h3>
+<h3>Special Cases<a class="headerlink" href="#special-cases" title="Link to this heading"></a></h3>
 <p>There are some API endpoints that do not follow API schema conventions for
 entity wrapping. Some do not wrap entities at all. On all endpoints that do not
 wrap entities, the results for a given <code class="docutils literal notranslate"><span class="pre">r*</span></code> method would be the same if using
@@ -520,7 +520,7 @@ i.e. <a class="reference internal" href="module_reference.html#pagerduty.RestApi
 <a class="reference internal" href="module_reference.html#pagerduty.UrlError" title="pagerduty.UrlError"><code class="xref py py-attr docutils literal notranslate"><span class="pre">pagerduty.UrlError</span></code></a> if used with them.</p>
 </section>
 <section id="examples">
-<h3>Examples<a class="headerlink" href="#examples" title="Permalink to this heading"></a></h3>
+<h3>Examples<a class="headerlink" href="#examples" title="Link to this heading"></a></h3>
 <p>The endpoint “Create Business Service Subscribers”, or <code class="docutils literal notranslate"><span class="pre">POST</span>
 <span class="pre">/business_services/{id}/subscribers</span></code>, wraps the response differently from the
 request. The end user can still pass the content to be wrapped via the <code class="docutils literal notranslate"><span class="pre">json</span></code>
@@ -565,7 +565,7 @@ entity is wrapped as appropriate.</p>
 </section>
 </section>
 <section id="pagination">
-<h2>Pagination<a class="headerlink" href="#pagination" title="Permalink to this heading"></a></h2>
+<h2>Pagination<a class="headerlink" href="#pagination" title="Link to this heading"></a></h2>
 <p>Main article: <a class="reference external" href="https://developer.pagerduty.com/docs/pagination">Pagination</a></p>
 <p>Only classic and cursor-based pagination are currently supported. Pagination
 functions require that the API endpoint being requested have entity wrapping
@@ -597,7 +597,7 @@ supports cursor-based pagination, it will call out to
 <a class="reference internal" href="module_reference.html#pagerduty.RestApiV2Client.iter_cursor" title="pagerduty.RestApiV2Client.iter_cursor"><code class="xref py py-attr docutils literal notranslate"><span class="pre">pagerduty.RestApiV2Client.iter_cursor</span></code></a> to iterate through results
 instead.</p>
 <section id="performance-and-completeness-of-results">
-<h3>Performance and Completeness of Results<a class="headerlink" href="#performance-and-completeness-of-results" title="Permalink to this heading"></a></h3>
+<h3>Performance and Completeness of Results<a class="headerlink" href="#performance-and-completeness-of-results" title="Link to this heading"></a></h3>
 <p>Because HTTP requests are made synchronously and not in multiple threads,
 requesting all pages of data will happen one page at a time and the functions
 <code class="docutils literal notranslate"><span class="pre">list_all</span></code> and <code class="docutils literal notranslate"><span class="pre">dict_all</span></code> will not return until after the final HTTP
@@ -610,7 +610,7 @@ discarded when the exception is raised. To make use of partial results, use
 yielded, and catch/handle exceptions as desired.</p>
 </section>
 <section id="updating-creating-or-deleting-while-paginating">
-<h3>Updating, creating or deleting while paginating<a class="headerlink" href="#updating-creating-or-deleting-while-paginating" title="Permalink to this heading"></a></h3>
+<h3>Updating, creating or deleting while paginating<a class="headerlink" href="#updating-creating-or-deleting-while-paginating" title="Link to this heading"></a></h3>
 <p>If performing page-wise write operations, i.e. making persistent changes to the
 PagerDuty application state immediately after fetching each page of results, an
 erroneous condition can result if there is any change to the resources in the
@@ -638,7 +638,7 @@ returned more than once, because they get bumped to the next group of 100 pages.
 </section>
 </section>
 <section id="multi-updating">
-<h2>Multi-updating<a class="headerlink" href="#multi-updating" title="Permalink to this heading"></a></h2>
+<h2>Multi-updating<a class="headerlink" href="#multi-updating" title="Link to this heading"></a></h2>
 <p>Multi-update actions can be performed using <code class="docutils literal notranslate"><span class="pre">rput</span></code> with some endpoints. For
 instance, to resolve two incidents with IDs <code class="docutils literal notranslate"><span class="pre">PABC123</span></code> and <code class="docutils literal notranslate"><span class="pre">PDEF456</span></code>:</p>
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">client</span><span class="o">.</span><span class="n">rput</span><span class="p">(</span>
@@ -661,7 +661,7 @@ address as the <code class="docutils literal notranslate"><span class="pre">defa
 initially.</p>
 </section>
 <section id="error-handling">
-<h2>Error Handling<a class="headerlink" href="#error-handling" title="Permalink to this heading"></a></h2>
+<h2>Error Handling<a class="headerlink" href="#error-handling" title="Link to this heading"></a></h2>
 <p>The <a class="reference internal" href="module_reference.html#pagerduty.UrlError" title="pagerduty.UrlError"><code class="xref py py-class docutils literal notranslate"><span class="pre">pagerduty.UrlError</span></code></a> is raised prior to making API calls, and it indicates
 unsupported URLs and/or malformed input.</p>
 <p>The base exception class for all errors encountered when making requests is
@@ -691,7 +691,7 @@ exception if it’s any other HTTP error code:</p>
 </div>
 </section>
 <section id="logging">
-<h2>Logging<a class="headerlink" href="#logging" title="Permalink to this heading"></a></h2>
+<h2>Logging<a class="headerlink" href="#logging" title="Link to this heading"></a></h2>
 <p>When a client object is instantiated, a
 <a class="reference external" href="https://docs.python.org/3/library/logging.html#logger-objects">Logger object</a>
 is created as follows:</p>
@@ -724,7 +724,7 @@ for all clients is <code class="docutils literal notranslate"><span class="pre">
 production systems.</p>
 </section>
 <section id="using-a-proxy-server">
-<h2>Using a Proxy Server<a class="headerlink" href="#using-a-proxy-server" title="Permalink to this heading"></a></h2>
+<h2>Using a Proxy Server<a class="headerlink" href="#using-a-proxy-server" title="Link to this heading"></a></h2>
 <p>To configure the client to use a host as a proxy for HTTPS traffic, update the
 <code class="docutils literal notranslate"><span class="pre">proxies</span></code> attribute:</p>
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="c1"># Host 10.42.187.3 port 4012 protocol https:</span>
@@ -733,7 +733,7 @@ production systems.</p>
 </div>
 </section>
 <section id="http-retry-configuration">
-<h2>HTTP Retry Configuration<a class="headerlink" href="#http-retry-configuration" title="Permalink to this heading"></a></h2>
+<h2>HTTP Retry Configuration<a class="headerlink" href="#http-retry-configuration" title="Link to this heading"></a></h2>
 <p>Session objects support retrying API requests if they receive a non-success
 response or if they encounter a network error.</p>
 <p>This behavior is configurable through the following properties:</p>
@@ -746,7 +746,7 @@ response or if they encounter a network error.</p>
 <li><p><a class="reference internal" href="module_reference.html#pagerduty.ApiClient.stagger_cooldown" title="pagerduty.ApiClient.stagger_cooldown"><code class="xref py py-attr docutils literal notranslate"><span class="pre">pagerduty.ApiClient.stagger_cooldown</span></code></a>: Randomizing factor for increasing successive cooldown wait times</p></li>
 </ul>
 <section id="default-behavior">
-<h3>Default Behavior<a class="headerlink" href="#default-behavior" title="Permalink to this heading"></a></h3>
+<h3>Default Behavior<a class="headerlink" href="#default-behavior" title="Link to this heading"></a></h3>
 <p>By default, after receiving a status 429 response, clients will retry an
 unlimited number of times, increasing the wait time before retry each
 successive time.  When encountering status <code class="docutils literal notranslate"><span class="pre">401</span> <span class="pre">Unauthorized</span></code>, the client
@@ -756,7 +756,7 @@ caused by an invalid credential.</p>
 client will return the <a class="reference external" href="https://docs.python-requests.org/en/master/api/#requests.Response">requests.Response</a> object.</p>
 </section>
 <section id="exponential-cooldown">
-<h3>Exponential Cooldown<a class="headerlink" href="#exponential-cooldown" title="Permalink to this heading"></a></h3>
+<h3>Exponential Cooldown<a class="headerlink" href="#exponential-cooldown" title="Link to this heading"></a></h3>
 <p>After each unsuccessful attempt, the client will sleep for a short period that
 increases exponentially with each retry.</p>
 <p>Let:</p>
@@ -773,7 +773,7 @@ increases exponentially with each retry.</p>
 <p>t<sub>n</sub> = a (1 + ρ r<sub>n</sub>) t<sub>n-1</sub></p>
 </section>
 <section id="configuring-retry-behavior">
-<h3>Configuring Retry Behavior<a class="headerlink" href="#configuring-retry-behavior" title="Permalink to this heading"></a></h3>
+<h3>Configuring Retry Behavior<a class="headerlink" href="#configuring-retry-behavior" title="Link to this heading"></a></h3>
 <p>The dictionary property <a class="reference internal" href="module_reference.html#pagerduty.ApiClient.retry" title="pagerduty.ApiClient.retry"><code class="xref py py-attr docutils literal notranslate"><span class="pre">pagerduty.ApiClient.retry</span></code></a> allows customization of
 HTTP retry limits on a per-HTTP-status basis. This includes the ability to
 override the above defaults for 401 and 429, although that is not recommended.</p>
@@ -824,7 +824,7 @@ reached in the underlying HTTP request methods.</p>
   <hr/>
 
   <div role="contentinfo">
-    <p>&#169; Copyright 2025, PagerDuty Inc..</p>
+    <p>&#169; Copyright 2025 PagerDuty, Inc.</p>
   </div>
 
   Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
