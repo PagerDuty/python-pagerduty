@@ -1,21 +1,21 @@
 
 
 <!DOCTYPE html>
-<html class="writer-html5" lang="en">
+<html class="writer-html5" lang="en" data-content_root="./">
 <head>
-  <meta charset="utf-8" /><meta name="generator" content="Docutils 0.19: https://docutils.sourceforge.io/" />
+  <meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" />
 
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Module Reference &mdash; python-pagerduty 1.0.0 documentation</title>
-      <link rel="stylesheet" type="text/css" href="_static/pygments.css?v=b76e3c8a" />
+  <title>Module Reference &mdash; python-pagerduty 2.0.0 documentation</title>
+      <link rel="stylesheet" type="text/css" href="_static/pygments.css?v=03e43079" />
       <link rel="stylesheet" type="text/css" href="_static/css/theme.css?v=e59714d7" />
 
   
       <script src="_static/jquery.js?v=5d32c60e"></script>
       <script src="_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
-      <script data-url_root="./" id="documentation_options" src="_static/documentation_options.js?v=af2ce170"></script>
-      <script src="_static/doctools.js?v=888ff710"></script>
-      <script src="_static/sphinx_highlight.js?v=4825356b"></script>
+      <script src="_static/documentation_options.js?v=51b770b3"></script>
+      <script src="_static/doctools.js?v=9bcbadda"></script>
+      <script src="_static/sphinx_highlight.js?v=dc90522c"></script>
     <script src="_static/js/theme.js"></script>
     <link rel="index" title="Index" href="genindex.html" />
     <link rel="search" title="Search" href="search.html" />
@@ -124,12 +124,12 @@
 </ul>
 </li>
 <li class="toctree-l2"><a class="reference internal" href="#client-defaults">Client Defaults</a><ul>
-<li class="toctree-l3"><a class="reference internal" href="#pagerduty.CANONICAL_PATHS"><code class="docutils literal notranslate"><span class="pre">CANONICAL_PATHS</span></code></a></li>
-<li class="toctree-l3"><a class="reference internal" href="#pagerduty.CURSOR_BASED_PAGINATION_PATHS"><code class="docutils literal notranslate"><span class="pre">CURSOR_BASED_PAGINATION_PATHS</span></code></a></li>
-<li class="toctree-l3"><a class="reference internal" href="#pagerduty.ENTITY_WRAPPER_CONFIG"><code class="docutils literal notranslate"><span class="pre">ENTITY_WRAPPER_CONFIG</span></code></a></li>
-<li class="toctree-l3"><a class="reference internal" href="#pagerduty.ITERATION_LIMIT"><code class="docutils literal notranslate"><span class="pre">ITERATION_LIMIT</span></code></a></li>
-<li class="toctree-l3"><a class="reference internal" href="#pagerduty.TEXT_LEN_LIMIT"><code class="docutils literal notranslate"><span class="pre">TEXT_LEN_LIMIT</span></code></a></li>
-<li class="toctree-l3"><a class="reference internal" href="#pagerduty.TIMEOUT"><code class="docutils literal notranslate"><span class="pre">TIMEOUT</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#pagerduty.rest_api_v2_client.CANONICAL_PATHS"><code class="docutils literal notranslate"><span class="pre">CANONICAL_PATHS</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#pagerduty.rest_api_v2_client.CURSOR_BASED_PAGINATION_PATHS"><code class="docutils literal notranslate"><span class="pre">CURSOR_BASED_PAGINATION_PATHS</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#pagerduty.rest_api_v2_client.ENTITY_WRAPPER_CONFIG"><code class="docutils literal notranslate"><span class="pre">ENTITY_WRAPPER_CONFIG</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#pagerduty.rest_api_v2_client.ITERATION_LIMIT"><code class="docutils literal notranslate"><span class="pre">ITERATION_LIMIT</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#pagerduty.common.TEXT_LEN_LIMIT"><code class="docutils literal notranslate"><span class="pre">TEXT_LEN_LIMIT</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#pagerduty.api_client.TIMEOUT"><code class="docutils literal notranslate"><span class="pre">TIMEOUT</span></code></a></li>
 </ul>
 </li>
 <li class="toctree-l2"><a class="reference internal" href="#functions">Functions</a><ul>
@@ -195,14 +195,14 @@
            <div itemprop="articleBody">
              
   <section id="module-reference">
-<span id="id1"></span><h1>Module Reference<a class="headerlink" href="#module-reference" title="Permalink to this heading"></a></h1>
+<span id="id1"></span><h1>Module Reference<a class="headerlink" href="#module-reference" title="Link to this heading"></a></h1>
 <p>This page covers the documentation of individual methods and classes provided
 by the module. For general usage and examples, refer to the <a class="reference internal" href="user_guide.html#user-guide"><span class="std std-ref">User Guide</span></a>.</p>
 <section id="api-client-classes">
-<h2>API Client Classes<a class="headerlink" href="#api-client-classes" title="Permalink to this heading"></a></h2>
+<h2>API Client Classes<a class="headerlink" href="#api-client-classes" title="Link to this heading"></a></h2>
 <dl class="py class">
 <dt class="sig sig-object py" id="pagerduty.ApiClient">
-<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">pagerduty.</span></span><span class="sig-name descname"><span class="pre">ApiClient</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">api_key</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">debug</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#pagerduty.ApiClient" title="Permalink to this definition"></a></dt>
+<em class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">pagerduty.</span></span><span class="sig-name descname"><span class="pre">ApiClient</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">api_key</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">debug</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#pagerduty.ApiClient" title="Link to this definition"></a></dt>
 <dd><p>Base class for making HTTP requests to PagerDuty APIs</p>
 <p>This is an opinionated wrapper of <a class="reference external" href="https://docs.python-requests.org/en/master/api/#request-sessions">requests.Session</a>, with a few additional
 features:</p>
@@ -229,26 +229,26 @@ output.</p></li>
 </dl>
 <dl class="py method">
 <dt class="sig sig-object py" id="pagerduty.ApiClient.after_set_api_key">
-<span class="sig-name descname"><span class="pre">after_set_api_key</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#pagerduty.ApiClient.after_set_api_key" title="Permalink to this definition"></a></dt>
+<span class="sig-name descname"><span class="pre">after_set_api_key</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#pagerduty.ApiClient.after_set_api_key" title="Link to this definition"></a></dt>
 <dd><p>Setter hook for setting or updating the API key.</p>
 <p>Child classes should implement this to perform additional steps.</p>
 </dd></dl>
 
 <dl class="py property">
 <dt class="sig sig-object py" id="pagerduty.ApiClient.api_key">
-<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">api_key</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">str</span></em><a class="headerlink" href="#pagerduty.ApiClient.api_key" title="Permalink to this definition"></a></dt>
+<em class="property"><span class="k"><span class="pre">property</span></span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">api_key</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">str</span></em><a class="headerlink" href="#pagerduty.ApiClient.api_key" title="Link to this definition"></a></dt>
 <dd><p>Property representing the credential used for accessing the given API.</p>
 </dd></dl>
 
 <dl class="py property">
 <dt class="sig sig-object py" id="pagerduty.ApiClient.auth_header">
-<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">auth_header</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">dict</span></em><a class="headerlink" href="#pagerduty.ApiClient.auth_header" title="Permalink to this definition"></a></dt>
+<em class="property"><span class="k"><span class="pre">property</span></span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">auth_header</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">dict</span></em><a class="headerlink" href="#pagerduty.ApiClient.auth_header" title="Link to this definition"></a></dt>
 <dd><p>Generates the header with the API credential used for authentication.</p>
 </dd></dl>
 
 <dl class="py attribute">
 <dt class="sig sig-object py" id="pagerduty.ApiClient.log">
-<span class="sig-name descname"><span class="pre">log</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">None</span></em><a class="headerlink" href="#pagerduty.ApiClient.log" title="Permalink to this definition"></a></dt>
+<span class="sig-name descname"><span class="pre">log</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">None</span></em><a class="headerlink" href="#pagerduty.ApiClient.log" title="Link to this definition"></a></dt>
 <dd><p>A <code class="docutils literal notranslate"><span class="pre">logging.Logger</span></code> object for logging messages. By default it is
 configured without any handlers and so no messages will be emitted. See:
 <a class="reference external" href="https://docs.python.org/3/library/logging.html#logger-objects">Logger Objects</a>.</p>
@@ -256,14 +256,14 @@ configured without any handlers and so no messages will be emitted. See:
 
 <dl class="py attribute">
 <dt class="sig sig-object py" id="pagerduty.ApiClient.max_http_attempts">
-<span class="sig-name descname"><span class="pre">max_http_attempts</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">10</span></em><a class="headerlink" href="#pagerduty.ApiClient.max_http_attempts" title="Permalink to this definition"></a></dt>
+<span class="sig-name descname"><span class="pre">max_http_attempts</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">10</span></em><a class="headerlink" href="#pagerduty.ApiClient.max_http_attempts" title="Link to this definition"></a></dt>
 <dd><p>The number of times that the client will retry after error statuses, for any
 that are defined greater than zero in <a class="reference internal" href="#pagerduty.ApiClient.retry" title="pagerduty.ApiClient.retry"><code class="xref py py-attr docutils literal notranslate"><span class="pre">retry</span></code></a>.</p>
 </dd></dl>
 
 <dl class="py attribute">
 <dt class="sig sig-object py" id="pagerduty.ApiClient.max_network_attempts">
-<span class="sig-name descname"><span class="pre">max_network_attempts</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">3</span></em><a class="headerlink" href="#pagerduty.ApiClient.max_network_attempts" title="Permalink to this definition"></a></dt>
+<span class="sig-name descname"><span class="pre">max_network_attempts</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">3</span></em><a class="headerlink" href="#pagerduty.ApiClient.max_network_attempts" title="Link to this definition"></a></dt>
 <dd><p>The number of times that connecting to the API will be attempted before
 treating the failure as non-transient; a <a class="reference internal" href="#pagerduty.Error" title="pagerduty.Error"><code class="xref py py-class docutils literal notranslate"><span class="pre">Error</span></code></a> exception
 will be raised if this happens.</p>
@@ -271,7 +271,7 @@ will be raised if this happens.</p>
 
 <dl class="py method">
 <dt class="sig sig-object py" id="pagerduty.ApiClient.normalize_params">
-<span class="sig-name descname"><span class="pre">normalize_params</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">params</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">dict</span></span></span><a class="headerlink" href="#pagerduty.ApiClient.normalize_params" title="Permalink to this definition"></a></dt>
+<span class="sig-name descname"><span class="pre">normalize_params</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">params</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">dict</span></span></span><a class="headerlink" href="#pagerduty.ApiClient.normalize_params" title="Link to this definition"></a></dt>
 <dd><p>Modify the user-supplied parameters to ease implementation</p>
 <p>Current behavior:</p>
 <ul class="simple">
@@ -289,19 +289,19 @@ in “[]”.</p></li>
 
 <dl class="py method">
 <dt class="sig sig-object py" id="pagerduty.ApiClient.normalize_url">
-<span class="sig-name descname"><span class="pre">normalize_url</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">url</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">str</span></span></span><a class="headerlink" href="#pagerduty.ApiClient.normalize_url" title="Permalink to this definition"></a></dt>
+<span class="sig-name descname"><span class="pre">normalize_url</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">url</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">str</span></span></span><a class="headerlink" href="#pagerduty.ApiClient.normalize_url" title="Link to this definition"></a></dt>
 <dd><p>Compose the URL whether it is a path or an already-complete URL</p>
 </dd></dl>
 
 <dl class="py attribute">
 <dt class="sig sig-object py" id="pagerduty.ApiClient.parent">
-<span class="sig-name descname"><span class="pre">parent</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">None</span></em><a class="headerlink" href="#pagerduty.ApiClient.parent" title="Permalink to this definition"></a></dt>
+<span class="sig-name descname"><span class="pre">parent</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">None</span></em><a class="headerlink" href="#pagerduty.ApiClient.parent" title="Link to this definition"></a></dt>
 <dd><p>The <code class="docutils literal notranslate"><span class="pre">super</span></code> object (<a class="reference external" href="https://docs.python-requests.org/en/master/api/#request-sessions">requests.Session</a>)</p>
 </dd></dl>
 
 <dl class="py attribute">
 <dt class="sig sig-object py" id="pagerduty.ApiClient.permitted_methods">
-<span class="sig-name descname"><span class="pre">permitted_methods</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">()</span></em><a class="headerlink" href="#pagerduty.ApiClient.permitted_methods" title="Permalink to this definition"></a></dt>
+<span class="sig-name descname"><span class="pre">permitted_methods</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">()</span></em><a class="headerlink" href="#pagerduty.ApiClient.permitted_methods" title="Link to this definition"></a></dt>
 <dd><p>A tuple of the methods permitted by the API which the client implements.</p>
 <p>For instance:</p>
 <ul class="simple">
@@ -312,7 +312,7 @@ in “[]”.</p></li>
 
 <dl class="py method">
 <dt class="sig sig-object py" id="pagerduty.ApiClient.postprocess">
-<span class="sig-name descname"><span class="pre">postprocess</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">response</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#pagerduty.ApiClient.postprocess" title="Permalink to this definition"></a></dt>
+<span class="sig-name descname"><span class="pre">postprocess</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">response</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#pagerduty.ApiClient.postprocess" title="Link to this definition"></a></dt>
 <dd><p>Perform supplemental actions immediately after receiving a response.</p>
 <p>This method is called once per request not including retries, and can be
 extended in child classes.</p>
@@ -320,7 +320,7 @@ extended in child classes.</p>
 
 <dl class="py method">
 <dt class="sig sig-object py" id="pagerduty.ApiClient.prepare_headers">
-<span class="sig-name descname"><span class="pre">prepare_headers</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">method</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">user_headers</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">{}</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">dict</span></span></span><a class="headerlink" href="#pagerduty.ApiClient.prepare_headers" title="Permalink to this definition"></a></dt>
+<span class="sig-name descname"><span class="pre">prepare_headers</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">method</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">user_headers</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">{}</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">dict</span></span></span><a class="headerlink" href="#pagerduty.ApiClient.prepare_headers" title="Link to this definition"></a></dt>
 <dd><p>Append special additional per-request headers.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
@@ -337,7 +337,7 @@ extended in child classes.</p>
 
 <dl class="py property">
 <dt class="sig sig-object py" id="pagerduty.ApiClient.print_debug">
-<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">print_debug</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">bool</span></em><a class="headerlink" href="#pagerduty.ApiClient.print_debug" title="Permalink to this definition"></a></dt>
+<em class="property"><span class="k"><span class="pre">property</span></span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">print_debug</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">bool</span></em><a class="headerlink" href="#pagerduty.ApiClient.print_debug" title="Link to this definition"></a></dt>
 <dd><p>Printing debug flag</p>
 <p>If set to True, the logging level of <a class="reference internal" href="#pagerduty.ApiClient.log" title="pagerduty.ApiClient.log"><code class="xref py py-attr docutils literal notranslate"><span class="pre">log</span></code></a> is set to
 <code class="docutils literal notranslate"><span class="pre">logging.DEBUG</span></code> and all log messages are emitted to <code class="docutils literal notranslate"><span class="pre">sys.stderr</span></code>.
@@ -351,7 +351,7 @@ production settings.</p>
 
 <dl class="py method">
 <dt class="sig sig-object py" id="pagerduty.ApiClient.request">
-<span class="sig-name descname"><span class="pre">request</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">method</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">url</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">Response</span></span></span><a class="headerlink" href="#pagerduty.ApiClient.request" title="Permalink to this definition"></a></dt>
+<span class="sig-name descname"><span class="pre">request</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">method</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">url</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">Response</span></span></span><a class="headerlink" href="#pagerduty.ApiClient.request" title="Link to this definition"></a></dt>
 <dd><p>Make a generic PagerDuty API request.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
@@ -372,7 +372,7 @@ base URL will be prepended.</p></li>
 
 <dl class="py attribute">
 <dt class="sig sig-object py" id="pagerduty.ApiClient.retry">
-<span class="sig-name descname"><span class="pre">retry</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">{}</span></em><a class="headerlink" href="#pagerduty.ApiClient.retry" title="Permalink to this definition"></a></dt>
+<span class="sig-name descname"><span class="pre">retry</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">{}</span></em><a class="headerlink" href="#pagerduty.ApiClient.retry" title="Link to this definition"></a></dt>
 <dd><p>A dict defining the retry behavior for each HTTP response status code.</p>
 <p>Each key in this dictionary is an int representing a HTTP response code. The
 behavior is specified by the int value at each key as follows:</p>
@@ -390,7 +390,7 @@ exception on a 401, and return the <a class="reference external" href="https://d
 
 <dl class="py attribute">
 <dt class="sig sig-object py" id="pagerduty.ApiClient.sleep_timer">
-<span class="sig-name descname"><span class="pre">sleep_timer</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">1.5</span></em><a class="headerlink" href="#pagerduty.ApiClient.sleep_timer" title="Permalink to this definition"></a></dt>
+<span class="sig-name descname"><span class="pre">sleep_timer</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">1.5</span></em><a class="headerlink" href="#pagerduty.ApiClient.sleep_timer" title="Link to this definition"></a></dt>
 <dd><p>Default initial cooldown time factor for rate limiting and network errors.</p>
 <p>Each time that the request makes a followup request, there will be a delay
 in seconds equal to this number times <a class="reference internal" href="#pagerduty.ApiClient.sleep_timer_base" title="pagerduty.ApiClient.sleep_timer_base"><code class="xref py py-attr docutils literal notranslate"><span class="pre">sleep_timer_base</span></code></a> to the power
@@ -400,14 +400,14 @@ of how many attempts have already been made so far, unless
 
 <dl class="py attribute">
 <dt class="sig sig-object py" id="pagerduty.ApiClient.sleep_timer_base">
-<span class="sig-name descname"><span class="pre">sleep_timer_base</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">2</span></em><a class="headerlink" href="#pagerduty.ApiClient.sleep_timer_base" title="Permalink to this definition"></a></dt>
+<span class="sig-name descname"><span class="pre">sleep_timer_base</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">2</span></em><a class="headerlink" href="#pagerduty.ApiClient.sleep_timer_base" title="Link to this definition"></a></dt>
 <dd><p>After each retry, the time to sleep before reattempting the API connection
 and request will increase by a factor of this amount.</p>
 </dd></dl>
 
 <dl class="py property">
 <dt class="sig sig-object py" id="pagerduty.ApiClient.stagger_cooldown">
-<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">stagger_cooldown</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">float</span></em><a class="headerlink" href="#pagerduty.ApiClient.stagger_cooldown" title="Permalink to this definition"></a></dt>
+<em class="property"><span class="k"><span class="pre">property</span></span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">stagger_cooldown</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">float</span></em><a class="headerlink" href="#pagerduty.ApiClient.stagger_cooldown" title="Link to this definition"></a></dt>
 <dd><p>Randomizing factor for wait times between retries during rate limiting.</p>
 <p>If set to number greater than 0, the sleep time for rate limiting will
 (for each successive sleep) be adjusted by a factor of one plus a
@@ -434,14 +434,14 @@ for consistent behavior with previous versions.</p>
 
 <dl class="py attribute">
 <dt class="sig sig-object py" id="pagerduty.ApiClient.timeout">
-<span class="sig-name descname"><span class="pre">timeout</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">60</span></em><a class="headerlink" href="#pagerduty.ApiClient.timeout" title="Permalink to this definition"></a></dt>
+<span class="sig-name descname"><span class="pre">timeout</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">60</span></em><a class="headerlink" href="#pagerduty.ApiClient.timeout" title="Link to this definition"></a></dt>
 <dd><p>This is the value sent to <a class="reference external" href="https://docs.python-requests.org/en/master/">Requests</a> as the <code class="docutils literal notranslate"><span class="pre">timeout</span></code> parameter that
 determines the TCP read timeout.</p>
 </dd></dl>
 
 <dl class="py property">
 <dt class="sig sig-object py" id="pagerduty.ApiClient.trunc_key">
-<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">trunc_key</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">str</span></em><a class="headerlink" href="#pagerduty.ApiClient.trunc_key" title="Permalink to this definition"></a></dt>
+<em class="property"><span class="k"><span class="pre">property</span></span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">trunc_key</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">str</span></em><a class="headerlink" href="#pagerduty.ApiClient.trunc_key" title="Link to this definition"></a></dt>
 <dd><p>Truncated key for secure display/identification purposes.</p>
 </dd></dl>
 
@@ -449,7 +449,7 @@ determines the TCP read timeout.</p>
 
 <dl class="py class">
 <dt class="sig sig-object py" id="pagerduty.RestApiV2Client">
-<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">pagerduty.</span></span><span class="sig-name descname"><span class="pre">RestApiV2Client</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">api_key</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">default_from</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">auth_type</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'token'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">debug</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#pagerduty.RestApiV2Client" title="Permalink to this definition"></a></dt>
+<em class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">pagerduty.</span></span><span class="sig-name descname"><span class="pre">RestApiV2Client</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">api_key</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">default_from</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">auth_type</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'token'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">debug</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#pagerduty.RestApiV2Client" title="Link to this definition"></a></dt>
 <dd><p>PagerDuty REST API v2 client class.</p>
 <p>Implements the most generic and oft-implemented aspects of PagerDuty’s REST
 API v2 as an opinionated wrapper of <a class="reference external" href="https://docs.python-requests.org/en/master/api/#request-sessions">requests.Session</a>.</p>
@@ -471,13 +471,13 @@ output.</p></li>
 </dl>
 <dl class="py attribute">
 <dt class="sig sig-object py" id="pagerduty.RestApiV2Client.api_call_counts">
-<span class="sig-name descname"><span class="pre">api_call_counts</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">None</span></em><a class="headerlink" href="#pagerduty.RestApiV2Client.api_call_counts" title="Permalink to this definition"></a></dt>
+<span class="sig-name descname"><span class="pre">api_call_counts</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">None</span></em><a class="headerlink" href="#pagerduty.RestApiV2Client.api_call_counts" title="Link to this definition"></a></dt>
 <dd><p>A dict object recording the number of API calls per endpoint</p>
 </dd></dl>
 
 <dl class="py property">
 <dt class="sig sig-object py" id="pagerduty.RestApiV2Client.api_key_access">
-<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">api_key_access</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">str</span></em><a class="headerlink" href="#pagerduty.RestApiV2Client.api_key_access" title="Permalink to this definition"></a></dt>
+<em class="property"><span class="k"><span class="pre">property</span></span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">api_key_access</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">str</span></em><a class="headerlink" href="#pagerduty.RestApiV2Client.api_key_access" title="Link to this definition"></a></dt>
 <dd><p>Memoized API key access type getter.</p>
 <p>Will be “user” if the API key is a user-level token (all users should
 have permission to create an API key with the same permissions as they
@@ -488,13 +488,13 @@ administrator user can create), this property will be “account”.</p>
 
 <dl class="py attribute">
 <dt class="sig sig-object py" id="pagerduty.RestApiV2Client.api_time">
-<span class="sig-name descname"><span class="pre">api_time</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">None</span></em><a class="headerlink" href="#pagerduty.RestApiV2Client.api_time" title="Permalink to this definition"></a></dt>
+<span class="sig-name descname"><span class="pre">api_time</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">None</span></em><a class="headerlink" href="#pagerduty.RestApiV2Client.api_time" title="Link to this definition"></a></dt>
 <dd><p>A dict object recording the total time of API calls to each endpoint</p>
 </dd></dl>
 
 <dl class="py property">
 <dt class="sig sig-object py" id="pagerduty.RestApiV2Client.auth_type">
-<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">auth_type</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">str</span></em><a class="headerlink" href="#pagerduty.RestApiV2Client.auth_type" title="Permalink to this definition"></a></dt>
+<em class="property"><span class="k"><span class="pre">property</span></span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">auth_type</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">str</span></em><a class="headerlink" href="#pagerduty.RestApiV2Client.auth_type" title="Link to this definition"></a></dt>
 <dd><p>Defines the method of API authentication.</p>
 <p>This value determines how the Authorization header will be set. By default this
 is “token”, which will result in the format <code class="docutils literal notranslate"><span class="pre">Token</span> <span class="pre">token=&lt;api_key&gt;</span></code>.</p>
@@ -502,20 +502,20 @@ is “token”, which will result in the format <code class="docutils literal no
 
 <dl class="py attribute">
 <dt class="sig sig-object py" id="pagerduty.RestApiV2Client.default_from">
-<span class="sig-name descname"><span class="pre">default_from</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">None</span></em><a class="headerlink" href="#pagerduty.RestApiV2Client.default_from" title="Permalink to this definition"></a></dt>
+<span class="sig-name descname"><span class="pre">default_from</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">None</span></em><a class="headerlink" href="#pagerduty.RestApiV2Client.default_from" title="Link to this definition"></a></dt>
 <dd><p>The default value to use as the <code class="docutils literal notranslate"><span class="pre">From</span></code> request header</p>
 </dd></dl>
 
 <dl class="py attribute">
 <dt class="sig sig-object py" id="pagerduty.RestApiV2Client.default_page_size">
-<span class="sig-name descname"><span class="pre">default_page_size</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">100</span></em><a class="headerlink" href="#pagerduty.RestApiV2Client.default_page_size" title="Permalink to this definition"></a></dt>
+<span class="sig-name descname"><span class="pre">default_page_size</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">100</span></em><a class="headerlink" href="#pagerduty.RestApiV2Client.default_page_size" title="Link to this definition"></a></dt>
 <dd><p>This will be the default number of results requested in each page when
 iterating/querying an index (the <code class="docutils literal notranslate"><span class="pre">limit</span></code> parameter).</p>
 </dd></dl>
 
 <dl class="py method">
 <dt class="sig sig-object py" id="pagerduty.RestApiV2Client.dict_all">
-<span class="sig-name descname"><span class="pre">dict_all</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">path</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kw</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">dict</span></span></span><a class="headerlink" href="#pagerduty.RestApiV2Client.dict_all" title="Permalink to this definition"></a></dt>
+<span class="sig-name descname"><span class="pre">dict_all</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">path</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kw</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">dict</span></span></span><a class="headerlink" href="#pagerduty.RestApiV2Client.dict_all" title="Link to this definition"></a></dt>
 <dd><p>Dictionary representation of all results from a resource collection.</p>
 <p>With the exception of <code class="docutils literal notranslate"><span class="pre">by</span></code>, all keyword arguments passed to this method are
 also passed to <a class="reference internal" href="#pagerduty.RestApiV2Client.iter_all" title="pagerduty.RestApiV2Client.iter_all"><code class="xref py py-attr docutils literal notranslate"><span class="pre">iter_all</span></code></a>; see the documentation on that method for
@@ -535,7 +535,7 @@ function will omit some data in the results.</p></li>
 
 <dl class="py method">
 <dt class="sig sig-object py" id="pagerduty.RestApiV2Client.find">
-<span class="sig-name descname"><span class="pre">find</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">resource</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">query</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">attribute</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'name'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">params</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">dict</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span></span><a class="headerlink" href="#pagerduty.RestApiV2Client.find" title="Permalink to this definition"></a></dt>
+<span class="sig-name descname"><span class="pre">find</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">resource</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">query</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">attribute</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'name'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">params</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">dict</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span></span><a class="headerlink" href="#pagerduty.RestApiV2Client.find" title="Link to this definition"></a></dt>
 <dd><p>Finds an object of a given resource type exactly matching a query.</p>
 <p>Works by querying a given resource index endpoint using the <code class="docutils literal notranslate"><span class="pre">query</span></code> parameter.
 To use this function on any given resource, the resource’s index must support
@@ -574,7 +574,7 @@ be returned if there is no exact match result.</p>
 
 <dl class="py method">
 <dt class="sig sig-object py" id="pagerduty.RestApiV2Client.iter_all">
-<span class="sig-name descname"><span class="pre">iter_all</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">url</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">params</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">page_size</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">item_hook</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">total</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">Iterator</span><span class="p"><span class="pre">[</span></span><span class="pre">dict</span><span class="p"><span class="pre">]</span></span></span></span><a class="headerlink" href="#pagerduty.RestApiV2Client.iter_all" title="Permalink to this definition"></a></dt>
+<span class="sig-name descname"><span class="pre">iter_all</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">url</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">params</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">page_size</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">item_hook</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">total</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">Iterator</span><span class="p"><span class="pre">[</span></span><span class="pre">dict</span><span class="p"><span class="pre">]</span></span></span></span><a class="headerlink" href="#pagerduty.RestApiV2Client.iter_all" title="Link to this definition"></a></dt>
 <dd><p>Iterator for the contents of an index endpoint or query.</p>
 <p>Automatically paginates and yields the results in each page, until all
 matching results have been yielded or a HTTP error response is received.</p>
@@ -615,7 +615,7 @@ to compute the total count of results in the query.</p></li>
 
 <dl class="py method">
 <dt class="sig sig-object py" id="pagerduty.RestApiV2Client.iter_cursor">
-<span class="sig-name descname"><span class="pre">iter_cursor</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">url</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">params</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">item_hook</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">Iterator</span><span class="p"><span class="pre">[</span></span><span class="pre">dict</span><span class="p"><span class="pre">]</span></span></span></span><a class="headerlink" href="#pagerduty.RestApiV2Client.iter_cursor" title="Permalink to this definition"></a></dt>
+<span class="sig-name descname"><span class="pre">iter_cursor</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">url</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">params</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">item_hook</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">Iterator</span><span class="p"><span class="pre">[</span></span><span class="pre">dict</span><span class="p"><span class="pre">]</span></span></span></span><a class="headerlink" href="#pagerduty.RestApiV2Client.iter_cursor" title="Link to this definition"></a></dt>
 <dd><p>Iterator for results from an endpoint using cursor-based pagination.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
@@ -631,25 +631,25 @@ for details on how this argument is used.</p></li>
 
 <dl class="py method">
 <dt class="sig sig-object py" id="pagerduty.RestApiV2Client.jget">
-<span class="sig-name descname"><span class="pre">jget</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">resource</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kw</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#pagerduty.RestApiV2Client.jget" title="Permalink to this definition"></a></dt>
+<span class="sig-name descname"><span class="pre">jget</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">resource</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kw</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#pagerduty.RestApiV2Client.jget" title="Link to this definition"></a></dt>
 <dd><p>Performs a GET request, returning the JSON-decoded body as a dictionary</p>
 </dd></dl>
 
 <dl class="py method">
 <dt class="sig sig-object py" id="pagerduty.RestApiV2Client.jpost">
-<span class="sig-name descname"><span class="pre">jpost</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">resource</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kw</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#pagerduty.RestApiV2Client.jpost" title="Permalink to this definition"></a></dt>
+<span class="sig-name descname"><span class="pre">jpost</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">resource</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kw</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#pagerduty.RestApiV2Client.jpost" title="Link to this definition"></a></dt>
 <dd><p>Performs a POST request, returning the JSON-decoded body as a dictionary</p>
 </dd></dl>
 
 <dl class="py method">
 <dt class="sig sig-object py" id="pagerduty.RestApiV2Client.jput">
-<span class="sig-name descname"><span class="pre">jput</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">resource</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kw</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#pagerduty.RestApiV2Client.jput" title="Permalink to this definition"></a></dt>
+<span class="sig-name descname"><span class="pre">jput</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">resource</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kw</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#pagerduty.RestApiV2Client.jput" title="Link to this definition"></a></dt>
 <dd><p>Performs a PUT request, returning the JSON-decoded body as a dictionary</p>
 </dd></dl>
 
 <dl class="py method">
 <dt class="sig sig-object py" id="pagerduty.RestApiV2Client.list_all">
-<span class="sig-name descname"><span class="pre">list_all</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">url</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kw</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">list</span></span></span><a class="headerlink" href="#pagerduty.RestApiV2Client.list_all" title="Permalink to this definition"></a></dt>
+<span class="sig-name descname"><span class="pre">list_all</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">url</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kw</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">list</span></span></span><a class="headerlink" href="#pagerduty.RestApiV2Client.list_all" title="Link to this definition"></a></dt>
 <dd><p>Returns a list of all objects from a given index endpoint.</p>
 <p>All keyword arguments passed to this function are also passed directly
 to <a class="reference internal" href="#pagerduty.RestApiV2Client.iter_all" title="pagerduty.RestApiV2Client.iter_all"><code class="xref py py-attr docutils literal notranslate"><span class="pre">iter_all</span></code></a>; see the documentation on that method for details.</p>
@@ -662,7 +662,7 @@ to <a class="reference internal" href="#pagerduty.RestApiV2Client.iter_all" titl
 
 <dl class="py method">
 <dt class="sig sig-object py" id="pagerduty.RestApiV2Client.persist">
-<span class="sig-name descname"><span class="pre">persist</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">resource</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">attr</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">values</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">update</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#pagerduty.RestApiV2Client.persist" title="Permalink to this definition"></a></dt>
+<span class="sig-name descname"><span class="pre">persist</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">resource</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">attr</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">values</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">update</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#pagerduty.RestApiV2Client.persist" title="Link to this definition"></a></dt>
 <dd><p>Finds or creates and returns a resource with a matching attribute</p>
 <p>Given a resource name, an attribute to use as an idempotency key and a
 set of attribute:value pairs as a dict, create a resource with the
@@ -692,7 +692,7 @@ with the values supplied.</p></li>
 
 <dl class="py method">
 <dt class="sig sig-object py" id="pagerduty.RestApiV2Client.postprocess">
-<span class="sig-name descname"><span class="pre">postprocess</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">response</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Response</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">suffix</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#pagerduty.RestApiV2Client.postprocess" title="Permalink to this definition"></a></dt>
+<span class="sig-name descname"><span class="pre">postprocess</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">response</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Response</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">suffix</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#pagerduty.RestApiV2Client.postprocess" title="Link to this definition"></a></dt>
 <dd><p>Records performance information / request metadata about the API call.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
@@ -706,7 +706,7 @@ with the values supplied.</p></li>
 
 <dl class="py method">
 <dt class="sig sig-object py" id="pagerduty.RestApiV2Client.rdelete">
-<span class="sig-name descname"><span class="pre">rdelete</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">resource</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kw</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#pagerduty.RestApiV2Client.rdelete" title="Permalink to this definition"></a></dt>
+<span class="sig-name descname"><span class="pre">rdelete</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">resource</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kw</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#pagerduty.RestApiV2Client.rdelete" title="Link to this definition"></a></dt>
 <dd><p>Delete a resource.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
@@ -723,7 +723,7 @@ whose value is the URL of the resource.</p></li>
 
 <dl class="py method">
 <dt class="sig sig-object py" id="pagerduty.RestApiV2Client.rget">
-<span class="sig-name descname"><span class="pre">rget</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">resource</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kw</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#pagerduty.RestApiV2Client.rget" title="Permalink to this definition"></a></dt>
+<span class="sig-name descname"><span class="pre">rget</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">resource</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kw</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#pagerduty.RestApiV2Client.rget" title="Link to this definition"></a></dt>
 <dd><p>Wrapped-entity-aware GET function.</p>
 <p>Retrieves a resource via GET and returns the wrapped entity in the
 response.</p>
@@ -745,7 +745,7 @@ whose value is the URL of the resource.</p></li>
 
 <dl class="py method">
 <dt class="sig sig-object py" id="pagerduty.RestApiV2Client.rpatch">
-<span class="sig-name descname"><span class="pre">rpatch</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">url</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kw</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#pagerduty.RestApiV2Client.rpatch" title="Permalink to this definition"></a></dt>
+<span class="sig-name descname"><span class="pre">rpatch</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">url</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kw</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#pagerduty.RestApiV2Client.rpatch" title="Link to this definition"></a></dt>
 <dd><p>Wrapped-entity-aware PATCH function.</p>
 <p>Currently the only API endpoint that uses or supports this method is “Update
 Workflow Integration Connection”: <code class="docutils literal notranslate"><span class="pre">PATCH</span>
@@ -756,7 +756,7 @@ Workflow Integration Connection”: <code class="docutils literal notranslate"><
 
 <dl class="py method">
 <dt class="sig sig-object py" id="pagerduty.RestApiV2Client.rpost">
-<span class="sig-name descname"><span class="pre">rpost</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">url</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kw</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#pagerduty.RestApiV2Client.rpost" title="Permalink to this definition"></a></dt>
+<span class="sig-name descname"><span class="pre">rpost</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">url</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kw</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#pagerduty.RestApiV2Client.rpost" title="Link to this definition"></a></dt>
 <dd><p>Wrapped-entity-aware POST function.</p>
 <p>Creates a resource and returns the created entity if successful.</p>
 <dl class="field-list simple">
@@ -776,7 +776,7 @@ index endpoint.</p></li>
 
 <dl class="py method">
 <dt class="sig sig-object py" id="pagerduty.RestApiV2Client.rput">
-<span class="sig-name descname"><span class="pre">rput</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">resource</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kw</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#pagerduty.RestApiV2Client.rput" title="Permalink to this definition"></a></dt>
+<span class="sig-name descname"><span class="pre">rput</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">resource</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kw</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#pagerduty.RestApiV2Client.rput" title="Link to this definition"></a></dt>
 <dd><p>Wrapped-entity-aware PUT function.</p>
 <p>Update an individual resource, returning the wrapped entity.</p>
 <dl class="field-list simple">
@@ -797,7 +797,7 @@ whose value is the URL of the resource.</p></li>
 
 <dl class="py property">
 <dt class="sig sig-object py" id="pagerduty.RestApiV2Client.subdomain">
-<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">subdomain</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">str</span></em><a class="headerlink" href="#pagerduty.RestApiV2Client.subdomain" title="Permalink to this definition"></a></dt>
+<em class="property"><span class="k"><span class="pre">property</span></span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">subdomain</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">str</span></em><a class="headerlink" href="#pagerduty.RestApiV2Client.subdomain" title="Link to this definition"></a></dt>
 <dd><p>Subdomain of the PagerDuty account of the API access token.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Type<span class="colon">:</span></dt>
@@ -808,25 +808,25 @@ whose value is the URL of the resource.</p></li>
 
 <dl class="py property">
 <dt class="sig sig-object py" id="pagerduty.RestApiV2Client.total_call_count">
-<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">total_call_count</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">int</span></em><a class="headerlink" href="#pagerduty.RestApiV2Client.total_call_count" title="Permalink to this definition"></a></dt>
+<em class="property"><span class="k"><span class="pre">property</span></span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">total_call_count</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">int</span></em><a class="headerlink" href="#pagerduty.RestApiV2Client.total_call_count" title="Link to this definition"></a></dt>
 <dd><p>The total number of API calls made by this instance.</p>
 </dd></dl>
 
 <dl class="py property">
 <dt class="sig sig-object py" id="pagerduty.RestApiV2Client.total_call_time">
-<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">total_call_time</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">float</span></em><a class="headerlink" href="#pagerduty.RestApiV2Client.total_call_time" title="Permalink to this definition"></a></dt>
+<em class="property"><span class="k"><span class="pre">property</span></span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">total_call_time</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">float</span></em><a class="headerlink" href="#pagerduty.RestApiV2Client.total_call_time" title="Link to this definition"></a></dt>
 <dd><p>The total time spent making API calls.</p>
 </dd></dl>
 
 <dl class="py property">
 <dt class="sig sig-object py" id="pagerduty.RestApiV2Client.trunc_token">
-<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">trunc_token</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">str</span></em><a class="headerlink" href="#pagerduty.RestApiV2Client.trunc_token" title="Permalink to this definition"></a></dt>
-<dd><p>Truncated token for secure display/identification purposes.</p>
+<em class="property"><span class="k"><span class="pre">property</span></span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">trunc_token</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">str</span></em><a class="headerlink" href="#pagerduty.RestApiV2Client.trunc_token" title="Link to this definition"></a></dt>
+<dd><p>Truncated API key for secure display/identification purposes.</p>
 </dd></dl>
 
 <dl class="py attribute">
 <dt class="sig sig-object py" id="pagerduty.RestApiV2Client.url">
-<span class="sig-name descname"><span class="pre">url</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">'https://api.pagerduty.com'</span></em><a class="headerlink" href="#pagerduty.RestApiV2Client.url" title="Permalink to this definition"></a></dt>
+<span class="sig-name descname"><span class="pre">url</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">'https://api.pagerduty.com'</span></em><a class="headerlink" href="#pagerduty.RestApiV2Client.url" title="Link to this definition"></a></dt>
 <dd><p>Base URL of the REST API</p>
 </dd></dl>
 
@@ -834,14 +834,14 @@ whose value is the URL of the resource.</p></li>
 
 <dl class="py class">
 <dt class="sig sig-object py" id="pagerduty.EventsApiV2Client">
-<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">pagerduty.</span></span><span class="sig-name descname"><span class="pre">EventsApiV2Client</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">api_key</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">debug</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#pagerduty.EventsApiV2Client" title="Permalink to this definition"></a></dt>
+<em class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">pagerduty.</span></span><span class="sig-name descname"><span class="pre">EventsApiV2Client</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">api_key</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">debug</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#pagerduty.EventsApiV2Client" title="Link to this definition"></a></dt>
 <dd><p>Session class for submitting events to the PagerDuty v2 Events API.</p>
 <p>Implements methods for submitting events to PagerDuty through the Events API,
 including change events, and inherits from <a class="reference internal" href="#pagerduty.ApiClient" title="pagerduty.ApiClient"><code class="xref py py-class docutils literal notranslate"><span class="pre">pagerduty.ApiClient</span></code></a>.  For more
 details on usage of this API, refer to the <a class="reference external" href="https://developer.pagerduty.com/docs/events-api-v2/overview/">Events API v2 documentation</a></p>
 <dl class="py method">
 <dt class="sig sig-object py" id="pagerduty.EventsApiV2Client.acknowledge">
-<span class="sig-name descname"><span class="pre">acknowledge</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">dedup_key</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">str</span></span></span><a class="headerlink" href="#pagerduty.EventsApiV2Client.acknowledge" title="Permalink to this definition"></a></dt>
+<span class="sig-name descname"><span class="pre">acknowledge</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">dedup_key</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">str</span></span></span><a class="headerlink" href="#pagerduty.EventsApiV2Client.acknowledge" title="Link to this definition"></a></dt>
 <dd><p>Acknowledge an alert via Events API.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
@@ -855,14 +855,14 @@ details on usage of this API, refer to the <a class="reference external" href="h
 
 <dl class="py method">
 <dt class="sig sig-object py" id="pagerduty.EventsApiV2Client.post">
-<span class="sig-name descname"><span class="pre">post</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">*</span></span><span class="n"><span class="pre">args</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kw</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">Response</span></span></span><a class="headerlink" href="#pagerduty.EventsApiV2Client.post" title="Permalink to this definition"></a></dt>
+<span class="sig-name descname"><span class="pre">post</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">*</span></span><span class="n"><span class="pre">args</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kw</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">Response</span></span></span><a class="headerlink" href="#pagerduty.EventsApiV2Client.post" title="Link to this definition"></a></dt>
 <dd><p>Override of <code class="docutils literal notranslate"><span class="pre">requests.Session.post</span></code></p>
 <p>Adds the <code class="docutils literal notranslate"><span class="pre">routing_key</span></code> parameter to the body before sending.</p>
 </dd></dl>
 
 <dl class="py method">
 <dt class="sig sig-object py" id="pagerduty.EventsApiV2Client.prepare_headers">
-<span class="sig-name descname"><span class="pre">prepare_headers</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">method</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">user_headers</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">{}</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">dict</span></span></span><a class="headerlink" href="#pagerduty.EventsApiV2Client.prepare_headers" title="Permalink to this definition"></a></dt>
+<span class="sig-name descname"><span class="pre">prepare_headers</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">method</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">user_headers</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">dict</span></span></span><a class="headerlink" href="#pagerduty.EventsApiV2Client.prepare_headers" title="Link to this definition"></a></dt>
 <dd><p>Add user agent and content type headers for Events API requests.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
@@ -876,7 +876,7 @@ details on usage of this API, refer to the <a class="reference external" href="h
 
 <dl class="py method">
 <dt class="sig sig-object py" id="pagerduty.EventsApiV2Client.resolve">
-<span class="sig-name descname"><span class="pre">resolve</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">dedup_key</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">str</span></span></span><a class="headerlink" href="#pagerduty.EventsApiV2Client.resolve" title="Permalink to this definition"></a></dt>
+<span class="sig-name descname"><span class="pre">resolve</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">dedup_key</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">str</span></span></span><a class="headerlink" href="#pagerduty.EventsApiV2Client.resolve" title="Link to this definition"></a></dt>
 <dd><p>Resolve an alert via Events API.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
@@ -887,7 +887,7 @@ details on usage of this API, refer to the <a class="reference external" href="h
 
 <dl class="py method">
 <dt class="sig sig-object py" id="pagerduty.EventsApiV2Client.send_change_event">
-<span class="sig-name descname"><span class="pre">send_change_event</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">payload</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">{}</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">links</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">[]</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">routing_key</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#pagerduty.EventsApiV2Client.send_change_event" title="Permalink to this definition"></a></dt>
+<span class="sig-name descname"><span class="pre">send_change_event</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">payload</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">links</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">routing_key</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#pagerduty.EventsApiV2Client.send_change_event" title="Link to this definition"></a></dt>
 <dd><p>Send a change event to the v2 Change Events API.</p>
 <p>See: <a class="reference external" href="https://developer.pagerduty.com/docs/events-api-v2/send-change-events/">https://developer.pagerduty.com/docs/events-api-v2/send-change-events/</a></p>
 <dl class="field-list simple">
@@ -901,15 +901,12 @@ representing the target and display text of each link</p></li>
 <a class="reference internal" href="#pagerduty.ApiClient.api_key" title="pagerduty.ApiClient.api_key"><code class="xref py py-attr docutils literal notranslate"><span class="pre">ApiClient.api_key</span></code></a> property in the final payload and this argument is ignored.</p></li>
 </ul>
 </dd>
-<dt class="field-even">Returns<span class="colon">:</span></dt>
-<dd class="field-even"><p>The response ID</p>
-</dd>
 </dl>
 </dd></dl>
 
 <dl class="py method">
 <dt class="sig sig-object py" id="pagerduty.EventsApiV2Client.send_event">
-<span class="sig-name descname"><span class="pre">send_event</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">action</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">dedup_key</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">properties</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">str</span></span></span><a class="headerlink" href="#pagerduty.EventsApiV2Client.send_event" title="Permalink to this definition"></a></dt>
+<span class="sig-name descname"><span class="pre">send_event</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">action</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">dedup_key</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">properties</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">str</span></span></span><a class="headerlink" href="#pagerduty.EventsApiV2Client.send_event" title="Link to this definition"></a></dt>
 <dd><p>Send an event to the v2 Events API.</p>
 <p>See: <a class="reference external" href="https://v2.developer.pagerduty.com/docs/send-an-event-events-api-v2">https://v2.developer.pagerduty.com/docs/send-an-event-events-api-v2</a></p>
 <dl class="field-list simple">
@@ -932,9 +929,12 @@ this would include <code class="docutils literal notranslate"><span class="pre">
 
 <dl class="py method">
 <dt class="sig sig-object py" id="pagerduty.EventsApiV2Client.submit">
-<span class="sig-name descname"><span class="pre">submit</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">summary</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">source</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">custom_details</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">links</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">timestamp</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">str</span></span></span><a class="headerlink" href="#pagerduty.EventsApiV2Client.submit" title="Permalink to this definition"></a></dt>
+<span class="sig-name descname"><span class="pre">submit</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">summary</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">source</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">custom_details</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">links</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">timestamp</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#pagerduty.EventsApiV2Client.submit" title="Link to this definition"></a></dt>
 <dd><p>Submit a change event.</p>
 <p>See: <a class="reference external" href="https://developer.pagerduty.com/docs/send-change-event">https://developer.pagerduty.com/docs/send-change-event</a></p>
+<p>This is a wrapper method for <a class="reference internal" href="#pagerduty.EventsApiV2Client.send_change_event" title="pagerduty.EventsApiV2Client.send_change_event"><code class="xref py py-attr docutils literal notranslate"><span class="pre">send_change_event</span></code></a> that composes an event
+payload from keyword arguments and an auto-generated event timestamp. To send an
+event with a wholly custom payload, use <a class="reference internal" href="#pagerduty.EventsApiV2Client.send_change_event" title="pagerduty.EventsApiV2Client.send_change_event"><code class="xref py py-attr docutils literal notranslate"><span class="pre">send_change_event</span></code></a> instead.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
@@ -946,15 +946,12 @@ this would include <code class="docutils literal notranslate"><span class="pre">
 <li><p><strong>timestamp</strong> (<em>str</em>) – Specifies an event timestamp. Must be an ISO8601-format date/time.</p></li>
 </ul>
 </dd>
-<dt class="field-even">Returns<span class="colon">:</span></dt>
-<dd class="field-even"><p>The response ID</p>
-</dd>
 </dl>
 </dd></dl>
 
 <dl class="py method">
 <dt class="sig sig-object py" id="pagerduty.EventsApiV2Client.trigger">
-<span class="sig-name descname"><span class="pre">trigger</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">summary</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">source</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">dedup_key</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">severity</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'critical'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">payload</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">custom_details</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">images</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">links</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">str</span></span></span><a class="headerlink" href="#pagerduty.EventsApiV2Client.trigger" title="Permalink to this definition"></a></dt>
+<span class="sig-name descname"><span class="pre">trigger</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">summary</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">source</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">dedup_key</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">severity</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'critical'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">payload</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">custom_details</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">images</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">links</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">str</span></span></span><a class="headerlink" href="#pagerduty.EventsApiV2Client.trigger" title="Link to this definition"></a></dt>
 <dd><p>Send an alert-triggering event</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
@@ -985,17 +982,17 @@ override the property set in the <code class="docutils literal notranslate"><spa
 
 </section>
 <section id="errors">
-<h2>Errors<a class="headerlink" href="#errors" title="Permalink to this heading"></a></h2>
+<h2>Errors<a class="headerlink" href="#errors" title="Link to this heading"></a></h2>
 <dl class="py class">
 <dt class="sig sig-object py" id="pagerduty.Error">
-<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">pagerduty.</span></span><span class="sig-name descname"><span class="pre">Error</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">message</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">response</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#pagerduty.Error" title="Permalink to this definition"></a></dt>
+<em class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">pagerduty.</span></span><span class="sig-name descname"><span class="pre">Error</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">message</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">response</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#pagerduty.Error" title="Link to this definition"></a></dt>
 <dd><p>General API errors base class.</p>
 <p>Note, the name of this class does not imply it solely includes errors
 experienced by the client or HTTP status 4xx responses, but descendants can
 include issues with the API backend.</p>
 <dl class="py attribute">
 <dt class="sig sig-object py" id="pagerduty.Error.response">
-<span class="sig-name descname"><span class="pre">response</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">None</span></em><a class="headerlink" href="#pagerduty.Error.response" title="Permalink to this definition"></a></dt>
+<span class="sig-name descname"><span class="pre">response</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">None</span></em><a class="headerlink" href="#pagerduty.Error.response" title="Link to this definition"></a></dt>
 <dd><p>The HTTP response object, if a response was successfully received.</p>
 <p>In the case of network errors, this property will be None.</p>
 </dd></dl>
@@ -1004,15 +1001,15 @@ include issues with the API backend.</p>
 
 <dl class="py class">
 <dt class="sig sig-object py" id="pagerduty.HttpError">
-<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">pagerduty.</span></span><span class="sig-name descname"><span class="pre">HttpError</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">message</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">response</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Response</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#pagerduty.HttpError" title="Permalink to this definition"></a></dt>
+<em class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">pagerduty.</span></span><span class="sig-name descname"><span class="pre">HttpError</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">message</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">response</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Response</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#pagerduty.HttpError" title="Link to this definition"></a></dt>
 <dd><p>Error class representing errors strictly associated with HTTP responses.</p>
 <p>This class was created to make it easier to more cleanly handle errors by
 way of a class that is guaranteed to have its <code class="docutils literal notranslate"><span class="pre">response</span></code> be a valid
 <a class="reference external" href="https://docs.python-requests.org/en/master/api/#requests.Response">requests.Response</a> object.</p>
 <p>Whereas, the more generic <a class="reference internal" href="#pagerduty.Error" title="pagerduty.Error"><code class="xref py py-class docutils literal notranslate"><span class="pre">Error</span></code></a> could also be used
 to denote such things as non-transient network errors wherein no response
-was recevied from the API.</p>
-<p>For instance, instead of this:</p>
+was received from the API.
+For instance, instead of this:</p>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="k">try</span><span class="p">:</span>
     <span class="n">user</span> <span class="o">=</span> <span class="n">session</span><span class="o">.</span><span class="n">rget</span><span class="p">(</span><span class="s1">&#39;/users/PABC123&#39;</span><span class="p">)</span>
 <span class="k">except</span> <span class="n">pagerduty</span><span class="o">.</span><span class="n">Error</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
@@ -1033,7 +1030,7 @@ was recevied from the API.</p>
 
 <dl class="py class">
 <dt class="sig sig-object py" id="pagerduty.ServerHttpError">
-<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">pagerduty.</span></span><span class="sig-name descname"><span class="pre">ServerHttpError</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">message</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">response</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Response</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#pagerduty.ServerHttpError" title="Permalink to this definition"></a></dt>
+<em class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">pagerduty.</span></span><span class="sig-name descname"><span class="pre">ServerHttpError</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">message</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">response</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Response</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#pagerduty.ServerHttpError" title="Link to this definition"></a></dt>
 <dd><p>Error class representing failed expectations made of the server.</p>
 <p>This is raised in cases where the response schema differs from the expected schema
 because of an API bug, or because it’s an early access endpoint and changes before
@@ -1042,50 +1039,51 @@ GA, or in cases of HTTP status 5xx where a successful response is required.</p>
 
 <dl class="py class">
 <dt class="sig sig-object py" id="pagerduty.UrlError">
-<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">pagerduty.</span></span><span class="sig-name descname"><span class="pre">UrlError</span></span><a class="headerlink" href="#pagerduty.UrlError" title="Permalink to this definition"></a></dt>
+<em class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">pagerduty.</span></span><span class="sig-name descname"><span class="pre">UrlError</span></span><a class="headerlink" href="#pagerduty.UrlError" title="Link to this definition"></a></dt>
 <dd><p>Exception class for unsupported URLs or malformed input.</p>
 </dd></dl>
 
 </section>
 <section id="client-defaults">
-<h2>Client Defaults<a class="headerlink" href="#client-defaults" title="Permalink to this heading"></a></h2>
+<h2>Client Defaults<a class="headerlink" href="#client-defaults" title="Link to this heading"></a></h2>
 <p>These are properties of the module that configure default behavior for the API
 client. There should be no need for the end user to modify them.</p>
-<span class="target" id="module-pagerduty"></span><dl class="py data">
-<dt class="sig sig-object py" id="pagerduty.CANONICAL_PATHS">
-<span class="sig-prename descclassname"><span class="pre">pagerduty.</span></span><span class="sig-name descname"><span class="pre">CANONICAL_PATHS</span></span><a class="headerlink" href="#pagerduty.CANONICAL_PATHS" title="Permalink to this definition"></a></dt>
+<dl class="py data" id="module-pagerduty.rest_api_v2_client">
+<dt class="sig sig-object py" id="pagerduty.rest_api_v2_client.CANONICAL_PATHS">
+<span class="sig-prename descclassname"><span class="pre">pagerduty.rest_api_v2_client.</span></span><span class="sig-name descname"><span class="pre">CANONICAL_PATHS</span></span><a class="headerlink" href="#pagerduty.rest_api_v2_client.CANONICAL_PATHS" title="Link to this definition"></a></dt>
 <dd><p>Explicit list of supported canonical REST API v2 paths</p>
 <dl class="field-list simple">
 </dl>
 </dd></dl>
 
 <dl class="py data">
-<dt class="sig sig-object py" id="pagerduty.CURSOR_BASED_PAGINATION_PATHS">
-<span class="sig-prename descclassname"><span class="pre">pagerduty.</span></span><span class="sig-name descname"><span class="pre">CURSOR_BASED_PAGINATION_PATHS</span></span><a class="headerlink" href="#pagerduty.CURSOR_BASED_PAGINATION_PATHS" title="Permalink to this definition"></a></dt>
+<dt class="sig sig-object py" id="pagerduty.rest_api_v2_client.CURSOR_BASED_PAGINATION_PATHS">
+<span class="sig-prename descclassname"><span class="pre">pagerduty.rest_api_v2_client.</span></span><span class="sig-name descname"><span class="pre">CURSOR_BASED_PAGINATION_PATHS</span></span><a class="headerlink" href="#pagerduty.rest_api_v2_client.CURSOR_BASED_PAGINATION_PATHS" title="Link to this definition"></a></dt>
 <dd><p>Explicit list of paths that support cursor-based pagination</p>
 <dl class="field-list simple">
 </dl>
 </dd></dl>
 
 <dl class="py data">
-<dt class="sig sig-object py" id="pagerduty.ENTITY_WRAPPER_CONFIG">
-<span class="sig-prename descclassname"><span class="pre">pagerduty.</span></span><span class="sig-name descname"><span class="pre">ENTITY_WRAPPER_CONFIG</span></span><a class="headerlink" href="#pagerduty.ENTITY_WRAPPER_CONFIG" title="Permalink to this definition"></a></dt>
+<dt class="sig sig-object py" id="pagerduty.rest_api_v2_client.ENTITY_WRAPPER_CONFIG">
+<span class="sig-prename descclassname"><span class="pre">pagerduty.rest_api_v2_client.</span></span><span class="sig-name descname"><span class="pre">ENTITY_WRAPPER_CONFIG</span></span><a class="headerlink" href="#pagerduty.rest_api_v2_client.ENTITY_WRAPPER_CONFIG" title="Link to this definition"></a></dt>
 <dd><p>Wrapped entities antipattern handling configuration.</p>
 <p>When trying to determine the entity wrapper name, this dictionary is first
 checked for keys that apply to a given request method and canonical API path
 based on a matching logic. If no keys are found that match, it is assumed that
 the API endpoint follows classic entity wrapping conventions, and the wrapper
 name can be inferred based on those conventions (see
-<a class="reference internal" href="#pagerduty.infer_entity_wrapper" title="pagerduty.infer_entity_wrapper"><code class="xref py py-attr docutils literal notranslate"><span class="pre">infer_entity_wrapper</span></code></a>). Any new API that does not follow these
+<a class="reference internal" href="#pagerduty.infer_entity_wrapper" title="pagerduty.infer_entity_wrapper"><code class="xref py py-attr docutils literal notranslate"><span class="pre">pagerduty.infer_entity_wrapper</span></code></a>). Any new API that does not follow these
 conventions should therefore be given an entry in this dictionary in order to
 properly support it for entity wrapping.</p>
-<p>Each of the keys should be a capitalized HTTP method (or <code class="docutils literal notranslate"><span class="pre">*</span></code> to match any
-method), followed by a space, followed by a canonical path i.e. as returned by
-<a class="reference internal" href="#pagerduty.canonical_path" title="pagerduty.canonical_path"><code class="xref py py-attr docutils literal notranslate"><span class="pre">canonical_path</span></code></a> and included in <a class="reference internal" href="#pagerduty.CANONICAL_PATHS" title="pagerduty.CANONICAL_PATHS"><code class="xref py py-attr docutils literal notranslate"><span class="pre">CANONICAL_PATHS</span></code></a>. Each value
-is either a tuple with request and response body wrappers (if they differ), a
-string (if they are the same for both cases) or <code class="docutils literal notranslate"><span class="pre">None</span></code> (if wrapping is
-disabled and the data is to be marshaled or unmarshaled as-is). Values in tuples
-can also be None to denote that either the request or response is unwrapped.</p>
+<p>Each of the keys should be a capitalized HTTP method (or <code class="docutils literal notranslate"><span class="pre">*</span></code> to match any method),
+followed by a space, followed by a canonical path i.e. as returned by
+<a class="reference internal" href="#pagerduty.canonical_path" title="pagerduty.canonical_path"><code class="xref py py-attr docutils literal notranslate"><span class="pre">pagerduty.canonical_path</span></code></a> and included in
+<a class="reference internal" href="#pagerduty.rest_api_v2_client.CANONICAL_PATHS" title="pagerduty.rest_api_v2_client.CANONICAL_PATHS"><code class="xref py py-attr docutils literal notranslate"><span class="pre">pagerduty.rest_api_v2_client.CANONICAL_PATHS</span></code></a>. Each value is either a tuple with
+request and response body wrappers (if they differ), a string (if they are the same for
+both cases) or <code class="docutils literal notranslate"><span class="pre">None</span></code> (if wrapping is disabled and the data is to be marshaled or
+unmarshaled as-is). Values in tuples can also be None to denote that either the request
+or response is unwrapped.</p>
 <p>An endpoint, under the design logic of this client, is said to have entity
 wrapping if the body (request or response) has only one property containing
 the content requested or transmitted, apart from properties used for
@@ -1098,8 +1096,8 @@ properties in request bodies.</p>
 </dd></dl>
 
 <dl class="py data">
-<dt class="sig sig-object py" id="pagerduty.ITERATION_LIMIT">
-<span class="sig-prename descclassname"><span class="pre">pagerduty.</span></span><span class="sig-name descname"><span class="pre">ITERATION_LIMIT</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">10000.0</span></em><a class="headerlink" href="#pagerduty.ITERATION_LIMIT" title="Permalink to this definition"></a></dt>
+<dt class="sig sig-object py" id="pagerduty.rest_api_v2_client.ITERATION_LIMIT">
+<span class="sig-prename descclassname"><span class="pre">pagerduty.rest_api_v2_client.</span></span><span class="sig-name descname"><span class="pre">ITERATION_LIMIT</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">10000.0</span></em><a class="headerlink" href="#pagerduty.rest_api_v2_client.ITERATION_LIMIT" title="Link to this definition"></a></dt>
 <dd><p>The maximum position of a result in classic pagination.</p>
 <p>The offset plus limit parameter may not exceed this number. This is enforced
 server-side and is not something the client may override. Rather, this value is
@@ -1107,40 +1105,40 @@ used to short-circuit pagination in order to avoid a HTTP 400 error.</p>
 <p>See: <a class="reference external" href="https://developer.pagerduty.com/docs/ZG9jOjExMDI5NTU4-pagination">Pagination</a>.</p>
 </dd></dl>
 
-<dl class="py data">
-<dt class="sig sig-object py" id="pagerduty.TEXT_LEN_LIMIT">
-<span class="sig-prename descclassname"><span class="pre">pagerduty.</span></span><span class="sig-name descname"><span class="pre">TEXT_LEN_LIMIT</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">100</span></em><a class="headerlink" href="#pagerduty.TEXT_LEN_LIMIT" title="Permalink to this definition"></a></dt>
+<dl class="py data" id="module-pagerduty.common">
+<dt class="sig sig-object py" id="pagerduty.common.TEXT_LEN_LIMIT">
+<span class="sig-prename descclassname"><span class="pre">pagerduty.common.</span></span><span class="sig-name descname"><span class="pre">TEXT_LEN_LIMIT</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">100</span></em><a class="headerlink" href="#pagerduty.common.TEXT_LEN_LIMIT" title="Link to this definition"></a></dt>
 <dd><p>The longest permissible length of API content to include in error messages.</p>
 </dd></dl>
 
-<dl class="py data">
-<dt class="sig sig-object py" id="pagerduty.TIMEOUT">
-<span class="sig-prename descclassname"><span class="pre">pagerduty.</span></span><span class="sig-name descname"><span class="pre">TIMEOUT</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">60</span></em><a class="headerlink" href="#pagerduty.TIMEOUT" title="Permalink to this definition"></a></dt>
+<dl class="py data" id="module-pagerduty.api_client">
+<dt class="sig sig-object py" id="pagerduty.api_client.TIMEOUT">
+<span class="sig-prename descclassname"><span class="pre">pagerduty.api_client.</span></span><span class="sig-name descname"><span class="pre">TIMEOUT</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">60</span></em><a class="headerlink" href="#pagerduty.api_client.TIMEOUT" title="Link to this definition"></a></dt>
 <dd><p>The default timeout in seconds for any given HTTP request.</p>
 <p>Modifying this value will not affect any preexisting API session instances.
 Rather, it will only affect new instances. It is recommended to use
-<a class="reference internal" href="#pagerduty.ApiClient.timeout" title="pagerduty.ApiClient.timeout"><code class="xref py py-attr docutils literal notranslate"><span class="pre">ApiClient.timeout</span></code></a> to configure the timeout for a given session.</p>
+<code class="xref py py-attr docutils literal notranslate"><span class="pre">ApiClient.timeout</span></code> to configure the timeout for a given session.</p>
 </dd></dl>
 
 </section>
 <section id="functions">
-<h2>Functions<a class="headerlink" href="#functions" title="Permalink to this heading"></a></h2>
+<h2>Functions<a class="headerlink" href="#functions" title="Link to this heading"></a></h2>
 <p>These are generic functions used by the API session classes and are not on
 their own typically needed, but which are documented for the benefit of anyone
 who may find use in them.</p>
 <section id="url-handling">
-<h3>URL Handling<a class="headerlink" href="#url-handling" title="Permalink to this heading"></a></h3>
+<h3>URL Handling<a class="headerlink" href="#url-handling" title="Link to this heading"></a></h3>
 <p>URL related functions.</p>
-<span class="target" id="module-0"></span><dl class="py function">
+<dl class="py function" id="module-pagerduty">
 <dt class="sig sig-object py" id="pagerduty.canonical_path">
-<span class="sig-prename descclassname"><span class="pre">pagerduty.</span></span><span class="sig-name descname"><span class="pre">canonical_path</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">base_url</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">url</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">str</span></span></span><a class="headerlink" href="#pagerduty.canonical_path" title="Permalink to this definition"></a></dt>
+<span class="sig-prename descclassname"><span class="pre">pagerduty.</span></span><span class="sig-name descname"><span class="pre">canonical_path</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">base_url</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">url</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">str</span></span></span><a class="headerlink" href="#pagerduty.canonical_path" title="Link to this definition"></a></dt>
 <dd><p>The canonical path from the API documentation corresponding to a URL</p>
 <p>This is used to identify and classify URLs according to which particular API
 within REST API v2 it belongs to.</p>
 <p>Explicitly supported canonical paths are defined in the list
-<a class="reference internal" href="#pagerduty.CANONICAL_PATHS" title="pagerduty.CANONICAL_PATHS"><code class="xref py py-attr docutils literal notranslate"><span class="pre">CANONICAL_PATHS</span></code></a> and are the path part of any given API’s URL. The
-path for a given API is what is shown at the top of its reference page, i.e.
-<code class="docutils literal notranslate"><span class="pre">/users/{id}/contact_methods</span></code> for retrieving a user’s contact methods
+<code class="xref py py-attr docutils literal notranslate"><span class="pre">pagerduty.rest_api_v2.CANONICAL_PATHS</span></code> and are the path part of any given
+API’s URL. The path for a given API is what is shown at the top of its reference
+page, i.e.  <code class="docutils literal notranslate"><span class="pre">/users/{id}/contact_methods</span></code> for retrieving a user’s contact methods
 (GET) or creating a new one (POST).</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
@@ -1157,10 +1155,11 @@ path for a given API is what is shown at the top of its reference page, i.e.
 
 <dl class="py function">
 <dt class="sig sig-object py" id="pagerduty.endpoint_matches">
-<span class="sig-prename descclassname"><span class="pre">pagerduty.</span></span><span class="sig-name descname"><span class="pre">endpoint_matches</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">endpoint_pattern</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">method</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">path</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">bool</span></span></span><a class="headerlink" href="#pagerduty.endpoint_matches" title="Permalink to this definition"></a></dt>
+<span class="sig-prename descclassname"><span class="pre">pagerduty.</span></span><span class="sig-name descname"><span class="pre">endpoint_matches</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">endpoint_pattern</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">method</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">path</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">bool</span></span></span><a class="headerlink" href="#pagerduty.endpoint_matches" title="Link to this definition"></a></dt>
 <dd><p>Whether an endpoint (method and canonical path) matches a given pattern</p>
-<p>This is the filtering logic  used for finding the appropriate entry in
-<a class="reference internal" href="#pagerduty.ENTITY_WRAPPER_CONFIG" title="pagerduty.ENTITY_WRAPPER_CONFIG"><code class="xref py py-attr docutils literal notranslate"><span class="pre">ENTITY_WRAPPER_CONFIG</span></code></a> to use for a given method and API path.</p>
+<p>This is the filtering logic used for finding the appropriate entry in
+<a class="reference internal" href="#pagerduty.rest_api_v2_client.ENTITY_WRAPPER_CONFIG" title="pagerduty.rest_api_v2_client.ENTITY_WRAPPER_CONFIG"><code class="xref py py-attr docutils literal notranslate"><span class="pre">pagerduty.rest_api_v2_client.ENTITY_WRAPPER_CONFIG</span></code></a> to use for a given method
+and API path.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
@@ -1179,7 +1178,7 @@ a canonical API path.</p></li>
 
 <dl class="py function">
 <dt class="sig sig-object py" id="pagerduty.is_path_param">
-<span class="sig-prename descclassname"><span class="pre">pagerduty.</span></span><span class="sig-name descname"><span class="pre">is_path_param</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">path_node</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">bool</span></span></span><a class="headerlink" href="#pagerduty.is_path_param" title="Permalink to this definition"></a></dt>
+<span class="sig-prename descclassname"><span class="pre">pagerduty.</span></span><span class="sig-name descname"><span class="pre">is_path_param</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">path_node</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">bool</span></span></span><a class="headerlink" href="#pagerduty.is_path_param" title="Link to this definition"></a></dt>
 <dd><p>Whether a part of a canonical path represents a variable parameter</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
@@ -1193,7 +1192,7 @@ a canonical API path.</p></li>
 
 <dl class="py function">
 <dt class="sig sig-object py" id="pagerduty.normalize_url">
-<span class="sig-prename descclassname"><span class="pre">pagerduty.</span></span><span class="sig-name descname"><span class="pre">normalize_url</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">base_url</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">url</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">str</span></span></span><a class="headerlink" href="#pagerduty.normalize_url" title="Permalink to this definition"></a></dt>
+<span class="sig-prename descclassname"><span class="pre">pagerduty.</span></span><span class="sig-name descname"><span class="pre">normalize_url</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">base_url</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">url</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">str</span></span></span><a class="headerlink" href="#pagerduty.normalize_url" title="Link to this definition"></a></dt>
 <dd><p>Normalize a URL or path to be a complete API URL before query parameters.</p>
 <p>The <code class="docutils literal notranslate"><span class="pre">url</span></code> argument may be a path relative to the base URL or a full URL.</p>
 <dl class="field-list simple">
@@ -1212,11 +1211,11 @@ a canonical API path.</p></li>
 
 </section>
 <section id="entity-wrapping">
-<h3>Entity Wrapping<a class="headerlink" href="#entity-wrapping" title="Permalink to this heading"></a></h3>
+<h3>Entity Wrapping<a class="headerlink" href="#entity-wrapping" title="Link to this heading"></a></h3>
 <p>Functions that implement entity wrapping logic.</p>
-<span class="target" id="module-1"></span><dl class="py function">
+<dl class="py function" id="module-0">
 <dt class="sig sig-object py" id="pagerduty.entity_wrappers">
-<span class="sig-prename descclassname"><span class="pre">pagerduty.</span></span><span class="sig-name descname"><span class="pre">entity_wrappers</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">method</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">path</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">tuple</span></span></span><a class="headerlink" href="#pagerduty.entity_wrappers" title="Permalink to this definition"></a></dt>
+<span class="sig-prename descclassname"><span class="pre">pagerduty.</span></span><span class="sig-name descname"><span class="pre">entity_wrappers</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">method</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">path</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">tuple</span></span></span><a class="headerlink" href="#pagerduty.entity_wrappers" title="Link to this definition"></a></dt>
 <dd><p>Obtains entity wrapping information for a given endpoint (path and method)</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
@@ -1237,18 +1236,19 @@ API response body object unmodified.</p>
 
 <dl class="py function">
 <dt class="sig sig-object py" id="pagerduty.infer_entity_wrapper">
-<span class="sig-prename descclassname"><span class="pre">pagerduty.</span></span><span class="sig-name descname"><span class="pre">infer_entity_wrapper</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">method</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">path</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">str</span></span></span><a class="headerlink" href="#pagerduty.infer_entity_wrapper" title="Permalink to this definition"></a></dt>
+<span class="sig-prename descclassname"><span class="pre">pagerduty.</span></span><span class="sig-name descname"><span class="pre">infer_entity_wrapper</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">method</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">path</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">str</span></span></span><a class="headerlink" href="#pagerduty.infer_entity_wrapper" title="Link to this definition"></a></dt>
 <dd><p>Infer the entity wrapper name from the endpoint using orthodox patterns.</p>
 <p>This is based on patterns that are broadly applicable but not universal in
 the v2 REST API, where the wrapper name is predictable from the path and
 method. This is the default logic applied to determine the wrapper name
 based on the path if there is no explicit entity wrapping defined for the
-given path in <a class="reference internal" href="#pagerduty.ENTITY_WRAPPER_CONFIG" title="pagerduty.ENTITY_WRAPPER_CONFIG"><code class="xref py py-attr docutils literal notranslate"><span class="pre">ENTITY_WRAPPER_CONFIG</span></code></a>.</p>
+given path in <a class="reference internal" href="#pagerduty.rest_api_v2_client.ENTITY_WRAPPER_CONFIG" title="pagerduty.rest_api_v2_client.ENTITY_WRAPPER_CONFIG"><code class="xref py py-attr docutils literal notranslate"><span class="pre">pagerduty.rest_api_v2_client.ENTITY_WRAPPER_CONFIG</span></code></a>.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
 <li><p><strong>method</strong> – The HTTP method</p></li>
-<li><p><strong>path</strong> – A canonical API path i.e. from <a class="reference internal" href="#pagerduty.CANONICAL_PATHS" title="pagerduty.CANONICAL_PATHS"><code class="xref py py-attr docutils literal notranslate"><span class="pre">CANONICAL_PATHS</span></code></a></p></li>
+<li><p><strong>path</strong> – A canonical API path i.e. from
+<a class="reference internal" href="#pagerduty.rest_api_v2_client.CANONICAL_PATHS" title="pagerduty.rest_api_v2_client.CANONICAL_PATHS"><code class="xref py py-attr docutils literal notranslate"><span class="pre">pagerduty.rest_api_v2_client.CANONICAL_PATHS</span></code></a></p></li>
 </ul>
 </dd>
 </dl>
@@ -1256,7 +1256,7 @@ given path in <a class="reference internal" href="#pagerduty.ENTITY_WRAPPER_CONF
 
 <dl class="py function">
 <dt class="sig sig-object py" id="pagerduty.unwrap">
-<span class="sig-prename descclassname"><span class="pre">pagerduty.</span></span><span class="sig-name descname"><span class="pre">unwrap</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">response</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Response</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">wrapper</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">dict</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">list</span></span></span><a class="headerlink" href="#pagerduty.unwrap" title="Permalink to this definition"></a></dt>
+<span class="sig-prename descclassname"><span class="pre">pagerduty.</span></span><span class="sig-name descname"><span class="pre">unwrap</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">response</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Response</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">wrapper</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">dict</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">list</span></span></span><a class="headerlink" href="#pagerduty.unwrap" title="Link to this definition"></a></dt>
 <dd><p>Unwraps a wrapped entity.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
@@ -1274,13 +1274,13 @@ the response, which is expected to be a dictionary (map).</p>
 
 </section>
 <section id="function-decorators">
-<h3>Function Decorators<a class="headerlink" href="#function-decorators" title="Permalink to this heading"></a></h3>
+<h3>Function Decorators<a class="headerlink" href="#function-decorators" title="Link to this heading"></a></h3>
 <p>Intended for use with functions based on the HTTP verb functions of subclasses
 of <a class="reference external" href="https://docs.python-requests.org/en/master/api/#request-sessions">requests.Session</a>, i.e. that would otherwise return a <a class="reference external" href="https://docs.python-requests.org/en/master/api/#requests.Response">requests.Response</a>
 object.</p>
-<span class="target" id="module-2"></span><dl class="py function">
+<dl class="py function" id="module-1">
 <dt class="sig sig-object py" id="pagerduty.auto_json">
-<span class="sig-prename descclassname"><span class="pre">pagerduty.</span></span><span class="sig-name descname"><span class="pre">auto_json</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">method</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#pagerduty.auto_json" title="Permalink to this definition"></a></dt>
+<span class="sig-prename descclassname"><span class="pre">pagerduty.</span></span><span class="sig-name descname"><span class="pre">auto_json</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">method</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#pagerduty.auto_json" title="Link to this definition"></a></dt>
 <dd><p>Makes methods return the full response body object after decoding from JSON.</p>
 <p>Intended for use on functions that take a URL positional argument followed
 by keyword arguments and return a <a class="reference external" href="https://docs.python-requests.org/en/master/api/#requests.Response">requests.Response</a> object.</p>
@@ -1288,13 +1288,13 @@ by keyword arguments and return a <a class="reference external" href="https://do
 
 <dl class="py function">
 <dt class="sig sig-object py" id="pagerduty.requires_success">
-<span class="sig-prename descclassname"><span class="pre">pagerduty.</span></span><span class="sig-name descname"><span class="pre">requires_success</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">method</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#pagerduty.requires_success" title="Permalink to this definition"></a></dt>
+<span class="sig-prename descclassname"><span class="pre">pagerduty.</span></span><span class="sig-name descname"><span class="pre">requires_success</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">method</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#pagerduty.requires_success" title="Link to this definition"></a></dt>
 <dd><p>Decorator that validates HTTP responses.</p>
 </dd></dl>
 
 <dl class="py function">
 <dt class="sig sig-object py" id="pagerduty.resource_url">
-<span class="sig-prename descclassname"><span class="pre">pagerduty.</span></span><span class="sig-name descname"><span class="pre">resource_url</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">method</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#pagerduty.resource_url" title="Permalink to this definition"></a></dt>
+<span class="sig-prename descclassname"><span class="pre">pagerduty.</span></span><span class="sig-name descname"><span class="pre">resource_url</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">method</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#pagerduty.resource_url" title="Link to this definition"></a></dt>
 <dd><p>API call decorator that allows passing a resource dict as the path/URL</p>
 <p>Most resources returned by the API will contain a <code class="docutils literal notranslate"><span class="pre">self</span></code> attribute that is
 the URL of the resource itself.</p>
@@ -1305,7 +1305,7 @@ need to re-construct the resource URL or hold it in a temporary variable.</p>
 
 <dl class="py function">
 <dt class="sig sig-object py" id="pagerduty.wrapped_entities">
-<span class="sig-prename descclassname"><span class="pre">pagerduty.</span></span><span class="sig-name descname"><span class="pre">wrapped_entities</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">method</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#pagerduty.wrapped_entities" title="Permalink to this definition"></a></dt>
+<span class="sig-prename descclassname"><span class="pre">pagerduty.</span></span><span class="sig-name descname"><span class="pre">wrapped_entities</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">method</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#pagerduty.wrapped_entities" title="Link to this definition"></a></dt>
 <dd><p>Automatically wrap request entities and unwrap response entities.</p>
 <p>Used for methods <a class="reference internal" href="#pagerduty.RestApiV2Client.rget" title="pagerduty.RestApiV2Client.rget"><code class="xref py py-attr docutils literal notranslate"><span class="pre">RestApiV2Client.rget</span></code></a>, <a class="reference internal" href="#pagerduty.RestApiV2Client.rpost" title="pagerduty.RestApiV2Client.rpost"><code class="xref py py-attr docutils literal notranslate"><span class="pre">RestApiV2Client.rpost</span></code></a> and
 <a class="reference internal" href="#pagerduty.RestApiV2Client.rput" title="pagerduty.RestApiV2Client.rput"><code class="xref py py-attr docutils literal notranslate"><span class="pre">RestApiV2Client.rput</span></code></a>. It makes them always return an object representing
@@ -1337,11 +1337,11 @@ prepended.</p>
 
 </section>
 <section id="helpers">
-<h3>Helpers<a class="headerlink" href="#helpers" title="Permalink to this heading"></a></h3>
+<h3>Helpers<a class="headerlink" href="#helpers" title="Link to this heading"></a></h3>
 <p>Miscellaneous functions</p>
-<span class="target" id="module-3"></span><dl class="py function">
+<dl class="py function" id="module-2">
 <dt class="sig sig-object py" id="pagerduty.deprecated_kwarg">
-<span class="sig-prename descclassname"><span class="pre">pagerduty.</span></span><span class="sig-name descname"><span class="pre">deprecated_kwarg</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">deprecated_name</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">details</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">method</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#pagerduty.deprecated_kwarg" title="Permalink to this definition"></a></dt>
+<span class="sig-prename descclassname"><span class="pre">pagerduty.</span></span><span class="sig-name descname"><span class="pre">deprecated_kwarg</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">deprecated_name</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">details</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">method</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#pagerduty.deprecated_kwarg" title="Link to this definition"></a></dt>
 <dd><p>Raises a warning if a deprecated keyword argument is used.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
@@ -1356,7 +1356,7 @@ prepended.</p>
 
 <dl class="py function">
 <dt class="sig sig-object py" id="pagerduty.http_error_message">
-<span class="sig-prename descclassname"><span class="pre">pagerduty.</span></span><span class="sig-name descname"><span class="pre">http_error_message</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">r</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Response</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">context</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">str</span></span></span><a class="headerlink" href="#pagerduty.http_error_message" title="Permalink to this definition"></a></dt>
+<span class="sig-prename descclassname"><span class="pre">pagerduty.</span></span><span class="sig-name descname"><span class="pre">http_error_message</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">r</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Response</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">context</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">str</span></span></span><a class="headerlink" href="#pagerduty.http_error_message" title="Link to this definition"></a></dt>
 <dd><p>Formats a message describing a HTTP error.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
@@ -1373,7 +1373,7 @@ prepended.</p>
 
 <dl class="py function">
 <dt class="sig sig-object py" id="pagerduty.last_4">
-<span class="sig-prename descclassname"><span class="pre">pagerduty.</span></span><span class="sig-name descname"><span class="pre">last_4</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">secret</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">str</span></span></span><a class="headerlink" href="#pagerduty.last_4" title="Permalink to this definition"></a></dt>
+<span class="sig-prename descclassname"><span class="pre">pagerduty.</span></span><span class="sig-name descname"><span class="pre">last_4</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">secret</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">str</span></span></span><a class="headerlink" href="#pagerduty.last_4" title="Link to this definition"></a></dt>
 <dd><p>Truncate a sensitive value to its last 4 characters</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
@@ -1387,7 +1387,7 @@ prepended.</p>
 
 <dl class="py function">
 <dt class="sig sig-object py" id="pagerduty.plural_name">
-<span class="sig-prename descclassname"><span class="pre">pagerduty.</span></span><span class="sig-name descname"><span class="pre">plural_name</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">obj_type</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">str</span></span></span><a class="headerlink" href="#pagerduty.plural_name" title="Permalink to this definition"></a></dt>
+<span class="sig-prename descclassname"><span class="pre">pagerduty.</span></span><span class="sig-name descname"><span class="pre">plural_name</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">obj_type</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">str</span></span></span><a class="headerlink" href="#pagerduty.plural_name" title="Link to this definition"></a></dt>
 <dd><p>Pluralizes a name, i.e. the API name from the <code class="docutils literal notranslate"><span class="pre">type</span></code> property</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
@@ -1402,7 +1402,7 @@ resource’s index URL</p>
 
 <dl class="py function">
 <dt class="sig sig-object py" id="pagerduty.successful_response">
-<span class="sig-prename descclassname"><span class="pre">pagerduty.</span></span><span class="sig-name descname"><span class="pre">successful_response</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">r</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Response</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">context</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">Response</span></span></span><a class="headerlink" href="#pagerduty.successful_response" title="Permalink to this definition"></a></dt>
+<span class="sig-prename descclassname"><span class="pre">pagerduty.</span></span><span class="sig-name descname"><span class="pre">successful_response</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">r</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Response</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">context</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">Response</span></span></span><a class="headerlink" href="#pagerduty.successful_response" title="Link to this definition"></a></dt>
 <dd><p>Validates the response as successful.</p>
 <p>Returns the response if it was successful; otherwise, raises an exception.</p>
 <dl class="field-list simple">
@@ -1420,8 +1420,8 @@ resource’s index URL</p>
 
 <dl class="py function">
 <dt class="sig sig-object py" id="pagerduty.truncate_text">
-<span class="sig-prename descclassname"><span class="pre">pagerduty.</span></span><span class="sig-name descname"><span class="pre">truncate_text</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">text</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">str</span></span></span><a class="headerlink" href="#pagerduty.truncate_text" title="Permalink to this definition"></a></dt>
-<dd><p>Truncates a string longer than <a class="reference internal" href="#pagerduty.TEXT_LEN_LIMIT" title="pagerduty.TEXT_LEN_LIMIT"><code class="xref py py-attr docutils literal notranslate"><span class="pre">TEXT_LEN_LIMIT</span></code></a></p>
+<span class="sig-prename descclassname"><span class="pre">pagerduty.</span></span><span class="sig-name descname"><span class="pre">truncate_text</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">text</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">str</span></span></span><a class="headerlink" href="#pagerduty.truncate_text" title="Link to this definition"></a></dt>
+<dd><p>Truncates a string longer than <a class="reference internal" href="#pagerduty.common.TEXT_LEN_LIMIT" title="pagerduty.common.TEXT_LEN_LIMIT"><code class="xref py py-attr docutils literal notranslate"><span class="pre">pagerduty.common.TEXT_LEN_LIMIT</span></code></a></p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><p><strong>text</strong> – The string to truncate if longer than the limit.</p>
@@ -1431,7 +1431,7 @@ resource’s index URL</p>
 
 <dl class="py function">
 <dt class="sig sig-object py" id="pagerduty.try_decoding">
-<span class="sig-prename descclassname"><span class="pre">pagerduty.</span></span><span class="sig-name descname"><span class="pre">try_decoding</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">r</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Response</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">dict</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">list</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">str</span></span></span><a class="headerlink" href="#pagerduty.try_decoding" title="Permalink to this definition"></a></dt>
+<span class="sig-prename descclassname"><span class="pre">pagerduty.</span></span><span class="sig-name descname"><span class="pre">try_decoding</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">r</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Response</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">dict</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">list</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">str</span></span></span><a class="headerlink" href="#pagerduty.try_decoding" title="Link to this definition"></a></dt>
 <dd><p>JSON-decode a response body</p>
 <p>Returns the decoded body if successful; raises <a class="reference internal" href="#pagerduty.ServerHttpError" title="pagerduty.ServerHttpError"><code class="xref py py-class docutils literal notranslate"><span class="pre">ServerHttpError</span></code></a>
 otherwise.</p>
@@ -1457,7 +1457,7 @@ otherwise.</p>
   <hr/>
 
   <div role="contentinfo">
-    <p>&#169; Copyright 2025, PagerDuty Inc..</p>
+    <p>&#169; Copyright 2025 PagerDuty, Inc.</p>
   </div>
 
   Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a

@@ -237,7 +237,7 @@ recorded as *log entries* of type ``annotate_log_entry``, so with that in mind:
 
 Events API v2
 *************
-**Trigger and resolve an alert,** getting its deduplication key from the API, using :class:`EventsApiV2Client`:
+**Trigger and resolve an alert,** getting its deduplication key from the API, using :class:`pagerduty.EventsApiV2Client`:
 
 .. code-block:: python
 
@@ -254,7 +254,7 @@ Events API v2
     # ...
     events_client.acknowledge('abc123')
 
-**Submit a change event** using a :class:`EventsApiV2Client` instance:
+**Submit a change event** using a :class:`pagerduty.EventsApiV2Client` instance:
 
 .. code-block:: python
 

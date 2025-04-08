@@ -1,0 +1,24 @@
+[project]
+name = "pagerduty"
+version = "2.0.0"
+description = "Clients for PagerDuty's Public APIs"
+requires-python = ">=3.6"
+dependencies = ["certifi", "requests", "urllib3"]
+maintainers = [
+  {name = "Demitri Morgan", email = "demitri@pagerduty.com"},
+  {name = "Mandi Walls", email = "mwalls@pagerduty.com"},
+  {name = "PagerDuty Customer Support", email = "support@pagerduty.com"}
+]
+
+[tool.setuptools.packages.find]
+where = ["."]
+include = ["pagerduty"]
+
+[project.urls]
+Documentation = "https://pagerduty.github.io/python-pagerduty"
+Repository =  "https://github.com/PagerDuty/python-pagerduty"
+PyPI = "https://pypi.org/project/pagerduty"
+
+[build-system]
+requires = ["setuptools"]
+build-backend = "setuptools.build_meta"

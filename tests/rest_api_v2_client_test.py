@@ -1,65 +1,18 @@
-#!/usr/bin/env python
-
-"""
-Unit tests for pagerduty
-
-Python 3, or the backport of unittest.mock for Python 2, is required.
-
-See:
-
-https://docs.python.org/3.5/library/unittest.mock.html
-https://pypi.org/project/backports.unittest_mock/1.3/
-"""
-import argparse
 import copy
-import datetime
 import json
 import logging
 import requests
 import sys
 import unittest
-
 from unittest.mock import Mock, MagicMock, patch, call
+
+
+from common_test import SessionTest
+from mocks import Response, Session
 
 import pagerduty
 
-class SessionTest(unittest.TestCase):
-    def assertDictContainsSubset(self, d0, d1):
-        self.assertTrue(set(d0.keys()).issubset(set(d1.keys())),
-            msg="First dict is not a subset of second dict")
-        self.assertEqual(d0, dict([(k, d1[k]) for k in d0]))
-
-class Session(object):
-    """
-    Python reqeusts.Session mockery class
-    """
-    request = None
-    headers = None
-
-class Response(object):
-    """Mock class for emulating requests.Response objects
-
-    Look for existing use of this class for examples on how to use.
-    """
-    def __init__(self, code, text, method='GET', url=None):
-        super(Response, self).__init__()
-        self.status_code = code
-        self.text = text
-        self.ok = code < 400
-        self.headers = MagicMock()
-        if url:
-            self.url = url
-        else:
-            self.url = 'https://api.pagerduty.com'
-        self.elapsed = datetime.timedelta(0,1.5)
-        self.request = Mock(url=self.url)
-        self.headers = {'date': 'somedate',
-            'x-request-id': 'xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx'}
-        self.request.method = method
-        self.json = MagicMock()
-        self.json.return_value = json.loads(text)
-
-class URLHandlingTest(unittest.TestCase):
+class RestApiV2UrlHandlingTest(unittest.TestCase):
 
     def test_canonical_path(self):
         identified_urls = [
@@ -91,42 +44,6 @@ class URLHandlingTest(unittest.TestCase):
     def test_is_path_param(self):
         self.assertTrue(pagerduty.is_path_param('{id}'))
         self.assertFalse(pagerduty.is_path_param('services'))
-
-    def test_normalize_url(self):
-        urls_expected = [
-            (
-                ('https://api.pagerduty.com/', 'users'),
-                'https://api.pagerduty.com/users',
-            ),
-            (
-                ('https://api.pagerduty.com', '/users'),
-                'https://api.pagerduty.com/users',
-            ),
-            (
-                (
-                    'https://api.pagerduty.com',
-                    'https://api.pagerduty.com/users',
-                ),
-                'https://api.pagerduty.com/users',
-            )
-        ]
-        for (base_url_url, expected_url) in urls_expected:
-            self.assertEqual(
-                expected_url,
-                pagerduty.normalize_url(*base_url_url)
-            )
-        invalid_input = [ # URL does not start with base_url
-            (
-                'https://api.pagerduty.com/incidents',
-                'https://events.pagerduty.com/api/v2/enqueue',
-            ),
-            (
-                'https://api.pagerduty.com/services',
-                'https://some.shady-site.com/read-auth-headers',
-            )
-        ]
-        for args in invalid_input:
-            self.assertRaises(pagerduty.UrlError, pagerduty.normalize_url, *args)
 
 class EntityWrappingTest(unittest.TestCase):
 
@@ -313,197 +230,6 @@ class FunctionDecoratorsTest(unittest.TestCase):
             {'incidents': incidents}
         )
 
-class HelperFunctionsTest(unittest.TestCase):
-
-    def test_plural_deplural(self):
-        # forward
-        for r_name in ('escalation_policies', 'services', 'log_entries'):
-            self.assertEqual(
-                r_name,
-                pagerduty.plural_name(pagerduty.singular_name(r_name))
-            )
-        # reverse
-        for o_name in ('escalation_policy', 'service', 'log_entry'):
-            self.assertEqual(
-                o_name,
-                pagerduty.singular_name(pagerduty.plural_name(o_name))
-            )
-
-    def test_successful_response(self):
-        self.assertRaises(pagerduty.Error, pagerduty.successful_response,
-            Response(400, json.dumps({})))
-        self.assertRaises(pagerduty.ServerHttpError, pagerduty.successful_response,
-            Response(500, json.dumps({})))
-
-class EventsApiV2ClientTest(SessionTest):
-
-    def test_send_event(self):
-        sess = pagerduty.EventsApiV2Client('routingkey')
-        parent = MagicMock()
-        parent.request = MagicMock()
-        parent.request.side_effect = [
-            Response(202, '{"dedup_key":"abc123"}'),
-            Response(202, '{"dedup_key":"abc123"}'),
-            Response(202, '{"dedup_key":"abc123"}')
-        ]
-        with patch.object(sess, 'parent', new=parent):
-            ddk = sess.trigger('testing 123', 'triggered.from.pagerduty',
-                custom_details={"this":"that"}, severity='warning',
-                images=[{'url':'https://http.cat/502.jpg'}])
-            self.assertEqual('abc123', ddk)
-            self.assertEqual(
-                'POST',
-                parent.request.call_args[0][0])
-            self.assertEqual(
-                'https://events.pagerduty.com/v2/enqueue',
-                parent.request.call_args[0][1])
-            self.assertDictContainsSubset(
-                {'Content-Type': 'application/json'},
-                parent.request.call_args[1]['headers'])
-            self.assertNotIn(
-                'X-Routing-Key',
-                parent.request.call_args[1]['headers'])
-            self.assertEqual(
-                {
-                    'event_action':'trigger',
-                    'routing_key':'routingkey',
-                    'payload':{
-                        'summary': 'testing 123',
-                        'source': 'triggered.from.pagerduty',
-                        'severity': 'warning',
-                        'custom_details': {'this':'that'},
-                    },
-                    'images': [{'url':'https://http.cat/502.jpg'}]
-                },
-                parent.request.call_args[1]['json'])
-            ddk = sess.resolve('abc123')
-            self.assertEqual(
-                {
-                    'event_action':'resolve',
-                    'dedup_key':'abc123',
-                    'routing_key':'routingkey',
-                },
-                parent.request.call_args[1]['json'])
-
-            ddk = sess.acknowledge('abc123')
-            self.assertEqual(
-                {
-                    'event_action':'acknowledge',
-                    'dedup_key':'abc123',
-                    'routing_key':'routingkey',
-                },
-                parent.request.call_args[1]['json'])
-
-    def test_send_explicit_event(self):
-        # test sending an event by calling `post` directly as opposed to any of
-        # the methods written into the client for sending events
-        sess = pagerduty.EventsApiV2Client('routingkey')
-        parent = MagicMock()
-        parent.request = MagicMock()
-        parent.request.side_effect = [Response(202, '{"dedup_key":"abc123"}')]
-        with patch.object(sess, 'parent', new=parent):
-            response = sess.post('/v2/enqueue', json={
-                'payload': {
-                    'summary': 'testing 123',
-                    'source': 'pagerduty integration',
-                    'severity': 'critical'
-                },
-                'event_action': 'trigger'
-            })
-            json_sent = parent.request.call_args[1]['json']
-            self.assertTrue('routing_key' in json_sent)
-            self.assertEqual(json_sent['routing_key'], 'routingkey')
-
-    @patch('pagerduty.EventsApiV2Client.event_timestamp',
-        '2020-03-25T00:00:00Z')
-    def test_submit_change_event(self):
-        sess = pagerduty.EventsApiV2Client('routingkey')
-        parent = MagicMock()
-        parent.request = MagicMock()
-        # The dedup key for change events is unused so we don't care about the response
-        # schema, only that it is valid JSON:
-        parent.request.side_effect = [ Response(202, '{}') ]
-        with patch.object(sess, 'parent', new=parent):
-            sess.submit(
-                'testing 123',
-                'triggered.from.pagerduty',
-                custom_details={"this":"that"},
-                links=[{'href':'https://http.cat/502.jpg'}],
-            )
-            self.assertEqual(
-                'POST',
-                parent.request.call_args[0][0])
-            self.assertEqual(
-                'https://events.pagerduty.com/v2/change/enqueue',
-                parent.request.call_args[0][1])
-            self.assertDictContainsSubset(
-                {'Content-Type': 'application/json'},
-                parent.request.call_args[1]['headers'])
-            self.assertNotIn(
-                'X-Routing-Key',
-                parent.request.call_args[1]['headers'])
-            self.assertEqual(
-                {
-                    'routing_key':'routingkey',
-                    'payload':{
-                        'summary': 'testing 123',
-                        'timestamp': '2020-03-25T00:00:00Z',
-                        'source': 'triggered.from.pagerduty',
-                        'custom_details': {'this':'that'},
-                    },
-                    'links': [{'href':'https://http.cat/502.jpg'}]
-                },
-                parent.request.call_args[1]['json'])
-        # Same as above but with a custom timestamp:
-        sess = pagerduty.EventsApiV2Client('routingkey')
-        parent = MagicMock()
-        parent.request = MagicMock()
-        parent.request.side_effect = [ Response(202, '{}') ]
-        with patch.object(sess, 'parent', new=parent):
-            custom_timestamp = '2023-06-26T00:00:00Z'
-            sess.submit(
-                'testing 123',
-                'triggered.from.pagerduty',
-                custom_details={"this":"that"},
-                links=[{'href':'https://http.cat/502.jpg'}],
-                timestamp=custom_timestamp,
-            )
-            self.assertEqual(
-                parent.request.call_args[1]['json']['payload']['timestamp'],
-                custom_timestamp
-            )
-
-    @patch('pagerduty.EventsApiV2Client.event_timestamp',
-        '2020-03-25T00:00:00Z')
-    def test_submit_lite_change_event(self):
-        sess = pagerduty.EventsApiV2Client('routingkey')
-        parent = MagicMock()
-        parent.request = MagicMock()
-        parent.request.side_effect = [ Response(202, '{}') ]
-        with patch.object(sess, 'parent', new=parent):
-            sess.submit('testing 123')
-            self.assertEqual(
-                'POST',
-                parent.request.call_args[0][0])
-            self.assertEqual(
-                'https://events.pagerduty.com/v2/change/enqueue',
-                parent.request.call_args[0][1])
-            self.assertDictContainsSubset(
-                {'Content-Type': 'application/json'},
-                parent.request.call_args[1]['headers'])
-            self.assertNotIn(
-                'X-Routing-Key',
-                parent.request.call_args[1]['headers'])
-            self.assertEqual(
-                {
-                    'routing_key':'routingkey',
-                    'payload':{
-                        'summary': 'testing 123',
-                        'timestamp': '2020-03-25T00:00:00Z',
-                    }
-                },
-                parent.request.call_args[1]['json'])
-
 class RestApiV2ClientTest(SessionTest):
 
     def test_oauth_headers(self):
@@ -579,7 +305,9 @@ class RestApiV2ClientTest(SessionTest):
         # pagination, short-circuit to iter_cursor
         path = '/audit/records'
         cpath = pagerduty.canonical_path('https://api.pagerduty.com', path)
-        self.assertTrue(cpath in pagerduty.CURSOR_BASED_PAGINATION_PATHS)
+        self.assertTrue(
+            cpath in pagerduty.rest_api_v2_client.CURSOR_BASED_PAGINATION_PATHS
+        )
         iter_cursor.return_value = []
         self.assertEqual([], list(sess.iter_all('/audit/records')))
         iter_cursor.assert_called_once_with('/audit/records', params=None)
@@ -781,7 +509,7 @@ class RestApiV2ClientTest(SessionTest):
         headers_get = {
             'Accept': 'application/vnd.pagerduty+json;version=2',
             'Authorization': 'Token token=12345',
-            'User-Agent': 'pagerduty/%s python-requests/%s Python/%d.%d'%(
+            'User-Agent': 'python-pagerduty/%s python-requests/%s Python/%d.%d'%(
                 pagerduty.__version__,
                 requests.__version__,
                 sys.version_info.major,
@@ -874,7 +602,7 @@ class RestApiV2ClientTest(SessionTest):
                 Response(429, json.dumps({'error': {'message': 'chill out'}})),
                 Response(200, json.dumps({'user': user})),
             ]
-            with patch.object(pagerduty.time, 'sleep') as sleep:
+            with patch.object(pagerduty.api_client.time, 'sleep') as sleep:
                 r = sess.get('/users')
                 self.assertTrue(r.ok) # should only return after success
                 self.assertEqual(3, request.call_count)
@@ -894,10 +622,10 @@ class RestApiV2ClientTest(SessionTest):
             request.reset_mock()
 
             # Test retry logic:
-            with patch.object(pagerduty.time, 'sleep') as sleep:
+            with patch.object(pagerduty.api_client.time, 'sleep') as sleep:
                 # Test getting a connection error and succeeding the final time.
                 returns = [
-                    pagerduty.HTTPError("D'oh!")
+                    pagerduty.api_client.Urllib3HttpError("D'oh!")
                 ]*sess.max_network_attempts
                 returns.append(Response(200, json.dumps({'user': user})))
                 request.side_effect = returns
@@ -915,7 +643,7 @@ class RestApiV2ClientTest(SessionTest):
                 # Now test handling a non-transient error when the client
                 # library itself hits odd issues that it can't handle, i.e.
                 # network, and that the raised exception includes context:
-                raises = [pagerduty.RequestException("D'oh!")]*(
+                raises = [pagerduty.api_client.RequestException("D'oh!")]*(
                     sess.max_network_attempts+1)
                 request.side_effect = raises
                 try:
@@ -982,10 +710,3 @@ class RestApiV2ClientTest(SessionTest):
     def test_truncated_token(self):
         sess = pagerduty.RestApiV2Client('abcd1234')
         self.assertEqual('*1234', sess.trunc_token)
-
-def main():
-    ap=argparse.ArgumentParser()
-    unittest.main()
-
-if __name__ == '__main__':
-    main()

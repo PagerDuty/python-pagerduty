@@ -1,21 +1,21 @@
 
 
 <!DOCTYPE html>
-<html class="writer-html5" lang="en">
+<html class="writer-html5" lang="en" data-content_root="./">
 <head>
-  <meta charset="utf-8" /><meta name="generator" content="Docutils 0.19: https://docutils.sourceforge.io/" />
+  <meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" />
 
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>PDPYRAS Migration Guide &mdash; python-pagerduty 1.0.0 documentation</title>
-      <link rel="stylesheet" type="text/css" href="_static/pygments.css?v=b76e3c8a" />
+  <title>PDPYRAS Migration Guide &mdash; python-pagerduty 2.0.0 documentation</title>
+      <link rel="stylesheet" type="text/css" href="_static/pygments.css?v=03e43079" />
       <link rel="stylesheet" type="text/css" href="_static/css/theme.css?v=e59714d7" />
 
   
       <script src="_static/jquery.js?v=5d32c60e"></script>
       <script src="_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
-      <script data-url_root="./" id="documentation_options" src="_static/documentation_options.js?v=af2ce170"></script>
-      <script src="_static/doctools.js?v=888ff710"></script>
-      <script src="_static/sphinx_highlight.js?v=4825356b"></script>
+      <script src="_static/documentation_options.js?v=51b770b3"></script>
+      <script src="_static/doctools.js?v=9bcbadda"></script>
+      <script src="_static/sphinx_highlight.js?v=dc90522c"></script>
     <script src="_static/js/theme.js"></script>
     <link rel="index" title="Index" href="genindex.html" />
     <link rel="search" title="Search" href="search.html" />
@@ -79,7 +79,7 @@
            <div itemprop="articleBody">
              
   <section id="pdpyras-migration-guide">
-<h1>PDPYRAS Migration Guide<a class="headerlink" href="#pdpyras-migration-guide" title="Permalink to this heading"></a></h1>
+<h1>PDPYRAS Migration Guide<a class="headerlink" href="#pdpyras-migration-guide" title="Link to this heading"></a></h1>
 <p>In addition to renaming the module from <code class="docutils literal notranslate"><span class="pre">pdpyras</span></code> to <code class="docutils literal notranslate"><span class="pre">pagerduty</span></code>, version
 1.0 of <code class="docutils literal notranslate"><span class="pre">python-pagerduty</span></code> includes some forward-looking class name changes
 from the original <a class="reference external" href="https://github.com/PagerDuty/pdpyras">pdpyras</a> source code. This was done so that nomenclature
@@ -89,12 +89,12 @@ between API clients and their respective APIs more clear.</p>
 i.e. if replacing all instances of <code class="docutils literal notranslate"><span class="pre">{{pattern}}</span></code> with <code class="docutils literal notranslate"><span class="pre">{{replacement}}</span></code>,
 the pattern is <code class="docutils literal notranslate"><span class="pre">s/{{pattern}}/{{replacement}}/g</span></code>.</p>
 <p>The first substitution that should be made is <code class="docutils literal notranslate"><span class="pre">s/pdpyras/pagerduty/g</span></code>, i.e.</p>
-<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="o">-</span> <span class="kn">import</span> <span class="nn">pdpyras</span>
-<span class="o">+</span> <span class="kn">import</span> <span class="nn">pagerduty</span>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="o">-</span> <span class="kn">import</span><span class="w"> </span><span class="nn">pdpyras</span>
+<span class="o">+</span> <span class="kn">import</span><span class="w"> </span><span class="nn">pagerduty</span>
 </pre></div>
 </div>
 <section id="client-classes">
-<h2>Client Classes<a class="headerlink" href="#client-classes" title="Permalink to this heading"></a></h2>
+<h2>Client Classes<a class="headerlink" href="#client-classes" title="Link to this heading"></a></h2>
 <p>In code that uses <a class="reference external" href="https://github.com/PagerDuty/pdpyras">pdpyras</a>, the following class name replacements should be
 made to switch to using their equivalents in <cite>python-pagerduty</cite>. <strong>The first
 three should be done in the order shown, so as to avoid name overlap issues:</strong></p>
@@ -111,7 +111,7 @@ class, and there are no method or property name collisions between the two
 original classes.</p>
 </section>
 <section id="exception-classes">
-<h2>Exception Classes<a class="headerlink" href="#exception-classes" title="Permalink to this heading"></a></h2>
+<h2>Exception Classes<a class="headerlink" href="#exception-classes" title="Link to this heading"></a></h2>
 <p>The exception classes have been renamed as follows:</p>
 <ul class="simple">
 <li><p><code class="docutils literal notranslate"><span class="pre">s/PDClientError/Error/g</span></code></p></li>
@@ -133,7 +133,7 @@ original classes.</p>
   <hr/>
 
   <div role="contentinfo">
-    <p>&#169; Copyright 2025, PagerDuty Inc..</p>
+    <p>&#169; Copyright 2025 PagerDuty, Inc.</p>
   </div>
 
   Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a

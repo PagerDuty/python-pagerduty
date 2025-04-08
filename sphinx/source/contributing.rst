@@ -16,24 +16,32 @@ Initial Setup
 To be able to rebuild the documentation and release a new version, first make
 sure you have `make <https://www.gnu.org/software/make/>`_ and `pip
 <https://pip.pypa.io/en/stable/installation/>`_ installed in your shell
-environment.
+environment, as well as Python version 3.11 or later.
+
+The recommended way of setting up the Python environment is using `asdf-vm
+<https://asdf-vm.com/>`_, i.e. run ``asdf install`` in your clone of the
+repository.
 
 Next, install Python dependencies for building and publishing as well as
 testing locally:
 
 .. code-block:: shell
 
-    pip install -r requirements.txt
+    pip install .
     pip install -r requirements-publish.txt 
 
-Running Unit Tests
-------------------
-Assuming that all dependencies are installed, running ``test_pagerduty.py`` in
-the root path of the repository will run the unit test suite:
+If asdf-vm was used to install Python locally, run the following after the above:
 
 .. code-block:: shell
 
-    ./test_pagerduty.py
+    asdf reshim python
+
+Finally, run ``test.sh`` in the root path of the repository to run the unit
+test suite locally, or run this command by itself:
+
+.. code-block:: shell
+
+    python -m unittest discover -p '*_test.py' -s tests
 
 Maintaining Entity Wrapper Configuration
 ----------------------------------------
@@ -60,8 +68,8 @@ antipattern-handling configuration.
 
 This system requires two global variables that must be manually maintained:
 
-* :attr:`pagerduty.CANONICAL_PATHS`, the list of canonical paths
-* :attr:`pagerduty.ENTITY_WRAPPER_CONFIG`, a dictionary of exceptions to entity wrapping and schema conventions
+* :attr:`pagerduty.rest_api_v2_client.CANONICAL_PATHS`, the list of canonical paths
+* :attr:`pagerduty.rest_api_v2_client.ENTITY_WRAPPER_CONFIG`, a dictionary of exceptions to entity wrapping and schema conventions
 
 Limitations
 ***********
@@ -87,8 +95,8 @@ The first step for adding support for new APIs is to have a copy of the API
 Reference source code (this is a private GitHub repository owned by the
 PagerDuty org). The script ``scripts/get_path_list/get_path_list.py`` can then
 be used to automatically generate definitions of the global variables
-:attr:`pagerduty.CANONICAL_PATHS` and
-:attr:`pagerduty.CURSOR_BASED_PAGINATION_PATHS` that can be copied into the
+:attr:`pagerduty.rest_api_v2_client.CANONICAL_PATHS` and
+:attr:`pagerduty.rest_api_v2_client.CURSOR_BASED_PAGINATION_PATHS` that can be copied into the
 source code to replace the existing definitions. The script takes one argument:
 a path to the file ``reference/v2/Index.yaml`` within the reference source
 repository.
@@ -99,7 +107,7 @@ The next step is to look at the request and response schemas in the API
 reference for each new endpoint added to the canonical path list, to see if it
 follows classic schema conventions for entity wrapping. If any new path does
 not, adding support for it will also require adding entries to
-:attr:`pagerduty.ENTITY_WRAPPER_CONFIG`. "Classic schema conventions" refers to
+:attr:`pagerduty.rest_api_v2_client.ENTITY_WRAPPER_CONFIG`. "Classic schema conventions" refers to
 the logic codified in :attr:`pagerduty.infer_entity_wrapper` and
 :attr:`pagerduty.unwrap` (where a "node" is a component of the path component
 of the URL, separated by forward slashes):
@@ -121,16 +129,16 @@ the same as the last node of the path. Examples: ``GET /services`` (wrapper =
 ``services``), ``PUT /incidents`` (wrapper = ``incidents``)
 
 If all of the above apply to new endpoints for all request methods, then no new
-entries need to be added to :attr:`pagerduty.ENTITY_WRAPPER_CONFIG` to support
+entries need to be added to :attr:`pagerduty.rest_api_v2_client.ENTITY_WRAPPER_CONFIG` to support
 them; they are supported automatically by virtue of following preexisting
 already-supported API patterns and having corresponding entries in
-:attr:`pagerduty.CANONICAL_PATHS`.
+:attr:`pagerduty.rest_api_v2_client.CANONICAL_PATHS`.
 
 Adding Support for Non-Conforming Endpoints
 *******************************************
 If the new endpoints do not follow classic schema conventions for entity
 wrapping, entries for them must be added to
-:attr:`pagerduty.ENTITY_WRAPPER_CONFIG` in order to support them. As described
+:attr:`pagerduty.rest_api_v2_client.ENTITY_WRAPPER_CONFIG` in order to support them. As described
 in the documentation of that attribute, each key is a combination of the
 request method (or "*" for the configuration entry to apply to all methods) and
 the canonical path in question, and each value is a string (for the same
@@ -139,7 +147,7 @@ is not applicable, and a tuple if the entity wrapping differs between the
 request and response bodies.
 
 Following the same examples as given in the :ref:`user_guide`: the entry in
-:attr:`pagerduty.ENTITY_WRAPPER_CONFIG` to handle the "Create Business Service
+:attr:`pagerduty.rest_api_v2_client.ENTITY_WRAPPER_CONFIG` to handle the "Create Business Service
 Subscribers" looks like this:
 
 .. code-block:: python
@@ -164,15 +172,20 @@ lives. To rebuild the HTML documentation from the source, run:
 
 To force a rebuild, run ``touch CHANGELOG.rst`` first.
 
+**NOTE:** Python version 3.13 or later must be used when rebuilding
+documentation, or the version number in the documentation will be
+``2.?.?-metadata-unavailable``.
+
 Releasing a New Version
 -----------------------
 
-You will first need valid user accounts on both ``pypi.org`` and ``test.pypi.org``
+You will need valid user accounts on both ``pypi.org`` and ``test.pypi.org``
 that have the "Maintainer" role on the project, as well as the requirements
 installed (see above).
 
 It is strongly recommended that you `use an API token
-<https://pypi.org/help/#apitoken>`_ to upload new releases to PyPI.
+<https://pypi.org/help/#apitoken>`_ to upload new releases to PyPI. The token
+must have write access to the project.
 
 Perform end-to-end publish and installation testing
 ***************************************************
@@ -183,8 +196,8 @@ project as on ``pypi.org``.
 
 Note, once a release is uploaded, it is no longer possible to upload a release
 with the same version number, even if that release is deleted. For that reason,
-it is a good idea to first add a suffix, i.e. ``-dev001``, to ``__version__``
-in ``setup.py`` while testing.
+it is a good idea to first add a suffix, i.e. ``-dev001``, to the version in
+``pyproject.toml`` while testing.
 
 To perform end-to-end tests, run the following, entering credentials for
 ``test.pypi.org`` when prompted:
@@ -195,7 +208,7 @@ To perform end-to-end tests, run the following, entering credentials for
 
 The make target ``testpublish`` performs the following:
 
-* Build the Python egg in ``dist/``
+* Build the Python package
 * Upload the new library to ``test.pypi.org``
 * Test-install the library from ``test.pypi.org`` into a temporary Python
   virtualenv that does not already have the library installed, to test
@@ -205,8 +218,8 @@ The make target ``testpublish`` performs the following:
 
 If any errors are encountered, the script should immediately exit. Errors
 should be investigated and mitigated before publishing. To test again,
-temporarily change ``__version__`` so that it counts as a new release
-and gets uploaded, and set it to the desired version before the actual
+temporarily change the version in ``pyproject.toml`` so that it counts as a new
+release and gets uploaded, and set it to the desired version before the actual
 release.
 
 Merge changes and tag
@@ -215,11 +228,8 @@ Merge changes and tag
 A pull request for releasing a new version should be created, which along with
 the functional changes should also include at least:
 
-* An update to the changelog, where all items corresponding to community
-  contributions end with (in parentheses) the GitHub user handle of the
-  contributor, a slash, and a link to the pull request (see CHANGELOG.rst for
-  preexisting examples).
-* A change in the version number in both setup.py and pagerduty.py, to a new
+* An update to ``CHANGELOG.rst`` describing the changes in the new release
+* A change in the version number in ``pyproject.toml`` to a new
   version that follows `Semantic Versioning <https://semver.org/>`_.
 * Rebuilt HTML documentation
 
