@@ -216,7 +216,7 @@ class EventsApiV2Client(ApiClient):
             event['payload']['custom_details'] = custom_details
         if links:
             event['links'] = links
-        return self.send_change_event(**event)
+        self.send_change_event(**event)
 
     def trigger(self, summary, source, dedup_key=None, severity='critical',
             payload=None, custom_details=None, images=None, links=None) -> str:
