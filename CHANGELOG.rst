@@ -4,9 +4,9 @@ This release introduces major structural changes to the module and how it is bui
 
 Some lesser changes are also included:
 
-* The docstring for the ``submit`` and ``send_change_event`` methods of ``EventsApiV2Client`` have been updated to reflect how they are expected to always return ``None``; this was causing Airflow build failures.
+* The docstrings for the ``submit`` and ``send_change_event`` methods of ``EventsApiV2Client`` have been updated to reflect how they are expected to always return ``None``; this was causing Airflow build failures.
 * The default user agent header has been updated: the prefix has been changed from ``pagerduty`` to ``python-pagerduty``.
-* The version number ``pagerduty.__version__`` is now maintained in ``pyproject.toml`` and discovered through package metadata introspection at import time. In Python versions prior to 3.8, the version will be ``2.?.?-metadata-unavailable`` because the new ``importlib`` feature required for it is unavailable.
+* The version number ``pagerduty.__version__`` is now maintained in ``pyproject.toml`` and discovered through package metadata introspection at import time. In Python versions prior to 3.8, the version will be ``2.*.*`` because the new ``importlib`` feature required for it is unavailable.
 
 **2025-01-02: Migrate from PDPYRAS - Version 1.0.0**
 

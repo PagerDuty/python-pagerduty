@@ -1,7 +1,7 @@
 import os
 import sys
 
-UNKNOWN_VERSION = "2.?.?-metadata-unavailable"
+UNKNOWN_VERSION = "2.*.*"
 
 def get_version_via_tomllib():
     import tomllib
