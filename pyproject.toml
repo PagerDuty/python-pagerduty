@@ -10,6 +10,9 @@ maintainers = [
   {name = "PagerDuty Customer Support", email = "support@pagerduty.com"}
 ]
 
+[project.scripts]
+pagerduty = "pagerduty.cli:main"
+
 [tool.setuptools.packages.find]
 where = ["."]
 include = ["pagerduty"]
