@@ -1,8 +1,12 @@
 #!/usr/bin/env python3
 
 import argparse
+import socket
 import sys
 from .events_api_v2_client import EventsApiV2Client
+
+HOSTNAME = socket.gethostname()
+DEFAULT_SOURCE = f"pagerduty.cli on {HOSTNAME}"
 
 def main():
     parser = argparse.ArgumentParser(
@@ -12,9 +16,10 @@ def main():
         help='Action to perform: trigger, acknowledge, or resolve an incident')
     parser.add_argument('-k', '--routing-key', required=True,
         help='PagerDuty Events API v2 routing key')
-    parser.add_argument('-i', '--dedup-key', help='Deduplication key for the incident')
+    parser.add_argument('-i', '--dedup-key', default=None,
+        help='Deduplication key for the incident')
     parser.add_argument('--description', help='Summary/description of the alert')
-    parser.add_argument('--source', help='Source of the alert')
+    parser.add_argument('--source', help='Source of the alert', default=DEFAULT_SOURCE)
 
     args = parser.parse_args()
 
@@ -26,8 +31,6 @@ def main():
         if args.action == 'trigger':
             if not args.description:
                 parser.error("--description is required for trigger action")
-            if not args.source:
-                parser.error("--source is required for trigger action")
             dedup_key = client.trigger(
                 summary=args.description,
                 source=args.source,
