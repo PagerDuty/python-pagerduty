@@ -14,6 +14,16 @@ This library is available on the Python Package Index as `pagerduty <https://pyp
 
     pip install pagerduty
 
+Command Line Interface
+----------------------
+This package also includes a basic CLI for triggering incidents using the
+PagerDuty Events API V2. For example, to trigger an incident:
+
+.. code-block:: bash
+
+    pagerduty -k $ROUTING_KEY --description "Network latency is high"
+
+For more details, use the ``-h`` flag to display the script's helptext.
 
 Overview
 --------
