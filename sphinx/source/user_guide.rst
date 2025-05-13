@@ -24,7 +24,7 @@ PagerDuty Events API V2. For example, to trigger an incident:
 
 .. code-block:: bash
 
-    pagerduty -k $ROUTING_KEY --description "Network latency is high"
+    pagerduty trigger -k $ROUTING_KEY --description "Network latency is high"
 
 For more details, use the ``-h`` flag to display the script's helptext.
 
