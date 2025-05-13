@@ -8,7 +8,7 @@ from .events_api_v2_client import EventsApiV2Client
 HOSTNAME = socket.gethostname()
 DEFAULT_SOURCE = f"pagerduty.cli on {HOSTNAME}"
 
-def main():
+def main(argv):
     parser = argparse.ArgumentParser(
         description='PagerDuty Events API V2 Command Line Interface'
     )
@@ -21,7 +21,7 @@ def main():
     parser.add_argument('--description', help='Summary/description of the alert')
     parser.add_argument('--source', help='Source of the alert', default=DEFAULT_SOURCE)
 
-    args = parser.parse_args()
+    args = parser.parse_args(argv)
 
     # Create the Events API client
     client = EventsApiV2Client(args.routing_key)
@@ -31,11 +31,8 @@ def main():
         if args.action == 'trigger':
             if not args.description:
                 parser.error("--description is required for trigger action")
-            dedup_key = client.trigger(
-                summary=args.description,
-                source=args.source,
-                dedup_key=args.dedup_key
-            )
+            dedup_key = client.trigger(args.description, args.source,
+                dedup_key=args.dedup_key)
             print(f"Alert triggered successfully. Deduplication key: {dedup_key}")
 
         elif args.action == 'acknowledge':
@@ -57,4 +54,4 @@ def main():
         sys.exit(1)
 
 if __name__ == '__main__':
-    main()
+    main(sys.argv[1:])
