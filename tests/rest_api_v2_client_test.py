@@ -707,6 +707,6 @@ class RestApiV2ClientTest(SessionTest):
         self.assertEqual('something', sess.subdomain)
         rget.assert_called_once_with('users', params={'limit':1})
 
-    def test_truncated_token(self):
+    def test_truncated_key(self):
         sess = pagerduty.RestApiV2Client('abcd1234')
-        self.assertEqual('*1234', sess.trunc_token)
+        self.assertEqual('*1234', sess.trunc_key)
