@@ -8,7 +8,7 @@ from .events_api_v2_client import EventsApiV2Client
 HOSTNAME = socket.gethostname()
 DEFAULT_SOURCE = f"pagerduty.cli on {HOSTNAME}"
 
-def main(argv):
+def run(argv):
     parser = argparse.ArgumentParser(
         description='PagerDuty Events API V2 Command Line Interface'
     )
@@ -53,5 +53,8 @@ def main(argv):
         print(f"Error: {str(e)}", file=sys.stderr)
         sys.exit(1)
 
+def main():
+    run(sys.argv[1:])
+
 if __name__ == '__main__':
-    main(sys.argv[1:])
+    main()
