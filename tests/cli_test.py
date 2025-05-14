@@ -8,7 +8,7 @@ class CliTest(unittest.TestCase):
 
     @patch.object(pagerduty.EventsApiV2Client, 'trigger')
     def test_trigger(self, trigger_method):
-        cli.main([
+        cli.run([
             '-k', 'routing_key_here',
             '-i', 'dedup_key_here',
             '--description', 'description_here',
@@ -21,7 +21,7 @@ class CliTest(unittest.TestCase):
 
     @patch.object(pagerduty.EventsApiV2Client, 'acknowledge')
     def test_acknowledge(self, acknowledge_method):
-        cli.main([
+        cli.run([
             '-k', 'routing_key_here',
             '-i', 'dedup_key_here',
             'acknowledge'
@@ -30,7 +30,7 @@ class CliTest(unittest.TestCase):
 
     @patch.object(pagerduty.EventsApiV2Client, 'resolve')
     def test_resolve(self, resolve_method):
-        cli.main([
+        cli.run([
             '-k', 'routing_key_here',
             '-i', 'dedup_key_here',
             'resolve'
