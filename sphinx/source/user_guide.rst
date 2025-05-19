@@ -19,8 +19,8 @@ This library is available on the Python Package Index as `pagerduty <https://pyp
 
 Command Line Interface
 ----------------------
-This package also includes a basic CLI for triggering incidents using the
-PagerDuty Events API V2. For example, to trigger an incident:
+This package also includes a basic CLI for PagerDuty Events API V2. For
+example, to trigger an incident:
 
 .. code-block:: bash
 
