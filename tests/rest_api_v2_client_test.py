@@ -309,8 +309,16 @@ class RestApiV2ClientTest(SessionTest):
             cpath in pagerduty.rest_api_v2_client.CURSOR_BASED_PAGINATION_PATHS
         )
         iter_cursor.return_value = []
-        self.assertEqual([], list(sess.iter_all('/audit/records')))
-        iter_cursor.assert_called_once_with('/audit/records', params=None)
+        passed_kw = {
+            'params': {
+                "since": "2025-01-01T00:00:00Z",
+                "until": "2025-05-19T00:00:00Z"
+            },
+            'item_hook': lambda x, y, z: print(f"{x}: {y}/{z}"),
+            'page_size': 42
+        }
+        self.assertEqual([], list(sess.iter_all('/audit/records', **passed_kw)))
+        iter_cursor.assert_called_once_with('/audit/records', **passed_kw)
 
         # Test: user tries to use iter_all on a singular resource, raise error:
         self.assertRaises(
