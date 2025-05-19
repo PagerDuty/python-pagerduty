@@ -1,3 +1,20 @@
+**2025-05-19: Bug fixes for iter_cursor and HTTP 204 response handling**
+
+* Allow ``try_decoding`` to return ``None`` for empty input; fixes GitHub issue #46.
+* Non-breaking changes to ``RestApiV2Client.iter_cursor``, to fix GitHub issue #45:
+
+   - It now uses the ``default_page_size`` client setting as the ``limit`` parameter.
+   - It accepts a ``page_size`` parameter that can override said default (and ``params`` can also override this default), similar to ``iter_all``.
+   - When called indirectly via ``iter_all``, the ``item_hook`` keyword argument is passed through to it, along with ``page_size``.
+
+**2025-05-14: Bug fix - Version 2.1.1**
+
+* The "main" method in the entry script is expected to receive no arguments, but in v2.1.0, it requires one positional argument.
+
+**2025-05-13: Command line interface - Version 2.1.0**
+
+* Add a basic command line interface for Events API v2, for feature parity with the legacy library that is used in the `Monit Integration Guide <https://www.pagerduty.com/docs/guides/monit-integration-guide/>`_.
+
 **2025-04-08: Multi-file refactor - Version 2.0.0**
 
 This release introduces major structural changes to the module and how it is built and tested. These changes were made for long-term maintainability of the codebase. Previously, it was all contained within a monolithic ``.py`` file (with a single Python script for all unit tests); now it is organized into smaller, appropriately-named Python files.
