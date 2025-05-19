@@ -1,6 +1,7 @@
 import datetime
 import json
 from unittest.mock import Mock, MagicMock, patch, call
+from json.decoder import JSONDecodeError
 
 class Session(object):
     """
@@ -30,6 +31,7 @@ class Response(object):
             'x-request-id': 'xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx'}
         self.request.method = method
         self.json = MagicMock()
-        self.json.return_value = json.loads(text)
-
-
+        try:
+            self.json.return_value = json.loads(text)
+        except JSONDecodeError as e:
+            self.json.side_effect = e
