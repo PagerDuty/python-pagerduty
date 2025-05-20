@@ -2,6 +2,8 @@
 from typing import Union
 from warnings import warn
 
+from json.decoder import JSONDecodeError
+
 # PyPI
 from requests import Response
 
@@ -164,8 +166,12 @@ def try_decoding(r: Response) -> Union[dict, list, str]:
     """
     try:
         return r.json()
-    except ValueError as e:
-        raise ServerHttpError(
-            "API responded with invalid JSON: " + truncate_text(r.text),
-            r,
-        )
+    except (JSONDecodeError, ValueError) as e:
+        if r.text.strip() == '':
+            # Some endpoints return HTTP 204 for request types other than delete
+            return None
+        else:
+            raise ServerHttpError(
+                "API responded with invalid JSON: " + truncate_text(r.text),
+                r,
+            )

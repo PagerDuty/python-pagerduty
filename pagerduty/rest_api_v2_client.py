@@ -991,7 +991,8 @@ class RestApiV2Client(ApiClient):
 
         # Short-circuit to cursor-based pagination if appropriate:
         if path in CURSOR_BASED_PAGINATION_PATHS:
-            return self.iter_cursor(url, params=params)
+            return self.iter_cursor(url, params=params, page_size=page_size,
+                item_hook=item_hook)
 
         nodes = path.split('/')
         if is_path_param(nodes[-1]):
@@ -1009,13 +1010,10 @@ class RestApiV2Client(ApiClient):
             raise UrlError(f"Pagination is not supported for {endpoint}.")
 
         # Parameters to send:
-        data = {}
-        if page_size is None:
-            data['limit'] = self.default_page_size
-        else:
-            data['limit'] = page_size
-        if total:
-            data['total'] = 1
+        data = {
+            'limit': (self.default_page_size, page_size)[int(bool(page_size))],
+            'total': int(bool(total))
+        }
         if isinstance(params, (dict, list)):
             # Override defaults with values given:
             data.update(dict(params))
@@ -1085,7 +1083,8 @@ class RestApiV2Client(ApiClient):
                     item_hook(result, n, total_count)
                 yield result
 
-    def iter_cursor(self, url, params=None, item_hook=None) -> Iterator[dict]:
+    def iter_cursor(self, url, params=None, item_hook=None, page_size=None) \
+            -> Iterator[dict]:
         """
         Iterator for results from an endpoint using cursor-based pagination.
 
@@ -1096,12 +1095,17 @@ class RestApiV2Client(ApiClient):
         :param item_hook:
             A callable object that accepts 3 positional arguments; see :attr:`iter_all`
             for details on how this argument is used.
+        :param page_size:
+            Number of results per page of results (the ``limit`` parameter). If
+            unspecified, :attr:`default_page_size` will be used.
         """
         path = canonical_path(self.url, url)
         if path not in CURSOR_BASED_PAGINATION_PATHS:
             raise UrlError(f"{path} does not support cursor-based pagination.")
         _, wrapper = entity_wrappers('GET', path)
-        user_params = {}
+        user_params = {
+            'limit': (self.default_page_size, page_size)[int(bool(page_size))]
+        }
         if isinstance(params, (dict, list)):
             # Override defaults with values given:
             user_params.update(dict(params))
@@ -1127,6 +1131,7 @@ class RestApiV2Client(ApiClient):
                 if hasattr(item_hook, '__call__'):
                     item_hook(result, total, '?')
                 yield result
+
             # Advance to the next page
             next_cursor = body.get('next_cursor', None)
             more = bool(next_cursor)

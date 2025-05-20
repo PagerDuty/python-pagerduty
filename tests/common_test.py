@@ -71,4 +71,25 @@ class HelperFunctionsTest(unittest.TestCase):
         self.assertRaises(pagerduty.ServerHttpError, pagerduty.successful_response,
             Response(500, json.dumps({})))
 
-
+    def test_try_decoding(self):
+        # Most requests, especially endpoints that follow standard patterns, will
+        # respond with valid JSON:
+        r = Response(200, json.dumps({
+            'service': {
+                'type': 'service_reference',
+                'id': 'POOPBUG',
+                'summary': 'A rare ID obfuscation'
+            }
+        }))
+        self.assertEqual(list(pagerduty.try_decoding(r).keys()), ['service'])
+        # Deletion requests, or PUT /teams/{t_id}/users/{u_id}, will respond with an
+        # empty string; json.loads will error out but try_decoding should return None:
+        r = Response(204, '')
+        self.assertEqual(pagerduty.try_decoding(r), None)
+        # Invalid JSON:
+        r = Response(500, '''<html><head>
+<title>500 Internal Server Error</title></head>
+<body>
+<h1>500 Internal Server Error</h1>
+</body></html>''')
+        self.assertRaises(pagerduty.ServerHttpError, pagerduty.try_decoding, r)

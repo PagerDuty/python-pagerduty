@@ -3,7 +3,7 @@
 build: pagerduty/* pyproject.toml
 	rm -f dist/* && python3 -m build
 
-docs/index.html: pagerduty/* README.rst CHANGELOG.rst sphinx/source/*
+docs/index.html: build pyproject.toml pagerduty/* CHANGELOG.rst sphinx/source/*
 	rm -fr ./docs && cd sphinx && make html && cd .. && mv sphinx/build/html ./docs && touch ./docs/.nojekyll
 
 docs: docs/index.html pagerduty/__pycache__

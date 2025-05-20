@@ -6,14 +6,14 @@
   <meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" />
 
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Module Reference &mdash; python-pagerduty 2.1.0 documentation</title>
+  <title>Module Reference &mdash; python-pagerduty 2.1.2 documentation</title>
       <link rel="stylesheet" type="text/css" href="_static/pygments.css?v=03e43079" />
       <link rel="stylesheet" type="text/css" href="_static/css/theme.css?v=e59714d7" />
 
   
       <script src="_static/jquery.js?v=5d32c60e"></script>
       <script src="_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
-      <script src="_static/documentation_options.js?v=20623aea"></script>
+      <script src="_static/documentation_options.js?v=b3e23499"></script>
       <script src="_static/doctools.js?v=9bcbadda"></script>
       <script src="_static/sphinx_highlight.js?v=dc90522c"></script>
     <script src="_static/js/theme.js"></script>
@@ -615,7 +615,7 @@ to compute the total count of results in the query.</p></li>
 
 <dl class="py method">
 <dt class="sig sig-object py" id="pagerduty.RestApiV2Client.iter_cursor">
-<span class="sig-name descname"><span class="pre">iter_cursor</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">url</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">params</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">item_hook</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">Iterator</span><span class="p"><span class="pre">[</span></span><span class="pre">dict</span><span class="p"><span class="pre">]</span></span></span></span><a class="headerlink" href="#pagerduty.RestApiV2Client.iter_cursor" title="Link to this definition"></a></dt>
+<span class="sig-name descname"><span class="pre">iter_cursor</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">url</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">params</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">item_hook</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">page_size</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">Iterator</span><span class="p"><span class="pre">[</span></span><span class="pre">dict</span><span class="p"><span class="pre">]</span></span></span></span><a class="headerlink" href="#pagerduty.RestApiV2Client.iter_cursor" title="Link to this definition"></a></dt>
 <dd><p>Iterator for results from an endpoint using cursor-based pagination.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
@@ -624,6 +624,8 @@ to compute the total count of results in the query.</p></li>
 <li><p><strong>params</strong> – Query parameters to include in the request.</p></li>
 <li><p><strong>item_hook</strong> – A callable object that accepts 3 positional arguments; see <a class="reference internal" href="#pagerduty.RestApiV2Client.iter_all" title="pagerduty.RestApiV2Client.iter_all"><code class="xref py py-attr docutils literal notranslate"><span class="pre">iter_all</span></code></a>
 for details on how this argument is used.</p></li>
+<li><p><strong>page_size</strong> – Number of results per page of results (the <code class="docutils literal notranslate"><span class="pre">limit</span></code> parameter). If
+unspecified, <a class="reference internal" href="#pagerduty.RestApiV2Client.default_page_size" title="pagerduty.RestApiV2Client.default_page_size"><code class="xref py py-attr docutils literal notranslate"><span class="pre">default_page_size</span></code></a> will be used.</p></li>
 </ul>
 </dd>
 </dl>
