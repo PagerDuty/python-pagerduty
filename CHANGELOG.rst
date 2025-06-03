@@ -1,4 +1,8 @@
-**2025-05-19: Bug fixes for iter_cursor and HTTP 204 response handling**
+**2025-06-03: Add py.typed marker file - Version 2.2.0**
+
+* Add a ``py.typed`` marker file so that type checkers recognize that ``pagerduty`` supports type checking.
+
+**2025-05-19: Bug fixes for iter_cursor and HTTP 204 response handling - Version 2.1.2**
 
 * Allow ``try_decoding`` to return ``None`` for empty input; fixes GitHub issue #46.
 * Non-breaking changes to ``RestApiV2Client.iter_cursor``, to fix GitHub issue #45:

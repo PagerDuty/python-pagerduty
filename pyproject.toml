@@ -1,6 +1,6 @@
 [project]
 name = "pagerduty"
-version = "2.1.2"
+version = "2.2.0"
 description = "Clients for PagerDuty's Public APIs"
 requires-python = ">=3.6"
 dependencies = ["certifi", "requests", "urllib3"]
@@ -25,3 +25,4 @@ PyPI = "https://pypi.org/project/pagerduty"
 [build-system]
 requires = ["setuptools"]
 build-backend = "setuptools.build_meta"
+
