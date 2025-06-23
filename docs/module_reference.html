@@ -6,14 +6,14 @@
   <meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" />
 
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Module Reference &mdash; python-pagerduty 2.2.0 documentation</title>
+  <title>Module Reference &mdash; python-pagerduty 2.3.0 documentation</title>
       <link rel="stylesheet" type="text/css" href="_static/pygments.css?v=03e43079" />
       <link rel="stylesheet" type="text/css" href="_static/css/theme.css?v=e59714d7" />
 
   
       <script src="_static/jquery.js?v=5d32c60e"></script>
       <script src="_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
-      <script src="_static/documentation_options.js?v=b21de401"></script>
+      <script src="_static/documentation_options.js?v=c3c8ae58"></script>
       <script src="_static/doctools.js?v=9bcbadda"></script>
       <script src="_static/sphinx_highlight.js?v=dc90522c"></script>
     <script src="_static/js/theme.js"></script>
@@ -69,6 +69,15 @@
 <li class="toctree-l4"><a class="reference internal" href="#pagerduty.ApiClient.stagger_cooldown"><code class="docutils literal notranslate"><span class="pre">ApiClient.stagger_cooldown</span></code></a></li>
 <li class="toctree-l4"><a class="reference internal" href="#pagerduty.ApiClient.timeout"><code class="docutils literal notranslate"><span class="pre">ApiClient.timeout</span></code></a></li>
 <li class="toctree-l4"><a class="reference internal" href="#pagerduty.ApiClient.trunc_key"><code class="docutils literal notranslate"><span class="pre">ApiClient.trunc_key</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="#pagerduty.OAuthTokenClient"><code class="docutils literal notranslate"><span class="pre">OAuthTokenClient</span></code></a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#pagerduty.OAuthTokenClient.authorize_url"><code class="docutils literal notranslate"><span class="pre">OAuthTokenClient.authorize_url()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#pagerduty.OAuthTokenClient.get_authorize_url"><code class="docutils literal notranslate"><span class="pre">OAuthTokenClient.get_authorize_url()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#pagerduty.OAuthTokenClient.get_new_token"><code class="docutils literal notranslate"><span class="pre">OAuthTokenClient.get_new_token()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#pagerduty.OAuthTokenClient.get_new_token_from_code"><code class="docutils literal notranslate"><span class="pre">OAuthTokenClient.get_new_token_from_code()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#pagerduty.OAuthTokenClient.get_refreshed_token"><code class="docutils literal notranslate"><span class="pre">OAuthTokenClient.get_refreshed_token()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#pagerduty.OAuthTokenClient.get_scoped_app_token"><code class="docutils literal notranslate"><span class="pre">OAuthTokenClient.get_scoped_app_token()</span></code></a></li>
 </ul>
 </li>
 <li class="toctree-l3"><a class="reference internal" href="#pagerduty.RestApiV2Client"><code class="docutils literal notranslate"><span class="pre">RestApiV2Client</span></code></a><ul>
@@ -443,6 +452,142 @@ determines the TCP read timeout.</p>
 <dt class="sig sig-object py" id="pagerduty.ApiClient.trunc_key">
 <em class="property"><span class="k"><span class="pre">property</span></span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">trunc_key</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">str</span></em><a class="headerlink" href="#pagerduty.ApiClient.trunc_key" title="Link to this definition"></a></dt>
 <dd><p>Truncated key for secure display/identification purposes.</p>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="pagerduty.OAuthTokenClient">
+<em class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">pagerduty.</span></span><span class="sig-name descname"><span class="pre">OAuthTokenClient</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">client_secret</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">client_id</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">debug</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#pagerduty.OAuthTokenClient" title="Link to this definition"></a></dt>
+<dd><p>Client with helpers for performing an OAuth exchange to obtain an access token.</p>
+<p>Tokens obtained using the client can then be used to authenticate REST API clients,
+e.g.</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">oauth_exchange_client</span> <span class="o">=</span> <span class="n">pagerduty</span><span class="o">.</span><span class="n">OAuthTokenClient</span><span class="p">(</span><span class="n">client_secret</span><span class="p">,</span> <span class="n">client_id</span><span class="p">)</span>
+<span class="n">oauth_response</span> <span class="o">=</span> <span class="n">oauth_exchange_client</span><span class="o">.</span><span class="n">get_scoped_app_token</span><span class="p">(</span><span class="s1">&#39;read&#39;</span><span class="p">)</span>
+<span class="n">client</span> <span class="o">=</span> <span class="n">pagerduty</span><span class="o">.</span><span class="n">RestApiV2Client</span><span class="p">(</span><span class="n">oauth_response</span><span class="p">[</span><span class="s1">&#39;access_token&#39;</span><span class="p">],</span> <span class="n">auth_type</span><span class="o">=</span><span class="s1">&#39;bearer&#39;</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>Requires <a class="reference external" href="https://developer.pagerduty.com/docs/register-an-app">registering a PagerDuty App</a> to obtain the necessary
+credentials, and must be used in the context of an OAuth2 authorization flow.</p>
+<p>For further details, refer to:</p>
+<ul class="simple">
+<li><p><a class="reference external" href="https://developer.pagerduty.com/docs/oauth-functionality">OAuth Functionality</a></p></li>
+<li><p><a class="reference external" href="https://developer.pagerduty.com/docs/user-oauth-token-via-code-grant">User OAuth Token via Code Grant</a></p></li>
+<li><p><a class="reference external" href="https://developer.pagerduty.com/docs/app-oauth-token">Obtaining an App OAuth Token</a></p></li>
+</ul>
+<dl class="py method">
+<dt class="sig sig-object py" id="pagerduty.OAuthTokenClient.authorize_url">
+<span class="sig-name descname"><span class="pre">authorize_url</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">scope</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">redirect_uri</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">str</span></span></span><a class="headerlink" href="#pagerduty.OAuthTokenClient.authorize_url" title="Link to this definition"></a></dt>
+<dd><p>The authorize URL in PagerDuty that the end user will visit to authorize the app</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>scope</strong> – Scope of the OAuth grant requested</p></li>
+<li><p><strong>redirect_uri</strong> – The redirect URI in the application that receives the authorization code
+through client redirect from PagerDuty</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>The formatted authorize URL.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="pagerduty.OAuthTokenClient.get_authorize_url">
+<em class="property"><span class="k"><span class="pre">classmethod</span></span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">get_authorize_url</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">client_id</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">scope</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">redirect_uri</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">str</span></span></span><a class="headerlink" href="#pagerduty.OAuthTokenClient.get_authorize_url" title="Link to this definition"></a></dt>
+<dd><p>Generate an authorize URL.</p>
+<p>This method can be called directly to circumvent the need to produce a client
+secret that is otherwise required to instantiate an object.</p>
+<p>This is the URL that the user initially visits in the application to authorize
+the application, which will ultimately redirect the user to <code class="docutils literal notranslate"><span class="pre">redirect_uri</span></code> but
+with the authorization code.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>client_id</strong> – Client ID of the application</p></li>
+<li><p><strong>scope</strong> – Scope of the OAuth grant requested</p></li>
+<li><p><strong>redirect_uri</strong> – The redirect URI in the application that receives the authorization code
+through client redirect from PagerDuty</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>The formatted authorize URL.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="pagerduty.OAuthTokenClient.get_new_token">
+<span class="sig-name descname"><span class="pre">get_new_token</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kw</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">dict</span></span></span><a class="headerlink" href="#pagerduty.OAuthTokenClient.get_new_token" title="Link to this definition"></a></dt>
+<dd><p>Make a token request.</p>
+<p>There should not be any need to call this method directly. Each of the supported
+types of token exchange requests are implemented in other methods:</p>
+<ul class="simple">
+<li><p><a class="reference internal" href="#pagerduty.OAuthTokenClient.get_new_token_from_code" title="pagerduty.OAuthTokenClient.get_new_token_from_code"><code class="xref py py-attr docutils literal notranslate"><span class="pre">get_new_token_from_code</span></code></a></p></li>
+<li><p><a class="reference internal" href="#pagerduty.OAuthTokenClient.get_refreshed_token" title="pagerduty.OAuthTokenClient.get_refreshed_token"><code class="xref py py-attr docutils literal notranslate"><span class="pre">get_refreshed_token</span></code></a></p></li>
+<li><p><a class="reference internal" href="#pagerduty.OAuthTokenClient.get_scoped_app_token" title="pagerduty.OAuthTokenClient.get_scoped_app_token"><code class="xref py py-attr docutils literal notranslate"><span class="pre">get_scoped_app_token</span></code></a></p></li>
+</ul>
+<dl class="field-list simple">
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p>The JSON response from <code class="docutils literal notranslate"><span class="pre">identity.pagerduty.com</span></code>, containing a key
+<code class="docutils literal notranslate"><span class="pre">access_token</span></code> with the new token, as a dict</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="pagerduty.OAuthTokenClient.get_new_token_from_code">
+<span class="sig-name descname"><span class="pre">get_new_token_from_code</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">auth_code</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">scope</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">redirect_uri</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">dict</span></span></span><a class="headerlink" href="#pagerduty.OAuthTokenClient.get_new_token_from_code" title="Link to this definition"></a></dt>
+<dd><p>Exchange an authorization code granted by the user for an access token.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>auth_code</strong> – The authorization code received by the application at the redirect URI
+provided.</p></li>
+<li><p><strong>scope</strong> – The scope of the authorization request.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Redirect_uri<span class="colon">:</span></dt>
+<dd class="field-even"><p>The redirect URI that was used in the authorization request.</p>
+</dd>
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p>The JSON response from <code class="docutils literal notranslate"><span class="pre">identity.pagerduty.com</span></code>, containing a key
+<code class="docutils literal notranslate"><span class="pre">access_token</span></code> with the new token, as a dict</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="pagerduty.OAuthTokenClient.get_refreshed_token">
+<span class="sig-name descname"><span class="pre">get_refreshed_token</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">refresh_token</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">dict</span></span></span><a class="headerlink" href="#pagerduty.OAuthTokenClient.get_refreshed_token" title="Link to this definition"></a></dt>
+<dd><p>Obtain a new access token using a refresh token.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>refresh_token</strong> – The refresh token provided in the response of the original access token,
+i.e. in the dict returned by <a class="reference internal" href="#pagerduty.OAuthTokenClient.get_new_token" title="pagerduty.OAuthTokenClient.get_new_token"><code class="xref py py-attr docutils literal notranslate"><span class="pre">get_new_token</span></code></a></p>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>The JSON response from <code class="docutils literal notranslate"><span class="pre">identity.pagerduty.com</span></code>, containing a key
+<code class="docutils literal notranslate"><span class="pre">access_token</span></code> with the new token, as a dict</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="pagerduty.OAuthTokenClient.get_scoped_app_token">
+<span class="sig-name descname"><span class="pre">get_scoped_app_token</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">scope</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#pagerduty.OAuthTokenClient.get_scoped_app_token" title="Link to this definition"></a></dt>
+<dd><p>Obtain a scoped app token.</p>
+<p>This can be used to grant a server-side app a scoped non-user application token.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>scope</strong> – The scope of the authorization request.</p>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>The JSON response from <code class="docutils literal notranslate"><span class="pre">identity.pagerduty.com</span></code>, containing a key
+<code class="docutils literal notranslate"><span class="pre">access_token</span></code> with the new token, as a dict</p>
+</dd>
+</dl>
 </dd></dl>
 
 </dd></dl>
