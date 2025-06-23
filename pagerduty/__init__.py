@@ -9,6 +9,8 @@ from . api_client import (
 
 from . events_api_v2_client import EventsApiV2Client
 
+from . oauth_token_client import OAuthTokenClient
+
 from . rest_api_v2_client import (
     CANONICAL_PATHS,
     CURSOR_BASED_PAGINATION_PATHS,

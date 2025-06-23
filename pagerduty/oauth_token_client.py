@@ -21,21 +21,20 @@ class OAuthTokenClient(ApiClient):
 
     url = 'https://identity.pagerduty.com'
 
-    def __init__(self, client_id: str, client_secret: str, debug=False):
+    def __init__(self, client_secret: str, client_id: str, debug=False):
         """
         Create an OAuth token client
 
-        :param client_id:
-            The client ID provided when registering the application.
         :param client_secret:
             The secret associated with the application.
+        :param client_id:
+            The client ID provided when registering the application.
         :param redirect_uri:
             The redirect URI in the application that receives the authorization code
             through client redirect from PagerDuty
         """
         super(OAuthTokenClient, self).__init__(client_secret, debug=debug)
         self.client_id = client_id
-        self.redirect_uri = redirect_uri
 
     @property
     def auth_header(self) -> dict:
@@ -56,6 +55,10 @@ class OAuthTokenClient(ApiClient):
             scope,
             redirect_uri
         )
+
+    @property
+    def api_key(self):
+        return self._api_key
 
     @api_key.setter
     def api_key(self, api_key: str):
@@ -85,12 +88,12 @@ class OAuthTokenClient(ApiClient):
         :returns:
             The formatted authorize URL.
         """
-        return self.url + '/oauth/authorize?'+ urllib.parse.urlencode({
-            'client_id': client_id,
-            'redirect_uri': redirect_uri,
-            'response_type': 'code',
-            'scope': scope
-        })
+        return cls.url + '/oauth/authorize?'+ urllib.parse.urlencode([
+            ('client_id', client_id),
+            ('redirect_uri', redirect_uri),
+            ('response_type', 'code'),
+            ('scope', scope)
+        ])
 
     def get_new_token(self, **kw) -> dict:
         """
@@ -174,4 +177,4 @@ class OAuthTokenClient(ApiClient):
         return self.get_new_token(
             grant_type = 'client_credentials',
             scope = scope
-        )).json()
+        )
