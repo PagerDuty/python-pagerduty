@@ -25,7 +25,6 @@ class OAuthTokenClient(ApiClient):
 
     - `OAuth Functionality <https://developer.pagerduty.com/docs/oauth-functionality>`_
     - `User OAuth Token via Code Grant <https://developer.pagerduty.com/docs/user-oauth-token-via-code-grant>`_
-    - `User OAuth Token via PKCE <https://developer.pagerduty.com/docs/user-oauth-token-via-pkce>`_
     """
 
     url = 'https://identity.pagerduty.com'
