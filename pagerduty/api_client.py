@@ -202,7 +202,7 @@ class ApiClient(Session):
         return self._api_key
 
     @api_key.setter
-    def api_key(self, api_key):
+    def api_key(self, api_key: str):
         if not (isinstance(api_key, str) and api_key):
             raise ValueError("API credential must be a non-empty string.")
         self._api_key = api_key
