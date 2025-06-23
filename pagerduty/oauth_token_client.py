@@ -6,7 +6,7 @@ from . rest_api_v2_client import RestApiV2Client
 
 class OAuthTokenClient(ApiClient):
     """
-    Client with helpers for performing an OAuth exchange to obtaining an access token.
+    Client with helpers for performing an OAuth exchange to obtain an access token.
 
     Requires `registering a PagerDuty App
     <https://developer.pagerduty.com/docs/register-an-app>`_ to obtain the necessary
@@ -16,12 +16,12 @@ class OAuthTokenClient(ApiClient):
 
     - `OAuth Functionality <https://developer.pagerduty.com/docs/oauth-functionality>`_
     - `User OAuth Token via Code Grant <https://developer.pagerduty.com/docs/user-oauth-token-via-code-grant>`_
+    - `User OAuth Token via PKCE <https://developer.pagerduty.com/docs/user-oauth-token-via-pkce>`_
     """
 
     url = 'https://identity.pagerduty.com'
 
-    def __init__(self, client_id: str, client_secret: str, redirect_uri: str,
-            scope: str, debug=False):
+    def __init__(self, client_id: str, client_secret: str, debug=False):
         """
         Create an OAuth token client
 
@@ -32,27 +32,29 @@ class OAuthTokenClient(ApiClient):
         :param redirect_uri:
             The redirect URI in the application that receives the authorization code
             through client redirect from PagerDuty
-        :param scope:
-            The scope of the token grant to request.
         """
         super(OAuthTokenClient, self).__init__(client_secret, debug=debug)
         self.client_id = client_id
         self.redirect_uri = redirect_uri
-        self.scope = scope
 
     @property
     def auth_header(self) -> dict:
         return {}
 
-    @property
-    def authorize_url(self):
+    def authorize_url(self, scope: str, redirect_uri: str) -> str:
         """
         The authorize URL in PagerDuty that the end user will visit to authorize the app
+
+        :param scope:
+            Scope of the OAuth grant requested
+        :param redirect_uri:
+            The redirect URI in the application that receives the authorization code
+            through client redirect from PagerDuty
         """
-        self.get_authorize_url(
+        return self.get_authorize_url(
             self.client_id,
-            self.redirect_uri,
-            self.scope
+            scope,
+            redirect_uri
         )
 
     @api_key.setter
@@ -62,7 +64,7 @@ class OAuthTokenClient(ApiClient):
         self._api_key = api_key
 
     @classmethod
-    def get_authorize_url(cls, client_id: str, redirect_uri: str, scope: str) -> str:
+    def get_authorize_url(cls, client_id: str, scope: str, redirect_uri: str) -> str:
         """
         Generate an authorize URL.
 
@@ -75,11 +77,13 @@ class OAuthTokenClient(ApiClient):
 
         :param client_id:
             Client ID of the application
+        :param scope:
+            Scope of the OAuth grant requested
         :param redirect_uri:
             The redirect URI in the application that receives the authorization code
             through client redirect from PagerDuty
-        :param scope:
-            Scope of the OAuth gratn requested
+        :returns:
+            The formatted authorize URL.
         """
         return self.url + '/oauth/authorize?'+ urllib.parse.urlencode({
             'client_id': client_id,
@@ -88,29 +92,56 @@ class OAuthTokenClient(ApiClient):
             'scope': scope
         })
 
-    def get_new_token(self, auth_code: str) -> dict:
+    def get_new_token(self, **kw) -> dict:
         """
-        Exchange an authorization code granted by the PagerDuty user for an access token
+        Make a token request.
+
+        There should not be any need to call this method directly. Each of the supported
+        types of token exchange requests are implemented in other methods:
+
+        * :attr:`get_new_token_from_code`
+        * :attr:`get_refreshed_token`
+        * :attr:`get_scoped_app_token`
+
+        :returns:
+            The JSON response from ``identity.pagerduty.com``, containing a key
+            ``access_token`` with the new token, as a dict
+        """
+        params = {
+            "client_id": self.client_id,
+            "client_secret": self.api_key
+        }
+        params.update(kw)
+        return successful_response(self.post(
+            '/oauth/token',
+            data = params,
+            headers = {
+                "Content-Type": "application/x-www-form-urlencoded"
+            }
+        )).json()
+
+    def get_new_token_from_code(self, auth_code: str, scope: str, redirect_uri: str) \
+            -> dict:
+        """
+        Exchange an authorization code granted by the user for an access token.
 
         :param auth_code:
             The authorization code received by the application at the redirect URI
             provided.
+        :param scope:
+            The scope of the authorization request.
+        :redirect_uri:
+            The redirect URI to be used in the authorization request.
         :returns:
-            The JSON response from ``identity.pagerduty.com`` as a dict
+            The JSON response from ``identity.pagerduty.com``, containing a key
+            ``access_token`` with the new token, as a dict
         """
-        return successful_response(self.post(
-            '/oauth/token',
-            data={
-                "client_id": self.client_id,
-                "client_secret": self.api_key,
-                "code": auth_code,
-                "grant_type": "authorization_code",
-                "redirect_uri": self.redirect_uri
-            },
-            headers={
-                "Content-Type": "application/x-www-form-urlencoded"
-            }
-        )).json()
+        return self.get_new_token(
+            grant_type = 'authorization_code',
+            code = auth_code,
+            scope = scope,
+            redirect_uri = redirect_uri
+        )
 
     def get_refreshed_token(self, refresh_token: str) -> dict:
         """
@@ -120,17 +151,27 @@ class OAuthTokenClient(ApiClient):
             The refresh token provided in the response of the original access token,
             i.e. in the dict returned by :attr:`get_new_token`
         :returns:
-            The JSON response from ``identity.pagerduty.com`` as a dict
+            The JSON response from ``identity.pagerduty.com``, containing a key
+            ``access_token`` with the new token, as a dict
         """
-        return successful_response(self.post(
-            '/oauth/token',
-            data={
-                "client_id": self.client_id,
-                "client_secret": self.api_key,
-                "grant_type": "refresh_token",
-                "refresh_token": refresh_token
-            },
-            headers={
-                "Content-Type": "application/x-www-form-urlencoded"
-            }
+        return self.get_new_token(
+            grant_type = 'refresh_token',
+            refresh_token = refresh_token
+        )
+
+    def get_scoped_app_token(self, scope: str):
+        """
+        Obtain a scoped app token.
+
+        This can be used to grant a server-side app a scoped non-user application token.
+
+        :param scope:
+            The scope of the authorization request.
+        :returns:
+            The JSON response from ``identity.pagerduty.com``, containing a key
+            ``access_token`` with the new token, as a dict
+        """
+        return self.get_new_token(
+            grant_type = 'client_credentials',
+            scope = scope
         )).json()
