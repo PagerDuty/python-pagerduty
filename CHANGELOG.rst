@@ -1,3 +1,7 @@
+**2025-06-23: Add a new OAuth token exchange client class - Version 3.0.0**
+
+* This version introduces a new client class for obtaining OAuth tokens using code grant / token refresh or for a scoped app.
+
 **2025-06-03: Add py.typed marker file - Version 2.2.0**
 
 * Add a ``py.typed`` marker file so that type checkers recognize that ``pagerduty`` supports type checking.

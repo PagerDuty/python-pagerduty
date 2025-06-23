@@ -12,6 +12,9 @@ API Client Classes
 .. autoclass:: pagerduty.ApiClient
     :members:
 
+.. autoclass:: pagerduty.OAuthTokenClient
+    :members:
+
 .. autoclass:: pagerduty.RestApiV2Client
     :members:
 
