@@ -8,6 +8,15 @@ class OAuthTokenClient(ApiClient):
     """
     Client with helpers for performing an OAuth exchange to obtain an access token.
 
+    Tokens obtained using the client can then be used to authenticate REST API clients,
+    e.g.
+
+    .. code-block:: python
+
+        oauth_exchange_client = pagerduty.OAuthTokenClient(client_secret, client_id)
+        oauth_response = oauth_exchange_client.get_scoped_app_token('read')
+        client = pagerduty.RestApiV2Client(oauth_response['access_token'], auth_type='bearer')
+
     Requires `registering a PagerDuty App
     <https://developer.pagerduty.com/docs/register-an-app>`_ to obtain the necessary
     credentials, and must be used in the context of an OAuth2 authorization flow.

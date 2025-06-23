@@ -40,8 +40,9 @@ constructor is the secret to use for accessing the API:
     # REST API v2:
     client = pagerduty.RestApiV2Client(API_KEY)
 
-    # REST API v2 with an OAuth2 access token:
+    # REST API v2 with an OAuth2 access token (both are equivalent)
     client_oauth = pagerduty.RestApiV2Client(OAUTH_TOKEN, auth_type='oauth2')
+    client_oauth = pagerduty.RestApiV2Client(OAUTH_TOKEN, auth_type='bearer')
 
     # Events API v2, including change events:
     events_client = pagerduty.EventsApiV2Client(ROUTING_KEY)
