@@ -37,9 +37,9 @@ class OAuthTokenClient(ApiClient):
             The secret associated with the application.
         :param client_id:
             The client ID provided when registering the application.
-        :param redirect_uri:
-            The redirect URI in the application that receives the authorization code
-            through client redirect from PagerDuty
+        :param debug:
+            Passed to the parent constructor as the ``debug`` argument. See:
+            :class:`ApiClient`
         """
         super(OAuthTokenClient, self).__init__(client_secret, debug=debug)
         self.client_id = client_id
@@ -57,6 +57,8 @@ class OAuthTokenClient(ApiClient):
         :param redirect_uri:
             The redirect URI in the application that receives the authorization code
             through client redirect from PagerDuty
+        :returns:
+            The formatted authorize URL.
         """
         return self.get_authorize_url(
             self.client_id,
