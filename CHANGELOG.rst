@@ -1,4 +1,4 @@
-**2025-06-23: Add a new OAuth token exchange client class - Version 3.0.0**
+**2025-06-23: Add a new OAuth token exchange client class - Version 2.3.0**
 
 * This version introduces a new client class for obtaining OAuth tokens using code grant / token refresh or for a scoped app.
 
