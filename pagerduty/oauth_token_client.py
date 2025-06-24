@@ -144,7 +144,7 @@ class OAuthTokenClient(ApiClient):
         :param scope:
             The scope of the authorization request.
         :redirect_uri:
-            The redirect URI to be used in the authorization request.
+            The redirect URI that was used in the authorization request.
         :returns:
             The JSON response from ``identity.pagerduty.com``, containing a key
             ``access_token`` with the new token, as a dict

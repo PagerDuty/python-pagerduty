@@ -94,6 +94,50 @@ property :attr:`pagerduty.RestApiV2Client.api_key_access` can be used. It will
 be ``account`` if its API secret is an account-level API key, and it will be
 ``user`` for a user-level API key.
 
+Performing an OAuth Exchange to Obtain an Access Token
+******************************************************
+The client class :class:`pagerduty.OAuthTokenClient` provides methods
+implementing the OAuth exchange requests described in `Obtaining a User OAuth
+Token via Code Grant
+<https://developer.pagerduty.com/docs/user-oauth-token-via-code-grant>`_ and
+`Obtaining an App OAuth Token
+<https://developer.pagerduty.com/docs/app-oauth-token>`_.
+
+.. code-block:: python
+
+    client = pagerduty.OAuthTokenClient(client_secret, client_id)
+
+To generate the URL that the user must visit to authorize the application:
+
+.. code-block:: python
+
+    # With a client object:
+    authorize_url = client.authorize_url(scope, redirect_uri)
+
+    # Without a client object:
+    authorize_url = pagerduty.OAuthTokenClient.get_authorize_url(client_id, scope, redirect_uri)
+
+The application must provide a redirect URI at which to receive the
+authorization code parameter. Once the user visits, has authorized the
+application and is redirected back to the application at the redirect URI, the
+``code`` parameter appended to it will contain the authorization code. The code
+can then be exchanged for an access token as following:
+
+.. code-block:: python
+
+    # auth_code contains the "code" parameter in the redirect URL of the application:
+    auth_response = client.get_new_token_from_code(auth_code, scope, redirect_uri)
+    access_token = auth_response['access_token']
+    refresh_token = auth_response['refresh_token']
+
+Refresh tokens obtained from the response can be used later to obtain new
+access tokens before the expiration of the original via token refresh:
+
+.. code-block:: python
+
+    auth_response = client.get_refreshed_token(refresh_token)
+    access_token = auth_response['access_token']
+    refresh_token = auth_response['refresh_token']
 
 Basic Usage Examples
 --------------------
