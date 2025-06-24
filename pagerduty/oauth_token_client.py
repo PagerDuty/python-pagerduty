@@ -1,7 +1,7 @@
 import urllib.parse
 
 from . api_client import ApiClient
-from . common import successful_response
+from . common import successful_response, try_decoding
 from . rest_api_v2_client import RestApiV2Client
 
 class OAuthTokenClient(ApiClient):
@@ -126,13 +126,13 @@ class OAuthTokenClient(ApiClient):
             "client_secret": self.api_key
         }
         params.update(kw)
-        return successful_response(self.post(
+        return try_decoding(successful_response(self.post(
             '/oauth/token',
             data = params,
             headers = {
                 "Content-Type": "application/x-www-form-urlencoded"
             }
-        )).json()
+        )))
 
     def get_new_token_from_code(self, auth_code: str, scope: str, redirect_uri: str) \
             -> dict:
