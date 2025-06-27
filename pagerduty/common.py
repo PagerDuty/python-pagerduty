@@ -1,4 +1,5 @@
 # Core
+import datetime
 from typing import Union
 from warnings import warn
 
@@ -18,6 +19,8 @@ from . errors import (
 ### DEFAULT SETTINGS ###
 ########################
 
+DATETIME_FMT = "%Y-%m-%dT%H:%M:%S%z"
+
 TEXT_LEN_LIMIT = 100
 """
 The longest permissible length of API content to include in error messages.
@@ -26,6 +29,14 @@ The longest permissible length of API content to include in error messages.
 ########################
 ### HELPER FUNCTIONS ###
 ########################
+
+def datetime_to_relative_seconds(datestr: str):
+    """
+    Convert an ISO8601 string to a relative number of seconds from the current time.
+    """
+    deadline = datetime.datetime.strptime(datestr, DATETIME_FMT)
+    now = datetime.datetime.now(datetime.UTC)
+    return (deadline-now).seconds
 
 def deprecated_kwarg(deprecated_name: str, details=None, method=None):
     """
@@ -94,6 +105,15 @@ def plural_name(obj_type: str) -> str:
         return obj_type[:-1]+'ies'
     else:
         return obj_type+'s'
+
+
+def relative_seconds_to_datetime(seconds_remaining: int):
+    """
+    Convert a number of seconds in the future to an absolute UTC ISO8601 time string.
+    """
+    now = datetime.datetime.now(datetime.UTC)
+    target_time = now + datetime.timedelta(seconds=seconds_remaining)
+    return datetime.strftime(DATETIME_FMT)
 
 def requires_success(method):
     """
