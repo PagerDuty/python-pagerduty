@@ -1220,8 +1220,8 @@ class RestApiV2Client(ApiClient):
             for item in self.iter_all(url, **iter_kw):
                 yield item
         else:
-            # Recurse into smaller time windows:
-            for (sub_since, sub_until) in datetime_intervals(since, until):
+            # Bisect the time window and recurse:
+            for (sub_since, sub_until) in datetime_intervals(since, until, n=2):
                 for item in self.iter_history(url, sub_since, sub_until, **iter_kw):
                     yield item
 
