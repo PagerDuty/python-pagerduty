@@ -9,8 +9,10 @@ from requests import Response
 # Local
 from . api_client import ApiClient, normalize_url
 from . common import (
+    datetime_intervals,
     requires_success,
     singular_name,
+    strftime,
     successful_response,
     truncate_text,
     try_decoding,
@@ -286,6 +288,24 @@ CURSOR_BASED_PAGINATION_PATHS = [
 Explicit list of paths that support cursor-based pagination
 
 :meta hide-value:
+"""
+
+HISTORICAL_RECORD_PATHS = [
+    '/audit/records',
+    '/change_events',
+    '/escalation_policies/{id}/audit/records',
+    '/incidents',
+    '/log_entries',
+    '/oncalls',
+    '/schedules/{id}/audit/records',
+    '/services/{id}/audit/records',
+    '/teams/{id}/audit/records',
+    '/users/{id}/audit/records'
+]
+"""
+Explicit list of paths that represent date-specific resources.
+
+These index endpoints support the "since" and "until" parameters and represent events.
 """
 
 ENTITY_WRAPPER_CONFIG = {
@@ -573,8 +593,11 @@ def entity_wrappers(method: str, path: str) -> tuple:
             # If a value is None, that indicates that the request or response
             # value should be encoded and decoded as-is without modifications.
             if False in [w is None or type(w) is str for w in wrapper]:
-                raise Exception(invalid_config_error)
+                raise UrlError(invalid_config_error)
             return wrapper
+        else:
+            # If not a tuple of length 2, or a string, or None, what are we doing here
+            raise UrlError(invalid_config_error)
     elif len(match) == 0:
         # Nothing in entity wrapper config matches. In this case it is assumed
         # that the endpoint follows classic API patterns and the wrapper name
@@ -1135,6 +1158,72 @@ class RestApiV2Client(ApiClient):
             # Advance to the next page
             next_cursor = body.get('next_cursor', None)
             more = bool(next_cursor)
+
+    def iter_history(self, url: str, since: datetime.datetime, until: datetime.datetime,
+            **kw) -> Iterator[dict]:
+        """
+        Yield all historical records from an endpoint in a given time interval.
+
+        This method works around the limitation of classic pagination (see
+        :attr:`ITERATION_LIMIT`) by sub-dividing queries into lesser time intervals
+        wherein the total number of results does not exceed the pagination limit.
+
+        :param url:
+            Index endpoint (API URL) from which to yield results. In the event that a
+            cursor-based pagination endpoint is given, this method calls
+            :attr:`iter_cursor` directly, as cursor-based pagination has no such
+            limitation.
+        :param since:
+            The beginning of the time interval. Must be a non-naïve datetime object
+            (i.e. it cannot be timezone-agnostic).
+        :param until:
+            The end of the time interval. Cannot be timezon-agnostic.
+        :param kw:
+            Custom keyword arguments to pass to the iteration method. Note, ``since``
+            and ``until`` will be ignored.
+        """
+        path = canonical_path(self.url, url)
+        since_until = {
+            'since': strftime(since),
+            'until': strftime(until)
+        }
+        iter_kw = deepcopy(kw)
+        if path not in HISTORICAL_RECORD_PATHS:
+            # Cannot continue; incompatible endpoint that doesn't accept since/until:
+            raise UrlError(f"Method iter_history does not support {path}")
+        elif path == '/oncalls':
+            # Warn for this specific endpoint but continue:
+            warn('iter_history may yield duplicate results when used with /oncalls')
+        elif path in CURSOR_BASED_PAGINATION_PATHS:
+            # Short-circuit to iter_cursor:
+            if 'params' in iter_kw and type(iter_kw['params']) is dict:
+                iter_kw['params'].update(since_until)
+            else:
+                iter_kw['params'] = since_until
+            return self.iter_cursor(url, **iter_kw)
+        # Obtain the total number of records for the interval:
+        query_params = kw.get('params', {})
+        query_params.update(since_until)
+        query_params.update({
+            'total': True,
+            'limit': 1,
+            'offset': 0
+        })
+        total_response = self.rget(url, params=query_params)
+        total = int(total_response['total'])
+
+        # If total exceeds maximum, subdivide further:
+        if total < ITERATION_LIMIT or (until - since).total_seconds() == 1:
+            # Do not subdivide any further; it is either not necessary or not feasible.
+            iter_kw.setdefault('params', {})
+            iter_kw['params'].update(since_until)
+            for item in self.iter_all(url, **iter_kw):
+                yield item
+        else:
+            # Recurse into smaller time windows:
+            for (sub_since, sub_until) in datetime_intervals(since, until):
+                for item in self.iter_history(url, sub_since, sub_until, **iter_kw):
+                    yield item
 
     @resource_url
     @auto_json
