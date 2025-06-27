@@ -36,7 +36,7 @@ def datetime_to_relative_seconds(datestr: str):
     """
     deadline = datetime.datetime.strptime(datestr, DATETIME_FMT)
     now = datetime.datetime.now(datetime.UTC)
-    return (deadline-now).seconds
+    return (deadline-now).total_seconds()
 
 def deprecated_kwarg(deprecated_name: str, details=None, method=None):
     """
