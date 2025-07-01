@@ -92,6 +92,19 @@ class HelperFunctionsTest(unittest.TestCase):
         self.assertEqual(12, int(interval_len))
         self.assertEqual((end - start).total_seconds(), total_s)
 
+    def test_datetime_to_relative_seconds(self):
+        # This test might be flaky, if something causes a serious delay in the execution
+        # of any of the underlying Python methods. It is a test of two methods, which
+        # should be the inverse of each other, but since datetime.datetime.now is
+        # immutable, we can't use patch.object to mock it so the best I could come up
+        # with for now is to assert that the relative number of seconds in-between
+        # changing it to a timestamp in the future and turning that back into a number
+        # of seconds relative to the new time afterwards is very close to the original.
+        t0 = 86400
+        future_timestamp = pagerduty.common.relative_seconds_to_datetime(t0)
+        t1 = pagerduty.common.datetime_to_relative_seconds(future_timestamp)
+        self.assertTrue(abs(t1-t0)/t0 < 0.0001)
+
     def test_plural_deplural(self):
         # forward
         for r_name in ('escalation_policies', 'services', 'log_entries'):
@@ -105,6 +118,23 @@ class HelperFunctionsTest(unittest.TestCase):
                 o_name,
                 pagerduty.singular_name(pagerduty.plural_name(o_name))
             )
+
+    def test_strftime(self):
+        when = datetime.datetime(2025, 7, 1, 23, 19, tzinfo=datetime.UTC)
+        datestr = pagerduty.common.strftime(when)
+        self.assertEqual('0000', datestr[-4:])
+        self.assertEqual('2025', datestr[:4])
+        self.assertEqual('07', datestr[5:7])
+        self.assertEqual('01', datestr[8:10])
+
+    def test_strptime(self):
+        when = pagerduty.common.strptime('1986-04-26T01:23:45+0300')
+        self.assertEqual(1986, when.year)
+        self.assertEqual(4, when.month)
+        self.assertEqual(26, when.day)
+        self.assertEqual(1, when.hour)
+        self.assertEqual(23, when.minute)
+        self.assertEqual(45, when.second)
 
     def test_successful_response(self):
         self.assertRaises(pagerduty.Error, pagerduty.successful_response,

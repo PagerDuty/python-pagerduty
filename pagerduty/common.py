@@ -1,5 +1,10 @@
 # Core
-import datetime
+from datetime import (
+    UTC,
+    date,
+    datetime,
+    timedelta
+)
 from typing import Union
 from warnings import warn
 from json.decoder import JSONDecodeError
@@ -30,15 +35,15 @@ The longest permissible length of API content to include in error messages.
 ### HELPER FUNCTIONS ###
 ########################
 
-def datetime_intervals(since: datetime.datetime, until: datetime.datetime, n=10) \
-        -> list[tuple[datetime.datetime, datetime.datetime]]:
+def datetime_intervals(since: datetime, until: datetime, n=10) \
+        -> list[tuple[datetime, datetime]]:
     """
     Break up a given time interval into a series of smaller consecutive time intervals.
 
     :param since:
-        A datetime.datetime object repesenting the beginning of the time interval.
+        A datetime object repesenting the beginning of the time interval.
     :param until:
-        A datetime.datetime object representing the end of the time interval.
+        A datetime object representing the end of the time interval.
     :param n:
         The target number of sub-intervals to generate.
     :returns:
@@ -59,7 +64,7 @@ def datetime_intervals(since: datetime.datetime, until: datetime.datetime, n=10)
     interval_start = since
     intervals = []
     for i in range(n_intervals-1):
-        interval_end = interval_start + datetime.timedelta(seconds=interval_len)
+        interval_end = interval_start + timedelta(seconds=interval_len)
         intervals.append((interval_start, interval_end))
         interval_start = interval_end
     intervals.append((interval_start, until))
@@ -70,7 +75,7 @@ def datetime_to_relative_seconds(datestr: str):
     Convert an ISO8601 string to a relative number of seconds from the current time.
     """
     deadline = strptime(datestr)
-    now = datetime.datetime.now(datetime.UTC)
+    now = datetime.now(UTC)
     return (deadline-now).total_seconds()
 
 def deprecated_kwarg(deprecated_name: str, details=None, method=None):
@@ -146,9 +151,9 @@ def relative_seconds_to_datetime(seconds_remaining: int):
     """
     Convert a number of seconds in the future to an absolute UTC ISO8601 time string.
     """
-    now = datetime.datetime.now(datetime.UTC)
-    target_time = now + datetime.timedelta(seconds=seconds_remaining)
-    return strftime(datetime)
+    now = datetime.now(UTC)
+    target_time = now + timedelta(seconds=seconds_remaining)
+    return strftime(target_time)
 
 def requires_success(method):
     """
@@ -178,18 +183,18 @@ def singular_name(r_name: str) -> str:
     else:
         return r_name.rstrip('s')
 
-def strftime(date: datetime.datetime) -> str:
+def strftime(time_obj: datetime) -> str:
     """
-    Format a ``datetime.datetime`` object to a string
+    Format a ``datetime`` object to a string
 
     :param date:
-        The ``datetime.datetime`` object
+        The ``datetime`` object
     :returns:
         The formatted string
     """
-    return date.strftime(DATETIME_FMT)
+    return time_obj.strftime(DATETIME_FMT)
 
-def strptime(datestr: str) -> datetime.datetime:
+def strptime(datestr: str) -> datetime:
     """
     Parse a string in full ISO8601 format into a ``datetime.datetime`` object.
 
@@ -198,7 +203,7 @@ def strptime(datestr: str) -> datetime.datetime:
     :returns:
         The datetime object representing the string
     """
-    return datetime.datetime.strptime(datestr, DATETIME_FMT)
+    return datetime.strptime(datestr, DATETIME_FMT)
 
 def successful_response(r: Response, context=None) -> Response:
     """Validates the response as successful.
