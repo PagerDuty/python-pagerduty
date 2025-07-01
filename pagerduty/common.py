@@ -1,7 +1,5 @@
 # Core
 import datetime
-import math
-
 from typing import Union
 from warnings import warn
 from json.decoder import JSONDecodeError
@@ -48,14 +46,15 @@ def datetime_intervals(since: datetime.datetime, until: datetime.datetime, n=10)
         time interval. If the resulting intervals would be less than one second, they
         will be one second.
     """
-    total_s = (until - since).total_seconds()
+    total_s = int((until - since).total_seconds())
     if total_s <= 0:
         raise ValueError('Argument "since" must be before "until".')
     elif total_s < n:
+        # One-second intervals:
         interval_len = 1
         n_intervals = total_s
     else:
-        interval_len = max(math.floor(total_s/n), 1)
+        interval_len = max(int(total_s/n), 1)
         n_intervals = n
     interval_start = since
     intervals = []

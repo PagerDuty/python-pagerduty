@@ -38,6 +38,14 @@ See: `Pagination
 <https://developer.pagerduty.com/docs/ZG9jOjExMDI5NTU4-pagination>`_.
 """
 
+RECURSION_LIMIT = 10
+"""
+Maximum depth of recursion when using functions that use recursion
+
+For example, :attr:`pagerduty.RestApiV2Client.iter_history` will call itself recursively
+if the number of results in the data set to be queried exceeds :attr:`ITERATION_LIMIT`.
+"""
+
 # List of canonical REST API paths
 #
 # Supporting a new API for entity wrapping will require adding its patterns to
@@ -1160,7 +1168,7 @@ class RestApiV2Client(ApiClient):
             more = bool(next_cursor)
 
     def iter_history(self, url: str, since: datetime.datetime, until: datetime.datetime,
-            **kw) -> Iterator[dict]:
+            recursion_depth=0, **kw) -> Iterator[dict]:
         """
         Yield all historical records from an endpoint in a given time interval.
 
@@ -1212,15 +1220,24 @@ class RestApiV2Client(ApiClient):
         total_response = self.rget(url, params=query_params)
         total = int(total_response['total'])
 
-        # If total exceeds maximum, subdivide further:
-        if total < ITERATION_LIMIT or (until - since).total_seconds() == 1:
+        stop_recursion = recursion_depth >= RECURSION_LIMIT
+        can_fully_paginate = total <= ITERATION_LIMIT
+        min_interval_len = (until - since).total_seconds() == 1
+        if can_fully_paginate or min_interval_len or stop_recursion:
             # Do not subdivide any further; it is either not necessary or not feasible.
+            if stop_recursion and not can_fully_paginate:
+                warn("Method iter_history has reached the recursion limit, but the " \
+                    "total number of results in the requested time sub-interval " \
+                    f"({since_until}) still exceeds the hard limit for classic " \
+                    f"pagination, {ITERATION_LIMIT}. Results will be incomplete. Try " \
+                    "requesting a smaller initial time interval to avoid this issue.")
             iter_kw.setdefault('params', {})
             iter_kw['params'].update(since_until)
             for item in self.iter_all(url, **iter_kw):
                 yield item
         else:
-            # Bisect the time window and recurse:
+            # If total exceeds maximum, bisect the time window and recurse:
+            iter_kw['recursion_depth'] = recursion_depth + 1
             for (sub_since, sub_until) in datetime_intervals(since, until, n=2):
                 for item in self.iter_history(url, sub_since, sub_until, **iter_kw):
                     yield item
