@@ -1,3 +1,4 @@
+import datetime
 import json
 import unittest
 
@@ -50,6 +51,46 @@ class UrlHandlingTest(unittest.TestCase):
             self.assertRaises(pagerduty.UrlError, pagerduty.normalize_url, *args)
 
 class HelperFunctionsTest(unittest.TestCase):
+
+    def test_datetime_intervals(self):
+        # Fall back to 1s / no. of seconds for intervals if the interval is too short
+        start = datetime.datetime(year=2025, month=7, day=1, hour=0, minute=0, second=0)
+        end = datetime.datetime(year=2025, month=7, day=1, hour=0, minute=0, second=3)
+        intervals = pagerduty.common.datetime_intervals(start, end)
+        # The start and end must line up with the original arguments:
+        self.assertEqual(start, intervals[0][0])
+        self.assertEqual(end, intervals[-1][1])
+        self.assertEqual(3, len(intervals))
+        for (intl_start, intl_end) in intervals:
+            self.assertEqual(1, int((intl_end-intl_start).total_seconds()))
+        # If the interval cannot be evenly divided among sub-intervals:
+        end = datetime.datetime(year=2025, month=7, day=1, hour=0, minute=1, second=0)
+        intervals = pagerduty.common.datetime_intervals(start, end, n=7)
+        # There should be the specified number of intervals:
+        self.assertEqual(7, len(intervals))
+        # The start and end must line up with the original arguments:
+        self.assertEqual(start, intervals[0][0])
+        self.assertEqual(end, intervals[-1][1])
+        # - The length of each sub-interval except the last is the quotient
+        # - The total combined length of intervals must still equal the length of the
+        # original interval given
+        # - The final interval is the remainder after subtracting (n-1)*q from the total
+        # interval length. In this case: 60 seconds total, 7*8 second intervals, but the
+        # last one ends up being 12 seconds because the first 6 intervals bring us to
+        # the :48 second mark:
+        total_s = 0
+        for (i, (intl_start, intl_end)) in enumerate(intervals):
+            if i == len(intervals)-1:
+                break
+            interval_len = (intl_end-intl_start).total_seconds()
+            self.assertEqual(8, int(interval_len))
+            total_s += interval_len
+            self.assertEqual(intl_end, intervals[i+1][0],
+                msg="Time intervals must be consecutive and non-overlapping.")
+        interval_len = (intervals[-1][1] - intervals[-1][0]).total_seconds()
+        total_s += interval_len
+        self.assertEqual(12, int(interval_len))
+        self.assertEqual((end - start).total_seconds(), total_s)
 
     def test_plural_deplural(self):
         # forward

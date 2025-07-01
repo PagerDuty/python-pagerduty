@@ -1,5 +1,6 @@
 # Core
 from copy import deepcopy
+from datetime import datetime
 from typing import Iterator, Union
 from warnings import warn
 
@@ -1167,7 +1168,7 @@ class RestApiV2Client(ApiClient):
             next_cursor = body.get('next_cursor', None)
             more = bool(next_cursor)
 
-    def iter_history(self, url: str, since: datetime.datetime, until: datetime.datetime,
+    def iter_history(self, url: str, since: datetime, until: datetime,
             recursion_depth=0, **kw) -> Iterator[dict]:
         """
         Yield all historical records from an endpoint in a given time interval.
@@ -1182,10 +1183,13 @@ class RestApiV2Client(ApiClient):
             :attr:`iter_cursor` directly, as cursor-based pagination has no such
             limitation.
         :param since:
-            The beginning of the time interval. Must be a non-naïve datetime object
-            (i.e. it cannot be timezone-agnostic).
+            The beginning of the time interval. It is recommended to supply a non-naïve
+            datetime object (i.e. it must be timezone-aware), in order to format the
+            ``since`` parameter when transmitting it to the API such that it
+            unambiguously takes the time zone into account.
         :param until:
-            The end of the time interval. Cannot be timezon-agnostic.
+            The end of the time interval. It is recommended to pass a timezone-aware
+            datetime object for the same reason as for the ``since`` parameter.
         :param kw:
             Custom keyword arguments to pass to the iteration method. Note, ``since``
             and ``until`` will be ignored.
