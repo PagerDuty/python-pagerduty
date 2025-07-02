@@ -47,6 +47,12 @@ For example, :attr:`pagerduty.RestApiV2Client.iter_history` will call itself rec
 if the number of results in the data set to be queried exceeds :attr:`ITERATION_LIMIT`.
 """
 
+ITER_HIST_RECURSION_WARNING_TEMPLATE = """RestApiV2Client.iter_history cannot continue
+bisecting historical time intervals because {reason}, but the total number of results in
+the current requested time sub-interval ({since_until}) still exceeds the hard limit for
+classic pagination, {iteration_limit}. Results will be incomplete. Try requesting a
+smaller initial time interval to avoid this issue.""".replace("\n", " ")
+
 # List of canonical REST API paths
 #
 # Supporting a new API for entity wrapping will require adding its patterns to
@@ -1208,10 +1214,8 @@ class RestApiV2Client(ApiClient):
             warn('iter_history may yield duplicate results when used with /oncalls')
         elif path in CURSOR_BASED_PAGINATION_PATHS:
             # Short-circuit to iter_cursor:
-            if 'params' in iter_kw and type(iter_kw['params']) is dict:
-                iter_kw['params'].update(since_until)
-            else:
-                iter_kw['params'] = since_until
+            iter_kw.setdefault('params', {})
+            iter_kw['params'].update(since_until)
             return self.iter_cursor(url, **iter_kw)
         # Obtain the total number of records for the interval:
         query_params = kw.get('params', {})
@@ -1221,20 +1225,24 @@ class RestApiV2Client(ApiClient):
             'limit': 1,
             'offset': 0
         })
-        total_response = self.rget(url, params=query_params)
-        total = int(total_response['total'])
+        total = int(self.jget(url, params=query_params)['total'])
 
-        stop_recursion = recursion_depth >= RECURSION_LIMIT
         can_fully_paginate = total <= ITERATION_LIMIT
         min_interval_len = (until - since).total_seconds() == 1
+        stop_recursion = recursion_depth >= RECURSION_LIMIT
         if can_fully_paginate or min_interval_len or stop_recursion:
             # Do not subdivide any further; it is either not necessary or not feasible.
-            if stop_recursion and not can_fully_paginate:
-                warn("Method iter_history has reached the recursion limit, but the " \
-                    "total number of results in the requested time sub-interval " \
-                    f"({since_until}) still exceeds the hard limit for classic " \
-                    f"pagination, {ITERATION_LIMIT}. Results will be incomplete. Try " \
-                    "requesting a smaller initial time interval to avoid this issue.")
+            if not can_fully_paginate:
+                # Issue a warning log message
+                if stop_recursion:
+                    reason = 'the recursion depth limit has been reached'
+                elif min_interval_len:
+                    reason = 'the time interval is already the minimum length (1s)'
+                self.log.warning(ITER_HIST_RECURSION_WARNING_TEMPLATE.format(
+                    reason = reason,
+                    since_until = str(since_until),
+                    iteration_limit = ITERATION_LIMIT
+                ))
             iter_kw.setdefault('params', {})
             iter_kw['params'].update(since_until)
             for item in self.iter_all(url, **iter_kw):
