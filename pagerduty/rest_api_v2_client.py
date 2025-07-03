@@ -1,6 +1,7 @@
 # Core
 from copy import deepcopy
 from datetime import datetime
+from sys import getrecursionlimit
 from typing import Iterator, Union
 from warnings import warn
 
@@ -39,19 +40,22 @@ See: `Pagination
 <https://developer.pagerduty.com/docs/ZG9jOjExMDI5NTU4-pagination>`_.
 """
 
-RECURSION_LIMIT = 10
+RECURSION_LIMIT = getrecursionlimit()/2
 """
-Maximum depth of recursion when using functions that use recursion
+Maximum depth of recursion when using functions that use recursion.
 
 For example, :attr:`pagerduty.RestApiV2Client.iter_history` will call itself recursively
 if the number of results in the data set to be queried exceeds :attr:`ITERATION_LIMIT`.
+
+Its value is arbitrary and meant to guard against excessive depth, although the true
+hard recursion limit in Python is actually higher.
 """
 
 ITER_HIST_RECURSION_WARNING_TEMPLATE = """RestApiV2Client.iter_history cannot continue
 bisecting historical time intervals because {reason}, but the total number of results in
 the current requested time sub-interval ({since_until}) still exceeds the hard limit for
-classic pagination, {iteration_limit}. Results will be incomplete. Try requesting a
-smaller initial time interval to avoid this issue.""".replace("\n", " ")
+classic pagination, {iteration_limit}. Results will be incomplete.{suggestion}
+""".replace("\n", " ")
 
 # List of canonical REST API paths
 #
@@ -1236,12 +1240,20 @@ class RestApiV2Client(ApiClient):
                 # Issue a warning log message
                 if stop_recursion:
                     reason = 'the recursion depth limit has been reached'
+                    suggestion = ' To avoid this issue, try requesting a smaller ' \
+                        'initial time interval.'
                 elif min_interval_len:
                     reason = 'the time interval is already the minimum length (1s)'
+                    # In practice, this scenario can only happen when PagerDuty ingests
+                    # and processes, for a single account, >10k alert history events per
+                    # second (to use `/log_entries` as an example). There is
+                    # unfortunately nothing more that can be done in this case.
+                    suggestion = ''
                 self.log.warning(ITER_HIST_RECURSION_WARNING_TEMPLATE.format(
                     reason = reason,
                     since_until = str(since_until),
-                    iteration_limit = ITERATION_LIMIT
+                    iteration_limit = ITERATION_LIMIT,
+                    suggestion = suggestion
                 ))
             iter_kw.setdefault('params', {})
             iter_kw['params'].update(since_until)
