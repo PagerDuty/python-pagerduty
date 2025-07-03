@@ -1,5 +1,7 @@
 # Core
 from copy import deepcopy
+from datetime import datetime
+from sys import getrecursionlimit
 from typing import Iterator, Union
 from warnings import warn
 
@@ -9,8 +11,10 @@ from requests import Response
 # Local
 from . api_client import ApiClient, normalize_url
 from . common import (
+    datetime_intervals,
     requires_success,
     singular_name,
+    strftime,
     successful_response,
     truncate_text,
     try_decoding,
@@ -35,6 +39,23 @@ used to short-circuit pagination in order to avoid a HTTP 400 error.
 See: `Pagination
 <https://developer.pagerduty.com/docs/ZG9jOjExMDI5NTU4-pagination>`_.
 """
+
+RECURSION_LIMIT = getrecursionlimit()/2
+"""
+Maximum depth of recursion when using functions that use recursion.
+
+For example, :attr:`pagerduty.RestApiV2Client.iter_history` will call itself recursively
+if the number of results in the data set to be queried exceeds :attr:`ITERATION_LIMIT`.
+
+Its value is arbitrary and meant to guard against excessive depth, although the true
+hard recursion limit in Python is actually higher.
+"""
+
+ITER_HIST_RECURSION_WARNING_TEMPLATE = """RestApiV2Client.iter_history cannot continue
+bisecting historical time intervals because {reason}, but the total number of results in
+the current requested time sub-interval ({since_until}) still exceeds the hard limit for
+classic pagination, {iteration_limit}. Results will be incomplete.{suggestion}
+""".replace("\n", " ")
 
 # List of canonical REST API paths
 #
@@ -286,6 +307,24 @@ CURSOR_BASED_PAGINATION_PATHS = [
 Explicit list of paths that support cursor-based pagination
 
 :meta hide-value:
+"""
+
+HISTORICAL_RECORD_PATHS = [
+    '/audit/records',
+    '/change_events',
+    '/escalation_policies/{id}/audit/records',
+    '/incidents',
+    '/log_entries',
+    '/oncalls',
+    '/schedules/{id}/audit/records',
+    '/services/{id}/audit/records',
+    '/teams/{id}/audit/records',
+    '/users/{id}/audit/records'
+]
+"""
+Explicit list of paths that represent date-specific resources.
+
+These index endpoints support the "since" and "until" parameters and represent events.
 """
 
 ENTITY_WRAPPER_CONFIG = {
@@ -573,8 +612,11 @@ def entity_wrappers(method: str, path: str) -> tuple:
             # If a value is None, that indicates that the request or response
             # value should be encoded and decoded as-is without modifications.
             if False in [w is None or type(w) is str for w in wrapper]:
-                raise Exception(invalid_config_error)
+                raise UrlError(invalid_config_error)
             return wrapper
+        else:
+            # If not a tuple of length 2, or a string, or None, what are we doing here
+            raise UrlError(invalid_config_error)
     elif len(match) == 0:
         # Nothing in entity wrapper config matches. In this case it is assumed
         # that the endpoint follows classic API patterns and the wrapper name
@@ -1135,6 +1177,94 @@ class RestApiV2Client(ApiClient):
             # Advance to the next page
             next_cursor = body.get('next_cursor', None)
             more = bool(next_cursor)
+
+    def iter_history(self, url: str, since: datetime, until: datetime,
+            recursion_depth=0, **kw) -> Iterator[dict]:
+        """
+        Yield all historical records from an endpoint in a given time interval.
+
+        This method works around the limitation of classic pagination (see
+        :attr:`ITERATION_LIMIT`) by sub-dividing queries into lesser time intervals
+        wherein the total number of results does not exceed the pagination limit.
+
+        :param url:
+            Index endpoint (API URL) from which to yield results. In the event that a
+            cursor-based pagination endpoint is given, this method calls
+            :attr:`iter_cursor` directly, as cursor-based pagination has no such
+            limitation.
+        :param since:
+            The beginning of the time interval. It is recommended to supply a non-naïve
+            datetime object (i.e. it must be timezone-aware), in order to format the
+            ``since`` parameter when transmitting it to the API such that it
+            unambiguously takes the time zone into account.
+        :param until:
+            The end of the time interval. It is recommended to pass a timezone-aware
+            datetime object for the same reason as for the ``since`` parameter.
+        :param kw:
+            Custom keyword arguments to pass to the iteration method. Note, ``since``
+            and ``until`` will be ignored.
+        """
+        path = canonical_path(self.url, url)
+        since_until = {
+            'since': strftime(since),
+            'until': strftime(until)
+        }
+        iter_kw = deepcopy(kw)
+        if path not in HISTORICAL_RECORD_PATHS:
+            # Cannot continue; incompatible endpoint that doesn't accept since/until:
+            raise UrlError(f"Method iter_history does not support {path}")
+        elif path == '/oncalls':
+            # Warn for this specific endpoint but continue:
+            warn('iter_history may yield duplicate results when used with /oncalls')
+        elif path in CURSOR_BASED_PAGINATION_PATHS:
+            # Short-circuit to iter_cursor:
+            iter_kw.setdefault('params', {})
+            iter_kw['params'].update(since_until)
+            return self.iter_cursor(url, **iter_kw)
+        # Obtain the total number of records for the interval:
+        query_params = kw.get('params', {})
+        query_params.update(since_until)
+        query_params.update({
+            'total': True,
+            'limit': 1,
+            'offset': 0
+        })
+        total = int(self.jget(url, params=query_params)['total'])
+
+        can_fully_paginate = total <= ITERATION_LIMIT
+        min_interval_len = (until - since).total_seconds() == 1
+        stop_recursion = recursion_depth >= RECURSION_LIMIT
+        if can_fully_paginate or min_interval_len or stop_recursion:
+            # Do not subdivide any further; it is either not necessary or not feasible.
+            if not can_fully_paginate:
+                # Issue a warning log message
+                if stop_recursion:
+                    reason = 'the recursion depth limit has been reached'
+                    suggestion = ' To avoid this issue, try requesting a smaller ' \
+                        'initial time interval.'
+                elif min_interval_len:
+                    reason = 'the time interval is already the minimum length (1s)'
+                    # In practice, this scenario can only happen when PagerDuty ingests
+                    # and processes, for a single account, >10k alert history events per
+                    # second (to use `/log_entries` as an example). There is
+                    # unfortunately nothing more that can be done in this case.
+                    suggestion = ''
+                self.log.warning(ITER_HIST_RECURSION_WARNING_TEMPLATE.format(
+                    reason = reason,
+                    since_until = str(since_until),
+                    iteration_limit = ITERATION_LIMIT,
+                    suggestion = suggestion
+                ))
+            iter_kw.setdefault('params', {})
+            iter_kw['params'].update(since_until)
+            for item in self.iter_all(url, **iter_kw):
+                yield item
+        else:
+            # If total exceeds maximum, bisect the time window and recurse:
+            iter_kw['recursion_depth'] = recursion_depth + 1
+            for (sub_since, sub_until) in datetime_intervals(since, until, n=2):
+                for item in self.iter_history(url, sub_since, sub_until, **iter_kw):
+                    yield item
 
     @resource_url
     @auto_json

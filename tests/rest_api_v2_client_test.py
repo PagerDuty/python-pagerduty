@@ -1,11 +1,12 @@
 import copy
+import datetime
 import json
 import logging
 import requests
 import sys
 import unittest
+import warnings
 from unittest.mock import Mock, MagicMock, patch, call
-
 
 from common_test import SessionTest
 from mocks import Response, Session
@@ -402,7 +403,6 @@ class RestApiV2ClientTest(SessionTest):
         items = list(sess.iter_all(weirdurl, item_hook=hook, total=True, page_size=10))
         self.assertEqual(30, len(items))
 
-
     @patch.object(pagerduty.RestApiV2Client, 'get')
     def test_iter_cursor(self, get):
         sess = pagerduty.RestApiV2Client('token')
@@ -435,6 +435,118 @@ class RestApiV2ClientTest(SessionTest):
         # It should send the next_cursor body parameter from the second to
         # last response as the cursor query parameter in the final request
         self.assertEqual(get.mock_calls[-1][2]['params']['cursor'], 5)
+
+    # iter_history tests
+    #
+    # Each call to iter_history will result in a "total" request (limit=1, offset=0)
+    # followed by iter_all sub-requests (if done recursing) for each interval, or a
+    # series of recursive calls to iter_history. The test data here don't reflect
+    # anything realistic, especially because the total number of records changes
+    # depending on the level of recursion, but the stubbing/mocking return values are
+    # just to test that the logic works.
+
+    @patch.object(pagerduty.RestApiV2Client, 'iter_all')
+    @patch.object(pagerduty.RestApiV2Client, 'jget')
+    def test_iter_history_recursion_1s(self, jget, iter_all):
+        """
+        Test iter_history stop-iteration on hitting the minimum interval length
+        """
+        client = pagerduty.RestApiV2Client('token')
+        # Checks for "total" in each sub-interval: the first for the whole 2s, the
+        # second for the first 1-second sub-interval and the third for the second.
+        jget.side_effect = [
+            # Top level: total is over the limit; bisect
+            {
+                'total': pagerduty.ITERATION_LIMIT+2,
+                'log_entries': []
+            },
+            # Level 1, sub-interval 1: call iter_all; max total not exceeded
+            {
+                'total': 1,
+                'log_entries': []
+            },
+            # Level 1, sub-interval 2: call iter_all; max total exceeded but interval=1s
+            {
+                'total': pagerduty.ITERATION_LIMIT+1,
+                'log_entries': []
+            }
+        ]
+        iter_all.side_effect = [
+            iter([{'type': 'log_entry'}]),
+            iter([{'type': 'log_entry'}])
+        ]
+
+        now = datetime.datetime.now(datetime.UTC)
+        future3 = now + datetime.timedelta(seconds=2)
+        results = list(client.iter_history('/log_entries', now, future3))
+        self.assertEqual(2, len(iter_all.mock_calls))
+        self.assertEqual([{'type': 'log_entry'}]*2, results)
+
+    @patch.object(pagerduty.RestApiV2Client, 'iter_all')
+    @patch.object(pagerduty.RestApiV2Client, 'jget')
+    def test_iter_history_recursion_limit(self, jget, iter_all):
+        """
+        Test iter_history stop-iteration on hitting the recursion depth limit
+        """
+        # Adjust the recursion limit so we only need 1 level of stub data:
+        client = pagerduty.RestApiV2Client('token')
+        original_recursion_limit = pagerduty.rest_api_v2_client.RECURSION_LIMIT 
+        pagerduty.rest_api_v2_client.RECURSION_LIMIT = 1
+        # Checks for "total" in each sub-interval: The expected breakdown of 3s is a 1s
+        # interval followed by a 2s interval at the first level of recursion, and then
+        # two 1s intervals.
+        jget.side_effect = [
+            # Top level: total is over the limit; bisect
+            {
+                'total': pagerduty.ITERATION_LIMIT+2,
+                'log_entries': []
+            },
+            # Level 1, sub-interval 1: call iter_all; max total not exceeded
+            {
+                'total': 1,
+                'log_entries': []
+            },
+            # Level 1, sub-interval 2: call iter_all; max recursion depth reached
+            {
+                'total': pagerduty.ITERATION_LIMIT+1,
+                'log_entries': []
+            }
+        ]
+        iter_all.side_effect = [
+            iter([{'type': 'log_entry'}]),
+            iter([{'type': 'log_entry'}])
+        ]
+        now = datetime.datetime.now(datetime.UTC)
+        future6 = now + datetime.timedelta(seconds=6)
+        results = list(client.iter_history('/log_entries', now, future6))
+        self.assertEqual([{'type': 'log_entry'}]*2, results)
+        self.assertEqual(2, len(iter_all.mock_calls))
+        pagerduty.rest_api_v2_client.RECURSION_LIMIT = original_recursion_limit
+
+    @patch.object(pagerduty.RestApiV2Client, 'iter_all')
+    @patch.object(pagerduty.RestApiV2Client, 'jget')
+    @patch.object(pagerduty.RestApiV2Client, 'iter_cursor')
+    def test_iter_history_cursor_callout(self, iter_cursor, jget, iter_all):
+        """
+        Validate the method defers to iter_cursor when used with cursor-based pagination
+        """
+        client = pagerduty.RestApiV2Client('token')
+        now = datetime.datetime.now(datetime.UTC)
+        future6 = now + datetime.timedelta(seconds=6)
+        iter_cursor.side_effect = [
+            iter([{'type': 'record'}])
+        ]
+        deletions = list(client.iter_history('/audit/records', now, future6, params={
+            'actions': ['delete']
+        }))
+        iter_all.assert_not_called()
+        jget.assert_not_called()
+        iter_cursor.assert_called_once()
+        self.assertEqual('/audit/records', iter_cursor.mock_calls[0][1][0])
+        self.assertEqual(
+            ['delete'],
+            iter_cursor.mock_calls[0][2]['params']['actions']
+        )
 
     @patch.object(pagerduty.RestApiV2Client, 'rput')
     @patch.object(pagerduty.RestApiV2Client, 'rpost')
