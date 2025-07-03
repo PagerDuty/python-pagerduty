@@ -1,8 +1,11 @@
+import json
 import unittest
 
 from unittest.mock import Mock, MagicMock, patch, call
 
+from mocks import Response
 from pagerduty import OAuthTokenClient
+from pagerduty.common import datetime_to_relative_seconds
 
 class OAuthTokenClientTest(unittest.TestCase):
 
@@ -27,7 +30,21 @@ class OAuthTokenClientTest(unittest.TestCase):
     @patch.object(OAuthTokenClient, 'post')
     def test_get_new_token(self, post):
         (client_secret, client_id, client) = self.new_client()
-        client.get_new_token(foo='bar', bar='baz')
+        # The following adapted from the documentation page
+        post.return_value = Response(200, json.dumps({
+          "client_info":"prefix_legacy_app",
+          "id_token":"super_long_jwt_string",
+          "token_type":"bearer",
+          "access_token":"not_really_an_access_token",
+          "refresh_token":"not_really_a_refresh_token",
+          "scope":"openid write",
+          "expires_in":864000
+        }))
+        response = client.get_new_token(foo='bar', bar='baz')
+        # Using a small epsilon vs. exact equals to avoid flakiness:
+        self.assertTrue(
+            abs(864000 - datetime_to_relative_seconds(response['expiration_date'])) < 1
+        )
         post.assert_called_once_with(
             '/oauth/token',
             data = {
@@ -74,3 +91,6 @@ class OAuthTokenClientTest(unittest.TestCase):
             grant_type = 'client_credentials',
             scope = scope
         )
+
+    def test_refresh_client(self):
+        pass
