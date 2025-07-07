@@ -1220,7 +1220,7 @@ class RestApiV2Client(ApiClient):
             next_cursor = body.get('next_cursor', None)
             more = bool(next_cursor)
 
-    def iter_history(self, url: str, since: datetime, until: Optional[datetime] = None,
+    def iter_history(self, url: str, since: datetime, until: datetime,
             recursion_depth: int = 0, **kw) -> Iterator[dict]:
         """
         Yield all historical records from an endpoint in a given time interval.
@@ -1238,18 +1238,16 @@ class RestApiV2Client(ApiClient):
             The beginning of the time interval. This must be a non-naïve datetime object
             (i.e. it must be timezone-aware), in order to format the ``since`` parameter
             when transmitting it to the API such that it unambiguously takes the time
-            zone into account.
+            zone into account. See: `datetime (Python documentation)
+            <https://docs.python.org/3/library/datetime.html>`_
         :param until:
             The end of the time interval. A timezone-aware datetime object must be
-            supplied for the same reason as for the ``since`` parameter. By default, the
-            current time is chosen.
+            supplied for the same reason as for the ``since`` parameter.
         :param kw:
             Custom keyword arguments to pass to the iteration method. Note, ``since``
             and ``until`` will be ignored.
         """
         path = canonical_path(self.url, url)
-        if until is None:
-            until = datetime.now(timezone.utc)
         since_until = {
             'since': strftime(since),
             'until': strftime(until)
