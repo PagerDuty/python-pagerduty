@@ -658,16 +658,15 @@ sets, one must either filter the results such that the total is less than this
 hard limit, or break the data set down into smaller time windows using the
 ``since`` and ``until`` parameters, for APIs that support them.
 
-For use cases such as reporting and aggregation, which require retrieiving
-large datasets of historical records from APIs that support the ``since`` and
-``until`` parameters, i.e.  ``/log_entries``, the method
-:attr:`pagerduty.RestApiV2Client.iter_history` was added in version 3.0.0. To
-use it, construct timezone-aware ``datetime.datetime`` objects (see: `datetime
+In version 3.0.0, the method :attr:`pagerduty.RestApiV2Client.iter_history` was
+added to facilitate retrieiving large datasets of historical records, i.e.
+``/log_entries``. To use it, first construct timezone-aware
+``datetime.datetime`` objects (see: `datetime
 <https://docs.python.org/3/library/datetime.html>`_) that correspond to the
 absolute beginning and end of the time interval from which to retrieive
 records. The method will then automatically figure out how to divide the time
-interval so that it can retrieve all records without running into the hard
-pagination limit.
+interval so that it can retrieve all records from sub-intervals without running
+into the hard pagination limit.
 
 For example, to obtain all alert/incident log entries year-to-date:
 
