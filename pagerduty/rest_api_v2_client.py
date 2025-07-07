@@ -978,15 +978,50 @@ class RestApiV2Client(ApiClient):
         query_params = {}
         if params is not None:
             query_params.update(params)
-        query_params.update({'query':query})
+        query_params.update({'query': query})
         simplify = lambda s: str(s).lower()
         search_term = simplify(query)
         equiv = lambda s: simplify(s[attribute]) == search_term
         obj_iter = self.iter_all(resource, params=query_params)
         return next(iter(filter(equiv, obj_iter)), None)
 
-    def iter_all(self, url, params=None, page_size=None, item_hook=None,
-            total=False) -> Iterator[dict]:
+    def get_total_record_count(self, url: str, params: Optional[dict] = None) -> int:
+        """
+        Gets the total count of records from a classic pagination index endpoint.
+
+        :param url:
+            The URL of the API endpoint to query
+        :param params:
+            An optional dictionary indicating additional parameters to send to the
+            endpoint, i.e. filters, time range (``since`` and ``until``), etc. This will
+            affect the total, i.e. if specifying a filter that matches a subset of
+            possible results.
+        :returns:
+            The total number of results from the endpoint with the parameters given.
+        """
+        query_params = deepcopy(params)
+        if query_params is None:
+            params = {}
+        query_params.update({
+            'total': True,
+            'limit': 1,
+            'offset': 0
+        })
+        response = self.get(url, params=query_params)
+        response_json = try_decoding(response)
+        if 'total' not in response_json:
+            path = canonical_path(self.url, url)
+            raise ServerHttpError(
+                f"Response from endpoint GET {path} lacks a \"total\" property. This " \
+                "may be because the endpoint does not support classic pagination, or " \
+                "implements it incompletely or incorrectly.",
+                response
+            )
+        return int(response_json['total'])
+
+    def iter_all(self, url, params: Optional[dict] = None,
+                page_size: Optional[dict] = None, item_hook: Optional[callable] = None,
+                total: bool = False) -> Iterator[dict]:
         """
         Iterator for the contents of an index endpoint or query.
 
@@ -1200,18 +1235,21 @@ class RestApiV2Client(ApiClient):
             :attr:`iter_cursor` directly, as cursor-based pagination has no such
             limitation.
         :param since:
-            The beginning of the time interval. It is recommended to supply a non-naïve
-            datetime object (i.e. it must be timezone-aware), in order to format the
-            ``since`` parameter when transmitting it to the API such that it
-            unambiguously takes the time zone into account.
+            The beginning of the time interval. This must be a non-naïve datetime object
+            (i.e. it must be timezone-aware), in order to format the ``since`` parameter
+            when transmitting it to the API such that it unambiguously takes the time
+            zone into account.
         :param until:
-            The end of the time interval. It is recommended to pass a timezone-aware
-            datetime object for the same reason as for the ``since`` parameter.
+            The end of the time interval. A timezone-aware datetime object must be
+            supplied for the same reason as for the ``since`` parameter. By default, the
+            current time is chosen.
         :param kw:
             Custom keyword arguments to pass to the iteration method. Note, ``since``
             and ``until`` will be ignored.
         """
         path = canonical_path(self.url, url)
+        if until is None:
+            until = datetime.now(timezone.utc)
         since_until = {
             'since': strftime(since),
             'until': strftime(until)
@@ -1231,17 +1269,16 @@ class RestApiV2Client(ApiClient):
         # Obtain the total number of records for the interval:
         query_params = kw.get('params', {})
         query_params.update(since_until)
-        query_params.update({
-            'total': True,
-            'limit': 1,
-            'offset': 0
-        })
-        total = int(self.jget(url, params=query_params)['total'])
+        total = self.get_total_record_count(url, params=query_params)
 
+        no_results = total == 0
         can_fully_paginate = total <= ITERATION_LIMIT
         min_interval_len = int((until - since).total_seconds()) == 1
         stop_recursion = recursion_depth >= RECURSION_LIMIT
-        if can_fully_paginate or min_interval_len or stop_recursion:
+        if no_results:
+            # Nothing to be done for this interval
+            pass
+        elif can_fully_paginate or min_interval_len or stop_recursion:
             # Do not subdivide any further; it is either not necessary or not feasible.
             if not can_fully_paginate:
                 # Issue a warning log message
