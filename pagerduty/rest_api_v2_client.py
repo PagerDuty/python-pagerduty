@@ -1226,8 +1226,9 @@ class RestApiV2Client(ApiClient):
         Yield all historical records from an endpoint in a given time interval.
 
         This method works around the limitation of classic pagination (see
-        :attr:`ITERATION_LIMIT`) by sub-dividing queries into lesser time intervals
-        wherein the total number of results does not exceed the pagination limit.
+        :attr:`pagerduty.rest_api_v2_client.ITERATION_LIMIT`) by sub-dividing queries
+        into lesser time intervals wherein the total number of results does not exceed
+        the pagination limit.
 
         :param url:
             Index endpoint (API URL) from which to yield results. In the event that a
@@ -1244,8 +1245,9 @@ class RestApiV2Client(ApiClient):
             The end of the time interval. A timezone-aware datetime object must be
             supplied for the same reason as for the ``since`` parameter.
         :param kw:
-            Custom keyword arguments to pass to the iteration method. Note, ``since``
-            and ``until`` will be ignored.
+            Custom keyword arguments to pass to the iteration method. Note, if providing
+            ``params`` in order to add query string parameters for filtering, the
+            ``since`` and ``until`` keys (if present) will be ignored.
         """
         path = canonical_path(self.url, url)
         since_until = {
