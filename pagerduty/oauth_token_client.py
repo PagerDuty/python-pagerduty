@@ -81,7 +81,7 @@ class OAuthTokenClient(ApiClient):
             ``expiration_date`` containing the expiration date/time of the token in
             ISO8601 format. This value can then be used in :attr:`refresh_client`.
         """
-        response_json = try_decoding(response)
+        response_json = try_decoding(successful_response(response))
         if 'expires_in' not in response_json:
             raise ServerHttpError(
                 "Auth response did not include expected key \"expires_in\".",
@@ -175,13 +175,13 @@ class OAuthTokenClient(ApiClient):
             "client_secret": self.api_key
         }
         params.update(kw)
-        return self.amended_auth_response(successful_response(self.post(
+        return self.amended_auth_response(self.post(
             '/oauth/token',
             data = params,
             headers = {
                 "Content-Type": "application/x-www-form-urlencoded"
             }
-        )))
+        ))
 
     def get_new_token_from_code(self, auth_code: str, scope: str, redirect_uri: str) \
             -> dict:
