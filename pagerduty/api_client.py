@@ -5,6 +5,7 @@ import time
 
 from copy import deepcopy
 from random import random
+from typing import Union
 
 # PyPI
 from requests import Response, Session
@@ -219,7 +220,7 @@ class ApiClient(Session):
     def cooldown_factor(self) -> float:
         return self.sleep_timer_base*(1+self.stagger_cooldown*random())
 
-    def normalize_params(self, params) -> dict:
+    def normalize_params(self, params: dict) -> dict:
         """
         Modify the user-supplied parameters to ease implementation
 
@@ -241,11 +242,11 @@ class ApiClient(Session):
                 updated_params[param] = value
         return updated_params
 
-    def normalize_url(self, url) -> str:
+    def normalize_url(self, url: str) -> str:
         """Compose the URL whether it is a path or an already-complete URL"""
         return normalize_url(self.url, url)
 
-    def postprocess(self, response):
+    def postprocess(self, response: Response):
         """
         Perform supplemental actions immediately after receiving a response.
 
@@ -254,7 +255,7 @@ class ApiClient(Session):
         """
         pass
 
-    def prepare_headers(self, method, user_headers={}) -> dict:
+    def prepare_headers(self, method: str, user_headers: dict = {}) -> dict:
         """
         Append special additional per-request headers.
 
@@ -300,7 +301,7 @@ class ApiClient(Session):
             delattr(self, '_debugHandler')
         # else: no-op; only happens if debug is set to the same value twice
 
-    def request(self, method, url, **kwargs) -> Response:
+    def request(self, method: str, url: str, **kwargs) -> Response:
         """
         Make a generic PagerDuty API request.
 
@@ -435,7 +436,7 @@ class ApiClient(Session):
             return 0
 
     @stagger_cooldown.setter
-    def stagger_cooldown(self, val):
+    def stagger_cooldown(self, val: Union[float, int]):
         if type(val) not in [float, int] or val<0:
             raise ValueError("Cooldown randomization factor stagger_cooldown "
                 "must be a positive real number")
