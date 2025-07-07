@@ -1232,7 +1232,7 @@ class RestApiV2Client(ApiClient):
         total = int(self.jget(url, params=query_params)['total'])
 
         can_fully_paginate = total <= ITERATION_LIMIT
-        min_interval_len = (until - since).total_seconds() == 1
+        min_interval_len = int((until - since).total_seconds()) == 1
         stop_recursion = recursion_depth >= RECURSION_LIMIT
         if can_fully_paginate or min_interval_len or stop_recursion:
             # Do not subdivide any further; it is either not necessary or not feasible.
