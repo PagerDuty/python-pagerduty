@@ -1,6 +1,7 @@
 import datetime
 import json
 import unittest
+from datetime import timezone
 
 from mocks import Response
 
@@ -120,7 +121,7 @@ class HelperFunctionsTest(unittest.TestCase):
             )
 
     def test_strftime(self):
-        when = datetime.datetime(2025, 7, 1, 23, 19, tzinfo=datetime.UTC)
+        when = datetime.datetime(2025, 7, 1, 23, 19, tzinfo=timezone.utc)
         datestr = pagerduty.common.strftime(when)
         self.assertEqual('0000', datestr[-4:])
         self.assertEqual('2025', datestr[:4])
