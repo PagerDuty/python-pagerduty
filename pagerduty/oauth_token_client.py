@@ -1,6 +1,6 @@
 import datetime
-import typing
 import urllib.parse
+from typing import Optional, Tuple
 
 from copy import deepcopy
 
@@ -243,7 +243,7 @@ class OAuthTokenClient(ApiClient):
 
     def refresh_client(self, access_token: str, refresh_token: str,
             expiration_date: str, base_url='https://api.pagerduty.com', **kw) \
-        -> tuple[RestApiV2Client, typing.Optional[dict]]:
+        -> Tuple[RestApiV2Client, Optional[dict]]:
         """
         Instantiate and return a :class:`pagerduty.RestApiV2Client` client object
 
