@@ -224,23 +224,10 @@ class ApiClient(Session):
         """
         Modify the user-supplied parameters to ease implementation
 
-        Current behavior:
-
-        * If a parameter's value is of type list, and the parameter name does
-          not already end in "[]", then the square brackets are appended to keep
-          in line with the requirement that all set filters' parameter names end
-          in "[]".
-
         :returns:
             The query parameters after modification
         """
-        updated_params = {}
-        for param, value in params.items():
-            if type(value) is list and not param.endswith('[]'):
-                updated_params[param+'[]'] = value
-            else:
-                updated_params[param] = value
-        return updated_params
+        return params
 
     def normalize_url(self, url: str) -> str:
         """Compose the URL whether it is a path or an already-complete URL"""
