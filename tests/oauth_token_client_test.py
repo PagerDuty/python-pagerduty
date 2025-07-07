@@ -5,7 +5,11 @@ from unittest.mock import Mock, MagicMock, patch, call
 
 from mocks import Response
 from pagerduty import OAuthTokenClient
-from pagerduty.common import datetime_to_relative_seconds
+from pagerduty.common import (
+    datetime_to_relative_seconds,
+    relative_seconds_to_datetime
+)
+from pagerduty.rest_api_v2_client import RestApiV2Client
 
 class OAuthTokenClientTest(unittest.TestCase):
 
@@ -92,5 +96,63 @@ class OAuthTokenClientTest(unittest.TestCase):
             scope = scope
         )
 
-    def test_refresh_client(self):
-        pass
+    @patch.object(OAuthTokenClient, 'get_refreshed_token')
+    def test_refresh_client_skip_refresh(self, get_refreshed_token):
+        """
+        Test using refresh_client when the token is fresh enough to keep using it
+        """
+        (client_secret, client_id, client) = self.new_client()
+        fresh_enough_s_in_future = client.early_refresh_buffer + 864000
+        api_key = 'not_an_access_token'
+        rest_client, auth = client.refresh_client(
+            api_key,
+            'not_a_refresh_token',
+            expiration_date=relative_seconds_to_datetime(fresh_enough_s_in_future)
+        )
+        self.assertIsNone(auth)
+        self.assertIsInstance(rest_client, RestApiV2Client)
+        self.assertEqual('bearer', rest_client.auth_type)
+        self.assertEqual(api_key, rest_client.api_key)
+        get_refreshed_token.assert_not_called()
+
+    @patch.object(OAuthTokenClient, 'get_refreshed_token')
+    def test_refresh_client_perform_refresh(self, get_refreshed_token):
+        """
+        Test using refresh_client when the token is old enough to warrant a refresh
+        """
+        (client_secret, client_id, client) = self.new_client()
+        not_far_enough_in_future = client.early_refresh_buffer - 3600
+        freshly_made_expires_in = 864000
+        api_key_old = 'not_an_access_token'
+        api_key_new = "not_the_new_access_token"
+        refresh_token = "not_the_refresh_token"
+        api_url = 'https://api.eu.pagerduty.com'
+        from_email = "someone@example.com"
+        expiration_date = relative_seconds_to_datetime(not_far_enough_in_future)
+        expiration_date_new = relative_seconds_to_datetime(freshly_made_expires_in)
+        get_refreshed_token.return_value = {
+          "client_info": "prefix_legacy_app",
+          "id_token": "not_an_id_token",
+          "token_type": "bearer",
+          "access_token": api_key_new,
+          "refresh_token": refresh_token,
+          "scope": "openid write",
+          "expires_in": 864000,
+          "expiration_date": expiration_date_new
+        }
+        rest_client, auth = client.refresh_client(
+            api_key_old,
+            refresh_token,
+            expiration_date,
+            base_url = api_url,
+            default_from = from_email,
+            debug = True
+        )
+        get_refreshed_token.assert_called_once_with(refresh_token)
+        self.assertIs(dict, type(auth))
+        self.assertIsInstance(rest_client, RestApiV2Client)
+        self.assertEqual('bearer', rest_client.auth_type)
+        self.assertEqual(api_key_new, rest_client.api_key)
+        self.assertEqual(api_url, rest_client.url)
+        self.assertEqual(from_email, rest_client.default_from)
+        self.assertEqual(True, rest_client.print_debug)
