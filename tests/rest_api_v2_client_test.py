@@ -6,6 +6,7 @@ import requests
 import sys
 import unittest
 import warnings
+from datetime import timezone
 from unittest.mock import Mock, MagicMock, patch, call
 
 from common_test import SessionTest
@@ -476,7 +477,7 @@ class RestApiV2ClientTest(SessionTest):
             iter([{'type': 'log_entry'}])
         ]
 
-        now = datetime.datetime.now(datetime.UTC)
+        now = datetime.datetime.now(timezone.utc)
         future3 = now + datetime.timedelta(seconds=2)
         results = list(client.iter_history('/log_entries', now, future3))
         self.assertEqual(2, len(iter_all.mock_calls))
@@ -516,7 +517,7 @@ class RestApiV2ClientTest(SessionTest):
             iter([{'type': 'log_entry'}]),
             iter([{'type': 'log_entry'}])
         ]
-        now = datetime.datetime.now(datetime.UTC)
+        now = datetime.datetime.now(timezone.utc)
         future6 = now + datetime.timedelta(seconds=6)
         results = list(client.iter_history('/log_entries', now, future6))
         self.assertEqual([{'type': 'log_entry'}]*2, results)
@@ -531,7 +532,7 @@ class RestApiV2ClientTest(SessionTest):
         Validate the method defers to iter_cursor when used with cursor-based pagination
         """
         client = pagerduty.RestApiV2Client('token')
-        now = datetime.datetime.now(datetime.UTC)
+        now = datetime.datetime.now(timezone.utc)
         future6 = now + datetime.timedelta(seconds=6)
         iter_cursor.side_effect = [
             iter([{'type': 'record'}])
