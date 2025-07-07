@@ -5,7 +5,7 @@ from datetime import (
     timedelta,
     timezone
 )
-from typing import Union
+from typing import List, NewType, Tuple, Union
 from warnings import warn
 from json.decoder import JSONDecodeError
 
@@ -36,7 +36,7 @@ The longest permissible length of API content to include in error messages.
 ########################
 
 def datetime_intervals(since: datetime, until: datetime, n=10) \
-        -> list[tuple[datetime, datetime]]:
+        -> List[Tuple[datetime, datetime]]:
     """
     Break up a given time interval into a series of smaller consecutive time intervals.
 
