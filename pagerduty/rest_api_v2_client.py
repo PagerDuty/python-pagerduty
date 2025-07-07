@@ -28,13 +28,14 @@ from . errors import (
 ### CLIENT DEFAULTS ###
 #######################
 
-ITERATION_LIMIT = 1e4
+ITERATION_LIMIT = 10000
 """
 The maximum position of a result in classic pagination.
 
-The offset plus limit parameter may not exceed this number. This is enforced
-server-side and is not something the client may override. Rather, this value is
-used to short-circuit pagination in order to avoid a HTTP 400 error.
+The offset plus limit parameter may not exceed this number. This is enforced server-side
+and is not something the client may override. Rather, this value is reproduced in the
+client to enable short-circuiting pagination, so that the client can avoid the HTTP 400
+error that will result if the sum of the limit and offset parameters exceeds it.
 
 See: `Pagination
 <https://developer.pagerduty.com/docs/ZG9jOjExMDI5NTU4-pagination>`_.
