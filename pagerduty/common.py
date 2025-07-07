@@ -6,6 +6,7 @@ from datetime import (
 )
 from typing import (
     List,
+    Optional,
     Tuple,
     Union
 )
@@ -239,7 +240,7 @@ def truncate_text(text: str) -> str:
     else:
         return text
 
-def try_decoding(r: Response) -> Union[dict, list, str]:
+def try_decoding(r: Response) -> Optional[Union[dict, list, str]]:
     """
     JSON-decode a response body
 
