@@ -5,7 +5,11 @@ from datetime import (
     timedelta,
     timezone
 )
-from typing import List, NewType, Tuple, Union
+from typing import (
+    List,
+    Tuple,
+    Union
+)
 from warnings import warn
 from json.decoder import JSONDecodeError
 
