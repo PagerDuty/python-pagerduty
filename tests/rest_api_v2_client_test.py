@@ -5,7 +5,6 @@ import logging
 import requests
 import sys
 import unittest
-import warnings
 from datetime import timezone
 from unittest.mock import Mock, MagicMock, patch, call
 
