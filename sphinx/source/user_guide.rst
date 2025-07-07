@@ -105,14 +105,14 @@ Token via Code Grant
 
 .. code-block:: python
 
-    client = pagerduty.OAuthTokenClient(client_secret, client_id)
+    token_client = pagerduty.OAuthTokenClient(client_secret, client_id)
 
 To generate the URL that the user must visit to authorize the application:
 
 .. code-block:: python
 
     # With a client object:
-    authorize_url = client.authorize_url(scope, redirect_uri)
+    authorize_url = token_client.authorize_url(scope, redirect_uri)
 
     # Without a client object:
     authorize_url = pagerduty.OAuthTokenClient.get_authorize_url(client_id, scope, redirect_uri)
@@ -126,18 +126,42 @@ can then be exchanged for an access token as following:
 .. code-block:: python
 
     # auth_code contains the "code" parameter in the redirect URL of the application:
-    auth_response = client.get_new_token_from_code(auth_code, scope, redirect_uri)
+    auth_response = token_client.get_new_token_from_code(auth_code, scope, redirect_uri)
     access_token = auth_response['access_token']
     refresh_token = auth_response['refresh_token']
 
-Refresh tokens obtained from the response can be used later to obtain new
-access tokens before the expiration of the original via token refresh:
+Performing OAuth Token Refresh Automatically
+********************************************
+As of version 2.4.0, the OAuth response dictionary returned by token-getting
+methods of :class:`pagerduty.OAuthTokenClient` will include a property
+``expiration_date`` containing a string that is an ISO8601-formatted date/time
+indicating when the included token will expire. Assuming that your application
+securely stores this string value in addition to ``access_token`` and
+``refresh_token``, and has the means to retrieve these values, they can be used
+to call :attr:`pagerduty.OAuthTokenClient.refresh_client`, which instantiates a
+new :class:`pagerduty.RestApiV2Client` and automatically refreshes the access
+token as necessary.
 
 .. code-block:: python
 
-    auth_response = client.get_refreshed_token(refresh_token)
-    access_token = auth_response['access_token']
-    refresh_token = auth_response['refresh_token']
+    # Assume the calling application implements methods securely_get_values and
+    # securely_store_values to recall and store secrets used for API access:
+    access_token, refresh_token, expiration_date = securely_get_values()
+    rest_client, auth_response = token_client.refresh_client(
+        access_token,
+        refresh_token,
+        expiration_date
+    )
+    # If auth_response == None, the token was not refreshed and does not need
+    # to be updated; otherwise it will be similar to the value returned by
+    # other token-getting methods:
+    if type(auth_response) is dict:
+        securely_store_values(
+            access_token = auth_response['access_token'],
+            refresh_token = auth_response['refresh_token'],
+            expiration_date = auth_response['expiration_date']
+        )
+
 
 Basic Usage Examples
 --------------------
@@ -196,6 +220,20 @@ index endpoint:
 
     # >>> user
     # {'type': 'user', 'email': 'jane@example35.com', ...}
+
+**Getting a count of records:** use ``get_total_record_count`` on any endpoint
+that supports classic pagination:
+
+.. code-block:: python
+
+    # Get the total number of users in the whole account:
+    total_users = client.get_total_record_count('users')
+
+    # Get the total number of users on a given team:
+    total_users_on_team_x = client.get_total_record_count(
+        'users',
+        params = {'team_ids[]': ['PGHI789']}
+    )
 
 **Updating a resource:** use the ``json`` keyword argument to set the body of the request:
 
