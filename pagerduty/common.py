@@ -82,7 +82,8 @@ def datetime_to_relative_seconds(datestr: str):
     now = datetime.now(timezone.utc)
     return (deadline-now).total_seconds()
 
-def deprecated_kwarg(deprecated_name: str, details=None, method=None):
+def deprecated_kwarg(deprecated_name: str, details: Optional[str] = None,
+            method: Optional[str] = None):
     """
     Raises a warning if a deprecated keyword argument is used.
 
@@ -100,7 +101,7 @@ def deprecated_kwarg(deprecated_name: str, details=None, method=None):
         f"Keyword argument \"{deprecated_name}\"{method_msg} is deprecated."+details_msg
     )
 
-def http_error_message(r: Response, context=None) -> str:
+def http_error_message(r: Response, context: Optional[str] = None) -> str:
     """
     Formats a message describing a HTTP error.
 
@@ -159,7 +160,7 @@ def relative_seconds_to_datetime(seconds_remaining: int):
     target_time = now + timedelta(seconds=seconds_remaining)
     return strftime(target_time)
 
-def requires_success(method):
+def requires_success(method: callable) -> callable:
     """
     Decorator that validates HTTP responses.
     """
@@ -209,7 +210,7 @@ def strptime(datestr: str) -> datetime:
     """
     return datetime.strptime(datestr, DATETIME_FMT)
 
-def successful_response(r: Response, context=None) -> Response:
+def successful_response(r: Response, context: Optional[str] = None) -> Response:
     """Validates the response as successful.
 
     Returns the response if it was successful; otherwise, raises an exception.

@@ -705,7 +705,7 @@ def unwrap(response: Response, wrapper: Optional[str]) -> Union[dict, list]:
 ### FUNCTION DECORATORS ###
 ###########################
 
-def auto_json(method):
+def auto_json(method: callable) -> callable:
     """
     Makes methods return the full response body object after decoding from JSON.
 
@@ -718,7 +718,7 @@ def auto_json(method):
     call.__doc__ = doc
     return call
 
-def resource_url(method):
+def resource_url(method: callable) -> callable:
     """
     API call decorator that allows passing a resource dict as the path/URL
 
@@ -749,7 +749,7 @@ def resource_url(method):
     call.__doc__ = doc
     return call
 
-def wrapped_entities(method):
+def wrapped_entities(method: callable) -> callable:
     """
     Automatically wrap request entities and unwrap response entities.
 
