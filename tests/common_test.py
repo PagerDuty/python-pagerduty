@@ -129,13 +129,14 @@ class HelperFunctionsTest(unittest.TestCase):
         self.assertEqual('01', datestr[8:10])
 
     def test_strptime(self):
-        when = pagerduty.common.strptime('1986-04-26T01:23:45+0300')
+        when = pagerduty.common.strptime('1986-04-26T01:23:45+03:00')
         self.assertEqual(1986, when.year)
         self.assertEqual(4, when.month)
         self.assertEqual(26, when.day)
         self.assertEqual(1, when.hour)
         self.assertEqual(23, when.minute)
         self.assertEqual(45, when.second)
+        self.assertEqual("UTC+03:00", when.tzname())
 
     def test_successful_response(self):
         self.assertRaises(pagerduty.Error, pagerduty.successful_response,
