@@ -132,7 +132,7 @@ can then be exchanged for an access token as following:
 
 Performing OAuth Token Refresh Automatically
 ********************************************
-As of version 2.4.0, the OAuth response dictionary returned by token-getting
+As of version 3.0.0, the OAuth response dictionary returned by token-getting
 methods of :class:`pagerduty.OAuthTokenClient` will include a property
 ``expiration_date`` containing a string that is an ISO8601-formatted date/time
 indicating when the included token will expire. Assuming that your application
@@ -645,6 +645,40 @@ By default, classic, a.k.a. numeric pagination, will be used. If the endpoint
 supports cursor-based pagination, it will call out to
 :attr:`pagerduty.RestApiV2Client.iter_cursor` to iterate through results
 instead.
+
+Retrieving Large Historical Datasets
+************************************
+`Classic pagination
+<https://developer.pagerduty.com/docs/ZG9jOjExMDI5NTU4-pagination#classic-pagination>`_
+in REST API v2 has a hard limit of 10,000 records (see
+:attr:`pagerduty.ITERATION_LIMIT`). In other words, if the sum of the ``limit``
+and ``offset`` parameters is larger than this value, the API will respond with
+HTTP 400 Invalid Request. To get around this issue and retrieve larger data
+sets, one must either filter the results such that the total is less than this
+hard limit, or break the data set down into smaller time windows using the
+``since`` and ``until`` parameters, for APIs that support them.
+
+For use cases such as reporting and aggregation, which require retrieiving
+large datasets of historical records from APIs that support the ``since`` and
+``until`` parameters, i.e.  ``/log_entries``, the method
+:attr:`pagerduty.RestApiV2Client.iter_history` was added in version 3.0.0. To
+use it, construct timezone-aware ``datetime.datetime`` objects (see: `datetime
+<https://docs.python.org/3/library/datetime.html>`_) that correspond to the
+absolute beginning and end of the time interval from which to retrieive
+records. The method will then automatically figure out how to divide the time
+interval so that it can retrieve all records without running into the hard
+pagination limit.
+
+For example, to obtain all alert/incident log entries year-to-date:
+
+.. code-block:: python
+
+    from datetime import datetime, timezone
+    until = datetime.now(timezone.utc)
+    since = datetime(until.year, 1, 1, 0, 0, 0, tzinfo=timezone.utc)
+    # Assume "client" is an instance of RestApiV2Client:
+    log_entries = list(client.iter_history('/log_entries', since,  until))
+
 
 Performance and Completeness of Results
 ***************************************
