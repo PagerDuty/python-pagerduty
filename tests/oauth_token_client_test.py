@@ -41,7 +41,7 @@ class OAuthTokenClientTest(unittest.TestCase):
           "expires_in":864000
         }))
         response = client.get_new_token(foo='bar', bar='baz')
-        # Using a small epsilon vs. exact equals to avoid flakiness:
+        # Use a small epsilon instead of exact equality to avoid flakiness:
         self.assertTrue(
             abs(864000 - datetime_to_relative_seconds(response['expiration_date'])) < 1
         )

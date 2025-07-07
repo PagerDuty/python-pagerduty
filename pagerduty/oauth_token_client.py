@@ -42,7 +42,7 @@ class OAuthTokenClient(ApiClient):
 
     url = 'https://identity.pagerduty.com'
 
-    early_refresh_buffer = 600
+    early_refresh_buffer = 86400
     """
     Number of seconds before the expiration date to perform a token refresh.
 
@@ -53,6 +53,8 @@ class OAuthTokenClient(ApiClient):
     If the application is expected to use the resulting client object for more than this
     amount of time between each new call to :attr:`refresh_client`, this value can be
     set higher.
+
+    By default, this is 24 hours.
     """
 
     def __init__(self, client_secret: str, client_id: str, debug=False):
