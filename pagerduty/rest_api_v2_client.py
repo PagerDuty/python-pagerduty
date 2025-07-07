@@ -40,15 +40,15 @@ See: `Pagination
 <https://developer.pagerduty.com/docs/ZG9jOjExMDI5NTU4-pagination>`_.
 """
 
-RECURSION_LIMIT = getrecursionlimit()/2
+RECURSION_LIMIT = getrecursionlimit() // 2
 """
 Maximum depth of recursion when using functions that use recursion.
 
 For example, :attr:`pagerduty.RestApiV2Client.iter_history` will call itself recursively
 if the number of results in the data set to be queried exceeds :attr:`ITERATION_LIMIT`.
 
-Its value is arbitrary and meant to guard against excessive depth, although the true
-hard recursion limit in Python is actually higher.
+Its value is arbitrary and meant to guard against excessive depth. For safety, it is set
+to half the hard recursion limit in Python.
 """
 
 ITER_HIST_RECURSION_WARNING_TEMPLATE = """RestApiV2Client.iter_history cannot continue
