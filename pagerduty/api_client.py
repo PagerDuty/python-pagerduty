@@ -5,7 +5,7 @@ import time
 
 from copy import deepcopy
 from random import random
-from typing import Union
+from typing import Optional, Union
 
 # PyPI
 from requests import Response, Session
@@ -242,7 +242,7 @@ class ApiClient(Session):
         """
         pass
 
-    def prepare_headers(self, method: str, user_headers: dict = {}) -> dict:
+    def prepare_headers(self, method: str, user_headers: Optional[dict] = None) -> dict:
         """
         Append special additional per-request headers.
 
