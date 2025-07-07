@@ -1,8 +1,11 @@
 # Core
 from copy import deepcopy
-from datetime import datetime
+from datetime import (
+    datetime,
+    timezone
+)
 from sys import getrecursionlimit
-from typing import Iterator, Union
+from typing import Iterator, Optional, Union
 from warnings import warn
 
 # PyPI
@@ -15,6 +18,7 @@ from . common import (
     requires_success,
     singular_name,
     strftime,
+    strptime,
     successful_response,
     truncate_text,
     try_decoding,
@@ -660,13 +664,14 @@ def infer_entity_wrapper(method: str, path: str) -> str:
         # Plural if listing via GET to the index endpoint, or doing a multi-put:
         return path_nodes[-1]
 
-def unwrap(response: Response, wrapper) -> Union[dict, list]:
+def unwrap(response: Response, wrapper: Optional[str]) -> Union[dict, list]:
     """
-    Unwraps a wrapped entity.
+    Unwraps a wrapped entity from a HTTP response.
 
-    :param response: The response object
-    :param wrapper: The entity wrapper
-    :type wrapper: str or None
+    :param response:
+        The response object.
+    :param wrapper:
+        The entity wrapper (string), or None to skip unwrapping
     :returns:
         The value associated with the wrapper key in the JSON-decoded body of
         the response, which is expected to be a dictionary (map).
@@ -844,8 +849,8 @@ class RestApiV2Client(ApiClient):
     url = 'https://api.pagerduty.com'
     """Base URL of the REST API"""
 
-    def __init__(self, api_key: str, default_from=None,
-            auth_type='token', debug=False):
+    def __init__(self, api_key: str, default_from: Optional[str] = None,
+            auth_type: str = 'token', debug: bool = False):
         self.api_call_counts = {}
         self.api_time = {}
         self.auth_type = auth_type
@@ -929,8 +934,8 @@ class RestApiV2Client(ApiClient):
         iterator = self.iter_all(path, **kw)
         return {obj[by]:obj for obj in iterator}
 
-    def find(self, resource: str, query, attribute='name', params=None) \
-            -> Union[dict, None]:
+    def find(self, resource: str, query: str, attribute: str = 'name',
+            params: Optional[dict] = None) -> Union[dict, None]:
         """
         Finds an object of a given resource type exactly matching a query.
 
@@ -1126,8 +1131,9 @@ class RestApiV2Client(ApiClient):
                     item_hook(result, n, total_count)
                 yield result
 
-    def iter_cursor(self, url, params=None, item_hook=None, page_size=None) \
-            -> Iterator[dict]:
+    def iter_cursor(self, url: str, params: Optional[dict] = None,
+                item_hook: Optional[callable] = None,
+                page_size: Optional[int] = None) -> Iterator[dict]:
         """
         Iterator for results from an endpoint using cursor-based pagination.
 
@@ -1179,8 +1185,8 @@ class RestApiV2Client(ApiClient):
             next_cursor = body.get('next_cursor', None)
             more = bool(next_cursor)
 
-    def iter_history(self, url: str, since: datetime, until: datetime,
-            recursion_depth=0, **kw) -> Iterator[dict]:
+    def iter_history(self, url: str, since: datetime, until: Optional[datetime] = None,
+            recursion_depth: int = 0, **kw) -> Iterator[dict]:
         """
         Yield all historical records from an endpoint in a given time interval.
 
@@ -1348,7 +1354,7 @@ class RestApiV2Client(ApiClient):
         else:
             return self.rpost(resource, json=values)
 
-    def postprocess(self, response: Response, suffix=None):
+    def postprocess(self, response: Response, suffix: Optional[str] = None):
         """
         Records performance information / request metadata about the API call.
 
