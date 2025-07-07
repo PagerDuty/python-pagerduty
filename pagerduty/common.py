@@ -203,7 +203,7 @@ def strptime(datestr: str) -> datetime:
     Parse a string in full ISO8601 format into a ``datetime.datetime`` object.
 
     :param datestr:
-        String representation of the date and time
+        Full ISO8601 string representation of the date and time, including time zone
     :returns:
         The datetime object representing the string
     """
