@@ -651,7 +651,7 @@ Retrieving Large Historical Datasets
 `Classic pagination
 <https://developer.pagerduty.com/docs/ZG9jOjExMDI5NTU4-pagination#classic-pagination>`_
 in REST API v2 has a hard limit of 10,000 records (see
-:attr:`pagerduty.ITERATION_LIMIT`). In other words, if the sum of the ``limit``
+:attr:`pagerduty.rest_api_v2_client.ITERATION_LIMIT`). In other words, if the sum of the ``limit``
 and ``offset`` parameters is larger than this value, the API will respond with
 HTTP 400 Invalid Request. To get around this issue and retrieve larger data
 sets, one must either filter the results such that the total is less than this
