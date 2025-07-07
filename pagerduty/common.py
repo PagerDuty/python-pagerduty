@@ -1,9 +1,9 @@
 # Core
 from datetime import (
-    UTC,
     date,
     datetime,
-    timedelta
+    timedelta,
+    timezone
 )
 from typing import Union
 from warnings import warn
@@ -75,7 +75,7 @@ def datetime_to_relative_seconds(datestr: str):
     Convert an ISO8601 string to a relative number of seconds from the current time.
     """
     deadline = strptime(datestr)
-    now = datetime.now(UTC)
+    now = datetime.now(timezone.utc)
     return (deadline-now).total_seconds()
 
 def deprecated_kwarg(deprecated_name: str, details=None, method=None):
@@ -151,7 +151,7 @@ def relative_seconds_to_datetime(seconds_remaining: int):
     """
     Convert a number of seconds in the future to an absolute UTC ISO8601 time string.
     """
-    now = datetime.now(UTC)
+    now = datetime.now(timezone.utc)
     target_time = now + timedelta(seconds=seconds_remaining)
     return strftime(target_time)
 
