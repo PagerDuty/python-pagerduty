@@ -1,6 +1,5 @@
 # Core
 from datetime import (
-    date,
     datetime,
     timedelta,
     timezone
