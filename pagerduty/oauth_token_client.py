@@ -254,8 +254,11 @@ class OAuthTokenClient(ApiClient):
             The most current REST API access token.
         :param refresh_token:
             The refresh token required for token refresh.
-        :param expiration:
-            The expiration date of the refresh token.
+        :param expiration_date:
+            The expiration date of the refresh token, formatted as a complete ISO8601
+            datetime string, including the timezone suffix as a UTC offset. The value
+            contained in the ``expiration_date`` key of the amended response dictionary
+            returned by any of the "get token" methods should be usable.
         :param base_url:
             The value to use for :attr:`pagerduty.RestApiV2Client.base_url` when
             constructing the client object.
