@@ -163,6 +163,12 @@ token as necessary.
         )
 
 
+Note, the current default behavior of :class:`OAuthTokenClient` is to refresh
+the token if it is going to expire less than 24 hours in the future. This
+"buffer time" (expressed as a positive integer number of seconds in the future)
+can be controlled by setting the property
+:attr:`pagerduty.OAuthTokenClient.early_refresh_buffer`.
+
 Basic Usage Examples
 --------------------
 
