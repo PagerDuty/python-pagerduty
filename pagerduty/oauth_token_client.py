@@ -39,6 +39,8 @@ class OAuthTokenClient(ApiClient):
     - `Obtaining an App OAuth Token <https://developer.pagerduty.com/docs/app-oauth-token>`_
     """
 
+    permitted_methods = ('POST',)
+
     url = 'https://identity.pagerduty.com'
 
     early_refresh_buffer = 86400
