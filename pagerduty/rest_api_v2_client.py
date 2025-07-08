@@ -986,7 +986,7 @@ class RestApiV2Client(ApiClient):
         obj_iter = self.iter_all(resource, params=query_params)
         return next(iter(filter(equiv, obj_iter)), None)
 
-    def get_total_record_count(self, url: str, params: Optional[dict] = None) -> int:
+    def get_total(self, url: str, params: Optional[dict] = None) -> int:
         """
         Gets the total count of records from a classic pagination index endpoint.
 
@@ -1270,7 +1270,7 @@ class RestApiV2Client(ApiClient):
         # Obtain the total number of records for the interval:
         query_params = kw.get('params', {})
         query_params.update(since_until)
-        total = self.get_total_record_count(url, params=query_params)
+        total = self.get_total(url, params=query_params)
 
         no_results = total == 0
         can_fully_paginate = total <= ITERATION_LIMIT

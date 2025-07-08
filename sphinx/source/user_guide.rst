@@ -227,16 +227,16 @@ index endpoint:
     # >>> user
     # {'type': 'user', 'email': 'jane@example35.com', ...}
 
-**Getting a count of records:** use ``get_total_record_count`` on any endpoint
+**Getting a count of records:** use ``get_total`` on any endpoint
 that supports classic pagination:
 
 .. code-block:: python
 
     # Get the total number of users in the whole account:
-    total_users = client.get_total_record_count('users')
+    total_users = client.get_total('users')
 
     # Get the total number of users on a given team:
-    total_users_on_team_x = client.get_total_record_count(
+    total_users_on_team_x = client.get_total(
         'users',
         params = {'team_ids[]': ['PGHI789']}
     )

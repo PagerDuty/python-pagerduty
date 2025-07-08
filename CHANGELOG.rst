@@ -5,7 +5,7 @@
 
    - New method ``OAuthTokenClient.refresh_client``: instantiates and returns a ``RestApiV2Client`` instance and auto-refreshes the access token
    - New method ``RestApiV2Client.iter_history``: iterates through large historical data sets that exceed the hard limit of classic pagination
-   - New method ``RestApiV2Client.get_total_record_count``: returns the total number of matching records in a classic pagination endpoint
+   - New method ``RestApiV2Client.get_total``: returns the total number of matching records in a classic pagination endpoint
    - Expanded coverage of type hints
 
 **2025-06-23: Add a new OAuth token exchange client class - Version 2.3.0**

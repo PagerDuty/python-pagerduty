@@ -297,9 +297,9 @@ class RestApiV2ClientTest(SessionTest):
         )
 
     @patch.object(pagerduty.RestApiV2Client, 'get')
-    def test_get_total_record_count_valid(self, get):
+    def test_get_total_valid(self, get):
         """
-        Test RestApiV2Client.get_total_record_count for a valid response
+        Test RestApiV2Client.get_total for a valid response
         """
         count = 500
         pd_start = '2010-01-01T00:00:00Z'
@@ -310,7 +310,7 @@ class RestApiV2ClientTest(SessionTest):
             'log_entries': {}
         }))
         client = pagerduty.RestApiV2Client('token')
-        total = client.get_total_record_count('/log_entries', params = {
+        total = client.get_total('/log_entries', params = {
             'since': pd_start,
             'until': now
         })
@@ -327,9 +327,9 @@ class RestApiV2ClientTest(SessionTest):
         )
 
     @patch.object(pagerduty.RestApiV2Client, 'get')
-    def test_get_total_record_count_invalid(self, get):
+    def test_get_total_invalid(self, get):
         """
-        Test RestApiV2Client.get_total_record_count for a response that lacks "total"
+        Test RestApiV2Client.get_total for a response that lacks "total"
         """
         get.return_value = Response(200, json.dumps({
             'log_entries': {}
@@ -342,7 +342,7 @@ class RestApiV2ClientTest(SessionTest):
         client = pagerduty.RestApiV2Client('token')
         self.assertRaises(
             pagerduty.ServerHttpError,
-            client.get_total_record_count,
+            client.get_total,
             '/log_entries',
             params = {
                 'since': pd_start,
@@ -500,15 +500,15 @@ class RestApiV2ClientTest(SessionTest):
     # just to test that the logic works.
 
     @patch.object(pagerduty.RestApiV2Client, 'iter_all')
-    @patch.object(pagerduty.RestApiV2Client, 'get_total_record_count')
-    def test_iter_history_recursion_1s(self, get_total_record_count, iter_all):
+    @patch.object(pagerduty.RestApiV2Client, 'get_total')
+    def test_iter_history_recursion_1s(self, get_total, iter_all):
         """
         Test iter_history stop-iteration on hitting the minimum interval length
         """
         client = pagerduty.RestApiV2Client('token')
         # Checks for "total" in each sub-interval: the first for the whole 2s, the
         # second for the first 1-second sub-interval and the third for the second.
-        get_total_record_count.side_effect = [
+        get_total.side_effect = [
             # Top level: total is over the limit; bisect
             pagerduty.ITERATION_LIMIT+2,
             # Level 1, sub-interval 1: call iter_all; max total not exceeded
@@ -528,8 +528,8 @@ class RestApiV2ClientTest(SessionTest):
         self.assertEqual([{'type': 'log_entry'}]*2, results)
 
     @patch.object(pagerduty.RestApiV2Client, 'iter_all')
-    @patch.object(pagerduty.RestApiV2Client, 'get_total_record_count')
-    def test_iter_history_recursion_limit(self, get_total_record_count, iter_all):
+    @patch.object(pagerduty.RestApiV2Client, 'get_total')
+    def test_iter_history_recursion_limit(self, get_total, iter_all):
         """
         Test iter_history stop-iteration on hitting the recursion depth limit
         """
@@ -540,7 +540,7 @@ class RestApiV2ClientTest(SessionTest):
         # Checks for "total" in each sub-interval: The expected breakdown of 3s is a 1s
         # interval followed by a 2s interval at the first level of recursion, and then
         # two 1s intervals.
-        get_total_record_count.side_effect = [
+        get_total.side_effect = [
             # Top level: total is over the limit; bisect
             pagerduty.ITERATION_LIMIT+2,
             # Level 1, sub-interval 1: call iter_all; max total not exceeded
@@ -560,9 +560,9 @@ class RestApiV2ClientTest(SessionTest):
         pagerduty.rest_api_v2_client.RECURSION_LIMIT = original_recursion_limit
 
     @patch.object(pagerduty.RestApiV2Client, 'iter_all')
-    @patch.object(pagerduty.RestApiV2Client, 'get_total_record_count')
+    @patch.object(pagerduty.RestApiV2Client, 'get_total')
     @patch.object(pagerduty.RestApiV2Client, 'iter_cursor')
-    def test_iter_history_cursor_callout(self, iter_cursor, get_total_record_count,
+    def test_iter_history_cursor_callout(self, iter_cursor, get_total,
                 iter_all):
         """
         Validate the method defers to iter_cursor when used with cursor-based pagination
@@ -577,7 +577,7 @@ class RestApiV2ClientTest(SessionTest):
             'actions': ['delete']
         }))
         iter_all.assert_not_called()
-        get_total_record_count.assert_not_called()
+        get_total.assert_not_called()
         iter_cursor.assert_called_once()
         self.assertEqual('/audit/records', iter_cursor.mock_calls[0][1][0])
         self.assertEqual(
