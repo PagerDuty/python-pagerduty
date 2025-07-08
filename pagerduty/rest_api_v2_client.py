@@ -1007,7 +1007,7 @@ class RestApiV2Client(ApiClient):
         """
         query_params = deepcopy(params)
         if query_params is None:
-            params = {}
+            query_params = {}
         query_params.update({
             'total': True,
             'limit': 1,
