@@ -252,19 +252,18 @@ class OAuthTokenClient(ApiClient):
         :attr:`early_refresh_buffer` seconds before the expiration date.
 
         :param access_token:
-            The most current REST API access token.
+            The current REST API access token.
         :param refresh_token:
-            The refresh token required for token refresh.
+            The refresh token required to refresh the access token.
         :param expiration_date:
-            The expiration date of the refresh token, formatted as a complete ISO8601
-            datetime string, including the timezone suffix as a UTC offset. The value
-            contained in the ``expiration_date`` key of the amended response dictionary
-            returned by any of the "get token" methods should be usable.
+            The expiration date of the access token, formatted as an ISO8601 datetime
+            string, including the timezone suffix as a UTC offset. The value contained
+            in the ``expiration_date`` key of the amended response dictionary returned
+            by any of the "get token" methods should be usable as this parameter.
         :param base_url:
-            The value to use for :attr:`pagerduty.RestApiV2Client.base_url` when
-            constructing the client object.
+            The value to use for the ``url`` attribute of the API client object.
         :param kw:
-            Keyword arguments to pass to the constructor of the API client.
+            Keyword arguments to pass to the constructor of the API client object.
         :returns:
             A tuple containing a :class:`pagerduty.RestApiV2Client` object as its first
             element and the the amended OAuth response if a refresh was performed (and
