@@ -1,12 +1,22 @@
 # Core
-from typing import Union
+from datetime import (
+    datetime,
+    timedelta,
+    timezone
+)
+from typing import (
+    List,
+    Optional,
+    Tuple,
+    Union
+)
 from warnings import warn
-
 from json.decoder import JSONDecodeError
 
 # PyPI
 from requests import Response
 
+# Local
 from . errors import (
     Error,
     HttpError,
@@ -18,6 +28,8 @@ from . errors import (
 ### DEFAULT SETTINGS ###
 ########################
 
+DATETIME_FMT = "%Y-%m-%dT%H:%M:%S%z"
+
 TEXT_LEN_LIMIT = 100
 """
 The longest permissible length of API content to include in error messages.
@@ -27,7 +39,51 @@ The longest permissible length of API content to include in error messages.
 ### HELPER FUNCTIONS ###
 ########################
 
-def deprecated_kwarg(deprecated_name: str, details=None, method=None):
+def datetime_intervals(since: datetime, until: datetime, n=10) \
+        -> List[Tuple[datetime, datetime]]:
+    """
+    Break up a given time interval into a series of smaller consecutive time intervals.
+
+    :param since:
+        A datetime object repesenting the beginning of the time interval.
+    :param until:
+        A datetime object representing the end of the time interval.
+    :param n:
+        The target number of sub-intervals to generate.
+    :returns:
+        A list of tuples representing beginnings and ends of sub-intervals within the
+        time interval. If the resulting intervals would be less than one second, they
+        will be one second.
+    """
+    total_s = int((until - since).total_seconds())
+    if total_s <= 0:
+        raise ValueError('Argument "since" must be before "until".')
+    elif total_s < n:
+        # One-second intervals:
+        interval_len = 1
+        n_intervals = total_s
+    else:
+        interval_len = max(int(total_s/n), 1)
+        n_intervals = n
+    interval_start = since
+    intervals = []
+    for i in range(n_intervals-1):
+        interval_end = interval_start + timedelta(seconds=interval_len)
+        intervals.append((interval_start, interval_end))
+        interval_start = interval_end
+    intervals.append((interval_start, until))
+    return intervals
+
+def datetime_to_relative_seconds(datestr: str):
+    """
+    Convert an ISO8601 string to a relative number of seconds from the current time.
+    """
+    deadline = strptime(datestr)
+    now = datetime.now(timezone.utc)
+    return (deadline-now).total_seconds()
+
+def deprecated_kwarg(deprecated_name: str, details: Optional[str] = None,
+            method: Optional[str] = None):
     """
     Raises a warning if a deprecated keyword argument is used.
 
@@ -45,7 +101,7 @@ def deprecated_kwarg(deprecated_name: str, details=None, method=None):
         f"Keyword argument \"{deprecated_name}\"{method_msg} is deprecated."+details_msg
     )
 
-def http_error_message(r: Response, context=None) -> str:
+def http_error_message(r: Response, context: Optional[str] = None) -> str:
     """
     Formats a message describing a HTTP error.
 
@@ -95,7 +151,16 @@ def plural_name(obj_type: str) -> str:
     else:
         return obj_type+'s'
 
-def requires_success(method):
+
+def relative_seconds_to_datetime(seconds_remaining: int):
+    """
+    Convert a number of seconds in the future to an absolute UTC ISO8601 time string.
+    """
+    now = datetime.now(timezone.utc)
+    target_time = now + timedelta(seconds=seconds_remaining)
+    return strftime(target_time)
+
+def requires_success(method: callable) -> callable:
     """
     Decorator that validates HTTP responses.
     """
@@ -123,7 +188,29 @@ def singular_name(r_name: str) -> str:
     else:
         return r_name.rstrip('s')
 
-def successful_response(r: Response, context=None) -> Response:
+def strftime(time_obj: datetime) -> str:
+    """
+    Format a ``datetime`` object to a string
+
+    :param date:
+        The ``datetime`` object
+    :returns:
+        The formatted string
+    """
+    return time_obj.strftime(DATETIME_FMT)
+
+def strptime(datestr: str) -> datetime:
+    """
+    Parse a string in full ISO8601 format into a ``datetime.datetime`` object.
+
+    :param datestr:
+        Full ISO8601 string representation of the date and time, including time zone
+    :returns:
+        The datetime object representing the string
+    """
+    return datetime.strptime(datestr, DATETIME_FMT)
+
+def successful_response(r: Response, context: Optional[str] = None) -> Response:
     """Validates the response as successful.
 
     Returns the response if it was successful; otherwise, raises an exception.
@@ -154,7 +241,7 @@ def truncate_text(text: str) -> str:
     else:
         return text
 
-def try_decoding(r: Response) -> Union[dict, list, str]:
+def try_decoding(r: Response) -> Optional[Union[dict, list, str]]:
     """
     JSON-decode a response body
 

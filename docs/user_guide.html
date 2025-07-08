@@ -6,14 +6,14 @@
   <meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" />
 
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>User Guide &mdash; python-pagerduty 2.3.0 documentation</title>
+  <title>User Guide &mdash; python-pagerduty 3.0.0 documentation</title>
       <link rel="stylesheet" type="text/css" href="_static/pygments.css?v=03e43079" />
       <link rel="stylesheet" type="text/css" href="_static/css/theme.css?v=e59714d7" />
 
   
       <script src="_static/jquery.js?v=5d32c60e"></script>
       <script src="_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
-      <script src="_static/documentation_options.js?v=c3c8ae58"></script>
+      <script src="_static/documentation_options.js?v=acc74ff5"></script>
       <script src="_static/doctools.js?v=9bcbadda"></script>
       <script src="_static/sphinx_highlight.js?v=dc90522c"></script>
     <script src="_static/js/theme.js"></script>
@@ -51,6 +51,7 @@
 <li class="toctree-l3"><a class="reference internal" href="#using-non-us-service-regions">Using Non-US Service Regions</a></li>
 <li class="toctree-l3"><a class="reference internal" href="#the-from-header">The From header</a></li>
 <li class="toctree-l3"><a class="reference internal" href="#performing-an-oauth-exchange-to-obtain-an-access-token">Performing an OAuth Exchange to Obtain an Access Token</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#performing-oauth-token-refresh-automatically">Performing OAuth Token Refresh Automatically</a></li>
 </ul>
 </li>
 <li class="toctree-l2"><a class="reference internal" href="#basic-usage-examples">Basic Usage Examples</a><ul>
@@ -74,6 +75,7 @@
 </ul>
 </li>
 <li class="toctree-l2"><a class="reference internal" href="#pagination">Pagination</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#retrieving-large-historical-datasets">Retrieving Large Historical Datasets</a></li>
 <li class="toctree-l3"><a class="reference internal" href="#performance-and-completeness-of-results">Performance and Completeness of Results</a></li>
 <li class="toctree-l3"><a class="reference internal" href="#updating-creating-or-deleting-while-paginating">Updating, creating or deleting while paginating</a></li>
 </ul>
@@ -201,12 +203,12 @@ be <code class="docutils literal notranslate"><span class="pre">account</span></
 implementing the OAuth exchange requests described in <a class="reference external" href="https://developer.pagerduty.com/docs/user-oauth-token-via-code-grant">Obtaining a User OAuth
 Token via Code Grant</a> and
 <a class="reference external" href="https://developer.pagerduty.com/docs/app-oauth-token">Obtaining an App OAuth Token</a>.</p>
-<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">client</span> <span class="o">=</span> <span class="n">pagerduty</span><span class="o">.</span><span class="n">OAuthTokenClient</span><span class="p">(</span><span class="n">client_secret</span><span class="p">,</span> <span class="n">client_id</span><span class="p">)</span>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">token_client</span> <span class="o">=</span> <span class="n">pagerduty</span><span class="o">.</span><span class="n">OAuthTokenClient</span><span class="p">(</span><span class="n">client_secret</span><span class="p">,</span> <span class="n">client_id</span><span class="p">)</span>
 </pre></div>
 </div>
 <p>To generate the URL that the user must visit to authorize the application:</p>
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="c1"># With a client object:</span>
-<span class="n">authorize_url</span> <span class="o">=</span> <span class="n">client</span><span class="o">.</span><span class="n">authorize_url</span><span class="p">(</span><span class="n">scope</span><span class="p">,</span> <span class="n">redirect_uri</span><span class="p">)</span>
+<span class="n">authorize_url</span> <span class="o">=</span> <span class="n">token_client</span><span class="o">.</span><span class="n">authorize_url</span><span class="p">(</span><span class="n">scope</span><span class="p">,</span> <span class="n">redirect_uri</span><span class="p">)</span>
 
 <span class="c1"># Without a client object:</span>
 <span class="n">authorize_url</span> <span class="o">=</span> <span class="n">pagerduty</span><span class="o">.</span><span class="n">OAuthTokenClient</span><span class="o">.</span><span class="n">get_authorize_url</span><span class="p">(</span><span class="n">client_id</span><span class="p">,</span> <span class="n">scope</span><span class="p">,</span> <span class="n">redirect_uri</span><span class="p">)</span>
@@ -218,18 +220,47 @@ application and is redirected back to the application at the redirect URI, the
 <code class="docutils literal notranslate"><span class="pre">code</span></code> parameter appended to it will contain the authorization code. The code
 can then be exchanged for an access token as following:</p>
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="c1"># auth_code contains the &quot;code&quot; parameter in the redirect URL of the application:</span>
-<span class="n">auth_response</span> <span class="o">=</span> <span class="n">client</span><span class="o">.</span><span class="n">get_new_token_from_code</span><span class="p">(</span><span class="n">auth_code</span><span class="p">,</span> <span class="n">scope</span><span class="p">,</span> <span class="n">redirect_uri</span><span class="p">)</span>
+<span class="n">auth_response</span> <span class="o">=</span> <span class="n">token_client</span><span class="o">.</span><span class="n">get_new_token_from_code</span><span class="p">(</span><span class="n">auth_code</span><span class="p">,</span> <span class="n">scope</span><span class="p">,</span> <span class="n">redirect_uri</span><span class="p">)</span>
 <span class="n">access_token</span> <span class="o">=</span> <span class="n">auth_response</span><span class="p">[</span><span class="s1">&#39;access_token&#39;</span><span class="p">]</span>
 <span class="n">refresh_token</span> <span class="o">=</span> <span class="n">auth_response</span><span class="p">[</span><span class="s1">&#39;refresh_token&#39;</span><span class="p">]</span>
 </pre></div>
 </div>
-<p>Refresh tokens obtained from the response can be used later to obtain new
-access tokens before the expiration of the original via token refresh:</p>
-<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">auth_response</span> <span class="o">=</span> <span class="n">client</span><span class="o">.</span><span class="n">get_refreshed_token</span><span class="p">(</span><span class="n">refresh_token</span><span class="p">)</span>
-<span class="n">access_token</span> <span class="o">=</span> <span class="n">auth_response</span><span class="p">[</span><span class="s1">&#39;access_token&#39;</span><span class="p">]</span>
-<span class="n">refresh_token</span> <span class="o">=</span> <span class="n">auth_response</span><span class="p">[</span><span class="s1">&#39;refresh_token&#39;</span><span class="p">]</span>
+</section>
+<section id="performing-oauth-token-refresh-automatically">
+<h3>Performing OAuth Token Refresh Automatically<a class="headerlink" href="#performing-oauth-token-refresh-automatically" title="Link to this heading"></a></h3>
+<p>As of version 3.0.0, the OAuth response dictionary returned by token-getting
+methods of <a class="reference internal" href="module_reference.html#pagerduty.OAuthTokenClient" title="pagerduty.OAuthTokenClient"><code class="xref py py-class docutils literal notranslate"><span class="pre">pagerduty.OAuthTokenClient</span></code></a> will include a property
+<code class="docutils literal notranslate"><span class="pre">expiration_date</span></code> containing a string that is an ISO8601-formatted date/time
+indicating when the included token will expire. Assuming that your application
+securely stores this string value in addition to <code class="docutils literal notranslate"><span class="pre">access_token</span></code> and
+<code class="docutils literal notranslate"><span class="pre">refresh_token</span></code>, and has the means to retrieve these values, they can be used
+to call <a class="reference internal" href="module_reference.html#pagerduty.OAuthTokenClient.refresh_client" title="pagerduty.OAuthTokenClient.refresh_client"><code class="xref py py-attr docutils literal notranslate"><span class="pre">pagerduty.OAuthTokenClient.refresh_client</span></code></a>, which instantiates a
+new <a class="reference internal" href="module_reference.html#pagerduty.RestApiV2Client" title="pagerduty.RestApiV2Client"><code class="xref py py-class docutils literal notranslate"><span class="pre">pagerduty.RestApiV2Client</span></code></a> and automatically refreshes the access
+token as necessary.</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="c1"># Assume the calling application implements methods securely_get_values and</span>
+<span class="c1"># securely_store_values to recall and store secrets used for API access:</span>
+<span class="n">access_token</span><span class="p">,</span> <span class="n">refresh_token</span><span class="p">,</span> <span class="n">expiration_date</span> <span class="o">=</span> <span class="n">securely_get_values</span><span class="p">()</span>
+<span class="n">rest_client</span><span class="p">,</span> <span class="n">auth_response</span> <span class="o">=</span> <span class="n">token_client</span><span class="o">.</span><span class="n">refresh_client</span><span class="p">(</span>
+    <span class="n">access_token</span><span class="p">,</span>
+    <span class="n">refresh_token</span><span class="p">,</span>
+    <span class="n">expiration_date</span>
+<span class="p">)</span>
+<span class="c1"># If auth_response == None, the token was not refreshed and does not need</span>
+<span class="c1"># to be updated; otherwise it will be similar to the value returned by</span>
+<span class="c1"># other token-getting methods:</span>
+<span class="k">if</span> <span class="nb">type</span><span class="p">(</span><span class="n">auth_response</span><span class="p">)</span> <span class="ow">is</span> <span class="nb">dict</span><span class="p">:</span>
+    <span class="n">securely_store_values</span><span class="p">(</span>
+        <span class="n">access_token</span> <span class="o">=</span> <span class="n">auth_response</span><span class="p">[</span><span class="s1">&#39;access_token&#39;</span><span class="p">],</span>
+        <span class="n">refresh_token</span> <span class="o">=</span> <span class="n">auth_response</span><span class="p">[</span><span class="s1">&#39;refresh_token&#39;</span><span class="p">],</span>
+        <span class="n">expiration_date</span> <span class="o">=</span> <span class="n">auth_response</span><span class="p">[</span><span class="s1">&#39;expiration_date&#39;</span><span class="p">]</span>
+    <span class="p">)</span>
 </pre></div>
 </div>
+<p>Note, the current default behavior of <code class="xref py py-class docutils literal notranslate"><span class="pre">OAuthTokenClient</span></code> is to refresh
+the token if it is going to expire less than 24 hours in the future. This
+“buffer time” (expressed as a positive integer number of seconds in the future)
+can be controlled by setting the property
+<a class="reference internal" href="module_reference.html#pagerduty.OAuthTokenClient.early_refresh_buffer" title="pagerduty.OAuthTokenClient.early_refresh_buffer"><code class="xref py py-attr docutils literal notranslate"><span class="pre">pagerduty.OAuthTokenClient.early_refresh_buffer</span></code></a>.</p>
 </section>
 </section>
 <section id="basic-usage-examples">
@@ -278,6 +309,18 @@ index endpoint:</p>
 
 <span class="c1"># &gt;&gt;&gt; user</span>
 <span class="c1"># {&#39;type&#39;: &#39;user&#39;, &#39;email&#39;: &#39;jane@example35.com&#39;, ...}</span>
+</pre></div>
+</div>
+<p><strong>Getting a count of records:</strong> use <code class="docutils literal notranslate"><span class="pre">get_total</span></code> on any endpoint
+that supports classic pagination:</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="c1"># Get the total number of users in the whole account:</span>
+<span class="n">total_users</span> <span class="o">=</span> <span class="n">client</span><span class="o">.</span><span class="n">get_total</span><span class="p">(</span><span class="s1">&#39;users&#39;</span><span class="p">)</span>
+
+<span class="c1"># Get the total number of users on a given team:</span>
+<span class="n">total_users_on_team_x</span> <span class="o">=</span> <span class="n">client</span><span class="o">.</span><span class="n">get_total</span><span class="p">(</span>
+    <span class="s1">&#39;users&#39;</span><span class="p">,</span>
+    <span class="n">params</span> <span class="o">=</span> <span class="p">{</span><span class="s1">&#39;team_ids[]&#39;</span><span class="p">:</span> <span class="p">[</span><span class="s1">&#39;PGHI789&#39;</span><span class="p">]}</span>
+<span class="p">)</span>
 </pre></div>
 </div>
 <p><strong>Updating a resource:</strong> use the <code class="docutils literal notranslate"><span class="pre">json</span></code> keyword argument to set the body of the request:</p>
@@ -644,6 +687,33 @@ collection and return the results as a list or dictionary, respectively.</p>
 supports cursor-based pagination, it will call out to
 <a class="reference internal" href="module_reference.html#pagerduty.RestApiV2Client.iter_cursor" title="pagerduty.RestApiV2Client.iter_cursor"><code class="xref py py-attr docutils literal notranslate"><span class="pre">pagerduty.RestApiV2Client.iter_cursor</span></code></a> to iterate through results
 instead.</p>
+<section id="retrieving-large-historical-datasets">
+<h3>Retrieving Large Historical Datasets<a class="headerlink" href="#retrieving-large-historical-datasets" title="Link to this heading"></a></h3>
+<p><a class="reference external" href="https://developer.pagerduty.com/docs/ZG9jOjExMDI5NTU4-pagination#classic-pagination">Classic pagination</a>
+in REST API v2 has a hard limit of 10,000 records (see
+<a class="reference internal" href="module_reference.html#pagerduty.rest_api_v2_client.ITERATION_LIMIT" title="pagerduty.rest_api_v2_client.ITERATION_LIMIT"><code class="xref py py-attr docutils literal notranslate"><span class="pre">pagerduty.rest_api_v2_client.ITERATION_LIMIT</span></code></a>). In other words, if the sum of the <code class="docutils literal notranslate"><span class="pre">limit</span></code>
+and <code class="docutils literal notranslate"><span class="pre">offset</span></code> parameters is larger than this value, the API will respond with
+HTTP 400 Invalid Request. To get around this issue and retrieve larger data
+sets, one must either filter the results such that the total is less than this
+hard limit, or break the data set down into smaller time windows using the
+<code class="docutils literal notranslate"><span class="pre">since</span></code> and <code class="docutils literal notranslate"><span class="pre">until</span></code> parameters, for APIs that support them.</p>
+<p>In version 3.0.0, the method <a class="reference internal" href="module_reference.html#pagerduty.RestApiV2Client.iter_history" title="pagerduty.RestApiV2Client.iter_history"><code class="xref py py-attr docutils literal notranslate"><span class="pre">pagerduty.RestApiV2Client.iter_history</span></code></a> was
+added to facilitate retrieiving large datasets of historical records, i.e.
+<code class="docutils literal notranslate"><span class="pre">/log_entries</span></code>. To use it, first construct timezone-aware
+<code class="docutils literal notranslate"><span class="pre">datetime.datetime</span></code> objects (see: <a class="reference external" href="https://docs.python.org/3/library/datetime.html">datetime</a>) that correspond to the
+absolute beginning and end of the time interval from which to retrieive
+records. The method will then automatically figure out how to divide the time
+interval so that it can retrieve all records from sub-intervals without running
+into the hard pagination limit.</p>
+<p>For example, to obtain all alert/incident log entries year-to-date:</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span><span class="w"> </span><span class="nn">datetime</span><span class="w"> </span><span class="kn">import</span> <span class="n">datetime</span><span class="p">,</span> <span class="n">timezone</span>
+<span class="n">until</span> <span class="o">=</span> <span class="n">datetime</span><span class="o">.</span><span class="n">now</span><span class="p">(</span><span class="n">timezone</span><span class="o">.</span><span class="n">utc</span><span class="p">)</span>
+<span class="n">since</span> <span class="o">=</span> <span class="n">datetime</span><span class="p">(</span><span class="n">until</span><span class="o">.</span><span class="n">year</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="n">tzinfo</span><span class="o">=</span><span class="n">timezone</span><span class="o">.</span><span class="n">utc</span><span class="p">)</span>
+<span class="c1"># Assume &quot;client&quot; is an instance of RestApiV2Client:</span>
+<span class="n">log_entries</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="n">client</span><span class="o">.</span><span class="n">iter_history</span><span class="p">(</span><span class="s1">&#39;/log_entries&#39;</span><span class="p">,</span> <span class="n">since</span><span class="p">,</span>  <span class="n">until</span><span class="p">))</span>
+</pre></div>
+</div>
+</section>
 <section id="performance-and-completeness-of-results">
 <h3>Performance and Completeness of Results<a class="headerlink" href="#performance-and-completeness-of-results" title="Link to this heading"></a></h3>
 <p>Because HTTP requests are made synchronously and not in multiple threads,

@@ -1,6 +1,10 @@
 # Core
 from copy import deepcopy
 from datetime import datetime
+from typing import (
+    List,
+    Optional
+)
 
 # PyPI
 from requests import Response
@@ -29,7 +33,7 @@ class EventsApiV2Client(ApiClient):
 
     url = "https://events.pagerduty.com"
 
-    def __init__(self, api_key: str, debug=False):
+    def __init__(self, api_key: str, debug: bool = False):
         super(EventsApiV2Client, self).__init__(api_key, debug)
         # See: https://developer.pagerduty.com/docs/3d063fd4814a6-events-api-v2-overview#response-codes--retry-logic
         self.retry[500] = 2 # internal server error
@@ -41,7 +45,7 @@ class EventsApiV2Client(ApiClient):
     def auth_header(self) -> dict:
         return {}
 
-    def acknowledge(self, dedup_key) -> str:
+    def acknowledge(self, dedup_key: str) -> str:
         """
         Acknowledge an alert via Events API.
 
@@ -66,7 +70,7 @@ class EventsApiV2Client(ApiClient):
             kw['json'].update({'routing_key': self.api_key})
         return super(EventsApiV2Client, self).post(*args, **kw)
 
-    def prepare_headers(self, method, user_headers=None) -> dict:
+    def prepare_headers(self, method: str, user_headers: Optional[dict] = None) -> dict:
         """
         Add user agent and content type headers for Events API requests.
 
@@ -84,7 +88,7 @@ class EventsApiV2Client(ApiClient):
             headers.update(user_headers)
         return headers
 
-    def resolve(self, dedup_key) -> str:
+    def resolve(self, dedup_key: str) -> str:
         """
         Resolve an alert via Events API.
 
@@ -93,7 +97,10 @@ class EventsApiV2Client(ApiClient):
         """
         return self.send_event('resolve', dedup_key=dedup_key)
 
-    def send_change_event(self, payload=None, links=None, routing_key=None):
+    def send_change_event(self, payload: Optional[dict] = None,
+                links: Optional[List[dict]] = None,
+                routing_key: Optional[str] = None,
+                images: Optional[List[dict]] = None):
         """
         Send a change event to the v2 Change Events API.
 
@@ -107,12 +114,17 @@ class EventsApiV2Client(ApiClient):
             representing the target and display text of each link
         :param routing_key:
             (Deprecated) the routing key. The parameter is set automatically to the
-            :attr:`ApiClient.api_key` property in the final payload and this argument is ignored.
+            :attr:`ApiClient.api_key` property in the final payload and this argument is
+            ignored.
+        :param images:
+            Optional list of images to attach to the change event.
         """
         if payload is None:
             payload = {}
         if links is None:
             links = []
+        if images is None:
+            images = []
         if routing_key is not None:
             deprecated_kwarg(
                 'routing_key',
@@ -121,12 +133,15 @@ class EventsApiV2Client(ApiClient):
         event = {'payload': deepcopy(payload)}
         if links:
             event['links'] = deepcopy(links)
+        if images:
+            event['images'] = deepcopy(images)
         successful_response(
             self.post('/v2/change/enqueue', json=event),
             context="submitting change event",
         )
 
-    def send_event(self, action, dedup_key=None, **properties) -> str:
+    def send_event(self, action: str, dedup_key: Optional[str] = None, **properties) \
+            -> str:
         """
         Send an event to the v2 Events API.
 
@@ -171,8 +186,10 @@ class EventsApiV2Client(ApiClient):
             raise ServerHttpError(err_msg, response)
         return response_body['dedup_key']
 
-    def submit(self, summary, source=None, custom_details=None, links=None,
-            timestamp=None):
+    def submit(self, summary: str, source: Optional[str] = None,
+                custom_details: Optional[dict] = None,
+                links: Optional[List[dict]] = None,
+                timestamp: Optional[str] = None):
         """
         Submit a change event.
 
@@ -218,8 +235,11 @@ class EventsApiV2Client(ApiClient):
             event['links'] = links
         self.send_change_event(**event)
 
-    def trigger(self, summary, source, dedup_key=None, severity='critical',
-            payload=None, custom_details=None, images=None, links=None) -> str:
+    def trigger(self, summary: str, source: str, dedup_key: Optional[str] = None, \
+                severity: str = 'critical', payload: Optional[str] = None, \
+                custom_details: Optional[dict] = None,
+                images: Optional[List[dict]] = None,
+                links: Optional[List[dict]] = None) -> str:
         """
         Send an alert-triggering event
 

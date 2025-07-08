@@ -1,6 +1,11 @@
 # Core
 from copy import deepcopy
-from typing import Iterator, Union
+from datetime import (
+    datetime,
+    timezone
+)
+from sys import getrecursionlimit
+from typing import Iterator, Optional, Union
 from warnings import warn
 
 # PyPI
@@ -9,8 +14,11 @@ from requests import Response
 # Local
 from . api_client import ApiClient, normalize_url
 from . common import (
+    datetime_intervals,
     requires_success,
     singular_name,
+    strftime,
+    strptime,
     successful_response,
     truncate_text,
     try_decoding,
@@ -24,17 +32,35 @@ from . errors import (
 ### CLIENT DEFAULTS ###
 #######################
 
-ITERATION_LIMIT = 1e4
+ITERATION_LIMIT = 10000
 """
 The maximum position of a result in classic pagination.
 
-The offset plus limit parameter may not exceed this number. This is enforced
-server-side and is not something the client may override. Rather, this value is
-used to short-circuit pagination in order to avoid a HTTP 400 error.
+The offset plus limit parameter may not exceed this number. This is enforced server-side
+and is not something the client may override. Rather, this value is reproduced in the
+client to enable short-circuiting pagination, so that the client can avoid the HTTP 400
+error that will result if the sum of the limit and offset parameters exceeds it.
 
 See: `Pagination
 <https://developer.pagerduty.com/docs/ZG9jOjExMDI5NTU4-pagination>`_.
 """
+
+RECURSION_LIMIT = getrecursionlimit() // 2
+"""
+Maximum depth of recursion when using functions that use recursion.
+
+For example, :attr:`pagerduty.RestApiV2Client.iter_history` will call itself recursively
+if the number of results in the data set to be queried exceeds :attr:`ITERATION_LIMIT`.
+
+Its value is arbitrary and meant to guard against excessive depth. For safety, it is set
+to half the hard recursion limit in Python.
+"""
+
+ITER_HIST_RECURSION_WARNING_TEMPLATE = """RestApiV2Client.iter_history cannot continue
+bisecting historical time intervals because {reason}, but the total number of results in
+the current requested time sub-interval ({since_until}) still exceeds the hard limit for
+classic pagination, {iteration_limit}. Results will be incomplete.{suggestion}
+""".replace("\n", " ")
 
 # List of canonical REST API paths
 #
@@ -288,6 +314,26 @@ Explicit list of paths that support cursor-based pagination
 :meta hide-value:
 """
 
+HISTORICAL_RECORD_PATHS = [
+    '/audit/records',
+    '/change_events',
+    '/escalation_policies/{id}/audit/records',
+    '/incidents',
+    '/log_entries',
+    '/oncalls',
+    '/schedules/{id}/audit/records',
+    '/services/{id}/audit/records',
+    '/teams/{id}/audit/records',
+    '/users/{id}/audit/records'
+]
+"""
+Explicit list of paths that represent date-specific resources.
+
+These index endpoints support the "since" and "until" parameters and represent events.
+
+:meta hide-value:
+"""
+
 ENTITY_WRAPPER_CONFIG = {
     # Analytics
     '* /analytics/metrics/incidents/all': None,
@@ -457,8 +503,10 @@ def canonical_path(base_url: str, url: str) -> str:
     page, i.e.  ``/users/{id}/contact_methods`` for retrieving a user's contact methods
     (GET) or creating a new one (POST).
 
-    :param base_url: The base URL of the API
-    :param url: A non-normalized URL (a path or full URL)
+    :param base_url:
+        The base URL of the API
+    :param url:
+        A non-normalized URL (a path or full URL)
     :returns:
         The canonical REST API v2 path corresponding to a URL.
     """
@@ -539,8 +587,10 @@ def entity_wrappers(method: str, path: str) -> tuple:
     """
     Obtains entity wrapping information for a given endpoint (path and method)
 
-    :param method: The HTTP method
-    :param path: A canonical API path i.e. as returned by ``canonical_path``
+    :param method:
+        The HTTP method
+    :param path:
+        A canonical API path i.e. as returned by ``canonical_path``
     :returns:
         A 2-tuple. The first element is the wrapper name that should be used for
         the request body, and the second is the wrapper name to be used for the
@@ -573,8 +623,12 @@ def entity_wrappers(method: str, path: str) -> tuple:
             # If a value is None, that indicates that the request or response
             # value should be encoded and decoded as-is without modifications.
             if False in [w is None or type(w) is str for w in wrapper]:
+                # One or both is neither a string nor None, which is invalid:
                 raise Exception(invalid_config_error)
             return wrapper
+        else:
+            # If not a tuple of length 2, or a string, or None, what are we doing here:
+            raise Exception(invalid_config_error)
     elif len(match) == 0:
         # Nothing in entity wrapper config matches. In this case it is assumed
         # that the endpoint follows classic API patterns and the wrapper name
@@ -617,13 +671,14 @@ def infer_entity_wrapper(method: str, path: str) -> str:
         # Plural if listing via GET to the index endpoint, or doing a multi-put:
         return path_nodes[-1]
 
-def unwrap(response: Response, wrapper) -> Union[dict, list]:
+def unwrap(response: Response, wrapper: Optional[str]) -> Union[dict, list]:
     """
-    Unwraps a wrapped entity.
+    Unwraps a wrapped entity from a HTTP response.
 
-    :param response: The response object
-    :param wrapper: The entity wrapper
-    :type wrapper: str or None
+    :param response:
+        The response object.
+    :param wrapper:
+        The entity wrapper (string), or None to skip unwrapping
     :returns:
         The value associated with the wrapper key in the JSON-decoded body of
         the response, which is expected to be a dictionary (map).
@@ -657,7 +712,7 @@ def unwrap(response: Response, wrapper) -> Union[dict, list]:
 ### FUNCTION DECORATORS ###
 ###########################
 
-def auto_json(method):
+def auto_json(method: callable) -> callable:
     """
     Makes methods return the full response body object after decoding from JSON.
 
@@ -670,7 +725,7 @@ def auto_json(method):
     call.__doc__ = doc
     return call
 
-def resource_url(method):
+def resource_url(method: callable) -> callable:
     """
     API call decorator that allows passing a resource dict as the path/URL
 
@@ -701,7 +756,7 @@ def resource_url(method):
     call.__doc__ = doc
     return call
 
-def wrapped_entities(method):
+def wrapped_entities(method: callable) -> callable:
     """
     Automatically wrap request entities and unwrap response entities.
 
@@ -721,12 +776,13 @@ def wrapped_entities(method):
     exception, and thus design their own custom logic around different types of
     error responses.
 
-    :param method: Method being decorated. Must take one positional argument
-        after ``self`` that is the URL/path to the resource, followed by keyword
-        any number of keyword arguments, and must return an object of class
-        `requests.Response`_, and be named after the HTTP method but with "r"
-        prepended.
-    :returns: A callable object; the reformed method
+    :param method:
+        Method being decorated. Must take one positional argument after ``self`` that is
+        the URL/path to the resource, followed by keyword any number of keyword
+        arguments, and must return an object of class `requests.Response`_, and be named
+        after the HTTP method but with "r" prepended.
+    :returns:
+        A callable object; the reformed method
     """
     http_method = method.__name__.lstrip('r')
     doc = method.__doc__
@@ -773,10 +829,6 @@ class RestApiV2Client(ApiClient):
     :param debug:
         Sets :attr:`print_debug`. Set to True to enable verbose command line
         output.
-    :type token: str
-    :type name: str or None
-    :type default_from: str or None
-    :type debug: bool
 
     :members:
     """
@@ -801,8 +853,8 @@ class RestApiV2Client(ApiClient):
     url = 'https://api.pagerduty.com'
     """Base URL of the REST API"""
 
-    def __init__(self, api_key: str, default_from=None,
-            auth_type='token', debug=False):
+    def __init__(self, api_key: str, default_from: Optional[str] = None,
+            auth_type: str = 'token', debug: bool = False):
         self.api_call_counts = {}
         self.api_time = {}
         self.auth_type = auth_type
@@ -866,9 +918,9 @@ class RestApiV2Client(ApiClient):
         else:
             return {"Authorization": "Token token="+self.api_key}
 
-    def dict_all(self, path: str, **kw) -> dict:
+    def dict_all(self, path: str, by: str = 'id', **kw) -> dict:
         """
-        Dictionary representation of all results from a resource collection.
+        Dictionary representation of all results from an index endpoint.
 
         With the exception of ``by``, all keyword arguments passed to this method are
         also passed to :attr:`iter_all`; see the documentation on that method for
@@ -880,14 +932,18 @@ class RestApiV2Client(ApiClient):
             The attribute of each object to use for the key values of the dictionary.
             This is ``id`` by default. Please note, there is no uniqueness validation,
             so if you use an attribute that is not distinct for the data set, this
-            function will omit some data in the results.
+            function will omit some data in the results. If a property is named that
+            the schema of the API requested does not have, this method will raise
+            ``KeyError``.
+        :returns:
+            A dictionary keyed by the values of the property of each result specified by
+            the ``by`` parameter.
         """
-        by = kw.pop('by', 'id')
         iterator = self.iter_all(path, **kw)
         return {obj[by]:obj for obj in iterator}
 
-    def find(self, resource: str, query, attribute='name', params=None) \
-            -> Union[dict, None]:
+    def find(self, resource: str, query: str, attribute: str = 'name',
+            params: Optional[dict] = None) -> Union[dict, None]:
         """
         Finds an object of a given resource type exactly matching a query.
 
@@ -921,8 +977,6 @@ class RestApiV2Client(ApiClient):
             searching for user by email (for example) it can be set to ``email``
         :param params:
             Optional additional parameters to use when querying.
-        :type attribute: str
-        :type params: dict or None
         :returns:
             The dictionary representation of the result, if found; ``None`` will
             be returned if there is no exact match result.
@@ -930,15 +984,50 @@ class RestApiV2Client(ApiClient):
         query_params = {}
         if params is not None:
             query_params.update(params)
-        query_params.update({'query':query})
+        query_params.update({'query': query})
         simplify = lambda s: str(s).lower()
         search_term = simplify(query)
         equiv = lambda s: simplify(s[attribute]) == search_term
         obj_iter = self.iter_all(resource, params=query_params)
         return next(iter(filter(equiv, obj_iter)), None)
 
-    def iter_all(self, url, params=None, page_size=None, item_hook=None,
-            total=False) -> Iterator[dict]:
+    def get_total(self, url: str, params: Optional[dict] = None) -> int:
+        """
+        Gets the total count of records from a classic pagination index endpoint.
+
+        :param url:
+            The URL of the API endpoint to query
+        :param params:
+            An optional dictionary indicating additional parameters to send to the
+            endpoint, i.e. filters, time range (``since`` and ``until``), etc. This may
+            influence the total, i.e. if specifying a filter that matches a subset of
+            possible results.
+        :returns:
+            The total number of results from the endpoint with the parameters given.
+        """
+        query_params = deepcopy(params)
+        if query_params is None:
+            query_params = {}
+        query_params.update({
+            'total': True,
+            'limit': 1,
+            'offset': 0
+        })
+        response = self.get(url, params=query_params)
+        response_json = try_decoding(response)
+        if 'total' not in response_json:
+            path = canonical_path(self.url, url)
+            raise ServerHttpError(
+                f"Response from endpoint GET {path} lacks a \"total\" property. This " \
+                "may be because the endpoint does not support classic pagination, or " \
+                "implements it incompletely or incorrectly.",
+                response
+            )
+        return int(response_json['total'])
+
+    def iter_all(self, url, params: Optional[dict] = None,
+                page_size: Optional[int] = None, item_hook: Optional[callable] = None,
+                total: bool = False) -> Iterator[dict]:
         """
         Iterator for the contents of an index endpoint or query.
 
@@ -979,10 +1068,6 @@ class RestApiV2Client(ApiClient):
             count of records that match the query. Leaving this as False confers
             a small performance advantage, as the API in this case does not have
             to compute the total count of results in the query.
-        :type url: str
-        :type params: dict or None
-        :type page_size: int or None
-        :type total: bool
         """
         # Get entity wrapping and validate that the URL being requested is
         # likely to support pagination:
@@ -1083,8 +1168,9 @@ class RestApiV2Client(ApiClient):
                     item_hook(result, n, total_count)
                 yield result
 
-    def iter_cursor(self, url, params=None, item_hook=None, page_size=None) \
-            -> Iterator[dict]:
+    def iter_cursor(self, url: str, params: Optional[dict] = None,
+                item_hook: Optional[callable] = None,
+                page_size: Optional[int] = None) -> Iterator[dict]:
         """
         Iterator for results from an endpoint using cursor-based pagination.
 
@@ -1136,9 +1222,99 @@ class RestApiV2Client(ApiClient):
             next_cursor = body.get('next_cursor', None)
             more = bool(next_cursor)
 
+    def iter_history(self, url: str, since: datetime, until: datetime,
+            recursion_depth: int = 0, **kw) -> Iterator[dict]:
+        """
+        Yield all historical records from an endpoint in a given time interval.
+
+        This method works around the limitation of classic pagination (see
+        :attr:`pagerduty.rest_api_v2_client.ITERATION_LIMIT`) by sub-dividing queries
+        into lesser time intervals wherein the total number of results does not exceed
+        the pagination limit.
+
+        :param url:
+            Index endpoint (API URL) from which to yield results. In the event that a
+            cursor-based pagination endpoint is given, this method calls
+            :attr:`iter_cursor` directly, as cursor-based pagination has no such
+            limitation.
+        :param since:
+            The beginning of the time interval. This must be a non-naïve datetime object
+            (i.e. it must be timezone-aware), in order to format the ``since`` parameter
+            when transmitting it to the API such that it unambiguously takes the time
+            zone into account. See: `datetime (Python documentation)
+            <https://docs.python.org/3/library/datetime.html>`_
+        :param until:
+            The end of the time interval. A timezone-aware datetime object must be
+            supplied for the same reason as for the ``since`` parameter.
+        :param kw:
+            Custom keyword arguments to pass to the iteration method. Note, if providing
+            ``params`` in order to add query string parameters for filtering, the
+            ``since`` and ``until`` keys (if present) will be ignored.
+        """
+        path = canonical_path(self.url, url)
+        since_until = {
+            'since': strftime(since),
+            'until': strftime(until)
+        }
+        iter_kw = deepcopy(kw)
+        if path not in HISTORICAL_RECORD_PATHS:
+            # Cannot continue; incompatible endpoint that doesn't accept since/until:
+            raise UrlError(f"Method iter_history does not support {path}")
+        elif path == '/oncalls':
+            # Warn for this specific endpoint but continue:
+            warn('iter_history may yield duplicate results when used with /oncalls')
+        elif path in CURSOR_BASED_PAGINATION_PATHS:
+            # Short-circuit to iter_cursor:
+            iter_kw.setdefault('params', {})
+            iter_kw['params'].update(since_until)
+            return self.iter_cursor(url, **iter_kw)
+        # Obtain the total number of records for the interval:
+        query_params = kw.get('params', {})
+        query_params.update(since_until)
+        total = self.get_total(url, params=query_params)
+
+        no_results = total == 0
+        can_fully_paginate = total <= ITERATION_LIMIT
+        min_interval_len = int((until - since).total_seconds()) == 1
+        stop_recursion = recursion_depth >= RECURSION_LIMIT
+        if no_results:
+            # Nothing to be done for this interval
+            pass
+        elif can_fully_paginate or min_interval_len or stop_recursion:
+            # Do not subdivide any further; it is either not necessary or not feasible.
+            if not can_fully_paginate:
+                # Issue a warning log message
+                if stop_recursion:
+                    reason = 'the recursion depth limit has been reached'
+                    suggestion = ' To avoid this issue, try requesting a smaller ' \
+                        'initial time interval.'
+                elif min_interval_len:
+                    reason = 'the time interval is already the minimum length (1s)'
+                    # In practice, this scenario can only happen when PagerDuty ingests
+                    # and processes, for a single account, >10k alert history events per
+                    # second (to use `/log_entries` as an example). There is
+                    # unfortunately nothing more that can be done in this case.
+                    suggestion = ''
+                self.log.warning(ITER_HIST_RECURSION_WARNING_TEMPLATE.format(
+                    reason = reason,
+                    since_until = str(since_until),
+                    iteration_limit = ITERATION_LIMIT,
+                    suggestion = suggestion
+                ))
+            iter_kw.setdefault('params', {})
+            iter_kw['params'].update(since_until)
+            for item in self.iter_all(url, **iter_kw):
+                yield item
+        else:
+            # If total exceeds maximum, bisect the time window and recurse:
+            iter_kw['recursion_depth'] = recursion_depth + 1
+            for (sub_since, sub_until) in datetime_intervals(since, until, n=2):
+                for item in self.iter_history(url, sub_since, sub_until, **iter_kw):
+                    yield item
+
     @resource_url
     @auto_json
-    def jget(self, url, **kw) -> Union[dict, list]:
+    def jget(self, url: Union[str, dict], **kw) -> Union[dict, list]:
         """
         Performs a GET request, returning the JSON-decoded body as a dictionary
         """
@@ -1146,7 +1322,7 @@ class RestApiV2Client(ApiClient):
 
     @resource_url
     @auto_json
-    def jpost(self, url, **kw) -> Union[dict, list]:
+    def jpost(self, url: Union[str, dict], **kw) -> Union[dict, list]:
         """
         Performs a POST request, returning the JSON-decoded body as a dictionary
         """
@@ -1154,13 +1330,13 @@ class RestApiV2Client(ApiClient):
 
     @resource_url
     @auto_json
-    def jput(self, url, **kw) -> Union[dict, list]:
+    def jput(self, url: Union[str, dict], **kw) -> Optional[Union[dict, list]]:
         """
         Performs a PUT request, returning the JSON-decoded body as a dictionary
         """
         return self.put(url, **kw)
 
-    def list_all(self, url, **kw) -> list:
+    def list_all(self, url: str, **kw) -> list:
         """
         Returns a list of all objects from a given index endpoint.
 
@@ -1172,7 +1348,31 @@ class RestApiV2Client(ApiClient):
         """
         return list(self.iter_all(url, **kw))
 
-    def persist(self, resource, attr, values, update=False):
+    def normalize_params(self, params: dict) -> dict:
+        """
+        Modify the user-supplied parameters to ease implementation
+
+        Current behavior:
+
+        * If a parameter's value is of type list, and the parameter name does
+          not already end in "[]", then the square brackets are appended to keep
+          in line with the requirement that all set filters' parameter names end
+          in "[]".
+
+        :returns:
+            The query parameters after modification
+        """
+        updated_params = {}
+        for param, value in params.items():
+            if type(value) is list and not param.endswith('[]'):
+                updated_params[param+'[]'] = value
+            else:
+                updated_params[param] = value
+        return updated_params
+
+
+    def persist(self, resource: str, attr: str, values: dict, update: bool = False) \
+            -> dict:
         """
         Finds or creates and returns a resource with a matching attribute
 
@@ -1196,11 +1396,6 @@ class RestApiV2Client(ApiClient):
         :param update:
             (New in 4.4.0) If set to True, any existing resource will be updated
             with the values supplied.
-        :type resource: str
-        :type attr: str
-        :type values: dict
-        :type update: bool
-        :rtype: dict
         """
         if attr not in values:
             raise ValueError("Argument `values` must contain a key equal "
@@ -1217,7 +1412,7 @@ class RestApiV2Client(ApiClient):
         else:
             return self.rpost(resource, json=values)
 
-    def postprocess(self, response: Response, suffix=None):
+    def postprocess(self, response: Response, suffix: Optional[str] = None):
         """
         Records performance information / request metadata about the API call.
 
@@ -1258,7 +1453,17 @@ class RestApiV2Client(ApiClient):
                 "and reference x_request_id=%s / date=%s",
                 status, request_id, request_date)
 
-    def prepare_headers(self, method, user_headers={}) -> dict:
+    def prepare_headers(self, method: str, user_headers: Optional[dict] = None) -> dict:
+        """
+        Amends and combines default and user-supplied headers for a REST API request.
+
+        :param method:
+            The HTTP method
+        :param user_headers:
+            Any user-supplied headers
+        :returns:
+            A dictionary of the final headers to use in the request
+        """
         headers = deepcopy(self.headers)
         headers['User-Agent'] = self.user_agent
         if self.default_from is not None:
@@ -1271,7 +1476,7 @@ class RestApiV2Client(ApiClient):
 
     @resource_url
     @requires_success
-    def rdelete(self, resource, **kw) -> Response:
+    def rdelete(self, resource: Union[str, dict], **kw) -> Response:
         """
         Delete a resource.
 
@@ -1281,13 +1486,12 @@ class RestApiV2Client(ApiClient):
             whose value is the URL of the resource.
         :param **kw:
             Custom keyword arguments to pass to ``requests.Session.delete``
-        :type resource: str or dict
         """
         return self.delete(resource, **kw)
 
     @resource_url
     @wrapped_entities
-    def rget(self, resource, **kw) -> Union[dict, list]:
+    def rget(self, resource: Union[str, dict], **kw) -> Union[dict, list]:
         """
         Wrapped-entity-aware GET function.
 
@@ -1301,13 +1505,12 @@ class RestApiV2Client(ApiClient):
         :param **kw:
             Custom keyword arguments to pass to ``requests.Session.get``
         :returns:
-            Dictionary representation of the requested object
-        :type resource: str or dict
+            The API response after JSON-decoding and unwrapping
         """
         return self.get(resource, **kw)
 
     @wrapped_entities
-    def rpatch(self, path, **kw) -> dict:
+    def rpatch(self, path: str, **kw) -> dict:
         """
         Wrapped-entity-aware PATCH function.
 
@@ -1315,12 +1518,20 @@ class RestApiV2Client(ApiClient):
         Workflow Integration Connection": ``PATCH
         /workflows/integrations/{integration_id}/connections/{id}``
 
-        It cannot use the :attr:`resource_url` decorator because the schema in that case has no
-        ``self`` property, and so the URL or path must be supplied.
+        It cannot use the :attr:`resource_url` decorator because the schema in that case
+        has no ``self`` property, and so the URL or path must be supplied.
+
+        :param path:
+            The URL to be requested
+        :param kw:
+            Keyword arguments to send to the request function, i.e. ``params``
+        :returns:
+            The API response after JSON-decoding and unwrapping
         """
+        return self.patch(path, **kw)
 
     @wrapped_entities
-    def rpost(self, path, **kw) -> Union[dict, list]:
+    def rpost(self, path: str, **kw) -> Union[dict, list]:
         """
         Wrapped-entity-aware POST function.
 
@@ -1332,14 +1543,13 @@ class RestApiV2Client(ApiClient):
         :param **kw:
             Custom keyword arguments to pass to ``requests.Session.post``
         :returns:
-            Dictionary representation of the created object
-        :type path: str
+            The API response after JSON-decoding and unwrapping
         """
         return self.post(path, **kw)
 
     @resource_url
     @wrapped_entities
-    def rput(self, resource, **kw) -> Union[dict, list]:
+    def rput(self, resource: Union[str, dict], **kw) -> Optional[Union[dict, list]]:
         """
         Wrapped-entity-aware PUT function.
 
@@ -1352,7 +1562,9 @@ class RestApiV2Client(ApiClient):
         :param **kw:
             Custom keyword arguments to pass to ``requests.Session.put``
         :returns:
-            Dictionary representation of the updated object
+            The API response after JSON-decoding and unwrapping. In the case of at least
+            one Teams API endpoint and any other future API endpoint that responds with
+            204 No Content, the return value will be None.
         """
         return self.put(resource, **kw)
 
@@ -1360,8 +1572,6 @@ class RestApiV2Client(ApiClient):
     def subdomain(self) -> str:
         """
         Subdomain of the PagerDuty account of the API access token.
-
-        :type: str or None
         """
         if not hasattr(self, '_subdomain') or self._subdomain is None:
             try:
