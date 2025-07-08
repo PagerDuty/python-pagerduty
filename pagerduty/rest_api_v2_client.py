@@ -617,11 +617,12 @@ def entity_wrappers(method: str, path: str) -> tuple:
             # If a value is None, that indicates that the request or response
             # value should be encoded and decoded as-is without modifications.
             if False in [w is None or type(w) is str for w in wrapper]:
-                raise UrlError(invalid_config_error)
+                # One or both is neither a string nor None, which is invalid:
+                raise Exception(invalid_config_error)
             return wrapper
         else:
-            # If not a tuple of length 2, or a string, or None, what are we doing here
-            raise UrlError(invalid_config_error)
+            # If not a tuple of length 2, or a string, or None, what are we doing here:
+            raise Exception(invalid_config_error)
     elif len(match) == 0:
         # Nothing in entity wrapper config matches. In this case it is assumed
         # that the endpoint follows classic API patterns and the wrapper name
