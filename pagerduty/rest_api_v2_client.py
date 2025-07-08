@@ -1026,7 +1026,7 @@ class RestApiV2Client(ApiClient):
         return int(response_json['total'])
 
     def iter_all(self, url, params: Optional[dict] = None,
-                page_size: Optional[dict] = None, item_hook: Optional[callable] = None,
+                page_size: Optional[int] = None, item_hook: Optional[callable] = None,
                 total: bool = False) -> Iterator[dict]:
         """
         Iterator for the contents of an index endpoint or query.
@@ -1068,10 +1068,6 @@ class RestApiV2Client(ApiClient):
             count of records that match the query. Leaving this as False confers
             a small performance advantage, as the API in this case does not have
             to compute the total count of results in the query.
-        :type url: str
-        :type params: dict or None
-        :type page_size: int or None
-        :type total: bool
         """
         # Get entity wrapping and validate that the URL being requested is
         # likely to support pagination:
