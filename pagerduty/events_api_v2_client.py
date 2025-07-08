@@ -3,10 +3,7 @@ from copy import deepcopy
 from datetime import datetime
 from typing import (
     List,
-    NotRequired,
-    Optional,
-    Required,
-    TypedDict
+    Optional
 )
 
 # PyPI
@@ -20,15 +17,6 @@ from . common import (
     try_decoding,
     truncate_text
 )
-
-class ImageEntry(TypedDict):
-    src: Required[str]
-    href: NotRequired[str]
-    alt: NotRequired[str]
-
-class LinkEntry(TypedDict):
-    href: Required[str]
-    text: NotRequired[str]
 
 class EventsApiV2Client(ApiClient):
 
@@ -110,9 +98,9 @@ class EventsApiV2Client(ApiClient):
         return self.send_event('resolve', dedup_key=dedup_key)
 
     def send_change_event(self, payload: Optional[dict] = None,
-                links: Optional[List[LinkEntry]] = None,
+                links: Optional[List[dict]] = None,
                 routing_key: Optional[str] = None,
-                images: Optional[List[ImageEntry]] = None):
+                images: Optional[List[dict]] = None):
         """
         Send a change event to the v2 Change Events API.
 
@@ -200,7 +188,7 @@ class EventsApiV2Client(ApiClient):
 
     def submit(self, summary: str, source: Optional[str] = None,
                 custom_details: Optional[dict] = None,
-                links: Optional[List[LinkEntry]] = None,
+                links: Optional[List[dict]] = None,
                 timestamp: Optional[str] = None):
         """
         Submit a change event.
@@ -250,8 +238,8 @@ class EventsApiV2Client(ApiClient):
     def trigger(self, summary: str, source: str, dedup_key: Optional[str] = None, \
                 severity: str = 'critical', payload: Optional[str] = None, \
                 custom_details: Optional[dict] = None,
-                images: Optional[List[ImageEntry]] = None,
-                links: Optional[List[LinkEntry]] = None) -> str:
+                images: Optional[List[dict]] = None,
+                links: Optional[List[dict]] = None) -> str:
         """
         Send an alert-triggering event
 
