@@ -7,6 +7,12 @@
    - New method ``RestApiV2Client.iter_history``: iterates through large historical data sets that exceed the hard limit of classic pagination
    - New method ``RestApiV2Client.get_total``: returns the total number of matching records in a classic pagination endpoint
    - Expanded coverage of type hints
+   - Documentantion revisions
+
+* **Fixes:**
+
+   - Method ``RestApiV2Client.rpatch`` now fully implemented (it mistakenly was left with no return value in previous versions)
+   - Mutable default values in optional keyword arguments have been replaced with ``None``.
 
 **2025-06-23: Add a new OAuth token exchange client class - Version 2.3.0**
 
