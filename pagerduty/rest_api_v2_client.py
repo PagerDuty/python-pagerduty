@@ -330,6 +330,8 @@ HISTORICAL_RECORD_PATHS = [
 Explicit list of paths that represent date-specific resources.
 
 These index endpoints support the "since" and "until" parameters and represent events.
+
+:meta hide-value:
 """
 
 ENTITY_WRAPPER_CONFIG = {
@@ -501,8 +503,10 @@ def canonical_path(base_url: str, url: str) -> str:
     page, i.e.  ``/users/{id}/contact_methods`` for retrieving a user's contact methods
     (GET) or creating a new one (POST).
 
-    :param base_url: The base URL of the API
-    :param url: A non-normalized URL (a path or full URL)
+    :param base_url:
+        The base URL of the API
+    :param url:
+        A non-normalized URL (a path or full URL)
     :returns:
         The canonical REST API v2 path corresponding to a URL.
     """
@@ -583,8 +587,10 @@ def entity_wrappers(method: str, path: str) -> tuple:
     """
     Obtains entity wrapping information for a given endpoint (path and method)
 
-    :param method: The HTTP method
-    :param path: A canonical API path i.e. as returned by ``canonical_path``
+    :param method:
+        The HTTP method
+    :param path:
+        A canonical API path i.e. as returned by ``canonical_path``
     :returns:
         A 2-tuple. The first element is the wrapper name that should be used for
         the request body, and the second is the wrapper name to be used for the
@@ -770,12 +776,13 @@ def wrapped_entities(method: callable) -> callable:
     exception, and thus design their own custom logic around different types of
     error responses.
 
-    :param method: Method being decorated. Must take one positional argument
-        after ``self`` that is the URL/path to the resource, followed by keyword
-        any number of keyword arguments, and must return an object of class
-        `requests.Response`_, and be named after the HTTP method but with "r"
-        prepended.
-    :returns: A callable object; the reformed method
+    :param method:
+        Method being decorated. Must take one positional argument after ``self`` that is
+        the URL/path to the resource, followed by keyword any number of keyword
+        arguments, and must return an object of class `requests.Response`_, and be named
+        after the HTTP method but with "r" prepended.
+    :returns:
+        A callable object; the reformed method
     """
     http_method = method.__name__.lstrip('r')
     doc = method.__doc__
@@ -822,10 +829,6 @@ class RestApiV2Client(ApiClient):
     :param debug:
         Sets :attr:`print_debug`. Set to True to enable verbose command line
         output.
-    :type token: str
-    :type name: str or None
-    :type default_from: str or None
-    :type debug: bool
 
     :members:
     """
@@ -915,9 +918,9 @@ class RestApiV2Client(ApiClient):
         else:
             return {"Authorization": "Token token="+self.api_key}
 
-    def dict_all(self, path: str, **kw) -> dict:
+    def dict_all(self, path: str, by: str = 'id', **kw) -> dict:
         """
-        Dictionary representation of all results from a resource collection.
+        Dictionary representation of all results from an index endpoint.
 
         With the exception of ``by``, all keyword arguments passed to this method are
         also passed to :attr:`iter_all`; see the documentation on that method for
@@ -929,9 +932,13 @@ class RestApiV2Client(ApiClient):
             The attribute of each object to use for the key values of the dictionary.
             This is ``id`` by default. Please note, there is no uniqueness validation,
             so if you use an attribute that is not distinct for the data set, this
-            function will omit some data in the results.
+            function will omit some data in the results. If a property is named that
+            the schema of the API requested does not have, this method will raise
+            ``KeyError``.
+        :returns:
+            A dictionary keyed by the values of the property of each result specified by
+            the ``by`` parameter.
         """
-        by = kw.pop('by', 'id')
         iterator = self.iter_all(path, **kw)
         return {obj[by]:obj for obj in iterator}
 
@@ -970,8 +977,6 @@ class RestApiV2Client(ApiClient):
             searching for user by email (for example) it can be set to ``email``
         :param params:
             Optional additional parameters to use when querying.
-        :type attribute: str
-        :type params: dict or None
         :returns:
             The dictionary representation of the result, if found; ``None`` will
             be returned if there is no exact match result.
@@ -994,8 +999,8 @@ class RestApiV2Client(ApiClient):
             The URL of the API endpoint to query
         :param params:
             An optional dictionary indicating additional parameters to send to the
-            endpoint, i.e. filters, time range (``since`` and ``until``), etc. This will
-            affect the total, i.e. if specifying a filter that matches a subset of
+            endpoint, i.e. filters, time range (``since`` and ``until``), etc. This may
+            influence the total, i.e. if specifying a filter that matches a subset of
             possible results.
         :returns:
             The total number of results from the endpoint with the parameters given.
@@ -1313,7 +1318,7 @@ class RestApiV2Client(ApiClient):
 
     @resource_url
     @auto_json
-    def jget(self, url, **kw) -> Union[dict, list]:
+    def jget(self, url: Union[str, dict], **kw) -> Union[dict, list]:
         """
         Performs a GET request, returning the JSON-decoded body as a dictionary
         """
@@ -1321,7 +1326,7 @@ class RestApiV2Client(ApiClient):
 
     @resource_url
     @auto_json
-    def jpost(self, url, **kw) -> Union[dict, list]:
+    def jpost(self, url: Union[str, dict], **kw) -> Union[dict, list]:
         """
         Performs a POST request, returning the JSON-decoded body as a dictionary
         """
@@ -1329,13 +1334,13 @@ class RestApiV2Client(ApiClient):
 
     @resource_url
     @auto_json
-    def jput(self, url, **kw) -> Union[dict, list]:
+    def jput(self, url: Union[str, dict], **kw) -> Optional[Union[dict, list]]:
         """
         Performs a PUT request, returning the JSON-decoded body as a dictionary
         """
         return self.put(url, **kw)
 
-    def list_all(self, url, **kw) -> list:
+    def list_all(self, url: str, **kw) -> list:
         """
         Returns a list of all objects from a given index endpoint.
 
@@ -1370,7 +1375,8 @@ class RestApiV2Client(ApiClient):
         return updated_params
 
 
-    def persist(self, resource, attr, values, update=False):
+    def persist(self, resource: str, attr: str, values: dict, update: bool = False) \
+            -> dict:
         """
         Finds or creates and returns a resource with a matching attribute
 
@@ -1394,11 +1400,6 @@ class RestApiV2Client(ApiClient):
         :param update:
             (New in 4.4.0) If set to True, any existing resource will be updated
             with the values supplied.
-        :type resource: str
-        :type attr: str
-        :type values: dict
-        :type update: bool
-        :rtype: dict
         """
         if attr not in values:
             raise ValueError("Argument `values` must contain a key equal "
@@ -1456,7 +1457,17 @@ class RestApiV2Client(ApiClient):
                 "and reference x_request_id=%s / date=%s",
                 status, request_id, request_date)
 
-    def prepare_headers(self, method, user_headers={}) -> dict:
+    def prepare_headers(self, method: str, user_headers: Optional[dict] = None) -> dict:
+        """
+        Amends and combines default and user-supplied headers for a REST API request.
+
+        :param method:
+            The HTTP method
+        :param user_headers:
+            Any user-supplied headers
+        :returns:
+            A dictionary of the final headers to use in the request
+        """
         headers = deepcopy(self.headers)
         headers['User-Agent'] = self.user_agent
         if self.default_from is not None:
@@ -1469,7 +1480,7 @@ class RestApiV2Client(ApiClient):
 
     @resource_url
     @requires_success
-    def rdelete(self, resource, **kw) -> Response:
+    def rdelete(self, resource: Union[str, dict], **kw) -> Response:
         """
         Delete a resource.
 
@@ -1479,13 +1490,12 @@ class RestApiV2Client(ApiClient):
             whose value is the URL of the resource.
         :param **kw:
             Custom keyword arguments to pass to ``requests.Session.delete``
-        :type resource: str or dict
         """
         return self.delete(resource, **kw)
 
     @resource_url
     @wrapped_entities
-    def rget(self, resource, **kw) -> Union[dict, list]:
+    def rget(self, resource: Union[str, dict], **kw) -> Union[dict, list]:
         """
         Wrapped-entity-aware GET function.
 
@@ -1499,13 +1509,12 @@ class RestApiV2Client(ApiClient):
         :param **kw:
             Custom keyword arguments to pass to ``requests.Session.get``
         :returns:
-            Dictionary representation of the requested object
-        :type resource: str or dict
+            The API response after JSON-decoding and unwrapping
         """
         return self.get(resource, **kw)
 
     @wrapped_entities
-    def rpatch(self, path, **kw) -> dict:
+    def rpatch(self, path: str, **kw) -> dict:
         """
         Wrapped-entity-aware PATCH function.
 
@@ -1513,12 +1522,20 @@ class RestApiV2Client(ApiClient):
         Workflow Integration Connection": ``PATCH
         /workflows/integrations/{integration_id}/connections/{id}``
 
-        It cannot use the :attr:`resource_url` decorator because the schema in that case has no
-        ``self`` property, and so the URL or path must be supplied.
+        It cannot use the :attr:`resource_url` decorator because the schema in that case
+        has no ``self`` property, and so the URL or path must be supplied.
+
+        :param path:
+            The URL to be requested
+        :param kw:
+            Keyword arguments to send to the request function, i.e. ``params``
+        :returns:
+            The API response after JSON-decoding and unwrapping
         """
+        return self.patch(path, **kw)
 
     @wrapped_entities
-    def rpost(self, path, **kw) -> Union[dict, list]:
+    def rpost(self, path: str, **kw) -> Union[dict, list]:
         """
         Wrapped-entity-aware POST function.
 
@@ -1530,14 +1547,13 @@ class RestApiV2Client(ApiClient):
         :param **kw:
             Custom keyword arguments to pass to ``requests.Session.post``
         :returns:
-            Dictionary representation of the created object
-        :type path: str
+            The API response after JSON-decoding and unwrapping
         """
         return self.post(path, **kw)
 
     @resource_url
     @wrapped_entities
-    def rput(self, resource, **kw) -> Union[dict, list]:
+    def rput(self, resource: Union[str, dict], **kw) -> Optional[Union[dict, list]]:
         """
         Wrapped-entity-aware PUT function.
 
@@ -1550,7 +1566,9 @@ class RestApiV2Client(ApiClient):
         :param **kw:
             Custom keyword arguments to pass to ``requests.Session.put``
         :returns:
-            Dictionary representation of the updated object
+            The API response after JSON-decoding and unwrapping. In the case of at least
+            one Teams API endpoint and any other future API endpoint that responds with
+            204 No Content, the return value will be None.
         """
         return self.put(resource, **kw)
 
@@ -1558,8 +1576,6 @@ class RestApiV2Client(ApiClient):
     def subdomain(self) -> str:
         """
         Subdomain of the PagerDuty account of the API access token.
-
-        :type: str or None
         """
         if not hasattr(self, '_subdomain') or self._subdomain is None:
             try:

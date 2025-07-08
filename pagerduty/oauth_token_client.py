@@ -243,8 +243,8 @@ class OAuthTokenClient(ApiClient):
         )
 
     def refresh_client(self, access_token: str, refresh_token: str,
-                expiration_date: str, base_url='https://api.pagerduty.com', **kw) \
-            -> Tuple[RestApiV2Client, Optional[dict]]:
+                expiration_date: str, base_url: str = 'https://api.pagerduty.com', **kw
+            ) -> Tuple[RestApiV2Client, Optional[dict]]:
         """
         Instantiate and return a :class:`pagerduty.RestApiV2Client` client object
 
