@@ -935,6 +935,8 @@ class RestApiV2Client(ApiClient):
             function will omit some data in the results. If a property is named that
             the schema of the API requested does not have, this method will raise
             ``KeyError``.
+        :param kw:
+            Keyword arguments to pass to :attr:`iter_all`.
         :returns:
             A dictionary keyed by the values of the property of each result specified by
             the ``by`` parameter.
@@ -1025,6 +1027,43 @@ class RestApiV2Client(ApiClient):
             )
         return int(response_json['total'])
 
+    def iter_alert_grouping_settings(self, service_ids: Optional[list] = None,
+                limit: Optional[int] = None) -> Iterator[dict]:
+        """
+        Iterator for the contents of the "List alert grouping settings" endpoint.
+
+        The API endpoint "GET /alert_grouping_settings" has its own unique method of
+        pagination. This method provides an abstraction for it similar to what
+        :attr:`iter_all` provides for endpoints that implement classic pagination.
+
+        See:
+        `List alert grouping settings <https://developer.pagerduty.com/api-reference/b9fe211cc2748-list-alert-grouping-settings>`_
+
+        :param service_ids:
+            A list of specific service IDs to which results will be constrained.
+        :param limit:
+            The number of results retrieved per page. By default, the value
+            :attr:`default_page_size` will be used.
+        :yields:
+            Results from each page in the ``alert_grouping_settings`` response property.
+        """
+        more = True
+        after = None
+        page_size = self.default_page_size
+        if limit is not None:
+            page_size = limit
+        while more:
+            params = {'limit': page_size}
+            if service_ids is not None:
+                params['service_ids[]'] = service_ids
+            if after is not None:
+                params['after'] = after
+            page = self.jget('/alert_grouping_settings', params=params)
+            for result in page['alert_grouping_settings']:
+                yield result
+            after = page.get('before', None)
+            more = after is not None
+
     def iter_all(self, url, params: Optional[dict] = None,
                 page_size: Optional[int] = None, item_hook: Optional[callable] = None,
                 total: bool = False) -> Iterator[dict]:
@@ -1068,6 +1107,8 @@ class RestApiV2Client(ApiClient):
             count of records that match the query. Leaving this as False confers
             a small performance advantage, as the API in this case does not have
             to compute the total count of results in the query.
+        :yields:
+            Results from each page of results.
         """
         # Get entity wrapping and validate that the URL being requested is
         # likely to support pagination:
@@ -1168,6 +1209,56 @@ class RestApiV2Client(ApiClient):
                     item_hook(result, n, total_count)
                 yield result
 
+    def iter_analytics_raw_incidents(self, filters: dict, order: str = 'desc',
+                order_by: str = 'created_at', limit: Optional[int] = None,
+                time_zone: Optional[str] = None) -> Iterator[dict]:
+        """
+        Iterator for raw analytics data on multiple incidents.
+
+        The API endpoint ``POST /analytics/raw/incidents`` has its own unique method of
+        pagination. This method provides an abstraction for it similar to
+        :attr:`iter_all`.
+
+        See: 
+        `Get raw data - multiple incidents <https://developer.pagerduty.com/api-reference/c2d493e995071-get-raw-data-multiple-incidents>`_
+
+        :param filters:
+            Dictionary representation of the required ``filters`` parameters.
+        :param order:
+            The order in which to sort results. Must be ``asc`` or ``desc``.
+        :param order_by:
+            The attribute of results by which to order results. Must be ``created_at``
+            or ``seconds_to_resolve``.
+        :param limit:
+            The number of results to yield per page before requesting the next page. If
+            unspecified, :attr:`default_page_size` will be used. The particular API
+            endpoint permits values up to 1000.
+        :yields:
+            Entries of the ``data`` property in the response body from each page
+        """
+        page_size = self.default_page_size
+        if limit is not None:
+            page_size = limit
+        more = True
+        last = None
+        while more:
+            body = {
+                'filters': filters,
+                'order': order,
+                'order_by': order_by,
+                'limit': page_size
+            }
+            if time_zone is not None:
+                body['time_zone'] = time_zone
+            if last is not None:
+                body['starting_after'] = last
+            page = self.jpost('/analytics/raw/incidents', json=body)
+            for result in page['data']:
+                yield result
+            last = page.get('last', None)
+            more = page.get('more', False) and last is not None
+
+
     def iter_cursor(self, url: str, params: Optional[dict] = None,
                 item_hook: Optional[callable] = None,
                 page_size: Optional[int] = None) -> Iterator[dict]:
@@ -1184,6 +1275,8 @@ class RestApiV2Client(ApiClient):
         :param page_size:
             Number of results per page of results (the ``limit`` parameter). If
             unspecified, :attr:`default_page_size` will be used.
+        :yields:
+            Results from each page of results.
         """
         path = canonical_path(self.url, url)
         if path not in CURSOR_BASED_PAGINATION_PATHS:
@@ -1250,6 +1343,9 @@ class RestApiV2Client(ApiClient):
             Custom keyword arguments to pass to the iteration method. Note, if providing
             ``params`` in order to add query string parameters for filtering, the
             ``since`` and ``until`` keys (if present) will be ignored.
+        :yields:
+            All results from the resource collection API within the time range specified
+            by ``since`` and ``until``.
         """
         path = canonical_path(self.url, url)
         since_until = {
