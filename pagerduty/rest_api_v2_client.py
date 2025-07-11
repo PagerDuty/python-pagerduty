@@ -1027,6 +1027,43 @@ class RestApiV2Client(ApiClient):
             )
         return int(response_json['total'])
 
+    def iter_alert_grouping_settings(self, service_ids: Optional[list] = None,
+                limit: Optional[int] = None) -> Iterator[dict]:
+        """
+        Iterator for the contents of the "List alert grouping settings" endpoint.
+
+        The API endpoint "GET /alert_grouping_settings" has its own unique method of
+        pagination. This method provides an abstraction for it similar to what
+        :attr:`iter_all` provides for endpoints that implement classic pagination.
+
+        See:
+        `List alert grouping settings <https://developer.pagerduty.com/api-reference/b9fe211cc2748-list-alert-grouping-settings>`_
+
+        :param service_ids:
+            A list of specific service IDs to which results will be constrained.
+        :param limit:
+            The number of results retrieved per page. By default, the value
+            :attr:`default_page_size` will be used.
+        :yields:
+            Results from each page in the ``alert_grouping_settings`` response property.
+        """
+        more = True
+        after = None
+        page_size = self.default_page_size
+        if limit is not None:
+            page_size = limit
+        while more:
+            params = {'limit': page_size}
+            if service_ids is not None:
+                params['service_ids[]'] = service_ids
+            if after is not None:
+                params['after'] = after
+            page = self.jget('/alert_grouping_settings', params=params)
+            for result in page['alert_grouping_settings']:
+                yield result
+            after = page.get('before', None)
+            more = after is not None
+
     def iter_all(self, url, params: Optional[dict] = None,
                 page_size: Optional[int] = None, item_hook: Optional[callable] = None,
                 total: bool = False) -> Iterator[dict]:
