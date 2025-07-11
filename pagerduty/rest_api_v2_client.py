@@ -935,6 +935,8 @@ class RestApiV2Client(ApiClient):
             function will omit some data in the results. If a property is named that
             the schema of the API requested does not have, this method will raise
             ``KeyError``.
+        :param kw:
+            Keyword arguments to pass to :attr:`iter_all`.
         :returns:
             A dictionary keyed by the values of the property of each result specified by
             the ``by`` parameter.
@@ -1068,6 +1070,8 @@ class RestApiV2Client(ApiClient):
             count of records that match the query. Leaving this as False confers
             a small performance advantage, as the API in this case does not have
             to compute the total count of results in the query.
+        :yields:
+            Results from each page of results.
         """
         # Get entity wrapping and validate that the URL being requested is
         # likely to support pagination:
@@ -1234,6 +1238,8 @@ class RestApiV2Client(ApiClient):
         :param page_size:
             Number of results per page of results (the ``limit`` parameter). If
             unspecified, :attr:`default_page_size` will be used.
+        :yields:
+            Results from each page of results.
         """
         path = canonical_path(self.url, url)
         if path not in CURSOR_BASED_PAGINATION_PATHS:
@@ -1300,6 +1306,9 @@ class RestApiV2Client(ApiClient):
             Custom keyword arguments to pass to the iteration method. Note, if providing
             ``params`` in order to add query string parameters for filtering, the
             ``since`` and ``until`` keys (if present) will be ignored.
+        :yields:
+            All results from the resource collection API within the time range specified
+            by ``since`` and ``until``.
         """
         path = canonical_path(self.url, url)
         since_until = {
