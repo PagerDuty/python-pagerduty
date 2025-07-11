@@ -1168,6 +1168,56 @@ class RestApiV2Client(ApiClient):
                     item_hook(result, n, total_count)
                 yield result
 
+    def iter_analytics_raw_incidents(self, filters: dict, order: str = 'desc',
+                order_by: str = 'created_at', limit: Optional[int] = None,
+                time_zone: Optional[str] = None) -> Iterator[dict]:
+        """
+        Iterator for raw analytics data on multiple incidents.
+
+        The API endpoint ``POST /analytics/raw/incidents`` has its own unique method of
+        pagination. This method provides an abstraction for it similar to
+        :attr:`iter_all`.
+
+        See: 
+        `Get raw data - multiple incidents <https://developer.pagerduty.com/api-reference/c2d493e995071-get-raw-data-multiple-incidents>`_
+
+        :param filters:
+            Dictionary representation of the required ``filters`` parameters.
+        :param order:
+            The order in which to sort results. Must be ``asc`` or ``desc``.
+        :param order_by:
+            The attribute of results by which to order results. Must be ``created_at``
+            or ``seconds_to_resolve``.
+        :param limit:
+            The number of results to yield per page before requesting the next page. If
+            unspecified, :attr:`default_page_size` will be used. The particular API
+            endpoint permits values up to 1000.
+        :yields:
+            Entries of the ``data`` property in the response body from each page
+        """
+        page_size = self.default_page_size
+        if limit is not None:
+            page_size = limit
+        more = True
+        last = None
+        while more:
+            body = {
+                'filters': filters,
+                'order': order,
+                'order_by': order_by,
+                'limit': page_size
+            }
+            if time_zone is not None:
+                body['time_zone'] = time_zone
+            if last is not None:
+                body['starting_after'] = last
+            page = self.jpost('/analytics/raw/incidents', json=body)
+            for result in page['data']:
+                yield result
+            last = page.get('last', None)
+            more = page.get('more', False) and last is not None
+
+
     def iter_cursor(self, url: str, params: Optional[dict] = None,
                 item_hook: Optional[callable] = None,
                 page_size: Optional[int] = None) -> Iterator[dict]:
