@@ -335,6 +335,10 @@ These index endpoints support the "since" and "until" parameters and represent e
 """
 
 ENTITY_WRAPPER_CONFIG = {
+    # Abilities
+    'GET /abilities/{id}': None,
+    # Add-ons follows orthodox schema patterns
+    # Alert grouping settings follows orthodox schema patterns
     # Analytics
     '* /analytics/metrics/incidents/all': None,
     '* /analytics/metrics/incidents/escalation_policies': None,
@@ -863,6 +867,34 @@ class RestApiV2Client(ApiClient):
         self.headers.update({
             'Accept': 'application/vnd.pagerduty+json;version=2',
         })
+
+    def account_has_ability(self, ability: str) -> bool:
+        """
+        Test that the account has an ability.
+
+        :param ability:
+            The named ability, i.e. ``teams``.
+        :returns:
+            True or False based on whether the account has the named ability.
+        """
+        r = self.get(f"/abilities/{ability}")
+        if r.status_code == 204:
+            return True
+        elif r.status_code == 402:
+            return False
+        elif r.status_code == 403:
+            # Stop. Authorization failed. This is expected to be non-transient. This
+            # may be added at a later time to ApiClient, i.e. to add a new default
+            # action similar to HTTP 401. It would be a be a breaking change...
+            raise HttpError(
+                "Received 403 Forbidden response from the API. The identity "
+                "associated with the credentials does not have permission to "
+                "perform the requested action.", r)
+        elif r.status_code == 404:
+            raise HttpError(
+                f"Invalid or unknown ability \"{ability}\"; API responded with status "
+                "404 Not Found.", r)
+        return False
 
     def after_set_api_key(self):
         self._subdomain = None
