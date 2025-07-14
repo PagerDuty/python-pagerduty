@@ -6,6 +6,7 @@ import requests
 import sys
 import unittest
 from datetime import timezone
+from typing import Optional
 from unittest.mock import Mock, MagicMock, patch, call
 
 from common_test import SessionTest
@@ -34,15 +35,19 @@ def page(pagenum: int, total: int, limit: int, resource: str = 'users'):
         'limit': limit
     })
 
-def page_alert_grouping_settings(before: str, after: str, limit: int, ):
+def page_alert_grouping_settings(after: Optional[str], limit: int) -> str:
     """
     Generate a dummy page for testing alert grouping settings API's special pagination
     """
-    return json.dumps({
-        # TBD (awaiting clarification/docfix on the public API documentation)
-    })
+    page = {
+        # Method is agnostic to the internal schema of settings entries:
+        'alert_grouping_settings': [{'foo': f"bar{i}"} for i in range(limit)],
+    }
+    if after is not None:
+        page['after'] = after
+    return json.dumps(page)
 
-def page_analytics_raw_incident_data(limit, last, more):
+def page_analytics_raw_incident_data(limit: int, last: str, more: bool) -> str:
     """
     Generate a dummy page for testing the special pagination in the analytics API
 
@@ -407,12 +412,23 @@ class RestApiV2ClientTest(SessionTest):
     def test_iter_alert_grouping_settings(self, get):
         """
         Test the special pagination style of the alert grouping settings API.
-
-        INCOMPLETE; the design is still TBD because the API docs are unclear and I'm
-        waiting on a reply.
         """
-        pass
-
+        AFTER_1 = 'abcd1234'
+        AFTER_2 = 'defg5678'
+        client = pagerduty.RestApiV2Client('token')
+        get.side_effect = [
+            Response(200, page_alert_grouping_settings(AFTER_1, 2)),
+            Response(200, page_alert_grouping_settings(AFTER_2, 2)),
+            Response(200, page_alert_grouping_settings(None, 2))
+        ]
+        data = list(client.iter_alert_grouping_settings())
+        self.assertEqual(6, len(data))
+        self.assertEqual(3, get.call_count)
+        # A page's "after" cursor is the value of "after" from the page before it:
+        self.assertEqual(
+            AFTER_1,
+            get.call_args_list[1][1]['params']['after']
+        )
 
     @patch.object(pagerduty.RestApiV2Client, 'iter_cursor')
     @patch.object(pagerduty.RestApiV2Client, 'get')
