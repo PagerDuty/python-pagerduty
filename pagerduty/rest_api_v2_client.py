@@ -1061,7 +1061,7 @@ class RestApiV2Client(ApiClient):
             page = self.jget('/alert_grouping_settings', params=params)
             for result in page['alert_grouping_settings']:
                 yield result
-            after = page.get('before', None)
+            after = page.get('after', None)
             more = after is not None
 
     def iter_all(self, url, params: Optional[dict] = None,
