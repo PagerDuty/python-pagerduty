@@ -680,6 +680,58 @@ class RestApiV2ClientTest(SessionTest):
             iter_cursor.mock_calls[0][2]['params']['actions']
         )
 
+    @patch.object(pagerduty.RestApiV2Client, 'iter_all')
+    def test_iter_incident_notes_single_incident(self, iter_all):
+        """
+        Validate proper function when requesting incident notes for a given incident ID
+        """
+        INCIDENT_ID = 'Q789GHI'
+        iter_all.return_value = iter([
+            {'type': 'trigger_log_entry', 'summary': 'server on fire'},
+            {'type': 'annotate_log_entry', 'summary': 'used extinguisher'},
+            {'type': 'annotate_log_entry', 'summary': 'will not reboot, replacing.'},
+            {'type': 'resolve_log_entry'}
+        ])
+        client = pagerduty.RestApiV2Client('token')
+
+        notes = list(client.iter_incident_notes(incident_id = INCIDENT_ID, params = {
+            'team_ids[]': ['Q1GN0R3M3']
+        }))
+        self.assertEqual(2, len(notes))
+        self.assertEqual(
+            f"/incidents/{INCIDENT_ID}/log_entries",
+            iter_all.call_args[0][0]
+        )
+        params = iter_all.call_args_list[0][1]['params']
+        self.assertFalse('team_ids'   in params)
+        self.assertFalse('team_ids[]' in params)
+
+    @patch.object(pagerduty.RestApiV2Client, 'iter_all')
+    def test_iter_incident_notes_teams_filter(self, iter_all):
+        """
+        Validate proper function when requesting incident notes for specified teams
+        """
+        TEAM_ID_1 = 'QABCDE12345'
+        TEAM_ID_2 = 'QFGHIJ67890'
+        iter_all.return_value = iter([
+            {'type': 'trigger_log_entry', 'summary': 'server on fire'},
+            {'type': 'annotate_log_entry', 'summary': 'used extinguisher'},
+            {'type': 'annotate_log_entry', 'summary': 'will not reboot, replacing.'},
+            {'type': 'resolve_log_entry'}
+        ])
+        client = pagerduty.RestApiV2Client('token')
+        notes = list(client.iter_incident_notes(params = {
+            'team_ids[]': [TEAM_ID_1, TEAM_ID_2]
+        }))
+        self.assertEqual(2, len(notes))
+        self.assertEqual(
+            '/log_entries',
+            iter_all.call_args[0][0]
+        )
+        params = iter_all.call_args_list[0][1]['params']
+        self.assertTrue('team_ids[]' in params)
+        self.assertEqual([TEAM_ID_1, TEAM_ID_2], params['team_ids[]'])
+
     @patch.object(pagerduty.RestApiV2Client, 'rput')
     @patch.object(pagerduty.RestApiV2Client, 'rpost')
     @patch.object(pagerduty.RestApiV2Client, 'iter_all')

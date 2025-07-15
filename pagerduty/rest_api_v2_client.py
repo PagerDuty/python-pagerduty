@@ -1440,6 +1440,36 @@ class RestApiV2Client(ApiClient):
                 for item in self.iter_history(url, sub_since, sub_until, **iter_kw):
                     yield item
 
+    def iter_incident_notes(self, incident_id: Optional[str] = None, **kw) \
+            -> Iterator[dict]:
+        """
+        Iterator for incident notes.
+
+        This is a filtered iterator for log entries of type ``annotate_log_entry``.
+
+        :param incident_id:
+            Optionally, request log entries for a specific incident. If included, the
+            ``team_ids[]`` query parameter will be removed and ignored.
+        :param kw:
+            Custom keyword arguments to send to :attr:`iter_all`.
+        :yields:
+            Incident note log entries as dictionary objects
+        """
+        my_kw = deepcopy(kw)
+        my_kw.setdefault('params', {})
+        url = '/log_entries'
+        if incident_id is not None:
+            url = f"/incidents/{incident_id}/log_entries"
+            # The teams filter is irrelevant for a specific incident's log entries, so
+            # it must be removed if present:
+            for key in ('team_ids', 'team_ids[]'):
+                if 'params' in my_kw and key in my_kw['params']:
+                    del(my_kw['params'][key])
+        return iter(filter(
+            lambda ile: ile['type'] == 'annotate_log_entry',
+            self.iter_all(url, **my_kw)
+        ))
+
     @resource_url
     @auto_json
     def jget(self, url: Union[str, dict], **kw) -> Union[dict, list]:
