@@ -656,15 +656,24 @@ records. The method will then automatically figure out how to divide the time
 interval so that it can retrieve all records from sub-intervals without running
 into the hard pagination limit.
 
-For example, to obtain all alert/incident log entries year-to-date:
+For example, to obtain all log entries (incident/alert timeline events) year-to-date:
 
 .. code-block:: python
 
     from datetime import datetime, timezone
     until = datetime.now(timezone.utc)
     since = datetime(until.year, 1, 1, 0, 0, 0, tzinfo=timezone.utc)
-    # Assume "client" is an instance of RestApiV2Client:
-    log_entries = list(client.iter_history('/log_entries', since,  until))
+    # Assume "client" is an instance of RestApiV2Client and "process_ile" is a
+    # storage and/or data reduction/aggregation method:
+    for log_entry in client.iter_history('/log_entries', since,  until):
+        process_ile(log_entry)
+
+It is recommended to perform action on each item once it has been yielded, i.e.
+to persist it in a data warehouse, rather than constructing big a list of
+results and then operating on the list. That is because, if anything goes
+wrong while fetching the dataset, i.e. an exception is raised or the program
+runs out of memory, the partial data it retrieved will be lost to garbage
+collection.
 
 Non-Standard Pagination Styles
 ******************************
