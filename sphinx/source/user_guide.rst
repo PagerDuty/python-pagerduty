@@ -666,10 +666,10 @@ For example, to obtain all alert/incident log entries year-to-date:
     # Assume "client" is an instance of RestApiV2Client:
     log_entries = list(client.iter_history('/log_entries', since,  until))
 
-Atypical Pagination Styles
-**************************
+Non-Standard Pagination Styles
+******************************
 For all endpoints that implement one of the standard pagination methods
-(classic or cursor-based), :attr`pagerduty.RestApiV2Client.iter_all` will
+(classic or cursor-based), :attr:`pagerduty.RestApiV2Client.iter_all` will
 work. However, as of this writing, there are two API endpoints known to have
 their own special pagination style. Dedicated abstractions for them include:
 
