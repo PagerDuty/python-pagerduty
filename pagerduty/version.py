@@ -1,7 +1,7 @@
 import os
 import sys
 
-UNKNOWN_VERSION = "2.*.*"
+UNKNOWN_VERSION = "3.*.*"
 
 def get_version_via_tomllib():
     import tomllib
@@ -14,8 +14,8 @@ def get_version():
     if sys.version_info.major == 3 and sys.version_info.minor < 8:
         # There is no way to obtain the version from the package metadata because the
         # necessary importlib features have not yet been added. At some point we need to
-        # drop support for these versions. We only care about major version 3 because
-        # version 2 is already not supported.
+        # drop support for these versions. We only care about Python major version 3
+        # because version 2 is already not supported and Python 4 isn't out yet.
         return UNKNOWN_VERSION
     else:
         try:

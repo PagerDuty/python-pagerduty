@@ -296,27 +296,15 @@ appended to the names of list-type-value parameters as necessary. For example:
     # API calls will look like the following:
     # GET /incidents?user_ids%5B%5D=PHIJ789&statuses%5B%5D=triggered&statuses%5B%5D=acknowledged&offset=0&limit=100
 
-**Get a list of all incident notes submitted by a team:** Incident notes are
-recorded as *log entries* of type ``annotate_log_entry``, so with that in mind:
-
-* Use ``iter_all`` on the "List log entries" endpoint
-* Use the query parameter ``team_ids[]`` to filter by team ID
-* Use the ``since`` and ``until`` query parameters to select a time range
-* Use ``filter`` to limit the results to incident notes
+**Get a list of all incident notes submitted by a team within a time range:**
 
 .. code-block:: python
 
-    notes = list(filter(
-        lambda ile: ile['type'] == 'annotate_log_entry',
-        client.iter_all(
-            'log_entries',
-            params={
-                'team_ids':['PN1T34M'], 
-                'since': '2024-01-01',
-                'until': '2025-01-01'
-            }
-        )
-    ))
+    notes = list(client.iter_incident_notes(params={
+        'team_ids':['PN1T34M'],
+        'since': '2025-01-01',
+        'until': '2025-07-01'
+    }))
 
     # >>> notes
     # [{'type': 'annotate_log_entry', 'summary': 'Resolved by reboot' ... }, ... ]
@@ -668,16 +656,38 @@ records. The method will then automatically figure out how to divide the time
 interval so that it can retrieve all records from sub-intervals without running
 into the hard pagination limit.
 
-For example, to obtain all alert/incident log entries year-to-date:
+For example, to obtain all log entries (incident/alert timeline events) year-to-date:
 
 .. code-block:: python
 
     from datetime import datetime, timezone
     until = datetime.now(timezone.utc)
     since = datetime(until.year, 1, 1, 0, 0, 0, tzinfo=timezone.utc)
-    # Assume "client" is an instance of RestApiV2Client:
-    log_entries = list(client.iter_history('/log_entries', since,  until))
+    # Assume "client" is an instance of RestApiV2Client and "process_ile" is a
+    # storage and/or data reduction/aggregation method:
+    for log_entry in client.iter_history('/log_entries', since,  until):
+        process_ile(log_entry)
 
+It is recommended to perform action on each item once it has been yielded, i.e.
+to persist it in a data warehouse, rather than constructing big a list of
+results and then operating on the list. That is because, if anything goes
+wrong while fetching the dataset, i.e. an exception is raised or the program
+runs out of memory, the partial data it retrieved will be lost to garbage
+collection.
+
+Non-Standard Pagination Styles
+******************************
+For all endpoints that implement one of the standard pagination methods
+(classic or cursor-based), :attr:`pagerduty.RestApiV2Client.iter_all` will
+work. However, as of this writing, there are two API endpoints known to have
+their own special pagination style. Dedicated abstractions for them include:
+
+* `Get raw data - multiple incidents (analytics) <https://developer.pagerduty.com/api-reference/c2d493e995071-get-raw-data-multiple-incidents>`_ / ``POST /analytics/raw/incidents``: :attr:`pagerduty.RestApiV2Client.iter_analytics_raw_incidents`
+* `List alert grouping settings <https://developer.pagerduty.com/api-reference/b9fe211cc2748-list-alert-grouping-settings>`_ / ``GET /alert_grouping_settings``: :attr:`pagerduty.RestApiV2Client.iter_alert_grouping_settings`
+
+These methods must be used on said endpoints; using the standard pagination
+methods such as ``iter_all``, ``iter_cursor`` or ``iter_history`` on them will not work
+properly.
 
 Performance and Completeness of Results
 ***************************************
@@ -689,9 +699,9 @@ number of results is higher.
 
 Moreover, if these methods are used to fetch a very large volume of data, and
 an error is encountered when this happens, the partial data set will be
-discarded when the exception is raised. To make use of partial results, use
-:attr:`pagerduty.RestApiV2Client.iter_all`, perform actions on each result
-yielded, and catch/handle exceptions as desired.
+discarded when the exception is raised. To make use of partial results, perform
+actions on each result using an ``iter_*`` method and catch/handle exceptions
+as desired.
 
 Updating, creating or deleting while paginating
 ***********************************************

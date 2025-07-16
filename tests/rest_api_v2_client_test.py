@@ -6,12 +6,70 @@ import requests
 import sys
 import unittest
 from datetime import timezone
+from typing import Optional
 from unittest.mock import Mock, MagicMock, patch, call
 
 from common_test import SessionTest
 from mocks import Response, Session
 
 import pagerduty
+
+def page(pagenum: int, total: int, limit: int, resource: str = 'users'):
+    """
+    Generate a dummy page of result data for testing classic pagination.
+
+    This deliberately returns results 10 at a time and ignores the limit property in
+    order to verify we are not using the response properties but rather the count of
+    results to increment.
+    :param pagenum:
+        Effective page number
+    :param total:
+        Value of the "total" property in the response
+    :param limit:
+        Value of the "limit" property in the response
+    """
+    return json.dumps({
+        resource: [{'id':i} for i in range(10*pagenum, 10*(pagenum+1))],
+        'total': total,
+        'more': pagenum<(total/10)-1,
+        'limit': limit
+    })
+
+def page_alert_grouping_settings(after: Optional[str], limit: int) -> str:
+    """
+    Generate a dummy page for testing alert grouping settings API's special pagination
+    """
+    page = {
+        # Method is agnostic to the internal schema of settings entries:
+        'alert_grouping_settings': [{'foo': f"bar{i}"} for i in range(limit)],
+    }
+    if after is not None:
+        page['after'] = after
+    return json.dumps(page)
+
+def page_analytics_raw_incident_data(limit: int, last: str, more: bool) -> str:
+    """
+    Generate a dummy page for testing the special pagination in the analytics API
+
+    The test is agnostic to content and most of the response properties. It only needs
+    to mock up the properties that are actually used.
+    """
+    body = {
+        'data': [{'foo': f"bar_{i}"}  for i in range(limit)],
+        'more': more
+    }
+    if last:
+        body['last'] = last
+    return json.dumps(body)
+
+def page_cursor(wrapper, results, cursor):
+    """
+    Generate a dummy page of result data for testing cursor-based pagination.
+    """
+    return json.dumps({
+        wrapper: results,
+        'next_cursor': cursor
+    })
 
 class RestApiV2UrlHandlingTest(unittest.TestCase):
 
@@ -350,6 +408,28 @@ class RestApiV2ClientTest(SessionTest):
             }
         )
 
+    @patch.object(pagerduty.RestApiV2Client, 'get')
+    def test_iter_alert_grouping_settings(self, get):
+        """
+        Test the special pagination style of the alert grouping settings API.
+        """
+        AFTER_1 = 'abcd1234'
+        AFTER_2 = 'defg5678'
+        client = pagerduty.RestApiV2Client('token')
+        get.side_effect = [
+            Response(200, page_alert_grouping_settings(AFTER_1, 2)),
+            Response(200, page_alert_grouping_settings(AFTER_2, 2)),
+            Response(200, page_alert_grouping_settings(None, 2))
+        ]
+        data = list(client.iter_alert_grouping_settings())
+        self.assertEqual(6, len(data))
+        self.assertEqual(3, get.call_count)
+        # A page's "after" cursor is the value of "after" from the page before it:
+        self.assertEqual(
+            AFTER_1,
+            get.call_args_list[1][1]['params']['after']
+        )
+
     @patch.object(pagerduty.RestApiV2Client, 'iter_cursor')
     @patch.object(pagerduty.RestApiV2Client, 'get')
     def test_iter_all(self, get, iter_cursor):
@@ -388,24 +468,13 @@ class RestApiV2ClientTest(SessionTest):
             lambda p: list(sess.iter_all(p)),
             '/analytics/raw/incidents/Q3R8ZN19Z8K083/responses'
         )
-
-        # Generate a dummy page. This deliberately returns results 10 at a time
-        # and not the limit property in order to verify we are not using the
-        # response properties but rather the count of results to increment
-        # the limit:
-        page = lambda n, t, l: {
-            'users': [{'id':i} for i in range(10*n, 10*(n+1))],
-            'total': t,
-            'more': n<(t/10)-1,
-            'limit': l
-        }
         iter_param = lambda p: json.dumps({
             'limit':10, 'total': True, 'offset': 0
         })
         get.side_effect = [
-            Response(200, json.dumps(page(0, 30, 10))),
-            Response(200, json.dumps(page(1, 30, 10))),
-            Response(200, json.dumps(page(2, 30, 10))),
+            Response(200, page(0, 30, 10)),
+            Response(200, page(1, 30, 10)),
+            Response(200, page(2, 30, 10)),
         ]
         # Follow-up to #103: add more odd parameters to the URL
         weirdurl='https://api.pagerduty.com/users?number=1&filters[]=foo'
@@ -425,11 +494,11 @@ class RestApiV2ClientTest(SessionTest):
         # Test stopping iteration on non-success status
         get.reset_mock()
         error_encountered = [
-            Response(200, json.dumps(page(0, 50, 10))),
-            Response(200, json.dumps(page(1, 50, 10))),
-            Response(200, json.dumps(page(2, 50, 10))),
-            Response(400, json.dumps(page(3, 50, 10))), # break
-            Response(200, json.dumps(page(4, 50, 10))),
+            Response(200, page(0, 50, 10)),
+            Response(200, page(1, 50, 10)),
+            Response(200, page(2, 50, 10)),
+            Response(400, page(3, 50, 10)), # break
+            Response(200, page(4, 50, 10)),
         ]
         get.side_effect = copy.deepcopy(error_encountered)
         self.assertRaises(pagerduty.Error, list, sess.iter_all(weirdurl))
@@ -448,24 +517,50 @@ class RestApiV2ClientTest(SessionTest):
             'limit':10, 'total': True, 'offset': 0
         })
         get.side_effect = [
-            Response(200, json.dumps(page(0, 30, None))),
-            Response(200, json.dumps(page(1, 30, 42))),
-            Response(200, json.dumps(page(2, 30, 2020))),
+            Response(200, page(0, 30, None)),
+            Response(200, page(1, 30, 42)),
+            Response(200, page(2, 30, 2020)),
         ]
         weirdurl='https://api.pagerduty.com/users?number=1'
         hook = MagicMock()
         items = list(sess.iter_all(weirdurl, item_hook=hook, total=True, page_size=10))
         self.assertEqual(30, len(items))
 
+    @patch.object(pagerduty.RestApiV2Client, 'post')
+    def test_iter_analytics_raw_incidents(self, post):
+        LIMIT = 10
+        client = pagerduty.RestApiV2Client('token')
+        # Test: exit if "more" indicates the end of the data set, use custom limit
+        LAST_1 = 'abcd1234'
+        LAST_2 = 'defg5678'
+        post.side_effect = [
+            Response(200, page_analytics_raw_incident_data(LIMIT, LAST_1, True)),
+            Response(200, page_analytics_raw_incident_data(LIMIT, LAST_2, False))
+        ]
+        data = list(client.iter_analytics_raw_incidents({'bar': 'baz'}, limit=LIMIT))
+        self.assertEqual(LIMIT*2, len(data))
+        self.assertEqual(2, post.call_count)
+        self.assertEqual(
+            LAST_1,
+            post.call_args_list[1][1]['json']['starting_after']
+        )
+        # Test: exit if the "last" property is not set, use default limit
+        post.reset_mock()
+        post.side_effect = [
+            Response(200, page_analytics_raw_incident_data(LIMIT, None, True)),
+            Response(200, page_analytics_raw_incident_data(LIMIT, None, True))
+        ]
+        data = list(client.iter_analytics_raw_incidents({'bar': 'baz'}))
+        self.assertEqual(1, post.call_count)
+        self.assertEqual(
+            client.default_page_size,
+            post.call_args_list[0][1]['json']['limit']
+        )
+
     @patch.object(pagerduty.RestApiV2Client, 'get')
     def test_iter_cursor(self, get):
         sess = pagerduty.RestApiV2Client('token')
         sess.log = MagicMock()
-        # Generate a dummy response dict
-        page = lambda wrapper, results, cursor: json.dumps({
-            wrapper: results,
-            'next_cursor': cursor
-        })
         # Test: user tries to use iter_cursor where it won't work, raise:
         self.assertRaises(
             pagerduty.UrlError,
@@ -478,9 +573,9 @@ class RestApiV2ClientTest(SessionTest):
         # looks like apart from the entity wrapper, but that doesn't matter for
         # the purpose of this test.
         get.side_effect = [
-            Response(200, page('records', [1, 2, 3], 2)),
-            Response(200, page('records', [4, 5, 6], 5)),
-            Response(200, page('records', [7, 8, 9], None))
+            Response(200, page_cursor('records', [1, 2, 3], 2)),
+            Response(200, page_cursor('records', [4, 5, 6], 5)),
+            Response(200, page_cursor('records', [7, 8, 9], None))
         ]
         self.assertEqual(
             list(sess.iter_cursor('/audit/records')),
@@ -584,6 +679,58 @@ class RestApiV2ClientTest(SessionTest):
             ['delete'],
             iter_cursor.mock_calls[0][2]['params']['actions']
         )
+
+    @patch.object(pagerduty.RestApiV2Client, 'iter_all')
+    def test_iter_incident_notes_single_incident(self, iter_all):
+        """
+        Validate proper function when requesting incident notes for a given incident ID
+        """
+        INCIDENT_ID = 'Q789GHI'
+        iter_all.return_value = iter([
+            {'type': 'trigger_log_entry', 'summary': 'server on fire'},
+            {'type': 'annotate_log_entry', 'summary': 'used extinguisher'},
+            {'type': 'annotate_log_entry', 'summary': 'will not reboot, replacing.'},
+            {'type': 'resolve_log_entry'}
+        ])
+        client = pagerduty.RestApiV2Client('token')
+
+        notes = list(client.iter_incident_notes(incident_id = INCIDENT_ID, params = {
+            'team_ids[]': ['Q1GN0R3M3']
+        }))
+        self.assertEqual(2, len(notes))
+        self.assertEqual(
+            f"/incidents/{INCIDENT_ID}/log_entries",
+            iter_all.call_args[0][0]
+        )
+        params = iter_all.call_args_list[0][1]['params']
+        self.assertFalse('team_ids'   in params)
+        self.assertFalse('team_ids[]' in params)
+
+    @patch.object(pagerduty.RestApiV2Client, 'iter_all')
+    def test_iter_incident_notes_teams_filter(self, iter_all):
+        """
+        Validate proper function when requesting incident notes for specified teams
+        """
+        TEAM_ID_1 = 'QABCDE12345'
+        TEAM_ID_2 = 'QFGHIJ67890'
+        iter_all.return_value = iter([
+            {'type': 'trigger_log_entry', 'summary': 'server on fire'},
+            {'type': 'annotate_log_entry', 'summary': 'used extinguisher'},
+            {'type': 'annotate_log_entry', 'summary': 'will not reboot, replacing.'},
+            {'type': 'resolve_log_entry'}
+        ])
+        client = pagerduty.RestApiV2Client('token')
+        notes = list(client.iter_incident_notes(params = {
+            'team_ids[]': [TEAM_ID_1, TEAM_ID_2]
+        }))
+        self.assertEqual(2, len(notes))
+        self.assertEqual(
+            '/log_entries',
+            iter_all.call_args[0][0]
+        )
+        params = iter_all.call_args_list[0][1]['params']
+        self.assertTrue('team_ids[]' in params)
+        self.assertEqual([TEAM_ID_1, TEAM_ID_2], params['team_ids[]'])
 
     @patch.object(pagerduty.RestApiV2Client, 'rput')
     @patch.object(pagerduty.RestApiV2Client, 'rpost')

@@ -6,14 +6,14 @@
   <meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" />
 
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Module Reference &mdash; python-pagerduty 3.0.0 documentation</title>
+  <title>Module Reference &mdash; python-pagerduty 3.1.0 documentation</title>
       <link rel="stylesheet" type="text/css" href="_static/pygments.css?v=03e43079" />
       <link rel="stylesheet" type="text/css" href="_static/css/theme.css?v=e59714d7" />
 
   
       <script src="_static/jquery.js?v=5d32c60e"></script>
       <script src="_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
-      <script src="_static/documentation_options.js?v=acc74ff5"></script>
+      <script src="_static/documentation_options.js?v=dd1205ac"></script>
       <script src="_static/doctools.js?v=9bcbadda"></script>
       <script src="_static/sphinx_highlight.js?v=dc90522c"></script>
     <script src="_static/js/theme.js"></script>
@@ -84,6 +84,7 @@
 </ul>
 </li>
 <li class="toctree-l3"><a class="reference internal" href="#pagerduty.RestApiV2Client"><code class="docutils literal notranslate"><span class="pre">RestApiV2Client</span></code></a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#pagerduty.RestApiV2Client.account_has_ability"><code class="docutils literal notranslate"><span class="pre">RestApiV2Client.account_has_ability()</span></code></a></li>
 <li class="toctree-l4"><a class="reference internal" href="#pagerduty.RestApiV2Client.api_call_counts"><code class="docutils literal notranslate"><span class="pre">RestApiV2Client.api_call_counts</span></code></a></li>
 <li class="toctree-l4"><a class="reference internal" href="#pagerduty.RestApiV2Client.api_key_access"><code class="docutils literal notranslate"><span class="pre">RestApiV2Client.api_key_access</span></code></a></li>
 <li class="toctree-l4"><a class="reference internal" href="#pagerduty.RestApiV2Client.api_time"><code class="docutils literal notranslate"><span class="pre">RestApiV2Client.api_time</span></code></a></li>
@@ -93,9 +94,12 @@
 <li class="toctree-l4"><a class="reference internal" href="#pagerduty.RestApiV2Client.dict_all"><code class="docutils literal notranslate"><span class="pre">RestApiV2Client.dict_all()</span></code></a></li>
 <li class="toctree-l4"><a class="reference internal" href="#pagerduty.RestApiV2Client.find"><code class="docutils literal notranslate"><span class="pre">RestApiV2Client.find()</span></code></a></li>
 <li class="toctree-l4"><a class="reference internal" href="#pagerduty.RestApiV2Client.get_total"><code class="docutils literal notranslate"><span class="pre">RestApiV2Client.get_total()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#pagerduty.RestApiV2Client.iter_alert_grouping_settings"><code class="docutils literal notranslate"><span class="pre">RestApiV2Client.iter_alert_grouping_settings()</span></code></a></li>
 <li class="toctree-l4"><a class="reference internal" href="#pagerduty.RestApiV2Client.iter_all"><code class="docutils literal notranslate"><span class="pre">RestApiV2Client.iter_all()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#pagerduty.RestApiV2Client.iter_analytics_raw_incidents"><code class="docutils literal notranslate"><span class="pre">RestApiV2Client.iter_analytics_raw_incidents()</span></code></a></li>
 <li class="toctree-l4"><a class="reference internal" href="#pagerduty.RestApiV2Client.iter_cursor"><code class="docutils literal notranslate"><span class="pre">RestApiV2Client.iter_cursor()</span></code></a></li>
 <li class="toctree-l4"><a class="reference internal" href="#pagerduty.RestApiV2Client.iter_history"><code class="docutils literal notranslate"><span class="pre">RestApiV2Client.iter_history()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#pagerduty.RestApiV2Client.iter_incident_notes"><code class="docutils literal notranslate"><span class="pre">RestApiV2Client.iter_incident_notes()</span></code></a></li>
 <li class="toctree-l4"><a class="reference internal" href="#pagerduty.RestApiV2Client.jget"><code class="docutils literal notranslate"><span class="pre">RestApiV2Client.jget()</span></code></a></li>
 <li class="toctree-l4"><a class="reference internal" href="#pagerduty.RestApiV2Client.jpost"><code class="docutils literal notranslate"><span class="pre">RestApiV2Client.jpost()</span></code></a></li>
 <li class="toctree-l4"><a class="reference internal" href="#pagerduty.RestApiV2Client.jput"><code class="docutils literal notranslate"><span class="pre">RestApiV2Client.jput()</span></code></a></li>
@@ -672,6 +676,20 @@ output.</p></li>
 <dt class="field-even">Members<span class="colon">:</span></dt>
 <dd class="field-even"><p></p></dd>
 </dl>
+<dl class="py method">
+<dt class="sig sig-object py" id="pagerduty.RestApiV2Client.account_has_ability">
+<span class="sig-name descname"><span class="pre">account_has_ability</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">ability</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">bool</span></span></span><a class="headerlink" href="#pagerduty.RestApiV2Client.account_has_ability" title="Link to this definition"></a></dt>
+<dd><p>Test that the account has an ability.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>ability</strong> – The named ability, i.e. <code class="docutils literal notranslate"><span class="pre">teams</span></code>.</p>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>True or False based on whether the account has the named ability.</p>
+</dd>
+</dl>
+</dd></dl>
+
 <dl class="py attribute">
 <dt class="sig sig-object py" id="pagerduty.RestApiV2Client.api_call_counts">
 <span class="sig-name descname"><span class="pre">api_call_counts</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">None</span></em><a class="headerlink" href="#pagerduty.RestApiV2Client.api_call_counts" title="Link to this definition"></a></dt>
@@ -733,6 +751,7 @@ so if you use an attribute that is not distinct for the data set, this
 function will omit some data in the results. If a property is named that
 the schema of the API requested does not have, this method will raise
 <code class="docutils literal notranslate"><span class="pre">KeyError</span></code>.</p></li>
+<li><p><strong>kw</strong> – Keyword arguments to pass to <a class="reference internal" href="#pagerduty.RestApiV2Client.iter_all" title="pagerduty.RestApiV2Client.iter_all"><code class="xref py py-attr docutils literal notranslate"><span class="pre">iter_all</span></code></a>.</p></li>
 </ul>
 </dd>
 <dt class="field-even">Returns<span class="colon">:</span></dt>
@@ -802,6 +821,29 @@ possible results.</p></li>
 </dd></dl>
 
 <dl class="py method">
+<dt class="sig sig-object py" id="pagerduty.RestApiV2Client.iter_alert_grouping_settings">
+<span class="sig-name descname"><span class="pre">iter_alert_grouping_settings</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">service_ids</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">list</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">limit</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">Iterator</span><span class="p"><span class="pre">[</span></span><span class="pre">dict</span><span class="p"><span class="pre">]</span></span></span></span><a class="headerlink" href="#pagerduty.RestApiV2Client.iter_alert_grouping_settings" title="Link to this definition"></a></dt>
+<dd><p>Iterator for the contents of the “List alert grouping settings” endpoint.</p>
+<p>The API endpoint “GET /alert_grouping_settings” has its own unique method of
+pagination. This method provides an abstraction for it similar to what
+<a class="reference internal" href="#pagerduty.RestApiV2Client.iter_all" title="pagerduty.RestApiV2Client.iter_all"><code class="xref py py-attr docutils literal notranslate"><span class="pre">iter_all</span></code></a> provides for endpoints that implement classic pagination.</p>
+<p>See:
+<a class="reference external" href="https://developer.pagerduty.com/api-reference/b9fe211cc2748-list-alert-grouping-settings">List alert grouping settings</a></p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>service_ids</strong> – A list of specific service IDs to which results will be constrained.</p></li>
+<li><p><strong>limit</strong> – The number of results retrieved per page. By default, the value
+<a class="reference internal" href="#pagerduty.RestApiV2Client.default_page_size" title="pagerduty.RestApiV2Client.default_page_size"><code class="xref py py-attr docutils literal notranslate"><span class="pre">default_page_size</span></code></a> will be used.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Yields<span class="colon">:</span></dt>
+<dd class="field-even"><p>Results from each page in the <code class="docutils literal notranslate"><span class="pre">alert_grouping_settings</span></code> response property.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
 <dt class="sig sig-object py" id="pagerduty.RestApiV2Client.iter_all">
 <span class="sig-name descname"><span class="pre">iter_all</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">url</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">params</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">dict</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">page_size</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">item_hook</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">callable</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">total</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">bool</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">Iterator</span><span class="p"><span class="pre">[</span></span><span class="pre">dict</span><span class="p"><span class="pre">]</span></span></span></span><a class="headerlink" href="#pagerduty.RestApiV2Client.iter_all" title="Link to this definition"></a></dt>
 <dd><p>Iterator for the contents of an index endpoint or query.</p>
@@ -839,6 +881,36 @@ a small performance advantage, as the API in this case does not have
 to compute the total count of results in the query.</p></li>
 </ul>
 </dd>
+<dt class="field-even">Yields<span class="colon">:</span></dt>
+<dd class="field-even"><p>Results from each page of results.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="pagerduty.RestApiV2Client.iter_analytics_raw_incidents">
+<span class="sig-name descname"><span class="pre">iter_analytics_raw_incidents</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">filters</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">dict</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">order</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">'desc'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">order_by</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">'created_at'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">limit</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">time_zone</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">Iterator</span><span class="p"><span class="pre">[</span></span><span class="pre">dict</span><span class="p"><span class="pre">]</span></span></span></span><a class="headerlink" href="#pagerduty.RestApiV2Client.iter_analytics_raw_incidents" title="Link to this definition"></a></dt>
+<dd><p>Iterator for raw analytics data on multiple incidents.</p>
+<p>The API endpoint <code class="docutils literal notranslate"><span class="pre">POST</span> <span class="pre">/analytics/raw/incidents</span></code> has its own unique method of
+pagination. This method provides an abstraction for it similar to
+<a class="reference internal" href="#pagerduty.RestApiV2Client.iter_all" title="pagerduty.RestApiV2Client.iter_all"><code class="xref py py-attr docutils literal notranslate"><span class="pre">iter_all</span></code></a>.</p>
+<p>See: 
+<a class="reference external" href="https://developer.pagerduty.com/api-reference/c2d493e995071-get-raw-data-multiple-incidents">Get raw data - multiple incidents</a></p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>filters</strong> – Dictionary representation of the required <code class="docutils literal notranslate"><span class="pre">filters</span></code> parameters.</p></li>
+<li><p><strong>order</strong> – The order in which to sort results. Must be <code class="docutils literal notranslate"><span class="pre">asc</span></code> or <code class="docutils literal notranslate"><span class="pre">desc</span></code>.</p></li>
+<li><p><strong>order_by</strong> – The attribute of results by which to order results. Must be <code class="docutils literal notranslate"><span class="pre">created_at</span></code>
+or <code class="docutils literal notranslate"><span class="pre">seconds_to_resolve</span></code>.</p></li>
+<li><p><strong>limit</strong> – The number of results to yield per page before requesting the next page. If
+unspecified, <a class="reference internal" href="#pagerduty.RestApiV2Client.default_page_size" title="pagerduty.RestApiV2Client.default_page_size"><code class="xref py py-attr docutils literal notranslate"><span class="pre">default_page_size</span></code></a> will be used. The particular API
+endpoint permits values up to 1000.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Yields<span class="colon">:</span></dt>
+<dd class="field-even"><p>Entries of the <code class="docutils literal notranslate"><span class="pre">data</span></code> property in the response body from each page</p>
+</dd>
 </dl>
 </dd></dl>
 
@@ -856,6 +928,9 @@ for details on how this argument is used.</p></li>
 <li><p><strong>page_size</strong> – Number of results per page of results (the <code class="docutils literal notranslate"><span class="pre">limit</span></code> parameter). If
 unspecified, <a class="reference internal" href="#pagerduty.RestApiV2Client.default_page_size" title="pagerduty.RestApiV2Client.default_page_size"><code class="xref py py-attr docutils literal notranslate"><span class="pre">default_page_size</span></code></a> will be used.</p></li>
 </ul>
+</dd>
+<dt class="field-even">Yields<span class="colon">:</span></dt>
+<dd class="field-even"><p>Results from each page of results.</p>
 </dd>
 </dl>
 </dd></dl>
@@ -885,6 +960,29 @@ supplied for the same reason as for the <code class="docutils literal notranslat
 <code class="docutils literal notranslate"><span class="pre">params</span></code> in order to add query string parameters for filtering, the
 <code class="docutils literal notranslate"><span class="pre">since</span></code> and <code class="docutils literal notranslate"><span class="pre">until</span></code> keys (if present) will be ignored.</p></li>
 </ul>
+</dd>
+<dt class="field-even">Yields<span class="colon">:</span></dt>
+<dd class="field-even"><p>All results from the resource collection API within the time range specified
+by <code class="docutils literal notranslate"><span class="pre">since</span></code> and <code class="docutils literal notranslate"><span class="pre">until</span></code>.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="pagerduty.RestApiV2Client.iter_incident_notes">
+<span class="sig-name descname"><span class="pre">iter_incident_notes</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">incident_id</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kw</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">Iterator</span><span class="p"><span class="pre">[</span></span><span class="pre">dict</span><span class="p"><span class="pre">]</span></span></span></span><a class="headerlink" href="#pagerduty.RestApiV2Client.iter_incident_notes" title="Link to this definition"></a></dt>
+<dd><p>Iterator for incident notes.</p>
+<p>This is a filtered iterator for log entries of type <code class="docutils literal notranslate"><span class="pre">annotate_log_entry</span></code>.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>incident_id</strong> – Optionally, request log entries for a specific incident. If included, the
+<code class="docutils literal notranslate"><span class="pre">team_ids[]</span></code> query parameter will be removed and ignored.</p></li>
+<li><p><strong>kw</strong> – Custom keyword arguments to send to <a class="reference internal" href="#pagerduty.RestApiV2Client.iter_all" title="pagerduty.RestApiV2Client.iter_all"><code class="xref py py-attr docutils literal notranslate"><span class="pre">iter_all</span></code></a>.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Yields<span class="colon">:</span></dt>
+<dd class="field-even"><p>Incident note log entries as dictionary objects</p>
 </dd>
 </dl>
 </dd></dl>

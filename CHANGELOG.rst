@@ -1,3 +1,13 @@
+**2025-07-15: New features - Version 3.1.0**
+
+* New features in ``RestApiV2Client``
+
+   - Abstraction for endpoints that implement non-standard styles of pagination
+   - Iterator method for incident notes
+   - Method for testing if the account has a given ability
+
+* Fix: Update the "Unknown version" (for versioned user-agent headers in Python prior to version 3.8) and add a test to validate that it is up to date with the true current major version
+
 **2025-07-08: New features - Version 3.0.0**
 
 * **Breaking Change:** the method ``ApiClient.normalize_params`` no longer modifies parameters. The implementation of it that previously did, which was meant only for the child class ``RestApiV2Client``, has been migrated to that class as an override.
