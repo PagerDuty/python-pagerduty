@@ -6,14 +6,14 @@
   <meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" />
 
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Changelog &mdash; python-pagerduty 3.0.0 documentation</title>
+  <title>Changelog &mdash; python-pagerduty 3.1.0 documentation</title>
       <link rel="stylesheet" type="text/css" href="_static/pygments.css?v=03e43079" />
       <link rel="stylesheet" type="text/css" href="_static/css/theme.css?v=e59714d7" />
 
   
       <script src="_static/jquery.js?v=5d32c60e"></script>
       <script src="_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
-      <script src="_static/documentation_options.js?v=acc74ff5"></script>
+      <script src="_static/documentation_options.js?v=dd1205ac"></script>
       <script src="_static/doctools.js?v=9bcbadda"></script>
       <script src="_static/sphinx_highlight.js?v=dc90522c"></script>
     <script src="_static/js/theme.js"></script>
@@ -76,6 +76,19 @@
              
   <section id="changelog">
 <h1>Changelog<a class="headerlink" href="#changelog" title="Link to this heading"></a></h1>
+<p><strong>2025-07-15: New features - Version 3.1.0</strong></p>
+<ul>
+<li><p>New features in <code class="docutils literal notranslate"><span class="pre">RestApiV2Client</span></code></p>
+<blockquote>
+<div><ul class="simple">
+<li><p>Abstraction for endpoints that implement non-standard styles of pagination</p></li>
+<li><p>Iterator method for incident notes</p></li>
+<li><p>Method for testing if the account has a given ability</p></li>
+</ul>
+</div></blockquote>
+</li>
+<li><p>Fix: Update the “Unknown version” (for versioned user-agent headers in Python prior to version 3.8) and add a test to validate that it is up to date with the true current major version</p></li>
+</ul>
 <p><strong>2025-07-08: New features - Version 3.0.0</strong></p>
 <ul>
 <li><p><strong>Breaking Change:</strong> the method <code class="docutils literal notranslate"><span class="pre">ApiClient.normalize_params</span></code> no longer modifies parameters. The implementation of it that previously did, which was meant only for the child class <code class="docutils literal notranslate"><span class="pre">RestApiV2Client</span></code>, has been migrated to that class as an override.</p></li>

@@ -6,14 +6,14 @@
   <meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" />
 
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>User Guide &mdash; python-pagerduty 3.0.0 documentation</title>
+  <title>User Guide &mdash; python-pagerduty 3.1.0 documentation</title>
       <link rel="stylesheet" type="text/css" href="_static/pygments.css?v=03e43079" />
       <link rel="stylesheet" type="text/css" href="_static/css/theme.css?v=e59714d7" />
 
   
       <script src="_static/jquery.js?v=5d32c60e"></script>
       <script src="_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
-      <script src="_static/documentation_options.js?v=acc74ff5"></script>
+      <script src="_static/documentation_options.js?v=dd1205ac"></script>
       <script src="_static/doctools.js?v=9bcbadda"></script>
       <script src="_static/sphinx_highlight.js?v=dc90522c"></script>
     <script src="_static/js/theme.js"></script>
@@ -76,6 +76,7 @@
 </li>
 <li class="toctree-l2"><a class="reference internal" href="#pagination">Pagination</a><ul>
 <li class="toctree-l3"><a class="reference internal" href="#retrieving-large-historical-datasets">Retrieving Large Historical Datasets</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#non-standard-pagination-styles">Non-Standard Pagination Styles</a></li>
 <li class="toctree-l3"><a class="reference internal" href="#performance-and-completeness-of-results">Performance and Completeness of Results</a></li>
 <li class="toctree-l3"><a class="reference internal" href="#updating-creating-or-deleting-while-paginating">Updating, creating or deleting while paginating</a></li>
 </ul>
@@ -372,25 +373,12 @@ appended to the names of list-type-value parameters as necessary. For example:</
 <span class="c1"># GET /incidents?user_ids%5B%5D=PHIJ789&amp;statuses%5B%5D=triggered&amp;statuses%5B%5D=acknowledged&amp;offset=0&amp;limit=100</span>
 </pre></div>
 </div>
-<p><strong>Get a list of all incident notes submitted by a team:</strong> Incident notes are
-recorded as <em>log entries</em> of type <code class="docutils literal notranslate"><span class="pre">annotate_log_entry</span></code>, so with that in mind:</p>
-<ul class="simple">
-<li><p>Use <code class="docutils literal notranslate"><span class="pre">iter_all</span></code> on the “List log entries” endpoint</p></li>
-<li><p>Use the query parameter <code class="docutils literal notranslate"><span class="pre">team_ids[]</span></code> to filter by team ID</p></li>
-<li><p>Use the <code class="docutils literal notranslate"><span class="pre">since</span></code> and <code class="docutils literal notranslate"><span class="pre">until</span></code> query parameters to select a time range</p></li>
-<li><p>Use <code class="docutils literal notranslate"><span class="pre">filter</span></code> to limit the results to incident notes</p></li>
-</ul>
-<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">notes</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="nb">filter</span><span class="p">(</span>
-    <span class="k">lambda</span> <span class="n">ile</span><span class="p">:</span> <span class="n">ile</span><span class="p">[</span><span class="s1">&#39;type&#39;</span><span class="p">]</span> <span class="o">==</span> <span class="s1">&#39;annotate_log_entry&#39;</span><span class="p">,</span>
-    <span class="n">client</span><span class="o">.</span><span class="n">iter_all</span><span class="p">(</span>
-        <span class="s1">&#39;log_entries&#39;</span><span class="p">,</span>
-        <span class="n">params</span><span class="o">=</span><span class="p">{</span>
-            <span class="s1">&#39;team_ids&#39;</span><span class="p">:[</span><span class="s1">&#39;PN1T34M&#39;</span><span class="p">],</span>
-            <span class="s1">&#39;since&#39;</span><span class="p">:</span> <span class="s1">&#39;2024-01-01&#39;</span><span class="p">,</span>
-            <span class="s1">&#39;until&#39;</span><span class="p">:</span> <span class="s1">&#39;2025-01-01&#39;</span>
-        <span class="p">}</span>
-    <span class="p">)</span>
-<span class="p">))</span>
+<p><strong>Get a list of all incident notes submitted by a team within a time range:</strong></p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">notes</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="n">client</span><span class="o">.</span><span class="n">iter_incident_notes</span><span class="p">(</span><span class="n">params</span><span class="o">=</span><span class="p">{</span>
+    <span class="s1">&#39;team_ids&#39;</span><span class="p">:[</span><span class="s1">&#39;PN1T34M&#39;</span><span class="p">],</span>
+    <span class="s1">&#39;since&#39;</span><span class="p">:</span> <span class="s1">&#39;2025-01-01&#39;</span><span class="p">,</span>
+    <span class="s1">&#39;until&#39;</span><span class="p">:</span> <span class="s1">&#39;2025-07-01&#39;</span>
+<span class="p">}))</span>
 
 <span class="c1"># &gt;&gt;&gt; notes</span>
 <span class="c1"># [{&#39;type&#39;: &#39;annotate_log_entry&#39;, &#39;summary&#39;: &#39;Resolved by reboot&#39; ... }, ... ]</span>
@@ -705,14 +693,36 @@ absolute beginning and end of the time interval from which to retrieive
 records. The method will then automatically figure out how to divide the time
 interval so that it can retrieve all records from sub-intervals without running
 into the hard pagination limit.</p>
-<p>For example, to obtain all alert/incident log entries year-to-date:</p>
+<p>For example, to obtain all log entries (incident/alert timeline events) year-to-date:</p>
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span><span class="w"> </span><span class="nn">datetime</span><span class="w"> </span><span class="kn">import</span> <span class="n">datetime</span><span class="p">,</span> <span class="n">timezone</span>
 <span class="n">until</span> <span class="o">=</span> <span class="n">datetime</span><span class="o">.</span><span class="n">now</span><span class="p">(</span><span class="n">timezone</span><span class="o">.</span><span class="n">utc</span><span class="p">)</span>
 <span class="n">since</span> <span class="o">=</span> <span class="n">datetime</span><span class="p">(</span><span class="n">until</span><span class="o">.</span><span class="n">year</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="n">tzinfo</span><span class="o">=</span><span class="n">timezone</span><span class="o">.</span><span class="n">utc</span><span class="p">)</span>
-<span class="c1"># Assume &quot;client&quot; is an instance of RestApiV2Client:</span>
-<span class="n">log_entries</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="n">client</span><span class="o">.</span><span class="n">iter_history</span><span class="p">(</span><span class="s1">&#39;/log_entries&#39;</span><span class="p">,</span> <span class="n">since</span><span class="p">,</span>  <span class="n">until</span><span class="p">))</span>
+<span class="c1"># Assume &quot;client&quot; is an instance of RestApiV2Client and &quot;process_ile&quot; is a</span>
+<span class="c1"># storage and/or data reduction/aggregation method:</span>
+<span class="k">for</span> <span class="n">log_entry</span> <span class="ow">in</span> <span class="n">client</span><span class="o">.</span><span class="n">iter_history</span><span class="p">(</span><span class="s1">&#39;/log_entries&#39;</span><span class="p">,</span> <span class="n">since</span><span class="p">,</span>  <span class="n">until</span><span class="p">):</span>
+    <span class="n">process_ile</span><span class="p">(</span><span class="n">log_entry</span><span class="p">)</span>
 </pre></div>
 </div>
+<p>It is recommended to perform action on each item once it has been yielded, i.e.
+to persist it in a data warehouse, rather than constructing big a list of
+results and then operating on the list. That is because, if anything goes
+wrong while fetching the dataset, i.e. an exception is raised or the program
+runs out of memory, the partial data it retrieved will be lost to garbage
+collection.</p>
+</section>
+<section id="non-standard-pagination-styles">
+<h3>Non-Standard Pagination Styles<a class="headerlink" href="#non-standard-pagination-styles" title="Link to this heading"></a></h3>
+<p>For all endpoints that implement one of the standard pagination methods
+(classic or cursor-based), <a class="reference internal" href="module_reference.html#pagerduty.RestApiV2Client.iter_all" title="pagerduty.RestApiV2Client.iter_all"><code class="xref py py-attr docutils literal notranslate"><span class="pre">pagerduty.RestApiV2Client.iter_all</span></code></a> will
+work. However, as of this writing, there are two API endpoints known to have
+their own special pagination style. Dedicated abstractions for them include:</p>
+<ul class="simple">
+<li><p><a class="reference external" href="https://developer.pagerduty.com/api-reference/c2d493e995071-get-raw-data-multiple-incidents">Get raw data - multiple incidents (analytics)</a> / <code class="docutils literal notranslate"><span class="pre">POST</span> <span class="pre">/analytics/raw/incidents</span></code>: <a class="reference internal" href="module_reference.html#pagerduty.RestApiV2Client.iter_analytics_raw_incidents" title="pagerduty.RestApiV2Client.iter_analytics_raw_incidents"><code class="xref py py-attr docutils literal notranslate"><span class="pre">pagerduty.RestApiV2Client.iter_analytics_raw_incidents</span></code></a></p></li>
+<li><p><a class="reference external" href="https://developer.pagerduty.com/api-reference/b9fe211cc2748-list-alert-grouping-settings">List alert grouping settings</a> / <code class="docutils literal notranslate"><span class="pre">GET</span> <span class="pre">/alert_grouping_settings</span></code>: <a class="reference internal" href="module_reference.html#pagerduty.RestApiV2Client.iter_alert_grouping_settings" title="pagerduty.RestApiV2Client.iter_alert_grouping_settings"><code class="xref py py-attr docutils literal notranslate"><span class="pre">pagerduty.RestApiV2Client.iter_alert_grouping_settings</span></code></a></p></li>
+</ul>
+<p>These methods must be used on said endpoints; using the standard pagination
+methods such as <code class="docutils literal notranslate"><span class="pre">iter_all</span></code>, <code class="docutils literal notranslate"><span class="pre">iter_cursor</span></code> or <code class="docutils literal notranslate"><span class="pre">iter_history</span></code> on them will not work
+properly.</p>
 </section>
 <section id="performance-and-completeness-of-results">
 <h3>Performance and Completeness of Results<a class="headerlink" href="#performance-and-completeness-of-results" title="Link to this heading"></a></h3>
@@ -723,9 +733,9 @@ response. Simply put, the functions will take longer to return if the total
 number of results is higher.</p>
 <p>Moreover, if these methods are used to fetch a very large volume of data, and
 an error is encountered when this happens, the partial data set will be
-discarded when the exception is raised. To make use of partial results, use
-<a class="reference internal" href="module_reference.html#pagerduty.RestApiV2Client.iter_all" title="pagerduty.RestApiV2Client.iter_all"><code class="xref py py-attr docutils literal notranslate"><span class="pre">pagerduty.RestApiV2Client.iter_all</span></code></a>, perform actions on each result
-yielded, and catch/handle exceptions as desired.</p>
+discarded when the exception is raised. To make use of partial results, perform
+actions on each result using an <code class="docutils literal notranslate"><span class="pre">iter_*</span></code> method and catch/handle exceptions
+as desired.</p>
 </section>
 <section id="updating-creating-or-deleting-while-paginating">
 <h3>Updating, creating or deleting while paginating<a class="headerlink" href="#updating-creating-or-deleting-while-paginating" title="Link to this heading"></a></h3>
