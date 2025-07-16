@@ -4,7 +4,7 @@ import pagerduty
 
 class VersionTest(unittest.TestCase):
 
-    def major_version_test(self):
+    def test_major_version(self):
         """
         Validate that the major "unknown version" matches the same as the actual
 
@@ -17,8 +17,7 @@ class VersionTest(unittest.TestCase):
         yet depending on the test environment (and this is required for using importlib)
         """
         ver_in_toml = pagerduty.version.get_version_via_tomllib()
-        ver_unknown = pagerdut.version.UNKNOWN_VERSION
+        ver_unknown = pagerduty.version.UNKNOWN_VERSION
         ver_from_fn = pagerduty.version.get_version()
         self.assertEqual(*[v.split('.')[0] for v in (ver_in_toml, ver_unknown)])
         self.assertEqual(*[v.split('.')[0] for v in (ver_unknown, ver_from_fn)])
-
