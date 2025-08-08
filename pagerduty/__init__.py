@@ -11,21 +11,25 @@ from . events_api_v2_client import EventsApiV2Client
 
 from . oauth_token_client import OAuthTokenClient
 
-from . rest_api_v2_client import (
-    CANONICAL_PATHS,
-    CURSOR_BASED_PAGINATION_PATHS,
-    ENTITY_WRAPPER_CONFIG,
+from . rest_api_v2_like_client import (
     ITERATION_LIMIT,
-    RestApiV2Client,
+    RestApiV2LikeClient,
     auto_json,
-    canonical_path,
     endpoint_matches,
-    entity_wrappers,
     infer_entity_wrapper,
     is_path_param,
     resource_url,
     unwrap,
     wrapped_entities
+)
+
+from . rest_api_v2_client import (
+    CANONICAL_PATHS,
+    CURSOR_BASED_PAGINATION_PATHS,
+    ENTITY_WRAPPER_CONFIG,
+    RestApiV2Client,
+    canonical_path,
+    entity_wrappers
 )
 
 from . common import (

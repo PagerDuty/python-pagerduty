@@ -39,79 +39,6 @@ Rather, it will only affect new instances. It is recommended to use
 ### HELPERS ###
 ###############
 
-def canonical_path(paths: list[str], base_url: str, url: str) -> str:
-    """
-    The canonical path from the API documentation corresponding to a URL.
-
-    Canonical paths are the bold-typed path portion of the of the URL displayed in the
-    API reference at the top of each reference page for the given API endpoint. They are
-    interpreted to mean patterns, i.e. any bracketed string means a variable parameter.
-
-    This method is used to identify and classify URLs according to which particular API
-    endpoint within the client's corresponding API it belongs to, in order to account
-    for any antipatterns that the endpoint might have.
-
-    For examle, in 
-    `List a user's contact methods
-    <https://developer.pagerduty.com/api-reference/50d46c0eb020d-list-a-user-s-contact-methods>
-    `_, the canonical path is ``/users/{id}/contact_methods``
-
-    :param paths:
-        A list of paths supported by the API client. One example of this is
-        :attr:`pagerduty.rest_api_v2.CANONICAL_PATHS`
-    :param base_url:
-        The base URL of the API
-    :param url:
-        A non-normalized URL (a path or full URL)
-    :returns:
-        The canonical API path corresponding to the URL.
-    """
-    full_url = normalize_url(base_url, url)
-    # Starting with / after hostname before the query string:
-    url_path = full_url.replace(base_url.rstrip('/'), '').split('?')[0]
-    # Root node (blank) counts so we include it:
-    n_nodes = url_path.count('/')
-    # First winnow the list down to paths with the same number of nodes:
-    patterns = list(filter(
-        lambda p: p.count('/') == n_nodes,
-        paths
-    ))
-    # Match against each node, skipping index zero because the root node always
-    # matches, and using the adjusted index "j":
-    for i, node in enumerate(url_path.split('/')[1:]):
-        j = i+1
-        patterns = list(filter(
-            lambda p: p.split('/')[j] == node or is_path_param(p.split('/')[j]),
-            patterns
-        ))
-        # Don't break early if len(patterns) == 1, but require an exact match...
-
-    if len(patterns) == 0:
-        raise UrlError(f"URL {url} does not match any canonical API path " \
-            'supported by this client.')
-    elif len(patterns) > 1:
-        # If there's multiple matches but one matches exactly, return that.
-        if url_path in patterns:
-            return url_path
-
-        # ...otherwise this is ambiguous.
-        raise Exception(f"Ambiguous URL {url} matches more than one " \
-            "canonical path pattern: "+', '.join(patterns)+'; this is likely ' \
-            'a bug.')
-    else:
-        return patterns[0]
-
-def is_path_param(path_node: str) -> bool:
-    """
-    Whether a part of a canonical path represents a variable parameter
-
-    :param path_node:
-        The node (value between slashes) in the path
-    :returns:
-        True if the node represents a variable parameter, False if it is a fixed value
-    """
-    return path_node.startswith('{') and path_node.endswith('}')
-
 def last_4(secret: str) -> str:
     """
     Truncate a sensitive value to its last 4 characters
@@ -289,22 +216,6 @@ class ApiClient(Session):
         Generates the header with the API credential used for authentication.
         """
         raise NotImplementedError
-
-    def canonical_path(self, url: str) -> str:
-        """
-        Return the canonical path of a URL for a particular API implementation.
-
-        :param url:
-            The URL. Must be supported by the API.
-        """
-        return canonical_path(self.canonical_paths, self.url, url)
-
-    @property
-    def canonical_paths(self) -> list[str]:
-        """
-        List of "canonical" API paths supported by the particular API client.
-        """
-        return []
 
     def cooldown_factor(self) -> float:
         return self.sleep_timer_base*(1+self.stagger_cooldown*random())
