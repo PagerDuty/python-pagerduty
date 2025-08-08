@@ -50,3 +50,6 @@ from . errors import (
     ServerHttpError,
     UrlError
 )
+
+from . slack_integration_api_client import SlackIntegrationApiClient
+from . slack_integration_connections_api_client import SlackIntegrationConnectionsApiClient
