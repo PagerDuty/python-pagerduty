@@ -5,14 +5,28 @@ Module Reference
 ================
 
 This page covers the documentation of individual methods and classes provided
-by the module. For general usage and examples, refer to the :ref:`user_guide`.
+by the package. For general usage and examples, refer to the :ref:`user_guide`.
 
 API Client Classes
 ------------------
+For convenience and backwards compatibility, the API client classes supplied by
+this library are imported into the root namespace of the module. For example:
+
+.. code-block:: python
+
+    # Instead of this:
+    from pagerduty.rest_api_v2_client import RestApiV2Client
+
+    # One can write the import as:
+    from pagerduty import RestApiV2Client
+
 .. autoclass:: pagerduty.ApiClient
     :members:
 
 .. autoclass:: pagerduty.OAuthTokenClient
+    :members:
+
+.. autoclass:: pagerduty.RestApiV2LikeClient
     :members:
 
 .. autoclass:: pagerduty.RestApiV2Client
@@ -21,65 +35,48 @@ API Client Classes
 .. autoclass:: pagerduty.EventsApiV2Client
     :members:
 
+.. autoclass:: pagerduty.SlackIntegrationApiClient
+    :members:
+
+.. autoclass:: pagerduty.SlackIntegrationConnectionsApiClient
+    :members:
+
 Errors
 ------
-.. autoclass:: pagerduty.Error
+.. automodule:: pagerduty.errors
     :members:
-.. autoclass:: pagerduty.HttpError
-    :members:
-.. autoclass:: pagerduty.ServerHttpError
-    :members:
-.. autoclass:: pagerduty.UrlError
 
-Client Defaults
----------------
-These are properties of the module that configure default behavior for the API
-client. There should be no need for the end user to modify them.
+Base API Client Helpers
+-----------------------
+.. automodule:: pagerduty.api_client
+    :members:
+    :exclude-members: ApiClient
+
+Common Helper Methods
+--------------------
+.. automodule:: pagerduty.common
+    :members:
+
+REST API v2 Helpers
+------------------
+
+Common Features
+***************
+REST API v2 and the integration APIs (to some extent) have some common
+features, such as classic pagination, which are implemented in
+``rest_api_v2_like_client`` so as to be able to repurpose them in APIs that
+follow similar conventions.
+
+.. automodule:: pagerduty.rest_api_v2_like_client
+    :members:
+    :exclude-members: RestApiV2LikeClient
+
+Features Exclusive to REST API v2
+*********************************
 
 .. automodule:: pagerduty.rest_api_v2_client
-    :members: ITERATION_LIMIT, ENTITY_WRAPPER_CONFIG, CANONICAL_PATHS, CURSOR_BASED_PAGINATION_PATHS
-.. automodule:: pagerduty.common
-    :members: TEXT_LEN_LIMIT
-.. automodule:: pagerduty.api_client
-    :members: TIMEOUT
-
-Functions
----------
-These are generic functions used by the API session classes and are not on
-their own typically needed, but which are documented for the benefit of anyone
-who may find use in them.
-
-URL Handling
-************
-URL related functions.
-
-.. automodule:: pagerduty
-    :members: canonical_path, endpoint_matches, is_path_param, normalize_url
-
-Entity Wrapping
-***************
-Functions that implement entity wrapping logic.
-
-.. automodule:: pagerduty
-    :members: entity_wrappers, infer_entity_wrapper, unwrap
-
-Function Decorators
-*******************
-Intended for use with functions based on the HTTP verb functions of subclasses
-of `requests.Session`_, i.e. that would otherwise return a `requests.Response`_
-object.
-
-.. automodule:: pagerduty
-    :members: auto_json, requires_success, resource_url, wrapped_entities
-
-Helpers
-*******
-Miscellaneous functions
-
-.. automodule:: pagerduty
-    :members: deprecated_kwarg, http_error_message, last_4, plural_name, successful_response, truncate_text, try_decoding
-
-
+    :members:
+    :exclude-members: RestApiV2Client
 
 .. References:
 .. -----------
