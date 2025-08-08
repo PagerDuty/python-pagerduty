@@ -12,7 +12,13 @@ from warnings import warn
 from requests import Response
 
 # Local
-from . api_client import ApiClient, normalize_url
+from . api_client import (
+    ApiClient,
+    canonical_path as common_canonical_path,
+    is_path_param,
+    normalize_url,
+)
+
 from . common import (
     datetime_intervals,
     requires_success,
@@ -471,12 +477,11 @@ properly support it for entity wrapping.
 
 Each of the keys should be a capitalized HTTP method (or ``*`` to match any method),
 followed by a space, followed by a canonical path i.e. as returned by
-:attr:`pagerduty.canonical_path` and included in
-:attr:`pagerduty.rest_api_v2_client.CANONICAL_PATHS`. Each value is either a tuple with
-request and response body wrappers (if they differ), a string (if they are the same for
-both cases) or ``None`` (if wrapping is disabled and the data is to be marshaled or
-unmarshaled as-is). Values in tuples can also be None to denote that either the request
-or response is unwrapped.
+:attr:`pagerduty.rest_api_v2_client.RestApiV2ApiClient.canonical_path`. Each value is
+either a tuple with request and response body wrappers (if they differ), a string (if
+they are the same for both cases) or ``None`` (if wrapping is disabled and the data is
+to be marshaled or unmarshaled as-is). Values in tuples can also be None to denote that
+either the request or response is unwrapped.
 
 An endpoint, under the design logic of this client, is said to have entity
 wrapping if the body (request or response) has only one property containing
@@ -496,58 +501,18 @@ properties in request bodies.
 
 def canonical_path(base_url: str, url: str) -> str:
     """
-    The canonical path from the API documentation corresponding to a URL
+    Get the canonical REST API v2 path (deprecated)
 
-    This is used to identify and classify URLs according to which particular API
-    within REST API v2 it belongs to.
-
-    Explicitly supported canonical paths are defined in the list
-    :attr:`pagerduty.rest_api_v2.CANONICAL_PATHS` and are the path part of any given
-    API's URL. The path for a given API is what is shown at the top of its reference
-    page, i.e.  ``/users/{id}/contact_methods`` for retrieving a user's contact methods
-    (GET) or creating a new one (POST).
+    Use the :attr:`pagerduty.RestApiV2Client.canonical_path` method, or the generic
+    method :attr:`pagerduty.api_client.canonical_path`, instead.
 
     :param base_url:
-        The base URL of the API
+        The base URL of the REST API v2 client
     :param url:
-        A non-normalized URL (a path or full URL)
-    :returns:
-        The canonical REST API v2 path corresponding to a URL.
+        The URL to get the path of
     """
-    full_url = normalize_url(base_url, url)
-    # Starting with / after hostname before the query string:
-    url_path = full_url.replace(base_url.rstrip('/'), '').split('?')[0]
-    # Root node (blank) counts so we include it:
-    n_nodes = url_path.count('/')
-    # First winnow the list down to paths with the same number of nodes:
-    patterns = list(filter(
-        lambda p: p.count('/') == n_nodes,
-        CANONICAL_PATHS
-    ))
-    # Match against each node, skipping index zero because the root node always
-    # matches, and using the adjusted index "j":
-    for i, node in enumerate(url_path.split('/')[1:]):
-        j = i+1
-        patterns = list(filter(
-            lambda p: p.split('/')[j] == node or is_path_param(p.split('/')[j]),
-            patterns
-        ))
-        # Don't break early if len(patterns) == 1, but require an exact match...
-
-    if len(patterns) == 0:
-        raise UrlError(f"URL {url} does not match any canonical API path " \
-            'supported by this client.')
-    elif len(patterns) > 1:
-        # If there's multiple matches but one matches exactly, return that.
-        if url_path in patterns:
-            return url_path
-
-        # ...otherwise this is ambiguous.
-        raise Exception(f"Ambiguous URL {url} matches more than one " \
-            "canonical path pattern: "+', '.join(patterns)+'; this is likely ' \
-            'a bug.')
-    else:
-        return patterns[0]
+    warn("This function is deprecated. Use pagerduty.api_client.canonical_path")
+    return common_canonical_path(CANONICAL_PATHS, base_url, url)
 
 def endpoint_matches(endpoint_pattern: str, method: str, path: str) -> bool:
     """
@@ -572,16 +537,6 @@ def endpoint_matches(endpoint_pattern: str, method: str, path: str) -> bool:
         endpoint_pattern.startswith(method.upper()) \
             or endpoint_pattern.startswith('*')
     ) and endpoint_pattern.endswith(f" {path}")
-
-def is_path_param(path_node: str) -> bool:
-    """
-    Whether a part of a canonical path represents a variable parameter
-
-    :param path_node: The node (value between slashes) in the path
-    :returns:
-        True if the node is an arbitrary variable, False if it is a fixed value
-    """
-    return path_node.startswith('{') and path_node.endswith('}')
 
 ###############################
 ### ENTITY WRAPPING HELPERS ###
@@ -792,7 +747,7 @@ def wrapped_entities(method: callable) -> callable:
     doc = method.__doc__
     def call(self, url, **kw):
         pass_kw = deepcopy(kw) # Make a copy for modification
-        path = canonical_path(self.url, url)
+        path = self.canonical_path(url)
         endpoint = "%s %s"%(http_method.upper(), path)
         req_w, res_w = entity_wrappers(http_method, path)
         # Validate the abbreviated (or full) request payload, and automatically
@@ -950,6 +905,10 @@ class RestApiV2Client(ApiClient):
         else:
             return {"Authorization": "Token token="+self.api_key}
 
+    @property
+    def canonical_paths(self):
+        return CANONICAL_PATHS
+
     def dict_all(self, path: str, by: str = 'id', **kw) -> dict:
         """
         Dictionary representation of all results from an index endpoint.
@@ -1050,7 +1009,7 @@ class RestApiV2Client(ApiClient):
         response = self.get(url, params=query_params)
         response_json = try_decoding(response)
         if 'total' not in response_json:
-            path = canonical_path(self.url, url)
+            path = self.canonical_path(url)
             raise ServerHttpError(
                 f"Response from endpoint GET {path} lacks a \"total\" property. This " \
                 "may be because the endpoint does not support classic pagination, or " \
@@ -1144,7 +1103,7 @@ class RestApiV2Client(ApiClient):
         """
         # Get entity wrapping and validate that the URL being requested is
         # likely to support pagination:
-        path = canonical_path(self.url, url)
+        path = self.canonical_path(url)
         endpoint = f"GET {path}"
 
         # Short-circuit to cursor-based pagination if appropriate:
@@ -1310,7 +1269,7 @@ class RestApiV2Client(ApiClient):
         :yields:
             Results from each page of results.
         """
-        path = canonical_path(self.url, url)
+        path = self.canonical_path(url)
         if path not in CURSOR_BASED_PAGINATION_PATHS:
             raise UrlError(f"{path} does not support cursor-based pagination.")
         _, wrapper = entity_wrappers('GET', path)
@@ -1379,7 +1338,7 @@ class RestApiV2Client(ApiClient):
             All results from the resource collection API within the time range specified
             by ``since`` and ``until``.
         """
-        path = canonical_path(self.url, url)
+        path = self.canonical_path(url)
         since_until = {
             'since': strftime(since),
             'until': strftime(until)
@@ -1464,6 +1423,10 @@ class RestApiV2Client(ApiClient):
             # it must be removed if present:
             for key in ('team_ids', 'team_ids[]'):
                 if 'params' in my_kw and key in my_kw['params']:
+                    self.log.warn(
+                        f"iter_incident_notes: query parameter \"{key}\" will be "
+                        "ignored because argument incident_id was specified"
+                    )
                     del(my_kw['params'][key])
         return iter(filter(
             lambda ile: ile['type'] == 'annotate_log_entry',
