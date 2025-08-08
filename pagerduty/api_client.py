@@ -21,56 +21,19 @@ from . errors import (
     HttpError,
     UrlError
 )
+from . common import (
+    TIMEOUT,
+    last_4,
+    normalize_url
+)
 
 ########################
 ### DEFAULT SETTINGS ###
 ########################
 
-TIMEOUT = 60
-"""
-The default timeout in seconds for any given HTTP request.
-
-Modifying this value will not affect any preexisting API session instances.
-Rather, it will only affect new instances. It is recommended to use
-:attr:`ApiClient.timeout` to configure the timeout for a given session.
-"""
-
 ###############
 ### HELPERS ###
 ###############
-
-def last_4(secret: str) -> str:
-    """
-    Truncate a sensitive value to its last 4 characters
-
-    :param secret: text to truncate
-    :returns:
-        The truncated text
-    """
-    return '*'+str(secret)[-4:]
-
-def normalize_url(base_url: str, url: str) -> str:
-    """
-    Normalize a URL or path to be a complete API URL before query parameters.
-
-    The ``url`` argument may be a path relative to the base URL or a full URL.
-
-    :param url:
-        The URL or path to normalize to a full URL.
-    :param base_url:
-        The base API URL, excluding any trailing slash, i.e.
-        "https://api.pagerduty.com"
-    :returns:
-        The full API URL.
-    """
-    if url.startswith(base_url):
-        return url
-    elif not (url.startswith('http://') or url.startswith('https://')):
-        return base_url.rstrip('/') + "/" + url.lstrip('/')
-    else:
-        raise UrlError(
-            f"URL {url} does not start with the API base URL {base_url}"
-        )
 
 ####################
 ### CLIENT CLASS ###

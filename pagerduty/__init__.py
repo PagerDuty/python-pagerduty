@@ -1,11 +1,21 @@
 from . version import __version__
 
-from . api_client import (
-    ApiClient,
+from . common import (
+    TEXT_LEN_LIMIT,
     TIMEOUT,
+    deprecated_kwarg,
+    http_error_message,
     last_4,
-    normalize_url
+    normalize_url,
+    plural_name,
+    requires_success,
+    singular_name,
+    successful_response,
+    truncate_text,
+    try_decoding
 )
+
+from . api_client import ApiClient
 
 from . events_api_v2_client import EventsApiV2Client
 
@@ -32,17 +42,8 @@ from . rest_api_v2_client import (
     entity_wrappers
 )
 
-from . common import (
-    TEXT_LEN_LIMIT,
-    deprecated_kwarg,
-    http_error_message,
-    plural_name,
-    requires_success,
-    singular_name,
-    successful_response,
-    truncate_text,
-    try_decoding
-)
+from . slack_integration_api_client import SlackIntegrationApiClient
+from . slack_integration_connections_api_client import SlackIntegrationConnectionsApiClient
 
 from . errors import (
     Error,
@@ -50,6 +51,3 @@ from . errors import (
     ServerHttpError,
     UrlError
 )
-
-from . slack_integration_api_client import SlackIntegrationApiClient
-from . slack_integration_connections_api_client import SlackIntegrationConnectionsApiClient
