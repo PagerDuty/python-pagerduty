@@ -27,18 +27,6 @@ from . common import (
     normalize_url
 )
 
-########################
-### DEFAULT SETTINGS ###
-########################
-
-###############
-### HELPERS ###
-###############
-
-####################
-### CLIENT CLASS ###
-####################
-
 class ApiClient(Session):
     """
     Base class for making HTTP requests to PagerDuty APIs

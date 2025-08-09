@@ -44,7 +44,7 @@ The default timeout in seconds for any given HTTP request.
 
 Modifying this value will not affect any preexisting API session instances.
 Rather, it will only affect new instances. It is recommended to use
-:attr:`ApiClient.timeout` to configure the timeout for a given session.
+:attr:`pagerduty.ApiClient.timeout` to configure the timeout for a given session.
 """
 
 
@@ -210,6 +210,8 @@ def relative_seconds_to_datetime(seconds_remaining: int):
 def requires_success(method: callable) -> callable:
     """
     Decorator that validates HTTP responses.
+
+    Uses :attr:`pagerduty.common.successful_response` for said validation.
     """
     doc = method.__doc__
     def call(self, url, **kw):
@@ -260,7 +262,8 @@ def strptime(datestr: str) -> datetime:
 def successful_response(r: Response, context: Optional[str] = None) -> Response:
     """Validates the response as successful.
 
-    Returns the response if it was successful; otherwise, raises an exception.
+    Returns the response if it was successful; otherwise, raises
+    :attr:`pagerduty.errors.Error`
 
     :param r:
         Response object corresponding to the response received.
@@ -292,7 +295,7 @@ def try_decoding(r: Response) -> Optional[Union[dict, list, str]]:
     """
     JSON-decode a response body
 
-    Returns the decoded body if successful; raises :class:`ServerHttpError`
+    Returns the decoded body if successful; raises :class:`pagerduty.ServerHttpError`
     otherwise.
 
     :param r:

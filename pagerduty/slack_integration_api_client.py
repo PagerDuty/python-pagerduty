@@ -16,15 +16,16 @@ ENTITY_WRAPPER_CONFIG = {
 
 class SlackIntegrationApiClient(RestApiV2LikeClient):
     """
-    Client for the PagerDuty Slack Integration API (WIP)
+    Client for the PagerDuty Slack Integration API.
+
+    Inherits from :class:`pagerduty.RestApiV2LikeClient`.
 
     This client provides an abstraction layer for all of the endpoints of the
     `PagerDuty Slack Integration API
-    <https://developer.pagerduty.com/api-reference/56fee4184eabc-pager-duty-slack-integration-api>
-    `_ except for the "Slack Connections" features, which are supported by 
-    :attr:`pagerduty.SlackIntegrationConnectionsApiClient`.
+    <https://developer.pagerduty.com/api-reference/56fee4184eabc-pager-duty-slack-integration-api>`_
+    except for the "Slack Connections" features, which are supported by 
+    :class:`pagerduty.SlackIntegrationConnectionsApiClient`.
     """
-
 
     permitted_Methods = ('GET', 'POST', 'PUT', 'DELETE')
 

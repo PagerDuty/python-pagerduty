@@ -14,12 +14,14 @@ ENTITY_WRAPPER_CONFIG = {
 
 class SlackIntegrationConnectionsApiClient(RestApiV2LikeClient):
     """
-    Client for the PagerDuty Slack Integration API's "Connections" endpoints
+    Client for the PagerDuty Slack Integration API's "Connections" endpoints.
+
+    Inherits from :class:`pagerduty.RestApiV2LikeClient`.
 
     This client provides an abstraction layer for the
     `PagerDuty Slack Integration API
-    <https://developer.pagerduty.com/api-reference/56fee4184eabc-pager-duty-slack-integration-api>
-    `_, specifically the "Connections" API endpoints, which use a different hostname in
+    <https://developer.pagerduty.com/api-reference/56fee4184eabc-pager-duty-slack-integration-api>`_,
+    specifically the "Connections" API endpoints, which use a different hostname in
     the base URL, ``app.pagerduty.com``, as opposed to ``api.pagerduty.com``.
     """
 

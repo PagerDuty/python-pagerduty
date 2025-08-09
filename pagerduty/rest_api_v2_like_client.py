@@ -65,12 +65,12 @@ def canonical_path(paths: list[str], base_url: str, url: str) -> str:
 
     For examle, in 
     `List a user's contact methods
-    <https://developer.pagerduty.com/api-reference/50d46c0eb020d-list-a-user-s-contact-methods>
-    `_, the canonical path is ``/users/{id}/contact_methods``
+    <https://developer.pagerduty.com/api-reference/50d46c0eb020d-list-a-user-s-contact-methods>`_,
+    the canonical path is ``/users/{id}/contact_methods``
 
     :param paths:
         A list of paths supported by the API client. One example of this is
-        :attr:`pagerduty.rest_api_v2.CANONICAL_PATHS`
+        ``pagerduty.rest_api_v2_client.CANONICAL_PATHS``.
     :param base_url:
         The base URL of the API
     :param url:
@@ -115,11 +115,11 @@ def canonical_path(paths: list[str], base_url: str, url: str) -> str:
 
 def endpoint_matches(endpoint_pattern: str, method: str, path: str) -> bool:
     """
-    Whether an endpoint (method and canonical path) matches a given pattern
+    Whether an endpoint (method and canonical path) matches a given pattern.
 
-    This is the filtering logic used for finding the appropriate entry i.e. in
-    :attr:`pagerduty.rest_api_v2_client.ENTITY_WRAPPER_CONFIG` to use for a given method
-    and API path.
+    This is used by :attr:`pagerduty.rest_api_v2_like_client.entity_wrappers` for
+    finding the appropriate entity wrapper configuration entry to use for a given HTTP
+    method and API path.
 
     :param endpoint_pattern:
         The endpoint pattern in the form ``METHOD PATH`` where ``METHOD`` is the
@@ -156,24 +156,25 @@ def entity_wrappers(wrapper_config: dict, method: str, path: str) -> tuple:
     Obtains entity wrapping information for a given endpoint (canonical path and method)
 
     The information about the API being acccessed is dependency-injected as the
-    ``wrapper_config`` parameter, which is a dictionary.
+    ``wrapper_config`` parameter, which is a dictionary. An example of such a dictionary
+    object is ``pagerduty.rest_api_v2_client.ENTITY_WRAPPER_CONFIG``.
 
     When trying to determine the entity wrapper name for a given API endpoint, the
     dictionary ``wrapper_config`` is first checked for keys that apply to a given
     request method and canonical API path based on a matching logic. If no keys are
     found that match, it is assumed that the API endpoint follows classic entity
     wrapping conventions, and the wrapper name can be inferred based on those
-    conventions (see :attr:`pagerduty.infer_entity_wrapper`). Any new API that does not
-    follow these conventions should therefore be given an entry in the
-    ``wrapper_config`` dictionary in order to properly support it for entity wrapping.
+    conventions (see :attr:`pagerduty.rest_api_v2_like_client.infer_entity_wrapper`).
+    Any new API that does not follow these conventions should therefore be given an
+    entry in the ``wrapper_config`` dictionary in order to properly support it for
+    entity wrapping.
 
     Each of the keys of should be a capitalized HTTP method (or ``*`` to match any
-    method), followed by a space, followed by a canonical path i.e. as returned by
-    :attr:`pagerduty.rest_api_v2_client.RestApiV2ApiClient.canonical_path`. Each value
-    is either a tuple with request and response body wrappers (if they differ), a string
-    (if they are the same for both cases) or ``None`` (if wrapping is disabled and the
-    data is to be marshaled or unmarshaled as-is). Values in tuples can also be None to
-    denote that either the request or response is unwrapped.
+    method), followed by a space, followed by a canonical path. Each value is either a
+    tuple with request and response body wrappers (if they differ), a string (if they
+    are the same for both cases) or ``None`` (if wrapping is disabled and the data is to
+    be marshaled or unmarshaled as-is). Values in tuples can also be None to denote that
+    either the request or response is unwrapped.
 
     An endpoint, under the design logic of this client, is said to have entity wrapping
     if the body (request or response) has only one property containing the content
@@ -313,10 +314,12 @@ def unwrap(response: Response, wrapper: Optional[str]) -> Union[dict, list]:
 
 def auto_json(method: callable) -> callable:
     """
-    Makes methods return the full response body object after decoding from JSON.
+    Decorator to return the full response body object after decoding from JSON.
 
     Intended for use on functions that take a URL positional argument followed
     by keyword arguments and return a `requests.Response`_ object.
+
+    The new return value is the JSON-decoded response body (``dict`` or ``list``).
     """
     doc = method.__doc__
     def call(self, url, **kw):
@@ -357,23 +360,21 @@ def resource_url(method: callable) -> callable:
 
 def wrapped_entities(method: callable) -> callable:
     """
-    Automatically wrap request entities and unwrap response entities.
+    Decorator to automatically wrap request entities and unwrap response entities.
 
-    Used for methods :attr:`RestApiV2Client.rget`, :attr:`RestApiV2Client.rpost` and
-    :attr:`RestApiV2Client.rput`. It makes them always return an object representing
-    the resource entity in the response (whether wrapped in a root-level
-    property or not) rather than the full response body. When making a post /
-    put request, and passing the ``json`` keyword argument to specify the
-    content to be JSON-encoded as the body, that keyword argument can be either
-    the to-be-wrapped content or the full body including the entity wrapper, and
+    Used for defining the ``r{method}`` functions, i.e.
+    :attr:`pagerduty.RestApiV2LikeClient.rpost`. It makes the methods always return an
+    object representing the resource entity in the response (whether wrapped in a
+    root-level property or not) rather than the full response body, after JSON-decoding.
+    When making a post / put request, and passing the ``json`` keyword argument to
+    specify the content to be JSON-encoded as the body, that keyword argument can be
+    either the to-be-wrapped content or the full body including the entity wrapper, and
     the ``json`` keyword argument will be normalized to include the wrapper.
 
-    Methods using this decorator will raise a :class:`HttpError` with its
-    ``response`` property being being the `requests.Response`_ object in the
-    case of any error (as of version 4.2 this is subclassed as
-    :class:`HttpError`), so that the implementer can access it by catching the
-    exception, and thus design their own custom logic around different types of
-    error responses.
+    Methods using this decorator will raise a :class:`pagerduty.HttpError` with its
+    ``response`` property being being the `requests.Response`_ object in the case of any
+    error, so that the implementer can access it by catching the exception, and thus
+    design their own custom logic around different types of error responses.
 
     :param method:
         Method being decorated. Must take one positional argument after ``self`` that is
@@ -450,6 +451,10 @@ class RestApiV2LikeClient(ApiClient):
 
         Child classes that do not implement this method do not a-priori support any API
         endpoints for features that require entity wrapping.
+
+        This value is used as the first argument to
+        :attr:`pagerduty.rest_api_v2_like_client.canonical_path` from
+        :attr:`pagerduty.RestApiV2LikeClient.canonical_path`.
         """
         return []
 
@@ -489,13 +494,24 @@ class RestApiV2LikeClient(ApiClient):
     @property
     def entity_wrapper_config(self) -> dict:
         """
-        Entity wrapping antipattern specification for the given client
+        Entity wrapping antipattern specification for the given client.
 
-        See attr:`pagerduty.rest_api_v2_client.entity_wrappers`
+        This dictionary object is sent to
+        attr:`pagerduty.rest_api_v2_like_client.entity_wrappers` when looking up how any
+        given API endpoint wraps (or doesn't wrap) response and request entities; refer
+        to the documentation on that method for further details.
+
+        Child classes should implement this method; it is otherwise assumed that all
+        endpoints in its corresponding API follow orthodox entity wrapping conventions.
         """
         return {}
 
     def entity_wrappers(self, http_method: str, path: str) -> tuple:
+        """
+        Get the entity-wrapper specification for any given API / API endpoint.
+
+        See: attr:`pagerduty.rest_api_v2_like_client.entity_wrappers`
+        """
         return entity_wrappers(self.entity_wrapper_config, http_method, path)
 
     def get_total(self, url: str, params: Optional[dict] = None) -> int:

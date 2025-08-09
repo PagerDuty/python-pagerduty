@@ -26,21 +26,11 @@ from . rest_api_v2_like_client import (
     wrapped_entities
 )
 
-#######################
-### CLIENT DEFAULTS ###
-#######################
-
+########################
+### DEFAULT SETTINGS ###
+########################
 
 RECURSION_LIMIT = getrecursionlimit() // 2
-"""
-Maximum depth of recursion when using functions that use recursion.
-
-For example, :attr:`pagerduty.RestApiV2Client.iter_history` will call itself recursively
-if the number of results in the data set to be queried exceeds :attr:`ITERATION_LIMIT`.
-
-Its value is arbitrary and meant to guard against excessive depth. For safety, it is set
-to half the hard recursion limit in Python.
-"""
 
 ITER_HIST_RECURSION_WARNING_TEMPLATE = """RestApiV2Client.iter_history cannot continue
 bisecting historical time intervals because {reason}, but the total number of results in
@@ -57,6 +47,8 @@ classic pagination, {iteration_limit}. Results will be incomplete.{suggestion}
 # To generate new definitions for CANONICAL_PATHS and
 # CURSOR_BASED_PAGINATION_PATHS based on the API documentation's source code,
 # use scripts/get_path_list/get_path_list.py
+
+# BEGIN auto-generated content
 
 CANONICAL_PATHS = [
     '/{entity_type}/{id}/change_tags',
@@ -273,11 +265,6 @@ CANONICAL_PATHS = [
     '/workflows/integrations/{integration_id}/connections',
     '/workflows/integrations/{integration_id}/connections/{id}',
 ]
-"""
-Explicit list of supported canonical REST API v2 paths
-
-:meta hide-value:
-"""
 
 CURSOR_BASED_PAGINATION_PATHS = [
     '/audit/records',
@@ -294,11 +281,8 @@ CURSOR_BASED_PAGINATION_PATHS = [
     '/workflows/integrations/connections',
     '/workflows/integrations/{integration_id}/connections',
 ]
-"""
-Explicit list of paths that support cursor-based pagination
 
-:meta hide-value:
-"""
+# END auto-generated content
 
 HISTORICAL_RECORD_PATHS = [
     '/audit/records',
@@ -312,13 +296,6 @@ HISTORICAL_RECORD_PATHS = [
     '/teams/{id}/audit/records',
     '/users/{id}/audit/records'
 ]
-"""
-Explicit list of paths that represent date-specific resources.
-
-These index endpoints support the "since" and "until" parameters and represent events.
-
-:meta hide-value:
-"""
 
 ENTITY_WRAPPER_CONFIG = {
     # Abilities
@@ -442,12 +419,7 @@ ENTITY_WRAPPER_CONFIG = {
 
     # OAuth Delegations
     'GET /oauth_delegations/revocation_requests/status': None
-} #: :meta hide-value:
-"""
-Wrapped entities antipattern handling configuration.
-
-:meta hide-value:
-"""
+}
 
 ################################
 ### REST API V2 URL HANDLING ###
@@ -477,6 +449,10 @@ def entity_wrappers(method: str, path: str) -> tuple:
     """
     return entity_wrappers_common(ENTITY_WRAPPER_CONFIG, method, path)
 
+################
+# CLIENT CLASS #
+################
+
 class RestApiV2Client(RestApiV2LikeClient):
     """
     PagerDuty REST API v2 client class.
@@ -484,7 +460,7 @@ class RestApiV2Client(RestApiV2LikeClient):
     Implements the most generic and oft-implemented aspects of PagerDuty's REST
     API v2 as an opinionated wrapper of `requests.Session`_.
 
-    Inherits from :class:`ApiClient` and :class:`RestApiV2LikeClient`.
+    Inherits from :class:`pagerduty.RestApiV2LikeClient`.
 
     :param api_key:
         REST API access token to use for HTTP requests
@@ -751,7 +727,7 @@ class RestApiV2Client(RestApiV2LikeClient):
         Yield all historical records from an endpoint in a given time interval.
 
         This method works around the limitation of classic pagination (see
-        :attr:`pagerduty.rest_api_v2_client.ITERATION_LIMIT`) by sub-dividing queries
+        :attr:`pagerduty.rest_api_v2_like_client.ITERATION_LIMIT`) by sub-dividing queries
         into lesser time intervals wherein the total number of results does not exceed
         the pagination limit.
 
