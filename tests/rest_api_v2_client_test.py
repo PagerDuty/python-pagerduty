@@ -239,6 +239,8 @@ class FunctionDecoratorsTest(unittest.TestCase):
         response.json.return_value = {'users': users_array}
         do_http_things.__name__ = 'rget'
         dummy_session.url = 'https://api.pagerduty.com'
+        dummy_session.canonical_path.return_value = '/users'
+        dummy_session.entity_wrappers.return_value = ('users', 'users')
         self.assertEqual(users_array,
             pagerduty.wrapped_entities(do_http_things)(dummy_session, '/users',
                 query='user'))
@@ -248,6 +250,9 @@ class FunctionDecoratorsTest(unittest.TestCase):
         # Response body validation
         do_http_things.__name__ = 'rpost'
         user_payload = {'email':'user@example.com', 'name':'User McUserson'}
+        dummy_session.url = 'https://api.pagerduty.com'
+        dummy_session.canonical_path.return_value = '/users'
+        dummy_session.entity_wrappers.return_value = ('user', 'user')
         self.assertRaises(
             pagerduty.Error,
             pagerduty.wrapped_entities(do_http_things),
@@ -257,6 +262,8 @@ class FunctionDecoratorsTest(unittest.TestCase):
         # Add type property; should work now and automatically pack the user
         # object into a JSON object inside the envelope.
         user_payload['type'] = 'user'
+        dummy_session.url = 'https://api.pagerduty.com'
+        dummy_session.canonical_path.return_value = '/users'
         do_http_things.__name__ = 'rpost'
         response.ok = True
         created_user = user_payload.copy()
@@ -273,6 +280,9 @@ class FunctionDecoratorsTest(unittest.TestCase):
         reset_mocks()
         # Test auto-envelope functionality for multi-update
         incidents = [{'id':'PABC123'}, {'id':'PDEF456'}]
+        dummy_session.url = 'https://api.pagerduty.com'
+        dummy_session.canonical_path.return_value = '/incidents'
+        dummy_session.entity_wrappers.return_value = ('incidents', 'incidents')
         do_http_things.__name__ = 'rput'
         response.ok = True
         updated_incidents = copy.deepcopy(incidents)
