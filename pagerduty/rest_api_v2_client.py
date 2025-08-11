@@ -727,9 +727,9 @@ class RestApiV2Client(RestApiV2BaseClient):
         Yield all historical records from an endpoint in a given time interval.
 
         This method works around the limitation of classic pagination (see
-        :attr:`pagerduty.rest_api_v2_base_client.ITERATION_LIMIT`) by sub-dividing queries
-        into lesser time intervals wherein the total number of results does not exceed
-        the pagination limit.
+        :attr:`pagerduty.rest_api_v2_base_client.ITERATION_LIMIT`) by recursively
+        bisecting the initially-provided time interval until the total number of results
+        in each sub-interval is less than the hard pagination limit.
 
         :param url:
             Index endpoint (API URL) from which to yield results. In the event that a

@@ -439,8 +439,12 @@ class RestApiV2BaseClient(ApiClient):
         """
         Return the canonical path of a URL for a particular API implementation.
 
+        See: :attr:`pagerduty.rest_api_v2_base_client.canonical_path`
+
         :param url:
             The URL. Must be supported by the API.
+        :returns:
+            The canonical path corresponding to the URL.
         """
         return canonical_path(self.canonical_paths, self.url, url)
 
@@ -450,7 +454,7 @@ class RestApiV2BaseClient(ApiClient):
         List of "canonical" API paths supported by the particular API client.
 
         Child classes that do not implement this method do not a-priori support any API
-        endpoints for features that require entity wrapping.
+        endpoints for features that require entity wrapping, e.g. pagination.
 
         This value is used as the first argument to
         :attr:`pagerduty.rest_api_v2_base_client.canonical_path` from
@@ -497,12 +501,14 @@ class RestApiV2BaseClient(ApiClient):
         Entity wrapping antipattern specification for the given client.
 
         This dictionary object is sent to
-        attr:`pagerduty.rest_api_v2_base_client.entity_wrappers` when looking up how any
-        given API endpoint wraps (or doesn't wrap) response and request entities; refer
-        to the documentation on that method for further details.
+        :attr:`pagerduty.rest_api_v2_base_client.entity_wrappers` when looking up how
+        any given API endpoint wraps (or doesn't wrap) response and request entities;
+        refer to the documentation on that method for further details.
 
-        Child classes should implement this method; it is otherwise assumed that all
-        endpoints in its corresponding API follow orthodox entity wrapping conventions.
+        Child classes should implement this method and return appropriate configuration
+        to cover all schema antipatterns. It is otherwise assumed that all endpoints in
+        its corresponding API follow orthodox entity wrapping conventions, in which case
+        the wrapper information can be inferred from the path itself.
         """
         return {}
 
@@ -510,7 +516,14 @@ class RestApiV2BaseClient(ApiClient):
         """
         Get the entity-wrapper specification for any given API / API endpoint.
 
-        See: attr:`pagerduty.rest_api_v2_base_client.entity_wrappers`
+        See: :attr:`pagerduty.rest_api_v2_base_client.entity_wrappers`
+
+        :param http_method:
+            The method of the request.
+        :param path:
+            The canonical API path of the request.
+        :returns:
+            The entity wrapper tuple to use in the given request.
         """
         return entity_wrappers(self.entity_wrapper_config, http_method, path)
 
