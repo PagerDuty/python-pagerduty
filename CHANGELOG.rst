@@ -1,3 +1,18 @@
+**2025-08-12: REST API Base Client Refactor + New Client - Version 4.0.0**
+
+* **Breaking Changes:**
+
+   - Deprecated property ``RestApiV2Client.trunc_token`` has been removed.
+   - Helper functions have been moved. References to them in the root ``pagerduty`` namespace will not be affected; they are still imported there for backwards compatibility. Any direct references to them through the modules where they were declared will need to be updated:
+
+      * Helper functions ``last_4`` and ``normalize_url`` have been moved from ``pagerduty.api_client`` to ``pagerduty.common``.
+      * Helper functions ``endpoint_matches``, ``is_path_param``, ``infer_entity_wrapper`` and ``unwrap`` have been moved from ``pagerduty.rest_api_v2_client`` to ``pagerduty.rest_api_v2_base_client``.
+      * Function decorators ``auto_json``, ``resource_url`` and ``wrapped_entities`` have been moved from ``pagerduty.rest_api_v2_client`` to ``pagerduty.rest_api_v2_base_client``.
+
+* **New Features:**
+
+   - API client classes ``pagerduty.SlackIntegrationApiClient`` and ``pagerduty.SlackIntegrationConnectionsApiClient`` provide support for the PagerDuty Slack Integration API.
+
 **2025-07-15: New features - Version 3.1.0**
 
 * New features in ``RestApiV2Client``
