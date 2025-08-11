@@ -1,4 +1,4 @@
-from . rest_api_v2_like_client import RestApiV2LikeClient
+from . rest_api_v2_base_client import RestApiV2BaseClient
 
 CANONICAL_PATHS = [
     "/workspaces/{slack_team_id}/connections",
@@ -12,11 +12,11 @@ ENTITY_WRAPPER_CONFIG = {
     "PUT /workspaces/{slack_team_id}/connections/{connection_id}": "slack_connection",
 }
 
-class SlackIntegrationConnectionsApiClient(RestApiV2LikeClient):
+class SlackIntegrationConnectionsApiClient(RestApiV2BaseClient):
     """
     Client for the PagerDuty Slack Integration API's "Connections" endpoints.
 
-    Inherits from :class:`pagerduty.RestApiV2LikeClient`.
+    Inherits from :class:`pagerduty.RestApiV2BaseClient`.
 
     This client provides an abstraction layer for the
     `PagerDuty Slack Integration API

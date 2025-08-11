@@ -21,9 +21,9 @@ from . events_api_v2_client import EventsApiV2Client
 
 from . oauth_token_client import OAuthTokenClient
 
-from . rest_api_v2_like_client import (
+from . rest_api_v2_base_client import (
     ITERATION_LIMIT,
-    RestApiV2LikeClient,
+    RestApiV2BaseClient,
     auto_json,
     endpoint_matches,
     infer_entity_wrapper,

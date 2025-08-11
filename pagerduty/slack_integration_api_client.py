@@ -1,4 +1,4 @@
-from . rest_api_v2_like_client import RestApiV2LikeClient
+from . rest_api_v2_base_client import RestApiV2BaseClient
 
 CANONICAL_PATHS = [
     "/incidents/{incident_id}/dedicated_channel"
@@ -14,11 +14,11 @@ ENTITY_WRAPPER_CONFIG = {
     "POST /incidents/{incident_id}/notification_channels": None,
 }
 
-class SlackIntegrationApiClient(RestApiV2LikeClient):
+class SlackIntegrationApiClient(RestApiV2BaseClient):
     """
     Client for the PagerDuty Slack Integration API.
 
-    Inherits from :class:`pagerduty.RestApiV2LikeClient`.
+    Inherits from :class:`pagerduty.RestApiV2BaseClient`.
 
     This client provides an abstraction layer for all of the endpoints of the
     `PagerDuty Slack Integration API

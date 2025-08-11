@@ -23,16 +23,16 @@ this library are imported into the root namespace of the module. For example:
 .. autoclass:: pagerduty.ApiClient
     :members:
 
+.. autoclass:: pagerduty.EventsApiV2Client
+    :members:
+
 .. autoclass:: pagerduty.OAuthTokenClient
     :members:
 
-.. autoclass:: pagerduty.RestApiV2LikeClient
+.. autoclass:: pagerduty.RestApiV2BaseClient
     :members:
 
 .. autoclass:: pagerduty.RestApiV2Client
-    :members:
-
-.. autoclass:: pagerduty.EventsApiV2Client
     :members:
 
 .. autoclass:: pagerduty.SlackIntegrationApiClient
@@ -43,40 +43,40 @@ this library are imported into the root namespace of the module. For example:
 
 Errors
 ------
-.. automodule:: pagerduty.errors
+As with client classes, all errors are imported to the root module
+namespace, so that one can import them directly from ``pagerduty``.
+
+.. autoclass:: pagerduty.Error
+    :members:
+.. autoclass:: pagerduty.HttpError
+    :members:
+.. autoclass:: pagerduty.ServerHttpError
+    :members:
+.. autoclass:: pagerduty.UrlError
     :members:
 
-Base API Client Helpers
------------------------
-.. automodule:: pagerduty.api_client
-    :members:
-    :exclude-members: ApiClient
+Common Features
+---------------
+Miscellaneous methods and constants used in the client that are used widely
+and/or don't fit neatly into any other category are defined in
+``pagerduty.common``.
 
-Common Helper Methods
---------------------
+A few of these features are imported to the root namespace for backwards
+compatibility, but new features will not, going forward.
+
 .. automodule:: pagerduty.common
     :members:
 
 REST API v2 Helpers
-------------------
-
-Common Features
-***************
+-------------------
 REST API v2 and the integration APIs (to some extent) have some common
 features, such as classic pagination, which are implemented in
-``rest_api_v2_like_client`` so as to be able to repurpose them in APIs that
+``rest_api_v2_base_client`` so as to be able to repurpose them in APIs that
 follow similar conventions.
 
-.. automodule:: pagerduty.rest_api_v2_like_client
+.. automodule:: pagerduty.rest_api_v2_base_client
     :members:
-    :exclude-members: RestApiV2LikeClient
-
-Features Exclusive to REST API v2
-*********************************
-
-.. automodule:: pagerduty.rest_api_v2_client
-    :members:
-    :exclude-members: RestApiV2Client
+    :exclude-members: RestApiV2BaseClient
 
 .. References:
 .. -----------

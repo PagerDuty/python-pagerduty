@@ -17,9 +17,9 @@ from . common import (
     strftime,
     strptime
 )
-from . rest_api_v2_like_client import (
+from . rest_api_v2_base_client import (
     ITERATION_LIMIT,
-    RestApiV2LikeClient,
+    RestApiV2BaseClient,
     auto_json,
     canonical_path as canonical_path_common,
     entity_wrappers as entity_wrappers_common,
@@ -453,14 +453,14 @@ def entity_wrappers(method: str, path: str) -> tuple:
 # CLIENT CLASS #
 ################
 
-class RestApiV2Client(RestApiV2LikeClient):
+class RestApiV2Client(RestApiV2BaseClient):
     """
     PagerDuty REST API v2 client class.
 
     Implements the most generic and oft-implemented aspects of PagerDuty's REST
     API v2 as an opinionated wrapper of `requests.Session`_.
 
-    Inherits from :class:`pagerduty.RestApiV2LikeClient`.
+    Inherits from :class:`pagerduty.RestApiV2BaseClient`.
 
     :param api_key:
         REST API access token to use for HTTP requests
@@ -727,7 +727,7 @@ class RestApiV2Client(RestApiV2LikeClient):
         Yield all historical records from an endpoint in a given time interval.
 
         This method works around the limitation of classic pagination (see
-        :attr:`pagerduty.rest_api_v2_like_client.ITERATION_LIMIT`) by sub-dividing queries
+        :attr:`pagerduty.rest_api_v2_base_client.ITERATION_LIMIT`) by sub-dividing queries
         into lesser time intervals wherein the total number of results does not exceed
         the pagination limit.
 
