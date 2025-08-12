@@ -198,7 +198,7 @@ def plural_name(obj_type: str) -> str:
         return obj_type+'s'
 
 
-def relative_seconds_to_datetime(seconds_remaining: int):
+def relative_seconds_to_datetime(seconds_remaining: int) -> str:
     """
     Convert a number of seconds in the future to an absolute UTC ISO8601 time string.
     """

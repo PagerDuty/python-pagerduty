@@ -51,7 +51,7 @@ See: `Pagination
 
 CanonicalPath = str
 """
-Canonical path type.
+Canonical path type (alias of ``str``).
 
 Canonical paths are the bold-typed portion of the path of the URL displayed in the API
 reference at the top of each reference page for the given API endpoint. They are
@@ -72,7 +72,7 @@ def canonical_path(paths: List[CanonicalPath], base_url: str, url: str) \
     For examle, in 
     `List a user's contact methods
     <https://developer.pagerduty.com/api-reference/50d46c0eb020d-list-a-user-s-contact-methods>`_,
-    the canonical path is ``/users/{id}/contact_methods``
+    the canonical path is ``/users/{id}/contact_methods``.
 
     :param paths:
         A list of paths supported by the API client. One example of this is
