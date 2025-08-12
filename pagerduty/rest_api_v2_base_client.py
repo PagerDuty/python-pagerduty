@@ -5,7 +5,7 @@ from datetime import (
     timezone
 )
 from sys import getrecursionlimit
-from typing import Iterator, Optional, Union
+from typing import Iterator, Optional, Tuple, Union
 from warnings import warn
 
 # PyPI
@@ -149,9 +149,9 @@ def is_path_param(path_node: str) -> bool:
 ###############################
 ### ENTITY WRAPPING HELPERS ###
 ###############################
-type EntityWrapper = str
+EntityWrapper = str
 
-type EntityWrapping = Optional[EntityWrapper]
+EntityWrapping = Optional[EntityWrapper]
 """
 Descriptive entity wrapping type.
 
@@ -160,7 +160,7 @@ the request or response named after the value of that string. If ``None``, it in
 that entity wrapping is not enabled or should be ignored.
 """
 
-type EntityWrappingSpec = tuple[EntityWrapping, EntityWrapping]
+EntityWrappingSpec = Tuple[EntityWrapping, EntityWrapping]
 """
 Descriptive type that specifies how entity wrapping is configured for an API endoint.
 
