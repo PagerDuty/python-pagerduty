@@ -42,6 +42,9 @@ from . rest_api_v2_client import (
     entity_wrappers
 )
 
+from . jira_cloud_integration_api_client import JiraCloudIntegrationApiClient
+from . jira_server_integration_api_client import JiraServerIntegrationApiClient
+from . ms_teams_integration_api_client import MsTeamsIntegrationApiClient
 from . slack_integration_api_client import SlackIntegrationApiClient
 from . slack_integration_connections_api_client import SlackIntegrationConnectionsApiClient
 

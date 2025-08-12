@@ -25,6 +25,12 @@ class JiraServerIntegrationApiClient(RestApiV2BaseClient):
     authentication and does not support the original token-style API authentication. For
     that reason, its constructor does not accept an "auth_type" argument, and it is
     assumed that the provided API key was generated using an OAuth flow.
+
+    :param api_key:
+        REST API access token to use for HTTP requests
+    :param debug:
+        Sets :attr:`print_debug`. Set to True to enable verbose command line
+        output.
     """
 
     permitted_methods = ('GET', 'POST', 'PUT', 'DELETE')

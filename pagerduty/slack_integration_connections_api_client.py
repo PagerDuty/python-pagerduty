@@ -23,9 +23,19 @@ class SlackIntegrationConnectionsApiClient(RestApiV2BaseClient):
     <https://developer.pagerduty.com/api-reference/56fee4184eabc-pager-duty-slack-integration-api>`_,
     specifically the "Connections" API endpoints, which use a different hostname in
     the base URL, ``app.pagerduty.com``, as opposed to ``api.pagerduty.com``.
+
+    :param api_key:
+        REST API access token to use for HTTP requests
+    :param auth_type:
+        The type of credential in use. If authenticating with an OAuth access
+        token, this must be set to ``oauth2`` or ``bearer``. This will determine the
+        format of ``Authorization`` header that is sent to the API in each request.
+    :param debug:
+        Sets :attr:`print_debug`. Set to True to enable verbose command line
+        output.
     """
 
-    permitted_Methods = ('GET', 'POST', 'PUT', 'DELETE')
+    permitted_methods = ('GET', 'POST', 'PUT', 'DELETE')
 
     url = "https://app.pagerduty.com/integration-slack"
 
