@@ -1,4 +1,4 @@
-**2025-08-12: REST API Base Client Refactor + New Client - Version 4.0.0**
+**2025-08-12: REST API Base Client Refactor + New Clients - Version 4.0.0**
 
 * **Breaking Changes:**
 
@@ -9,16 +9,21 @@
       * Helper functions ``endpoint_matches``, ``is_path_param``, ``infer_entity_wrapper`` and ``unwrap`` have been moved from ``pagerduty.rest_api_v2_client`` to ``pagerduty.rest_api_v2_base_client``.
       * Function decorators ``auto_json``, ``resource_url`` and ``wrapped_entities`` have been moved from ``pagerduty.rest_api_v2_client`` to ``pagerduty.rest_api_v2_base_client``.
 
-* **New Features:**
+* **New Features:** API client classes for the integration APIs that share many of the same features of ``pagerduty.RestApiV2Client``:
 
-   - API client classes ``pagerduty.SlackIntegrationApiClient`` and ``pagerduty.SlackIntegrationConnectionsApiClient`` provide support for the PagerDuty Slack Integration API.
+   - ``pagerduty.SlackIntegrationApiClient`` and ``pagerduty.SlackIntegrationConnectionsApiClient`` provide support for the PagerDuty Slack Integration API.
+   - ``pagerduty.MsTeamsIntegrationApiClient`` provides support for the PagerDuty MS Teams Integration API.
+   - ``pagerduty.JiraServerIntegrationApiClient`` provides support ofr the PagerDuty Jira Server Integration API.
+   - ``pagerduty.JiraCloudIntegrationApiClient`` provides support ofr the PagerDuty Jira Cloud Integration API.
 
-* **Fixes:**
+* **Fixes and Refactoring:**
 
    - HTTP request headers:
 
-      * Duplicate code removed from the ``prepare_headers`` method.
-      * The ``Content-Type`` header is now added when making ``PATCH`` requests
+      * Duplicate code has been removed from the ``prepare_headers`` method in all client classes and consolidated into ``pagerduty.ApiClient``.
+      * The ``Content-Type`` header is now added when making ``PATCH`` requests in REST API v2.
+
+   - New REST API base class ``pagerduty.RestApiV2BaseClient`` brings automatic entity wrapping and pagination helpers to new APIs outside of REST API v2
 
 **2025-07-15: New features - Version 3.1.0**
 
