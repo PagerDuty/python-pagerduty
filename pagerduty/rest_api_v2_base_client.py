@@ -149,7 +149,9 @@ def is_path_param(path_node: str) -> bool:
 ###############################
 ### ENTITY WRAPPING HELPERS ###
 ###############################
-type EntityWrapping = Optional[str]
+type EntityWrapper = str
+
+type EntityWrapping = Optional[EntityWrapper]
 """
 Descriptive entity wrapping type.
 
@@ -158,24 +160,21 @@ the request or response named after the value of that string. If ``None``, it in
 that entity wrapping is not enabled or should be ignored.
 """
 
-type EntityWrappingSpec = Union[tuple[EntityWrapping, EntityWrapping], EntityWrapping]
+type EntityWrappingSpec = tuple[EntityWrapping, EntityWrapping]
 """
-Entity wrapping specification type that describes how entity wrapping is handled.
+Descriptive type that specifies how entity wrapping is configured for an API endoint.
 
-If it is itself ``EntityWrapping``, it indicates that both the request and response body
-have the same entity wrapping.
-
-If it is a tuple of ``EntityWrapping``, it indicates that the entity wrapping may
-differ between request bodies and response bodies.
+The first member indicates the entity wrapping of the request body. The second indicates
+the entity wrapping of the response body. The two may differ.
 """
 
 def entity_wrappers(wrapper_config: dict, method: str, path: str) -> EntityWrappingSpec:
     """
     Obtains entity wrapping information for a given endpoint (canonical path and method)
 
-    The information about the API being acccessed is dependency-injected as the
-    ``wrapper_config`` parameter, which is a dictionary. An example of such a dictionary
-    object is ``pagerduty.rest_api_v2_client.ENTITY_WRAPPER_CONFIG``.
+    The information about the API is dependency-injected as the ``wrapper_config``
+    parameter. An example of such a dictionary object is
+    ``pagerduty.rest_api_v2_client.ENTITY_WRAPPER_CONFIG``.
 
     When trying to determine the entity wrapper name for a given API endpoint, the
     dictionary ``wrapper_config`` is first checked for keys that apply to a given
@@ -289,7 +288,7 @@ def infer_entity_wrapper(method: str, path: str) -> str:
         # Plural if listing via GET to the index endpoint, or doing a multi-put:
         return path_nodes[-1]
 
-def unwrap(response: Response, wrapper: Optional[str]) -> Union[dict, list]:
+def unwrap(response: Response, wrapper: EntityWrapping) -> Union[dict, list]:
     """
     Unwraps a wrapped entity from a HTTP response.
 
@@ -565,11 +564,11 @@ class RestApiV2BaseClient(ApiClient):
         """
         return {}
 
-    def entity_wrappers(self, http_method: str, path: str) -> tuple:
+    def entity_wrappers(self, http_method: str, path: str) -> EntityWrappingSpec:
         """
         Get the entity-wrapper specification for any given API / API endpoint.
 
-        See: :attr:`pagerduty.rest_api_v2_base_client.entity_wrappers`
+        See: :attr:`pagerduty.rest_api_v2_base_client.entity_wrappers`.
 
         :param http_method:
             The method of the request.
