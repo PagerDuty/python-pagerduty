@@ -3,7 +3,7 @@
 * **Breaking Changes:**
 
    - Deprecated property ``RestApiV2Client.trunc_token`` has been removed.
-   - Helper functions have been moved. References to them in the root ``pagerduty`` namespace will not be affected; they are still imported there for backwards compatibility. Any direct references to them through the modules where they were declared will need to be updated:
+   - Helper functions have been moved; any namespaced references to them will need to be updated. References to them in the root ``pagerduty`` namespace will not be affected; they are still imported there for backwards compatibility. The changes are as follows:
 
       * Helper functions ``last_4`` and ``normalize_url`` have been moved from ``pagerduty.api_client`` to ``pagerduty.common``.
       * Helper functions ``endpoint_matches``, ``is_path_param``, ``infer_entity_wrapper`` and ``unwrap`` have been moved from ``pagerduty.rest_api_v2_client`` to ``pagerduty.rest_api_v2_base_client``.
