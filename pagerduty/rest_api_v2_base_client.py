@@ -1,5 +1,3 @@
-
-
 # Core
 from copy import deepcopy
 from datetime import (
@@ -151,7 +149,27 @@ def is_path_param(path_node: str) -> bool:
 ###############################
 ### ENTITY WRAPPING HELPERS ###
 ###############################
-def entity_wrappers(wrapper_config: dict, method: str, path: str) -> tuple:
+type EntityWrapping = Optional[str]
+"""
+Descriptive entity wrapping type.
+
+If a string, it indicates that the entity is wrapped in a single property of the body of
+the request or response named after the value of that string. If ``None``, it indicates
+that entity wrapping is not enabled or should be ignored.
+"""
+
+type EntityWrappingSpec = Union[tuple[EntityWrapping, EntityWrapping], EntityWrapping]
+"""
+Entity wrapping specification type that describes how entity wrapping is handled.
+
+If it is itself ``EntityWrapping``, it indicates that both the request and response body
+have the same entity wrapping.
+
+If it is a tuple of ``EntityWrapping``, it indicates that the entity wrapping may
+differ between request bodies and response bodies.
+"""
+
+def entity_wrappers(wrapper_config: dict, method: str, path: str) -> EntityWrappingSpec:
     """
     Obtains entity wrapping information for a given endpoint (canonical path and method)
 
