@@ -5,7 +5,7 @@ from datetime import (
     timezone
 )
 from sys import getrecursionlimit
-from typing import Iterator, Optional, Tuple, Union
+from typing import Iterator, List, Optional, Tuple, Union
 from warnings import warn
 
 # PyPI
@@ -49,13 +49,21 @@ See: `Pagination
 ### REST API V2 URL HANDLING ###
 ################################
 
-def canonical_path(paths: list[str], base_url: str, url: str) -> str:
+CanonicalPath = str
+"""
+Canonical path type.
+
+Canonical paths are the bold-typed portion of the path of the URL displayed in the API
+reference at the top of each reference page for the given API endpoint. They are
+interpreted as patterns, i.e. any part of the path enclosed in curly braces (as
+determined by :attr:`pagerduty.rest_api_v2_base_client.is_path_param`) is interpreted as
+a variable parameter versus a literal substring of the path.
+"""
+
+def canonical_path(paths: List[CanonicalPath], base_url: str, url: str) \
+        -> CanonicalPath:
     """
     The canonical path from the API documentation corresponding to a URL.
-
-    Canonical paths are the bold-typed path portion of the of the URL displayed in the
-    API reference at the top of each reference page for the given API endpoint. They are
-    interpreted to mean patterns, i.e. any bracketed string means a variable parameter.
 
     This method is used to identify and classify URLs according to which particular API
     endpoint within the client's corresponding API it belongs to, in order to account
@@ -111,7 +119,7 @@ def canonical_path(paths: list[str], base_url: str, url: str) -> str:
     else:
         return patterns[0]
 
-def endpoint_matches(endpoint_pattern: str, method: str, path: str) -> bool:
+def endpoint_matches(endpoint_pattern: str, method: str, path: CanonicalPath) -> bool:
     """
     Whether an endpoint (method and canonical path) matches a given pattern.
 
@@ -157,7 +165,8 @@ Descriptive entity wrapping type.
 
 If a string, it indicates that the entity is wrapped in a single property of the body of
 the request or response named after the value of that string. If ``None``, it indicates
-that entity wrapping is not enabled or should be ignored.
+that entity wrapping is not enabled or should be ignored, i.e. send the user-supplied
+request body in the API request or return the response body without any modification.
 """
 
 EntityWrappingSpec = Tuple[EntityWrapping, EntityWrapping]
@@ -168,7 +177,8 @@ The first member indicates the entity wrapping of the request body. The second i
 the entity wrapping of the response body. The two may differ.
 """
 
-def entity_wrappers(wrapper_config: dict, method: str, path: str) -> EntityWrappingSpec:
+def entity_wrappers(wrapper_config: dict, method: str, path: CanonicalPath) \
+        -> EntityWrappingSpec:
     """
     Obtains entity wrapping information for a given endpoint (canonical path and method)
 
@@ -202,17 +212,13 @@ def entity_wrappers(wrapper_config: dict, method: str, path: str) -> EntityWrapp
     bodies.
 
     :param wrapper_config:
-        A dictionary in which the entity wrapper antipattern configuration is specified
+        A dictionary in which the entity wrapper antipattern configuration is specified.
     :param method:
-        The HTTP method
+        A HTTP method.
     :param path:
-        A canonical API path i.e. as returned by ``canonical_path``
+        A canonical API path.
     :returns:
-        A 2-tuple. The first element is the wrapper name that should be used for
-        the request body, and the second is the wrapper name to be used for the
-        response body. For either elements, if ``None`` is returned, that
-        signals to disable wrapping and pass the user-supplied request body or
-        API response body object unmodified.
+        The entity wrapping specification.
     """
     m = method.upper()
     endpoint = "%s %s"%(m, path)
@@ -256,7 +262,7 @@ def entity_wrappers(wrapper_config: dict, method: str, path: str) -> EntityWrapp
         raise Exception(f"{endpoint} matches more than one pattern:" + \
             f"{matches_str}; this is most likely a bug.")
 
-def infer_entity_wrapper(method: str, path: str) -> str:
+def infer_entity_wrapper(method: str, path: CanonicalPath) -> EntityWrapper:
     """
     Infer the entity wrapper name from the endpoint using orthodox patterns.
 
@@ -487,7 +493,7 @@ class RestApiV2BaseClient(ApiClient):
         else:
             return {"Authorization": "Token token="+self.api_key}
 
-    def canonical_path(self, url: str) -> str:
+    def canonical_path(self, url: str) -> CanonicalPath:
         """
         Return the canonical path of a URL for a particular API implementation.
 
@@ -501,9 +507,9 @@ class RestApiV2BaseClient(ApiClient):
         return canonical_path(self.canonical_paths, self.url, url)
 
     @property
-    def canonical_paths(self) -> list[str]:
+    def canonical_paths(self) -> List[CanonicalPath]:
         """
-        List of "canonical" API paths supported by the particular API client.
+        List of canonical paths supported by the particular API client.
 
         Child classes that do not implement this method do not a-priori support any API
         endpoints for features that require entity wrapping, e.g. pagination.
@@ -515,7 +521,7 @@ class RestApiV2BaseClient(ApiClient):
         return []
 
     @property
-    def cursor_based_pagination_paths(self) -> list[str]:
+    def cursor_based_pagination_paths(self) -> List[CanonicalPath]:
         """
         List of paths known by the client to support standard cursor-based pagination.
         """
@@ -558,13 +564,15 @@ class RestApiV2BaseClient(ApiClient):
         refer to the documentation on that method for further details.
 
         Child classes should implement this method and return appropriate configuration
-        to cover all schema antipatterns. It is otherwise assumed that all endpoints in
-        its corresponding API follow orthodox entity wrapping conventions, in which case
-        the wrapper information can be inferred from the path itself.
+        to cover all schema antipatterns in the APIs that they support. It is otherwise
+        assumed that all endpoints in its corresponding API follow orthodox entity
+        wrapping conventions, in which case the wrapper information can be inferred from
+        the path itself.
         """
         return {}
 
-    def entity_wrappers(self, http_method: str, path: str) -> EntityWrappingSpec:
+    def entity_wrappers(self, http_method: str, path: CanonicalPath) \
+            -> EntityWrappingSpec:
         """
         Get the entity-wrapper specification for any given API / API endpoint.
 
@@ -601,7 +609,7 @@ class RestApiV2BaseClient(ApiClient):
             'limit': 1,
             'offset': 0
         })
-        response = self.get(url, params=query_params)
+        response = successful_response(self.get(url, params=query_params))
         response_json = try_decoding(response)
         if 'total' not in response_json:
             path = self.canonical_path(url)
@@ -671,11 +679,11 @@ class RestApiV2BaseClient(ApiClient):
 
         nodes = path.split('/')
         if is_path_param(nodes[-1]):
-            # NOTE: If this happens for a newer API, the path might need to be
-            # added to the EXPAND_PATHS dictionary in
-            # scripts/get_path_list/get_path_list.py, after which
-            # CANONICAL_PATHS will then need to be updated accordingly based on
-            # the new output of the script.
+            # NOTE: If this happens for a newer endpoint in REST API v2, and the final
+            # path parameter is one of a fixed list of literal strings, the path might
+            # need to be added to the EXPAND_PATHS dictionary in
+            # scripts/get_path_list/get_path_list.py, after which CANONICAL_PATHS will
+            # then need to be updated accordingly based on the new output of the script.
             raise UrlError(f"Path {path} (URL={url}) is formatted like an " \
                 "individual resource versus a resource collection. It is " \
                 "therefore assumed to not support pagination.")
@@ -687,7 +695,7 @@ class RestApiV2BaseClient(ApiClient):
         # Parameters to send:
         data = {
             'limit': (self.default_page_size, page_size)[int(bool(page_size))],
-            'total': int(bool(total))
+            'total': bool(total)
         }
         if isinstance(params, (dict, list)):
             # Override defaults with values given:

@@ -24,6 +24,9 @@
       * The ``Content-Type`` header is now added when making ``PATCH`` requests in REST API v2.
 
    - New REST API base class ``pagerduty.RestApiV2BaseClient`` brings automatic entity wrapping and pagination helpers to new APIs outside of REST API v2
+   - The ``total`` query parameter sent to the API by ``iter_all`` is now a boolean as it needs to be according to the API documentation.
+   - New descriptive types for canonical paths and entity wrapping
+   - The ``get_total`` method of REST API client classes now tests for a successful response before checking the response schema in order to raise the correct type of exception.
 
 **2025-07-15: New features - Version 3.1.0**
 

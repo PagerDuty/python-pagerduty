@@ -5,7 +5,7 @@ from datetime import (
     timezone
 )
 from sys import getrecursionlimit
-from typing import Iterator, Optional, Union
+from typing import Iterator, List, Optional
 from warnings import warn
 
 # PyPI
@@ -19,6 +19,7 @@ from . common import (
 )
 from . rest_api_v2_base_client import (
     ITERATION_LIMIT,
+    CanonicalPath,
     RestApiV2BaseClient,
     auto_json,
     canonical_path as canonical_path_common,
@@ -553,11 +554,11 @@ class RestApiV2Client(RestApiV2BaseClient):
         return self._api_key_access
 
     @property
-    def canonical_paths(self) -> list[str]:
+    def canonical_paths(self) -> List[CanonicalPath]:
         return CANONICAL_PATHS
 
     @property
-    def cursor_based_pagination_paths(self) -> list[str]:
+    def cursor_based_pagination_paths(self) -> List[CanonicalPath]:
         return CURSOR_BASED_PAGINATION_PATHS
 
     @property
@@ -565,7 +566,7 @@ class RestApiV2Client(RestApiV2BaseClient):
         return ENTITY_WRAPPER_CONFIG
 
     def find(self, resource: str, query: str, attribute: str = 'name',
-            params: Optional[dict] = None) -> Union[dict, None]:
+            params: Optional[dict] = None) -> Optional[dict]:
         """
         Finds an object of a given resource type exactly matching a query.
 
