@@ -23,9 +23,6 @@ this library are imported into the root namespace of the module. For example:
 .. autoclass:: pagerduty.ApiClient
     :members:
 
-.. autoclass:: pagerduty.EventsApiV2Client
-    :members:
-
 .. autoclass:: pagerduty.OAuthTokenClient
     :members:
 
@@ -33,6 +30,18 @@ this library are imported into the root namespace of the module. For example:
     :members:
 
 .. autoclass:: pagerduty.RestApiV2Client
+    :members:
+
+.. autoclass:: pagerduty.EventsApiV2Client
+    :members:
+
+.. autoclass:: pagerduty.JiraCloudIntegrationApiClient
+    :members:
+
+.. autoclass:: pagerduty.JiraServerIntegrationApiClient
+    :members:
+
+.. autoclass:: pagerduty.MsTeamsIntegrationApiClient
     :members:
 
 .. autoclass:: pagerduty.SlackIntegrationApiClient
@@ -69,10 +78,9 @@ compatibility, but new features will not, going forward.
 
 REST API v2 Helpers
 -------------------
-REST API v2 and the integration APIs (to some extent) have some common
-features, such as classic pagination, which are implemented in
-``rest_api_v2_base_client`` so as to be able to repurpose them in APIs that
-follow similar conventions.
+REST API v2 and the integration APIs have some common features, such as classic
+pagination, which are implemented in ``rest_api_v2_base_client`` so as to be
+able to repurpose them in APIs that follow similar conventions.
 
 .. automodule:: pagerduty.rest_api_v2_base_client
     :members:

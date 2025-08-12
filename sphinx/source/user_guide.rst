@@ -69,7 +69,7 @@ for the EU:
     # Events API:
     events_client.url = 'https://events.eu.pagerduty.com'
     # Slack Integration "Connections" API (and likewise for other
-    # APIs that use apps.pagerduty.com):
+    # APIs that use apps.pagerduty.com and/or some unique base path):
     slack_integration_client.url = 'https://apps.eu.pagerduty.com/integration-slack'
 
 The From header
