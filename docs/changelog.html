@@ -76,6 +76,53 @@
              
   <section id="changelog">
 <h1>Changelog<a class="headerlink" href="#changelog" title="Link to this heading"></a></h1>
+<p><strong>2025-08-12: REST API Base Client Refactor + New Clients - Version 4.0.0</strong></p>
+<ul>
+<li><p><strong>Breaking Changes:</strong></p>
+<blockquote>
+<div><ul>
+<li><p>Deprecated property <code class="docutils literal notranslate"><span class="pre">RestApiV2Client.trunc_token</span></code> has been removed.</p></li>
+<li><p>Helper functions have been moved; any namespaced references to them will need to be updated. References to them in the root <code class="docutils literal notranslate"><span class="pre">pagerduty</span></code> namespace will not be affected; they are still imported there for backwards compatibility. The changes are as follows:</p>
+<blockquote>
+<div><ul class="simple">
+<li><p>Helper functions <code class="docutils literal notranslate"><span class="pre">last_4</span></code> and <code class="docutils literal notranslate"><span class="pre">normalize_url</span></code> have been moved from <code class="docutils literal notranslate"><span class="pre">pagerduty.api_client</span></code> to <code class="docutils literal notranslate"><span class="pre">pagerduty.common</span></code>.</p></li>
+<li><p>Helper functions <code class="docutils literal notranslate"><span class="pre">endpoint_matches</span></code>, <code class="docutils literal notranslate"><span class="pre">is_path_param</span></code>, <code class="docutils literal notranslate"><span class="pre">infer_entity_wrapper</span></code> and <code class="docutils literal notranslate"><span class="pre">unwrap</span></code> have been moved from <code class="docutils literal notranslate"><span class="pre">pagerduty.rest_api_v2_client</span></code> to <code class="docutils literal notranslate"><span class="pre">pagerduty.rest_api_v2_base_client</span></code>.</p></li>
+<li><p>Function decorators <code class="docutils literal notranslate"><span class="pre">auto_json</span></code>, <code class="docutils literal notranslate"><span class="pre">resource_url</span></code> and <code class="docutils literal notranslate"><span class="pre">wrapped_entities</span></code> have been moved from <code class="docutils literal notranslate"><span class="pre">pagerduty.rest_api_v2_client</span></code> to <code class="docutils literal notranslate"><span class="pre">pagerduty.rest_api_v2_base_client</span></code>.</p></li>
+</ul>
+</div></blockquote>
+</li>
+</ul>
+</div></blockquote>
+</li>
+<li><p><strong>New Features:</strong> API client classes for the integration APIs that share many of the same features of <code class="docutils literal notranslate"><span class="pre">pagerduty.RestApiV2Client</span></code>:</p>
+<blockquote>
+<div><ul class="simple">
+<li><p><code class="docutils literal notranslate"><span class="pre">pagerduty.SlackIntegrationApiClient</span></code> and <code class="docutils literal notranslate"><span class="pre">pagerduty.SlackIntegrationConnectionsApiClient</span></code> provide support for the PagerDuty Slack Integration API.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">pagerduty.MsTeamsIntegrationApiClient</span></code> provides support for the PagerDuty MS Teams Integration API.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">pagerduty.JiraServerIntegrationApiClient</span></code> provides support ofr the PagerDuty Jira Server Integration API.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">pagerduty.JiraCloudIntegrationApiClient</span></code> provides support ofr the PagerDuty Jira Cloud Integration API.</p></li>
+</ul>
+</div></blockquote>
+</li>
+<li><p><strong>Fixes and Refactoring:</strong></p>
+<blockquote>
+<div><ul>
+<li><p>HTTP request headers:</p>
+<blockquote>
+<div><ul class="simple">
+<li><p>Duplicate code has been removed from the <code class="docutils literal notranslate"><span class="pre">prepare_headers</span></code> method in all client classes and consolidated into <code class="docutils literal notranslate"><span class="pre">pagerduty.ApiClient</span></code>.</p></li>
+<li><p>The <code class="docutils literal notranslate"><span class="pre">Content-Type</span></code> header is now added when making <code class="docutils literal notranslate"><span class="pre">PATCH</span></code> requests in REST API v2.</p></li>
+</ul>
+</div></blockquote>
+</li>
+<li><p>New REST API base class <code class="docutils literal notranslate"><span class="pre">pagerduty.RestApiV2BaseClient</span></code> brings automatic entity wrapping and pagination helpers to new APIs outside of REST API v2</p></li>
+<li><p>The <code class="docutils literal notranslate"><span class="pre">total</span></code> query parameter sent to the API by <code class="docutils literal notranslate"><span class="pre">iter_all</span></code> is now a boolean as it needs to be according to the API documentation.</p></li>
+<li><p>New descriptive types for canonical paths and entity wrapping</p></li>
+<li><p>The <code class="docutils literal notranslate"><span class="pre">get_total</span></code> method of REST API client classes now tests for a successful response before checking the response schema in order to raise the correct type of exception.</p></li>
+</ul>
+</div></blockquote>
+</li>
+</ul>
 <p><strong>2025-07-15: New features - Version 3.1.0</strong></p>
 <ul>
 <li><p>New features in <code class="docutils literal notranslate"><span class="pre">RestApiV2Client</span></code></p>

@@ -27,6 +27,8 @@ class EventsApiV2Client(ApiClient):
     including change events, and inherits from :class:`pagerduty.ApiClient`.  For more
     details on usage of this API, refer to the `Events API v2 documentation
     <https://developer.pagerduty.com/docs/events-api-v2/overview/>`_
+
+    For constructor arguments, see :class:`pagerduty.ApiClient`.
     """
 
     permitted_methods = ('POST',)
@@ -69,24 +71,6 @@ class EventsApiV2Client(ApiClient):
         if 'json' in kw and hasattr(kw['json'], 'update'):
             kw['json'].update({'routing_key': self.api_key})
         return super(EventsApiV2Client, self).post(*args, **kw)
-
-    def prepare_headers(self, method: str, user_headers: Optional[dict] = None) -> dict:
-        """
-        Add user agent and content type headers for Events API requests.
-
-        :param user_headers: User-supplied headers that will override defaults
-        :returns:
-            The final list of headers to use in the request
-        """
-        headers = {}
-        headers.update(self.headers)
-        headers.update({
-            'Content-Type': 'application/json',
-            'User-Agent': self.user_agent,
-        })
-        if user_headers is not None:
-            headers.update(user_headers)
-        return headers
 
     def resolve(self, dedup_key: str) -> str:
         """

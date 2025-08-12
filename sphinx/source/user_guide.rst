@@ -57,9 +57,10 @@ context managers. For example:
 
 Using Non-US Service Regions
 ****************************
-If your PagerDuty account is in the EU or other service region outside the US, set the ``url`` attribute according to the
-documented `API Access URLs
-<https://support.pagerduty.com/docs/service-regions#api-access-urls>`_, i.e. for the EU:
+If your PagerDuty account is in the EU or other service region outside the US,
+set the ``url`` attribute according to the documented `API Access URLs
+<https://support.pagerduty.com/docs/service-regions#api-access-urls>`_, i.e.
+for the EU:
 
 .. code-block:: python
 
@@ -67,6 +68,9 @@ documented `API Access URLs
     client.url = 'https://api.eu.pagerduty.com'
     # Events API:
     events_client.url = 'https://events.eu.pagerduty.com'
+    # Slack Integration "Connections" API (and likewise for other
+    # APIs that use apps.pagerduty.com and/or some unique base path):
+    slack_integration_client.url = 'https://apps.eu.pagerduty.com/integration-slack'
 
 The From header
 ***************
@@ -348,6 +352,26 @@ Events API v2
     events_client.submit("new build finished at latest HEAD",
         source="automation")
 
+Client Classes
+--------------
+For each of the APIs documented in the top-level sections of the `API
+References
+<https://developer.pagerduty.com/api-reference/e65c5833eeb07-pager-duty-api>`_
+page, this library supports and provides abstraction for the API if it has a
+dedicated client class. These classes are documented under
+"API Client Classes" in :ref:`module_reference`.
+
+All client classes are based on :class:`pagerduty.ApiClient` and inherit its
+features.
+
+The class :class:`pagerduty.RestApiV2BaseClient` defines abstractions for
+features documented under the generic `REST API v2 Overview`_, and
+:class:`pagerduty.RestApiV2Client` inherits them.
+
+The "Integration" APIs are based loosely on REST API v2, and support several of
+the same features and conventions to varying degrees. For this reason, they
+also are based on inherit the features of :class:`pagerduty.RestApiV2BaseClient`.
+
 Generic Client Features
 -----------------------
 Generally, all of the features of `requests.Session`_ are available to the user
@@ -527,15 +551,15 @@ Wrapped-entity-aware Functions
 The following methods will automatically extract and return the wrapped content
 of API responses, and wrap request entities for the user as appropriate:
 
-* :attr:`pagerduty.RestApiV2Client.dict_all`: Create a dictionary of all results from a resource collection
-* :attr:`pagerduty.RestApiV2Client.find`: Find and return a specific result of a resource collection that matches a query
-* :attr:`pagerduty.RestApiV2Client.iter_all`: Iterate through all results of a resource collection
-* :attr:`pagerduty.RestApiV2Client.iter_cursor`: Iterate through all results of a resource collection using cursor-based pagination
-* :attr:`pagerduty.RestApiV2Client.list_all`: Create a list of all results from a resource collection
-* :attr:`pagerduty.RestApiV2Client.persist`: Create a resource entity with specified attributes if one that matches them does not already exist
-* :attr:`pagerduty.RestApiV2Client.rget`: Get the wrapped entity or resource collection at a given endpoint
-* :attr:`pagerduty.RestApiV2Client.rpost`: Send a POST request, wrapping the request entity / unwrapping the response entity
-* :attr:`pagerduty.RestApiV2Client.rput`: Send a PUT request, wrapping the request entity / unwrapping the response entity
+* :attr:`pagerduty.RestApiV2BaseClient.dict_all`: Create a dictionary of all results from a resource collection
+* :attr:`pagerduty.RestApiV2BaseClient.find`: Find and return a specific result of a resource collection that matches a query
+* :attr:`pagerduty.RestApiV2BaseClient.iter_all`: Iterate through all results of a resource collection
+* :attr:`pagerduty.RestApiV2BaseClient.iter_cursor`: Iterate through all results of a resource collection using cursor-based pagination
+* :attr:`pagerduty.RestApiV2BaseClient.list_all`: Create a list of all results from a resource collection
+* :attr:`pagerduty.RestApiV2BaseClient.rget`: Get the wrapped entity or resource collection at a given endpoint
+* :attr:`pagerduty.RestApiV2BaseClient.rpost`: Send a POST request, wrapping the request entity / unwrapping the response entity
+* :attr:`pagerduty.RestApiV2BaseClient.rput`: Send a PUT request, wrapping the request entity / unwrapping the response entity
+* :attr:`pagerduty.RestApiV2BaseClient.persist`: Create a resource entity with specified attributes if one that matches them does not already exist
 
 Special Cases
 *************
@@ -545,7 +569,7 @@ wrap entities, the results for a given ``r*`` method would be the same if using
 the equivalent ``j*`` method, and the details of request and response schemas
 are are left to the end user to extract and use as desired. Moreover, on all
 endpoints that completely lack entity wrapping, pagination is not supported,
-i.e. :attr:`pagerduty.RestApiV2Client.iter_all` will raise
+i.e. :attr:`pagerduty.RestApiV2BaseClient.iter_all` will raise
 :attr:`pagerduty.UrlError` if used with them.
 
 Examples
@@ -600,16 +624,15 @@ Pagination
 ----------
 Main article: `Pagination <https://developer.pagerduty.com/docs/pagination>`_
 
-Only classic and cursor-based pagination are currently supported. Pagination
-functions require that the API endpoint being requested have entity wrapping
-enabled, and respond with either a ``more`` or ``cursor`` property indicating
-how and if to fetch the next page of results.
-
-The method :attr:`pagerduty.RestApiV2Client.iter_all` returns an iterator that
+The method :attr:`pagerduty.RestApiV2BaseClient.iter_all` returns an iterator that
 yields results from an endpoint that features pagination. The methods
 :attr:`pagerduty.RestApiV2Client.list_all` and
 :attr:`pagerduty.RestApiV2Client.dict_all` will request all pages of the
 collection and return the results as a list or dictionary, respectively.
+
+When retrieving results from an endpoint that supports cursor-based pagination,
+these methods will use :attr:`pagerduty.RestApiV2BaseClient.iter_cursor`
+automatically.
 
 Examples:
 
@@ -646,15 +669,15 @@ sets, one must either filter the results such that the total is less than this
 hard limit, or break the data set down into smaller time windows using the
 ``since`` and ``until`` parameters, for APIs that support them.
 
-In version 3.0.0, the method :attr:`pagerduty.RestApiV2Client.iter_history` was
-added to facilitate retrieiving large datasets of historical records, i.e.
-``/log_entries``. To use it, first construct timezone-aware
+The method :attr:`pagerduty.RestApiV2Client.iter_history` automatically
+performs the second of these techniques to provide an iterator, similar to
+:attr:`pagerduty.RestApiV2BaseClient.iter_all`, but that has practically no
+dataset size limit. To use it, first construct timezone-aware
 ``datetime.datetime`` objects (see: `datetime
 <https://docs.python.org/3/library/datetime.html>`_) that correspond to the
 absolute beginning and end of the time interval from which to retrieive
-records. The method will then automatically figure out how to divide the time
-interval so that it can retrieve all records from sub-intervals without running
-into the hard pagination limit.
+records. Pass these objects as the second and third positional arguments to
+:attr:`pagerduty.RestApiV2Client.iter_history`.
 
 For example, to obtain all log entries (incident/alert timeline events) year-to-date:
 
@@ -669,25 +692,29 @@ For example, to obtain all log entries (incident/alert timeline events) year-to-
         process_ile(log_entry)
 
 It is recommended to perform action on each item once it has been yielded, i.e.
-to persist it in a data warehouse, rather than constructing big a list of
-results and then operating on the list. That is because, if anything goes
-wrong while fetching the dataset, i.e. an exception is raised or the program
-runs out of memory, the partial data it retrieved will be lost to garbage
-collection.
+persist it to a cache, rather than constructing big a list of results in-memory
+and then operating on the list. That is because, if anything goes wrong while
+fetching the dataset, i.e. an exception is raised or the program runs out of
+memory, the partial data it retrieved will be lost to garbage collection.
 
 Non-Standard Pagination Styles
 ******************************
-For all endpoints that implement one of the standard pagination methods
-(classic or cursor-based), :attr:`pagerduty.RestApiV2Client.iter_all` will
-work. However, as of this writing, there are two API endpoints known to have
-their own special pagination style. Dedicated abstractions for them include:
+For all endpoints that implement one of the standard pagination styles (classic
+or cursor-based), :attr:`pagerduty.RestApiV2BaseClient.iter_all` will work. If
+the endpoint does not completely or correctly implement one of these styles of
+pagination, the pagination methods (i.e.  ``iter_all``/``list_all``) cannot be
+used with them. For example:
+
+As of this writing, there are two API endpoints known to have a their own special
+pagination style, and specialized methods have been added for them. They are
+as follows:
 
 * `Get raw data - multiple incidents (analytics) <https://developer.pagerduty.com/api-reference/c2d493e995071-get-raw-data-multiple-incidents>`_ / ``POST /analytics/raw/incidents``: :attr:`pagerduty.RestApiV2Client.iter_analytics_raw_incidents`
 * `List alert grouping settings <https://developer.pagerduty.com/api-reference/b9fe211cc2748-list-alert-grouping-settings>`_ / ``GET /alert_grouping_settings``: :attr:`pagerduty.RestApiV2Client.iter_alert_grouping_settings`
 
 These methods must be used on said endpoints; using the standard pagination
-methods such as ``iter_all``, ``iter_cursor`` or ``iter_history`` on them will not work
-properly.
+methods such as ``iter_all``, ``iter_cursor`` or ``iter_history`` on them will
+not work properly.
 
 Performance and Completeness of Results
 ***************************************
@@ -940,3 +967,4 @@ reached in the underlying HTTP request methods.
 .. _requests.Response: https://docs.python-requests.org/en/master/api/#requests.Response
 .. _requests.Session: https://docs.python-requests.org/en/master/api/#request-sessions
 .. _`resource references`: https://developer.pagerduty.com/docs/resource-references
+.. _`REST API v2 Overview`: https://developer.pagerduty.com/docs/rest-api-overview
