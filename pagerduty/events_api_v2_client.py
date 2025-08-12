@@ -70,24 +70,6 @@ class EventsApiV2Client(ApiClient):
             kw['json'].update({'routing_key': self.api_key})
         return super(EventsApiV2Client, self).post(*args, **kw)
 
-    def prepare_headers(self, method: str, user_headers: Optional[dict] = None) -> dict:
-        """
-        Add user agent and content type headers for Events API requests.
-
-        :param user_headers: User-supplied headers that will override defaults
-        :returns:
-            The final list of headers to use in the request
-        """
-        headers = {}
-        headers.update(self.headers)
-        headers.update({
-            'Content-Type': 'application/json',
-            'User-Agent': self.user_agent,
-        })
-        if user_headers is not None:
-            headers.update(user_headers)
-        return headers
-
     def resolve(self, dedup_key: str) -> str:
         """
         Resolve an alert via Events API.

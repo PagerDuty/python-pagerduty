@@ -13,6 +13,13 @@
 
    - API client classes ``pagerduty.SlackIntegrationApiClient`` and ``pagerduty.SlackIntegrationConnectionsApiClient`` provide support for the PagerDuty Slack Integration API.
 
+* **Fixes:**
+
+   - HTTP request headers:
+
+      * Duplicate code removed from the ``prepare_headers`` method.
+      * The ``Content-Type`` header is now added when making ``PATCH`` requests
+
 **2025-07-15: New features - Version 3.1.0**
 
 * New features in ``RestApiV2Client``

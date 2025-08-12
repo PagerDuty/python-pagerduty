@@ -29,9 +29,12 @@ class SlackIntegrationConnectionsApiClient(RestApiV2BaseClient):
 
     url = "https://app.pagerduty.com/integration-slack"
 
-    @property
-    def auth_header(self) -> dict:
-        return {"Authorization": "Token token="+self.api_key}
+    def __init__(self, api_key: str, auth_type: str = 'token', debug: bool = False):
+        super(SlackIntegrationConnectionsApiClient, self).__init__(api_key,
+            auth_type=auth_type, debug=debug)
+        self.headers.update({
+            'Accept': 'application/json',
+        })
 
     @property
     def canonical_paths(self) -> list[str]:

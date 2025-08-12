@@ -205,7 +205,12 @@ class ApiClient(Session):
             The final list of headers to use in the request
         """
         headers = deepcopy(self.headers)
-        if user_headers:
+        headers['User-Agent'] = self.user_agent
+        # A universal convention: whenever sending a POST, PUT or PATCH, the
+        # Content-Type header is "application/json".
+        if method in ('POST', 'PUT', 'PATCH'):
+            headers['Content-Type'] = 'application/json'
+        if type(user_headers) is dict:
             headers.update(user_headers)
         return headers
 

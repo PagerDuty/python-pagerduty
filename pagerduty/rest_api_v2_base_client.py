@@ -416,6 +416,16 @@ class RestApiV2BaseClient(ApiClient):
 
     This class implements some common features like numeric pagination that also appear
     and are supported to varying degrees outside of REST API v2.
+
+    :param api_key:
+        REST API access token to use for HTTP requests
+    :param auth_type:
+        The type of credential in use. If authenticating with an OAuth access
+        token, this must be set to ``oauth2`` or ``bearer``. This will determine the
+        format of ``Authorization`` header that is sent to the API in each request.
+    :param debug:
+        Sets :attr:`print_debug`. Set to True to enable verbose command line
+        output.
     """
 
     api_call_counts = None
@@ -430,10 +440,35 @@ class RestApiV2BaseClient(ApiClient):
     iterating/querying an index (the ``limit`` parameter).
     """
 
-    def __init__(self, api_key: str, debug: bool = False):
+    def __init__(self, api_key: str, auth_type: str = 'token', debug: bool = False):
         self.api_call_counts = {}
         self.api_time = {}
+        self.auth_type = auth_type
         super(RestApiV2BaseClient, self).__init__(api_key, debug=debug)
+
+    @property
+    def auth_type(self) -> str:
+        """
+        Defines the method of API authentication.
+
+        This value determines how the Authorization header will be set. By default this
+        is "token", which will result in the format ``Token token=<api_key>``.
+        """
+        return self._auth_type
+
+    @auth_type.setter
+    def auth_type(self, value: str):
+        if value not in ('token', 'bearer', 'oauth2'):
+            raise AttributeError("auth_type value must be \"token\" (default) "
+                "or \"bearer\" or \"oauth\" to use OAuth2 authentication.")
+        self._auth_type = value
+
+    @property
+    def auth_header(self) -> dict:
+        if self.auth_type in ('bearer', 'oauth2'):
+            return {"Authorization": "Bearer "+self.api_key}
+        else:
+            return {"Authorization": "Token token="+self.api_key}
 
     def canonical_path(self, url: str) -> str:
         """

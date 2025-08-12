@@ -469,7 +469,8 @@ class RestApiV2Client(RestApiV2BaseClient):
         API calls using an account-level API access key.
     :param auth_type:
         The type of credential in use. If authenticating with an OAuth access
-        token, this must be set to ``oauth2`` or ``bearer``.
+        token, this must be set to ``oauth2`` or ``bearer``. This will determine the
+        format of ``Authorization`` header that is sent to the API in each request.
     :param debug:
         Sets :attr:`print_debug`. Set to True to enable verbose command line
         output.
@@ -485,9 +486,12 @@ class RestApiV2Client(RestApiV2BaseClient):
 
     def __init__(self, api_key: str, default_from: Optional[str] = None,
             auth_type: str = 'token', debug: bool = False):
-        self.auth_type = auth_type
-        super(RestApiV2Client, self).__init__(api_key, debug=debug)
+        super(RestApiV2Client, self).__init__(api_key, auth_type=auth_type, debug=debug)
         self.default_from = default_from
+        if default_from is not None:
+            self.headers.update({
+                'From': default_from
+            })
         self.headers.update({
             'Accept': 'application/vnd.pagerduty+json;version=2',
         })
@@ -549,30 +553,6 @@ class RestApiV2Client(RestApiV2BaseClient):
             else:
                 self._api_key_access = 'user'
         return self._api_key_access
-
-    @property
-    def auth_type(self) -> str:
-        """
-        Defines the method of API authentication.
-
-        This value determines how the Authorization header will be set. By default this
-        is "token", which will result in the format ``Token token=<api_key>``.
-        """
-        return self._auth_type
-
-    @auth_type.setter
-    def auth_type(self, value: str):
-        if value not in ('token', 'bearer', 'oauth2'):
-            raise AttributeError("auth_type value must be \"token\" (default) "
-                "or \"bearer\" or \"oauth\" to use OAuth2 authentication.")
-        self._auth_type = value
-
-    @property
-    def auth_header(self) -> dict:
-        if self.auth_type in ('bearer', 'oauth2'):
-            return {"Authorization": "Bearer "+self.api_key}
-        else:
-            return {"Authorization": "Token token="+self.api_key}
 
     @property
     def canonical_paths(self) -> list[str]:
@@ -910,27 +890,6 @@ class RestApiV2Client(RestApiV2BaseClient):
             return existing
         else:
             return self.rpost(resource, json=values)
-
-    def prepare_headers(self, method: str, user_headers: Optional[dict] = None) -> dict:
-        """
-        Amends and combines default and user-supplied headers for a REST API request.
-
-        :param method:
-            The HTTP method
-        :param user_headers:
-            Any user-supplied headers
-        :returns:
-            A dictionary of the final headers to use in the request
-        """
-        headers = deepcopy(self.headers)
-        headers['User-Agent'] = self.user_agent
-        if self.default_from is not None:
-            headers['From'] = self.default_from
-        if method in ('POST', 'PUT'):
-            headers['Content-Type'] = 'application/json'
-        if user_headers:
-            headers.update(user_headers)
-        return headers
 
     @wrapped_entities
     def rpatch(self, path: str, **kw) -> dict:
