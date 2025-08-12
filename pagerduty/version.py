@@ -1,7 +1,7 @@
 import os
 import sys
 
-UNKNOWN_VERSION = "3.*.*"
+UNKNOWN_VERSION = "4.*.*"
 
 def get_version_via_tomllib():
     import tomllib
