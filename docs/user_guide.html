@@ -59,6 +59,7 @@
 <li class="toctree-l3"><a class="reference internal" href="#events-api-v2">Events API v2</a></li>
 </ul>
 </li>
+<li class="toctree-l2"><a class="reference internal" href="#client-classes">Client Classes</a></li>
 <li class="toctree-l2"><a class="reference internal" href="#generic-client-features">Generic Client Features</a></li>
 <li class="toctree-l2"><a class="reference internal" href="#urls">URLs</a></li>
 <li class="toctree-l2"><a class="reference internal" href="#query-parameters">Query Parameters</a></li>
@@ -167,12 +168,16 @@ context managers. For example:</p>
 </div>
 <section id="using-non-us-service-regions">
 <h3>Using Non-US Service Regions<a class="headerlink" href="#using-non-us-service-regions" title="Link to this heading"></a></h3>
-<p>If your PagerDuty account is in the EU or other service region outside the US, set the <code class="docutils literal notranslate"><span class="pre">url</span></code> attribute according to the
-documented <a class="reference external" href="https://support.pagerduty.com/docs/service-regions#api-access-urls">API Access URLs</a>, i.e. for the EU:</p>
+<p>If your PagerDuty account is in the EU or other service region outside the US,
+set the <code class="docutils literal notranslate"><span class="pre">url</span></code> attribute according to the documented <a class="reference external" href="https://support.pagerduty.com/docs/service-regions#api-access-urls">API Access URLs</a>, i.e.
+for the EU:</p>
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="c1"># REST API</span>
 <span class="n">client</span><span class="o">.</span><span class="n">url</span> <span class="o">=</span> <span class="s1">&#39;https://api.eu.pagerduty.com&#39;</span>
 <span class="c1"># Events API:</span>
 <span class="n">events_client</span><span class="o">.</span><span class="n">url</span> <span class="o">=</span> <span class="s1">&#39;https://events.eu.pagerduty.com&#39;</span>
+<span class="c1"># Slack Integration &quot;Connections&quot; API (and likewise for other</span>
+<span class="c1"># APIs that use apps.pagerduty.com and/or some unique base path):</span>
+<span class="n">slack_integration_client</span><span class="o">.</span><span class="n">url</span> <span class="o">=</span> <span class="s1">&#39;https://apps.eu.pagerduty.com/integration-slack&#39;</span>
 </pre></div>
 </div>
 </section>
@@ -418,6 +423,22 @@ appended to the names of list-type-value parameters as necessary. For example:</
 </div>
 </section>
 </section>
+<section id="client-classes">
+<h2>Client Classes<a class="headerlink" href="#client-classes" title="Link to this heading"></a></h2>
+<p>For each of the APIs documented in the top-level sections of the <a class="reference external" href="https://developer.pagerduty.com/api-reference/e65c5833eeb07-pager-duty-api">API
+References</a>
+page, this library supports and provides abstraction for the API if it has a
+dedicated client class. These classes are documented under
+“API Client Classes” in <a class="reference internal" href="module_reference.html#module-reference"><span class="std std-ref">Module Reference</span></a>.</p>
+<p>All client classes are based on <a class="reference internal" href="module_reference.html#pagerduty.ApiClient" title="pagerduty.ApiClient"><code class="xref py py-class docutils literal notranslate"><span class="pre">pagerduty.ApiClient</span></code></a> and inherit its
+features.</p>
+<p>The class <a class="reference internal" href="module_reference.html#pagerduty.RestApiV2BaseClient" title="pagerduty.RestApiV2BaseClient"><code class="xref py py-class docutils literal notranslate"><span class="pre">pagerduty.RestApiV2BaseClient</span></code></a> defines abstractions for
+features documented under the generic <a class="reference external" href="https://developer.pagerduty.com/docs/rest-api-overview">REST API v2 Overview</a>, and
+<a class="reference internal" href="module_reference.html#pagerduty.RestApiV2Client" title="pagerduty.RestApiV2Client"><code class="xref py py-class docutils literal notranslate"><span class="pre">pagerduty.RestApiV2Client</span></code></a> inherits them.</p>
+<p>The “Integration” APIs are based loosely on REST API v2, and support several of
+the same features and conventions to varying degrees. For this reason, they
+also are based on inherit the features of <a class="reference internal" href="module_reference.html#pagerduty.RestApiV2BaseClient" title="pagerduty.RestApiV2BaseClient"><code class="xref py py-class docutils literal notranslate"><span class="pre">pagerduty.RestApiV2BaseClient</span></code></a>.</p>
+</section>
 <section id="generic-client-features">
 <h2>Generic Client Features<a class="headerlink" href="#generic-client-features" title="Link to this heading"></a></h2>
 <p>Generally, all of the features of <a class="reference external" href="https://docs.python-requests.org/en/master/api/#request-sessions">requests.Session</a> are available to the user
@@ -444,7 +465,7 @@ a complete API URL.  For instance, one can specify <code class="docutils literal
 <p>One can also pass the full URL of an API endpoint and it will still work, i.e.
 the <code class="docutils literal notranslate"><span class="pre">self</span></code> property of any object can be used, and there is no need to strip
 out the API base URL.</p>
-<p>The <code class="docutils literal notranslate"><span class="pre">r*</span></code> and <code class="docutils literal notranslate"><span class="pre">j*</span></code> methods, i.e.  <a class="reference internal" href="module_reference.html#pagerduty.RestApiV2Client.rget" title="pagerduty.RestApiV2Client.rget"><code class="xref py py-attr docutils literal notranslate"><span class="pre">pagerduty.RestApiV2Client.rget</span></code></a>,
+<p>The <code class="docutils literal notranslate"><span class="pre">r*</span></code> and <code class="docutils literal notranslate"><span class="pre">j*</span></code> methods, i.e.  <code class="xref py py-attr docutils literal notranslate"><span class="pre">pagerduty.RestApiV2Client.rget</span></code>,
 can also accept a dictionary object representing an API resource or a resource
 reference (see: <a class="reference external" href="https://developer.pagerduty.com/docs/resource-references">resource references</a>) in place of a URL, in which case the
 value at its <code class="docutils literal notranslate"><span class="pre">self</span></code> key will be used as the request URL.</p>
@@ -496,7 +517,7 @@ obtained:</p>
 <span class="nb">print</span><span class="p">(</span><span class="n">response</span><span class="o">.</span><span class="n">headers</span><span class="p">[</span><span class="s1">&#39;x-request-id&#39;</span><span class="p">])</span>
 </pre></div>
 </div>
-<p>If using the <code class="docutils literal notranslate"><span class="pre">j*</span></code> methods, i.e. <a class="reference internal" href="module_reference.html#pagerduty.RestApiV2Client.jget" title="pagerduty.RestApiV2Client.jget"><code class="xref py py-attr docutils literal notranslate"><span class="pre">pagerduty.RestApiV2Client.jget</span></code></a>, the return value
+<p>If using the <code class="docutils literal notranslate"><span class="pre">j*</span></code> methods, i.e. <code class="xref py py-attr docutils literal notranslate"><span class="pre">pagerduty.RestApiV2Client.jget</span></code>, the return value
 will be the full body of the response from the API after JSON-decoding, and
 the <code class="docutils literal notranslate"><span class="pre">json</span></code> keyword argument is not modified.</p>
 <p>When using the <code class="docutils literal notranslate"><span class="pre">r*</span></code> methods, the <code class="docutils literal notranslate"><span class="pre">json</span></code> keyword argument is modified before
@@ -576,15 +597,15 @@ cursor-based pagination) and no other content-bearing properties.</p>
 <p>The following methods will automatically extract and return the wrapped content
 of API responses, and wrap request entities for the user as appropriate:</p>
 <ul class="simple">
-<li><p><a class="reference internal" href="module_reference.html#pagerduty.RestApiV2Client.dict_all" title="pagerduty.RestApiV2Client.dict_all"><code class="xref py py-attr docutils literal notranslate"><span class="pre">pagerduty.RestApiV2Client.dict_all</span></code></a>: Create a dictionary of all results from a resource collection</p></li>
-<li><p><a class="reference internal" href="module_reference.html#pagerduty.RestApiV2Client.find" title="pagerduty.RestApiV2Client.find"><code class="xref py py-attr docutils literal notranslate"><span class="pre">pagerduty.RestApiV2Client.find</span></code></a>: Find and return a specific result of a resource collection that matches a query</p></li>
-<li><p><a class="reference internal" href="module_reference.html#pagerduty.RestApiV2Client.iter_all" title="pagerduty.RestApiV2Client.iter_all"><code class="xref py py-attr docutils literal notranslate"><span class="pre">pagerduty.RestApiV2Client.iter_all</span></code></a>: Iterate through all results of a resource collection</p></li>
-<li><p><a class="reference internal" href="module_reference.html#pagerduty.RestApiV2Client.iter_cursor" title="pagerduty.RestApiV2Client.iter_cursor"><code class="xref py py-attr docutils literal notranslate"><span class="pre">pagerduty.RestApiV2Client.iter_cursor</span></code></a>: Iterate through all results of a resource collection using cursor-based pagination</p></li>
-<li><p><a class="reference internal" href="module_reference.html#pagerduty.RestApiV2Client.list_all" title="pagerduty.RestApiV2Client.list_all"><code class="xref py py-attr docutils literal notranslate"><span class="pre">pagerduty.RestApiV2Client.list_all</span></code></a>: Create a list of all results from a resource collection</p></li>
-<li><p><a class="reference internal" href="module_reference.html#pagerduty.RestApiV2Client.persist" title="pagerduty.RestApiV2Client.persist"><code class="xref py py-attr docutils literal notranslate"><span class="pre">pagerduty.RestApiV2Client.persist</span></code></a>: Create a resource entity with specified attributes if one that matches them does not already exist</p></li>
-<li><p><a class="reference internal" href="module_reference.html#pagerduty.RestApiV2Client.rget" title="pagerduty.RestApiV2Client.rget"><code class="xref py py-attr docutils literal notranslate"><span class="pre">pagerduty.RestApiV2Client.rget</span></code></a>: Get the wrapped entity or resource collection at a given endpoint</p></li>
-<li><p><a class="reference internal" href="module_reference.html#pagerduty.RestApiV2Client.rpost" title="pagerduty.RestApiV2Client.rpost"><code class="xref py py-attr docutils literal notranslate"><span class="pre">pagerduty.RestApiV2Client.rpost</span></code></a>: Send a POST request, wrapping the request entity / unwrapping the response entity</p></li>
-<li><p><a class="reference internal" href="module_reference.html#pagerduty.RestApiV2Client.rput" title="pagerduty.RestApiV2Client.rput"><code class="xref py py-attr docutils literal notranslate"><span class="pre">pagerduty.RestApiV2Client.rput</span></code></a>: Send a PUT request, wrapping the request entity / unwrapping the response entity</p></li>
+<li><p><a class="reference internal" href="module_reference.html#pagerduty.RestApiV2BaseClient.dict_all" title="pagerduty.RestApiV2BaseClient.dict_all"><code class="xref py py-attr docutils literal notranslate"><span class="pre">pagerduty.RestApiV2BaseClient.dict_all</span></code></a>: Create a dictionary of all results from a resource collection</p></li>
+<li><p><code class="xref py py-attr docutils literal notranslate"><span class="pre">pagerduty.RestApiV2BaseClient.find</span></code>: Find and return a specific result of a resource collection that matches a query</p></li>
+<li><p><a class="reference internal" href="module_reference.html#pagerduty.RestApiV2BaseClient.iter_all" title="pagerduty.RestApiV2BaseClient.iter_all"><code class="xref py py-attr docutils literal notranslate"><span class="pre">pagerduty.RestApiV2BaseClient.iter_all</span></code></a>: Iterate through all results of a resource collection</p></li>
+<li><p><a class="reference internal" href="module_reference.html#pagerduty.RestApiV2BaseClient.iter_cursor" title="pagerduty.RestApiV2BaseClient.iter_cursor"><code class="xref py py-attr docutils literal notranslate"><span class="pre">pagerduty.RestApiV2BaseClient.iter_cursor</span></code></a>: Iterate through all results of a resource collection using cursor-based pagination</p></li>
+<li><p><a class="reference internal" href="module_reference.html#pagerduty.RestApiV2BaseClient.list_all" title="pagerduty.RestApiV2BaseClient.list_all"><code class="xref py py-attr docutils literal notranslate"><span class="pre">pagerduty.RestApiV2BaseClient.list_all</span></code></a>: Create a list of all results from a resource collection</p></li>
+<li><p><a class="reference internal" href="module_reference.html#pagerduty.RestApiV2BaseClient.rget" title="pagerduty.RestApiV2BaseClient.rget"><code class="xref py py-attr docutils literal notranslate"><span class="pre">pagerduty.RestApiV2BaseClient.rget</span></code></a>: Get the wrapped entity or resource collection at a given endpoint</p></li>
+<li><p><a class="reference internal" href="module_reference.html#pagerduty.RestApiV2BaseClient.rpost" title="pagerduty.RestApiV2BaseClient.rpost"><code class="xref py py-attr docutils literal notranslate"><span class="pre">pagerduty.RestApiV2BaseClient.rpost</span></code></a>: Send a POST request, wrapping the request entity / unwrapping the response entity</p></li>
+<li><p><a class="reference internal" href="module_reference.html#pagerduty.RestApiV2BaseClient.rput" title="pagerduty.RestApiV2BaseClient.rput"><code class="xref py py-attr docutils literal notranslate"><span class="pre">pagerduty.RestApiV2BaseClient.rput</span></code></a>: Send a PUT request, wrapping the request entity / unwrapping the response entity</p></li>
+<li><p><code class="xref py py-attr docutils literal notranslate"><span class="pre">pagerduty.RestApiV2BaseClient.persist</span></code>: Create a resource entity with specified attributes if one that matches them does not already exist</p></li>
 </ul>
 </section>
 <section id="special-cases">
@@ -595,7 +616,7 @@ wrap entities, the results for a given <code class="docutils literal notranslate
 the equivalent <code class="docutils literal notranslate"><span class="pre">j*</span></code> method, and the details of request and response schemas
 are are left to the end user to extract and use as desired. Moreover, on all
 endpoints that completely lack entity wrapping, pagination is not supported,
-i.e. <a class="reference internal" href="module_reference.html#pagerduty.RestApiV2Client.iter_all" title="pagerduty.RestApiV2Client.iter_all"><code class="xref py py-attr docutils literal notranslate"><span class="pre">pagerduty.RestApiV2Client.iter_all</span></code></a> will raise
+i.e. <a class="reference internal" href="module_reference.html#pagerduty.RestApiV2BaseClient.iter_all" title="pagerduty.RestApiV2BaseClient.iter_all"><code class="xref py py-attr docutils literal notranslate"><span class="pre">pagerduty.RestApiV2BaseClient.iter_all</span></code></a> will raise
 <a class="reference internal" href="module_reference.html#pagerduty.UrlError" title="pagerduty.UrlError"><code class="xref py py-attr docutils literal notranslate"><span class="pre">pagerduty.UrlError</span></code></a> if used with them.</p>
 </section>
 <section id="examples">
@@ -646,15 +667,14 @@ entity is wrapped as appropriate.</p>
 <section id="pagination">
 <h2>Pagination<a class="headerlink" href="#pagination" title="Link to this heading"></a></h2>
 <p>Main article: <a class="reference external" href="https://developer.pagerduty.com/docs/pagination">Pagination</a></p>
-<p>Only classic and cursor-based pagination are currently supported. Pagination
-functions require that the API endpoint being requested have entity wrapping
-enabled, and respond with either a <code class="docutils literal notranslate"><span class="pre">more</span></code> or <code class="docutils literal notranslate"><span class="pre">cursor</span></code> property indicating
-how and if to fetch the next page of results.</p>
-<p>The method <a class="reference internal" href="module_reference.html#pagerduty.RestApiV2Client.iter_all" title="pagerduty.RestApiV2Client.iter_all"><code class="xref py py-attr docutils literal notranslate"><span class="pre">pagerduty.RestApiV2Client.iter_all</span></code></a> returns an iterator that
+<p>The method <a class="reference internal" href="module_reference.html#pagerduty.RestApiV2BaseClient.iter_all" title="pagerduty.RestApiV2BaseClient.iter_all"><code class="xref py py-attr docutils literal notranslate"><span class="pre">pagerduty.RestApiV2BaseClient.iter_all</span></code></a> returns an iterator that
 yields results from an endpoint that features pagination. The methods
-<a class="reference internal" href="module_reference.html#pagerduty.RestApiV2Client.list_all" title="pagerduty.RestApiV2Client.list_all"><code class="xref py py-attr docutils literal notranslate"><span class="pre">pagerduty.RestApiV2Client.list_all</span></code></a> and
-<a class="reference internal" href="module_reference.html#pagerduty.RestApiV2Client.dict_all" title="pagerduty.RestApiV2Client.dict_all"><code class="xref py py-attr docutils literal notranslate"><span class="pre">pagerduty.RestApiV2Client.dict_all</span></code></a> will request all pages of the
+<code class="xref py py-attr docutils literal notranslate"><span class="pre">pagerduty.RestApiV2Client.list_all</span></code> and
+<code class="xref py py-attr docutils literal notranslate"><span class="pre">pagerduty.RestApiV2Client.dict_all</span></code> will request all pages of the
 collection and return the results as a list or dictionary, respectively.</p>
+<p>When retrieving results from an endpoint that supports cursor-based pagination,
+these methods will use <a class="reference internal" href="module_reference.html#pagerduty.RestApiV2BaseClient.iter_cursor" title="pagerduty.RestApiV2BaseClient.iter_cursor"><code class="xref py py-attr docutils literal notranslate"><span class="pre">pagerduty.RestApiV2BaseClient.iter_cursor</span></code></a>
+automatically.</p>
 <p>Examples:</p>
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="c1"># Example: Find all users with &quot;Dav&quot; in their name/email (i.e. Dave/David)</span>
 <span class="c1"># in the PagerDuty account:</span>
@@ -673,26 +693,26 @@ collection and return the results as a list or dictionary, respectively.</p>
 </div>
 <p>By default, classic, a.k.a. numeric pagination, will be used. If the endpoint
 supports cursor-based pagination, it will call out to
-<a class="reference internal" href="module_reference.html#pagerduty.RestApiV2Client.iter_cursor" title="pagerduty.RestApiV2Client.iter_cursor"><code class="xref py py-attr docutils literal notranslate"><span class="pre">pagerduty.RestApiV2Client.iter_cursor</span></code></a> to iterate through results
+<code class="xref py py-attr docutils literal notranslate"><span class="pre">pagerduty.RestApiV2Client.iter_cursor</span></code> to iterate through results
 instead.</p>
 <section id="retrieving-large-historical-datasets">
 <h3>Retrieving Large Historical Datasets<a class="headerlink" href="#retrieving-large-historical-datasets" title="Link to this heading"></a></h3>
 <p><a class="reference external" href="https://developer.pagerduty.com/docs/ZG9jOjExMDI5NTU4-pagination#classic-pagination">Classic pagination</a>
 in REST API v2 has a hard limit of 10,000 records (see
-<a class="reference internal" href="module_reference.html#pagerduty.rest_api_v2_client.ITERATION_LIMIT" title="pagerduty.rest_api_v2_client.ITERATION_LIMIT"><code class="xref py py-attr docutils literal notranslate"><span class="pre">pagerduty.rest_api_v2_client.ITERATION_LIMIT</span></code></a>). In other words, if the sum of the <code class="docutils literal notranslate"><span class="pre">limit</span></code>
+<code class="xref py py-attr docutils literal notranslate"><span class="pre">pagerduty.rest_api_v2_client.ITERATION_LIMIT</span></code>). In other words, if the sum of the <code class="docutils literal notranslate"><span class="pre">limit</span></code>
 and <code class="docutils literal notranslate"><span class="pre">offset</span></code> parameters is larger than this value, the API will respond with
 HTTP 400 Invalid Request. To get around this issue and retrieve larger data
 sets, one must either filter the results such that the total is less than this
 hard limit, or break the data set down into smaller time windows using the
 <code class="docutils literal notranslate"><span class="pre">since</span></code> and <code class="docutils literal notranslate"><span class="pre">until</span></code> parameters, for APIs that support them.</p>
-<p>In version 3.0.0, the method <a class="reference internal" href="module_reference.html#pagerduty.RestApiV2Client.iter_history" title="pagerduty.RestApiV2Client.iter_history"><code class="xref py py-attr docutils literal notranslate"><span class="pre">pagerduty.RestApiV2Client.iter_history</span></code></a> was
-added to facilitate retrieiving large datasets of historical records, i.e.
-<code class="docutils literal notranslate"><span class="pre">/log_entries</span></code>. To use it, first construct timezone-aware
+<p>The method <a class="reference internal" href="module_reference.html#pagerduty.RestApiV2Client.iter_history" title="pagerduty.RestApiV2Client.iter_history"><code class="xref py py-attr docutils literal notranslate"><span class="pre">pagerduty.RestApiV2Client.iter_history</span></code></a> automatically
+performs the second of these techniques to provide an iterator, similar to
+<a class="reference internal" href="module_reference.html#pagerduty.RestApiV2BaseClient.iter_all" title="pagerduty.RestApiV2BaseClient.iter_all"><code class="xref py py-attr docutils literal notranslate"><span class="pre">pagerduty.RestApiV2BaseClient.iter_all</span></code></a>, but that has practically no
+dataset size limit. To use it, first construct timezone-aware
 <code class="docutils literal notranslate"><span class="pre">datetime.datetime</span></code> objects (see: <a class="reference external" href="https://docs.python.org/3/library/datetime.html">datetime</a>) that correspond to the
 absolute beginning and end of the time interval from which to retrieive
-records. The method will then automatically figure out how to divide the time
-interval so that it can retrieve all records from sub-intervals without running
-into the hard pagination limit.</p>
+records. Pass these objects as the second and third positional arguments to
+<a class="reference internal" href="module_reference.html#pagerduty.RestApiV2Client.iter_history" title="pagerduty.RestApiV2Client.iter_history"><code class="xref py py-attr docutils literal notranslate"><span class="pre">pagerduty.RestApiV2Client.iter_history</span></code></a>.</p>
 <p>For example, to obtain all log entries (incident/alert timeline events) year-to-date:</p>
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span><span class="w"> </span><span class="nn">datetime</span><span class="w"> </span><span class="kn">import</span> <span class="n">datetime</span><span class="p">,</span> <span class="n">timezone</span>
 <span class="n">until</span> <span class="o">=</span> <span class="n">datetime</span><span class="o">.</span><span class="n">now</span><span class="p">(</span><span class="n">timezone</span><span class="o">.</span><span class="n">utc</span><span class="p">)</span>
@@ -704,25 +724,28 @@ into the hard pagination limit.</p>
 </pre></div>
 </div>
 <p>It is recommended to perform action on each item once it has been yielded, i.e.
-to persist it in a data warehouse, rather than constructing big a list of
-results and then operating on the list. That is because, if anything goes
-wrong while fetching the dataset, i.e. an exception is raised or the program
-runs out of memory, the partial data it retrieved will be lost to garbage
-collection.</p>
+persist it to a cache, rather than constructing big a list of results in-memory
+and then operating on the list. That is because, if anything goes wrong while
+fetching the dataset, i.e. an exception is raised or the program runs out of
+memory, the partial data it retrieved will be lost to garbage collection.</p>
 </section>
 <section id="non-standard-pagination-styles">
 <h3>Non-Standard Pagination Styles<a class="headerlink" href="#non-standard-pagination-styles" title="Link to this heading"></a></h3>
-<p>For all endpoints that implement one of the standard pagination methods
-(classic or cursor-based), <a class="reference internal" href="module_reference.html#pagerduty.RestApiV2Client.iter_all" title="pagerduty.RestApiV2Client.iter_all"><code class="xref py py-attr docutils literal notranslate"><span class="pre">pagerduty.RestApiV2Client.iter_all</span></code></a> will
-work. However, as of this writing, there are two API endpoints known to have
-their own special pagination style. Dedicated abstractions for them include:</p>
+<p>For all endpoints that implement one of the standard pagination styles (classic
+or cursor-based), <a class="reference internal" href="module_reference.html#pagerduty.RestApiV2BaseClient.iter_all" title="pagerduty.RestApiV2BaseClient.iter_all"><code class="xref py py-attr docutils literal notranslate"><span class="pre">pagerduty.RestApiV2BaseClient.iter_all</span></code></a> will work. If
+the endpoint does not completely or correctly implement one of these styles of
+pagination, the pagination methods (i.e.  <code class="docutils literal notranslate"><span class="pre">iter_all</span></code>/<code class="docutils literal notranslate"><span class="pre">list_all</span></code>) cannot be
+used with them. For example:</p>
+<p>As of this writing, there are two API endpoints known to have a their own special
+pagination style, and specialized methods have been added for them. They are
+as follows:</p>
 <ul class="simple">
 <li><p><a class="reference external" href="https://developer.pagerduty.com/api-reference/c2d493e995071-get-raw-data-multiple-incidents">Get raw data - multiple incidents (analytics)</a> / <code class="docutils literal notranslate"><span class="pre">POST</span> <span class="pre">/analytics/raw/incidents</span></code>: <a class="reference internal" href="module_reference.html#pagerduty.RestApiV2Client.iter_analytics_raw_incidents" title="pagerduty.RestApiV2Client.iter_analytics_raw_incidents"><code class="xref py py-attr docutils literal notranslate"><span class="pre">pagerduty.RestApiV2Client.iter_analytics_raw_incidents</span></code></a></p></li>
 <li><p><a class="reference external" href="https://developer.pagerduty.com/api-reference/b9fe211cc2748-list-alert-grouping-settings">List alert grouping settings</a> / <code class="docutils literal notranslate"><span class="pre">GET</span> <span class="pre">/alert_grouping_settings</span></code>: <a class="reference internal" href="module_reference.html#pagerduty.RestApiV2Client.iter_alert_grouping_settings" title="pagerduty.RestApiV2Client.iter_alert_grouping_settings"><code class="xref py py-attr docutils literal notranslate"><span class="pre">pagerduty.RestApiV2Client.iter_alert_grouping_settings</span></code></a></p></li>
 </ul>
 <p>These methods must be used on said endpoints; using the standard pagination
-methods such as <code class="docutils literal notranslate"><span class="pre">iter_all</span></code>, <code class="docutils literal notranslate"><span class="pre">iter_cursor</span></code> or <code class="docutils literal notranslate"><span class="pre">iter_history</span></code> on them will not work
-properly.</p>
+methods such as <code class="docutils literal notranslate"><span class="pre">iter_all</span></code>, <code class="docutils literal notranslate"><span class="pre">iter_cursor</span></code> or <code class="docutils literal notranslate"><span class="pre">iter_history</span></code> on them will
+not work properly.</p>
 </section>
 <section id="performance-and-completeness-of-results">
 <h3>Performance and Completeness of Results<a class="headerlink" href="#performance-and-completeness-of-results" title="Link to this heading"></a></h3>
@@ -917,7 +940,7 @@ supersede the maximum number of retries for any status defined in
 <p>Low-level HTTP request functions in client classes, i.e. <code class="docutils literal notranslate"><span class="pre">get</span></code>, will return
 <a class="reference external" href="https://docs.python-requests.org/en/master/api/#requests.Response">requests.Response</a> objects when they run out of retries. Higher-level
 functions that require a success status response, i.e.
-<a class="reference internal" href="module_reference.html#pagerduty.RestApiV2Client.list_all" title="pagerduty.RestApiV2Client.list_all"><code class="xref py py-attr docutils literal notranslate"><span class="pre">pagerduty.RestApiV2Client.list_all</span></code></a> and
+<code class="xref py py-attr docutils literal notranslate"><span class="pre">pagerduty.RestApiV2Client.list_all</span></code> and
 <a class="reference internal" href="module_reference.html#pagerduty.EventsApiV2Client.trigger" title="pagerduty.EventsApiV2Client.trigger"><code class="xref py py-attr docutils literal notranslate"><span class="pre">pagerduty.EventsApiV2Client.trigger</span></code></a>, will raise instances of
 <a class="reference internal" href="module_reference.html#pagerduty.HttpError" title="pagerduty.HttpError"><code class="xref py py-class docutils literal notranslate"><span class="pre">pagerduty.HttpError</span></code></a>, but only after the configured retry limits are
 reached in the underlying HTTP request methods.</p>

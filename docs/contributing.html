@@ -145,8 +145,8 @@ canonical path is then used as an identifier to perform a hash lookup of
 antipattern-handling configuration.</p>
 <p>This system requires two global variables that must be manually maintained:</p>
 <ul class="simple">
-<li><p><a class="reference internal" href="module_reference.html#pagerduty.rest_api_v2_client.CANONICAL_PATHS" title="pagerduty.rest_api_v2_client.CANONICAL_PATHS"><code class="xref py py-attr docutils literal notranslate"><span class="pre">pagerduty.rest_api_v2_client.CANONICAL_PATHS</span></code></a>, the list of canonical paths</p></li>
-<li><p><a class="reference internal" href="module_reference.html#pagerduty.rest_api_v2_client.ENTITY_WRAPPER_CONFIG" title="pagerduty.rest_api_v2_client.ENTITY_WRAPPER_CONFIG"><code class="xref py py-attr docutils literal notranslate"><span class="pre">pagerduty.rest_api_v2_client.ENTITY_WRAPPER_CONFIG</span></code></a>, a dictionary of exceptions to entity wrapping and schema conventions</p></li>
+<li><p><code class="xref py py-attr docutils literal notranslate"><span class="pre">pagerduty.rest_api_v2_client.CANONICAL_PATHS</span></code>, the list of canonical paths</p></li>
+<li><p><code class="xref py py-attr docutils literal notranslate"><span class="pre">pagerduty.rest_api_v2_client.ENTITY_WRAPPER_CONFIG</span></code>, a dictionary of exceptions to entity wrapping and schema conventions</p></li>
 </ul>
 </section>
 <section id="limitations">
@@ -172,8 +172,8 @@ resource collection endpoints.</p>
 Reference source code (this is a private GitHub repository owned by the
 PagerDuty org). The script <code class="docutils literal notranslate"><span class="pre">scripts/get_path_list/get_path_list.py</span></code> can then
 be used to automatically generate definitions of the global variables
-<a class="reference internal" href="module_reference.html#pagerduty.rest_api_v2_client.CANONICAL_PATHS" title="pagerduty.rest_api_v2_client.CANONICAL_PATHS"><code class="xref py py-attr docutils literal notranslate"><span class="pre">pagerduty.rest_api_v2_client.CANONICAL_PATHS</span></code></a> and
-<a class="reference internal" href="module_reference.html#pagerduty.rest_api_v2_client.CURSOR_BASED_PAGINATION_PATHS" title="pagerduty.rest_api_v2_client.CURSOR_BASED_PAGINATION_PATHS"><code class="xref py py-attr docutils literal notranslate"><span class="pre">pagerduty.rest_api_v2_client.CURSOR_BASED_PAGINATION_PATHS</span></code></a> that can be copied into the
+<code class="xref py py-attr docutils literal notranslate"><span class="pre">pagerduty.rest_api_v2_client.CANONICAL_PATHS</span></code> and
+<code class="xref py py-attr docutils literal notranslate"><span class="pre">pagerduty.rest_api_v2_client.CURSOR_BASED_PAGINATION_PATHS</span></code> that can be copied into the
 source code to replace the existing definitions. The script takes one argument:
 a path to the file <code class="docutils literal notranslate"><span class="pre">reference/v2/Index.yaml</span></code> within the reference source
 repository.</p>
@@ -184,9 +184,9 @@ repository.</p>
 reference for each new endpoint added to the canonical path list, to see if it
 follows classic schema conventions for entity wrapping. If any new path does
 not, adding support for it will also require adding entries to
-<a class="reference internal" href="module_reference.html#pagerduty.rest_api_v2_client.ENTITY_WRAPPER_CONFIG" title="pagerduty.rest_api_v2_client.ENTITY_WRAPPER_CONFIG"><code class="xref py py-attr docutils literal notranslate"><span class="pre">pagerduty.rest_api_v2_client.ENTITY_WRAPPER_CONFIG</span></code></a>. “Classic schema conventions” refers to
-the logic codified in <a class="reference internal" href="module_reference.html#pagerduty.infer_entity_wrapper" title="pagerduty.infer_entity_wrapper"><code class="xref py py-attr docutils literal notranslate"><span class="pre">pagerduty.infer_entity_wrapper</span></code></a> and
-<a class="reference internal" href="module_reference.html#pagerduty.unwrap" title="pagerduty.unwrap"><code class="xref py py-attr docutils literal notranslate"><span class="pre">pagerduty.unwrap</span></code></a> (where a “node” is a component of the path component
+<code class="xref py py-attr docutils literal notranslate"><span class="pre">pagerduty.rest_api_v2_client.ENTITY_WRAPPER_CONFIG</span></code>. “Classic schema conventions” refers to
+the logic codified in <code class="xref py py-attr docutils literal notranslate"><span class="pre">pagerduty.infer_entity_wrapper</span></code> and
+<code class="xref py py-attr docutils literal notranslate"><span class="pre">pagerduty.unwrap</span></code> (where a “node” is a component of the path component
 of the URL, separated by forward slashes):</p>
 <p><strong>1:</strong> If the last node of the path is an opaque identifier, then the path corresponds
 to an individual PagerDuty resource, and the request and response wrapper names
@@ -202,16 +202,16 @@ request method is not POST), the request and response wrapper names are both
 the same as the last node of the path. Examples: <code class="docutils literal notranslate"><span class="pre">GET</span> <span class="pre">/services</span></code> (wrapper =
 <code class="docutils literal notranslate"><span class="pre">services</span></code>), <code class="docutils literal notranslate"><span class="pre">PUT</span> <span class="pre">/incidents</span></code> (wrapper = <code class="docutils literal notranslate"><span class="pre">incidents</span></code>)</p>
 <p>If all of the above apply to new endpoints for all request methods, then no new
-entries need to be added to <a class="reference internal" href="module_reference.html#pagerduty.rest_api_v2_client.ENTITY_WRAPPER_CONFIG" title="pagerduty.rest_api_v2_client.ENTITY_WRAPPER_CONFIG"><code class="xref py py-attr docutils literal notranslate"><span class="pre">pagerduty.rest_api_v2_client.ENTITY_WRAPPER_CONFIG</span></code></a> to support
+entries need to be added to <code class="xref py py-attr docutils literal notranslate"><span class="pre">pagerduty.rest_api_v2_client.ENTITY_WRAPPER_CONFIG</span></code> to support
 them; they are supported automatically by virtue of following preexisting
 already-supported API patterns and having corresponding entries in
-<a class="reference internal" href="module_reference.html#pagerduty.rest_api_v2_client.CANONICAL_PATHS" title="pagerduty.rest_api_v2_client.CANONICAL_PATHS"><code class="xref py py-attr docutils literal notranslate"><span class="pre">pagerduty.rest_api_v2_client.CANONICAL_PATHS</span></code></a>.</p>
+<code class="xref py py-attr docutils literal notranslate"><span class="pre">pagerduty.rest_api_v2_client.CANONICAL_PATHS</span></code>.</p>
 </section>
 <section id="adding-support-for-non-conforming-endpoints">
 <h3>Adding Support for Non-Conforming Endpoints<a class="headerlink" href="#adding-support-for-non-conforming-endpoints" title="Link to this heading"></a></h3>
 <p>If the new endpoints do not follow classic schema conventions for entity
 wrapping, entries for them must be added to
-<a class="reference internal" href="module_reference.html#pagerduty.rest_api_v2_client.ENTITY_WRAPPER_CONFIG" title="pagerduty.rest_api_v2_client.ENTITY_WRAPPER_CONFIG"><code class="xref py py-attr docutils literal notranslate"><span class="pre">pagerduty.rest_api_v2_client.ENTITY_WRAPPER_CONFIG</span></code></a> in order to support them. As described
+<code class="xref py py-attr docutils literal notranslate"><span class="pre">pagerduty.rest_api_v2_client.ENTITY_WRAPPER_CONFIG</span></code> in order to support them. As described
 in the documentation of that attribute, each key is a combination of the
 request method (or “*” for the configuration entry to apply to all methods) and
 the canonical path in question, and each value is a string (for the same
@@ -219,7 +219,7 @@ wrapper name in the request and response bodies), <code class="docutils literal 
 is not applicable, and a tuple if the entity wrapping differs between the
 request and response bodies.</p>
 <p>Following the same examples as given in the <a class="reference internal" href="user_guide.html#user-guide"><span class="std std-ref">User Guide</span></a>: the entry in
-<a class="reference internal" href="module_reference.html#pagerduty.rest_api_v2_client.ENTITY_WRAPPER_CONFIG" title="pagerduty.rest_api_v2_client.ENTITY_WRAPPER_CONFIG"><code class="xref py py-attr docutils literal notranslate"><span class="pre">pagerduty.rest_api_v2_client.ENTITY_WRAPPER_CONFIG</span></code></a> to handle the “Create Business Service
+<code class="xref py py-attr docutils literal notranslate"><span class="pre">pagerduty.rest_api_v2_client.ENTITY_WRAPPER_CONFIG</span></code> to handle the “Create Business Service
 Subscribers” looks like this:</p>
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="s1">&#39;POST /business_services/</span><span class="si">{id}</span><span class="s1">/subscribers&#39;</span><span class="p">:</span> <span class="p">(</span><span class="s1">&#39;subscribers&#39;</span><span class="p">,</span> <span class="s1">&#39;subscriptions&#39;</span><span class="p">),</span>
 </pre></div>

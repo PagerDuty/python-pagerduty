@@ -104,6 +104,7 @@
 <li class="toctree-l3"><a class="reference internal" href="user_guide.html#events-api-v2">Events API v2</a></li>
 </ul>
 </li>
+<li class="toctree-l2"><a class="reference internal" href="user_guide.html#client-classes">Client Classes</a></li>
 <li class="toctree-l2"><a class="reference internal" href="user_guide.html#generic-client-features">Generic Client Features</a></li>
 <li class="toctree-l2"><a class="reference internal" href="user_guide.html#urls">URLs</a></li>
 <li class="toctree-l2"><a class="reference internal" href="user_guide.html#query-parameters">Query Parameters</a></li>
@@ -147,8 +148,14 @@
 <li class="toctree-l2"><a class="reference internal" href="module_reference.html#api-client-classes">API Client Classes</a><ul>
 <li class="toctree-l3"><a class="reference internal" href="module_reference.html#pagerduty.ApiClient"><code class="docutils literal notranslate"><span class="pre">ApiClient</span></code></a></li>
 <li class="toctree-l3"><a class="reference internal" href="module_reference.html#pagerduty.OAuthTokenClient"><code class="docutils literal notranslate"><span class="pre">OAuthTokenClient</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="module_reference.html#pagerduty.RestApiV2BaseClient"><code class="docutils literal notranslate"><span class="pre">RestApiV2BaseClient</span></code></a></li>
 <li class="toctree-l3"><a class="reference internal" href="module_reference.html#pagerduty.RestApiV2Client"><code class="docutils literal notranslate"><span class="pre">RestApiV2Client</span></code></a></li>
 <li class="toctree-l3"><a class="reference internal" href="module_reference.html#pagerduty.EventsApiV2Client"><code class="docutils literal notranslate"><span class="pre">EventsApiV2Client</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="module_reference.html#pagerduty.JiraCloudIntegrationApiClient"><code class="docutils literal notranslate"><span class="pre">JiraCloudIntegrationApiClient</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="module_reference.html#pagerduty.JiraServerIntegrationApiClient"><code class="docutils literal notranslate"><span class="pre">JiraServerIntegrationApiClient</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="module_reference.html#pagerduty.MsTeamsIntegrationApiClient"><code class="docutils literal notranslate"><span class="pre">MsTeamsIntegrationApiClient</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="module_reference.html#pagerduty.SlackIntegrationApiClient"><code class="docutils literal notranslate"><span class="pre">SlackIntegrationApiClient</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="module_reference.html#pagerduty.SlackIntegrationConnectionsApiClient"><code class="docutils literal notranslate"><span class="pre">SlackIntegrationConnectionsApiClient</span></code></a></li>
 </ul>
 </li>
 <li class="toctree-l2"><a class="reference internal" href="module_reference.html#errors">Errors</a><ul>
@@ -158,20 +165,41 @@
 <li class="toctree-l3"><a class="reference internal" href="module_reference.html#pagerduty.UrlError"><code class="docutils literal notranslate"><span class="pre">UrlError</span></code></a></li>
 </ul>
 </li>
-<li class="toctree-l2"><a class="reference internal" href="module_reference.html#client-defaults">Client Defaults</a><ul>
-<li class="toctree-l3"><a class="reference internal" href="module_reference.html#pagerduty.rest_api_v2_client.CANONICAL_PATHS"><code class="docutils literal notranslate"><span class="pre">CANONICAL_PATHS</span></code></a></li>
-<li class="toctree-l3"><a class="reference internal" href="module_reference.html#pagerduty.rest_api_v2_client.CURSOR_BASED_PAGINATION_PATHS"><code class="docutils literal notranslate"><span class="pre">CURSOR_BASED_PAGINATION_PATHS</span></code></a></li>
-<li class="toctree-l3"><a class="reference internal" href="module_reference.html#pagerduty.rest_api_v2_client.ENTITY_WRAPPER_CONFIG"><code class="docutils literal notranslate"><span class="pre">ENTITY_WRAPPER_CONFIG</span></code></a></li>
-<li class="toctree-l3"><a class="reference internal" href="module_reference.html#pagerduty.rest_api_v2_client.ITERATION_LIMIT"><code class="docutils literal notranslate"><span class="pre">ITERATION_LIMIT</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="module_reference.html#common-features">Common Features</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="module_reference.html#pagerduty.common.DATETIME_FMT"><code class="docutils literal notranslate"><span class="pre">DATETIME_FMT</span></code></a></li>
 <li class="toctree-l3"><a class="reference internal" href="module_reference.html#pagerduty.common.TEXT_LEN_LIMIT"><code class="docutils literal notranslate"><span class="pre">TEXT_LEN_LIMIT</span></code></a></li>
-<li class="toctree-l3"><a class="reference internal" href="module_reference.html#pagerduty.api_client.TIMEOUT"><code class="docutils literal notranslate"><span class="pre">TIMEOUT</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="module_reference.html#pagerduty.common.TIMEOUT"><code class="docutils literal notranslate"><span class="pre">TIMEOUT</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="module_reference.html#pagerduty.common.datetime_intervals"><code class="docutils literal notranslate"><span class="pre">datetime_intervals()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="module_reference.html#pagerduty.common.datetime_to_relative_seconds"><code class="docutils literal notranslate"><span class="pre">datetime_to_relative_seconds()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="module_reference.html#pagerduty.common.deprecated_kwarg"><code class="docutils literal notranslate"><span class="pre">deprecated_kwarg()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="module_reference.html#pagerduty.common.http_error_message"><code class="docutils literal notranslate"><span class="pre">http_error_message()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="module_reference.html#pagerduty.common.last_4"><code class="docutils literal notranslate"><span class="pre">last_4()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="module_reference.html#pagerduty.common.normalize_url"><code class="docutils literal notranslate"><span class="pre">normalize_url()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="module_reference.html#pagerduty.common.plural_name"><code class="docutils literal notranslate"><span class="pre">plural_name()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="module_reference.html#pagerduty.common.relative_seconds_to_datetime"><code class="docutils literal notranslate"><span class="pre">relative_seconds_to_datetime()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="module_reference.html#pagerduty.common.requires_success"><code class="docutils literal notranslate"><span class="pre">requires_success()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="module_reference.html#pagerduty.common.singular_name"><code class="docutils literal notranslate"><span class="pre">singular_name()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="module_reference.html#pagerduty.common.strftime"><code class="docutils literal notranslate"><span class="pre">strftime()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="module_reference.html#pagerduty.common.strptime"><code class="docutils literal notranslate"><span class="pre">strptime()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="module_reference.html#pagerduty.common.successful_response"><code class="docutils literal notranslate"><span class="pre">successful_response()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="module_reference.html#pagerduty.common.truncate_text"><code class="docutils literal notranslate"><span class="pre">truncate_text()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="module_reference.html#pagerduty.common.try_decoding"><code class="docutils literal notranslate"><span class="pre">try_decoding()</span></code></a></li>
 </ul>
 </li>
-<li class="toctree-l2"><a class="reference internal" href="module_reference.html#functions">Functions</a><ul>
-<li class="toctree-l3"><a class="reference internal" href="module_reference.html#url-handling">URL Handling</a></li>
-<li class="toctree-l3"><a class="reference internal" href="module_reference.html#entity-wrapping">Entity Wrapping</a></li>
-<li class="toctree-l3"><a class="reference internal" href="module_reference.html#function-decorators">Function Decorators</a></li>
-<li class="toctree-l3"><a class="reference internal" href="module_reference.html#helpers">Helpers</a></li>
+<li class="toctree-l2"><a class="reference internal" href="module_reference.html#rest-api-v2-helpers">REST API v2 Helpers</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="module_reference.html#pagerduty.rest_api_v2_base_client.CanonicalPath"><code class="docutils literal notranslate"><span class="pre">CanonicalPath</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="module_reference.html#pagerduty.rest_api_v2_base_client.EntityWrapping"><code class="docutils literal notranslate"><span class="pre">EntityWrapping</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="module_reference.html#pagerduty.rest_api_v2_base_client.EntityWrappingSpec"><code class="docutils literal notranslate"><span class="pre">EntityWrappingSpec</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="module_reference.html#pagerduty.rest_api_v2_base_client.ITERATION_LIMIT"><code class="docutils literal notranslate"><span class="pre">ITERATION_LIMIT</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="module_reference.html#pagerduty.rest_api_v2_base_client.auto_json"><code class="docutils literal notranslate"><span class="pre">auto_json()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="module_reference.html#pagerduty.rest_api_v2_base_client.canonical_path"><code class="docutils literal notranslate"><span class="pre">canonical_path()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="module_reference.html#pagerduty.rest_api_v2_base_client.endpoint_matches"><code class="docutils literal notranslate"><span class="pre">endpoint_matches()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="module_reference.html#pagerduty.rest_api_v2_base_client.entity_wrappers"><code class="docutils literal notranslate"><span class="pre">entity_wrappers()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="module_reference.html#pagerduty.rest_api_v2_base_client.infer_entity_wrapper"><code class="docutils literal notranslate"><span class="pre">infer_entity_wrapper()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="module_reference.html#pagerduty.rest_api_v2_base_client.is_path_param"><code class="docutils literal notranslate"><span class="pre">is_path_param()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="module_reference.html#pagerduty.rest_api_v2_base_client.resource_url"><code class="docutils literal notranslate"><span class="pre">resource_url()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="module_reference.html#pagerduty.rest_api_v2_base_client.unwrap"><code class="docutils literal notranslate"><span class="pre">unwrap()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="module_reference.html#pagerduty.rest_api_v2_base_client.wrapped_entities"><code class="docutils literal notranslate"><span class="pre">wrapped_entities()</span></code></a></li>
 </ul>
 </li>
 </ul>
