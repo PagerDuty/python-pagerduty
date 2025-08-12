@@ -1,4 +1,9 @@
-from . rest_api_v2_base_client import RestApiV2BaseClient
+from typing import List
+
+from . rest_api_v2_base_client import (
+    CanonicalPath,
+    RestApiV2BaseClient
+)
 
 CANONICAL_PATHS = [
     "/incidents/{incident_id}/dedicated_channel"
@@ -41,7 +46,7 @@ class SlackIntegrationApiClient(RestApiV2BaseClient):
         })
 
     @property
-    def canonical_paths(self) -> list[str]:
+    def canonical_paths(self) -> List[CanonicalPath]:
         return CANONICAL_PATHS
 
     @property
