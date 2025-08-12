@@ -175,9 +175,8 @@ def normalize_url(base_url: str, url: str) -> str:
         return base_url.rstrip('/') + "/" + url.lstrip('/')
     else:
         raise UrlError(
-            f"URL {url} does not start with the API base URL {base_url}"
+            f"URL {url} does not start with the API base URL {base_url}."
         )
-
 
 def plural_name(obj_type: str) -> str:
     """

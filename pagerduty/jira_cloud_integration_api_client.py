@@ -30,6 +30,9 @@ class JiraCloudIntegrationApiClient(RestApiV2BaseClient):
             auth_type=auth_type, debug=debug)
         self.headers.update({
             'Accept': 'application/json',
+            # All requests in the reference and not just data-bearing create/update
+            # methods have this header, so it should also be included in GET:
+            'Content-Type': 'application/json'
         })
 
     @property

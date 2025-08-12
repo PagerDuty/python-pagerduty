@@ -26,18 +26,27 @@ class JiraServerIntegrationApiClient(RestApiV2BaseClient):
     that reason, its constructor does not accept an "auth_type" argument, and it is
     assumed that the provided API key was generated using an OAuth flow.
 
-    For constructor arguments, see :class:`pagerduty.ApiClient`.
+    :param api_key:
+        REST API access token to use for HTTP requests
+    :param jira_signature_token:
+        Connected Jira instance signature token. This validates the connection between
+        PagerDuty and a specific Jira instance.
+    :param debug:
+        Sets :attr:`pagerduty.ApiClient.print_debug`. Set to ``True`` to enable verbose
+        command line output.
     """
 
     permitted_methods = ('GET', 'POST', 'PUT', 'DELETE')
 
     url = "https://app.pagerduty.com/integration-jira-service"
 
-    def __init__(self, api_key: str, debug: bool = False):
+    def __init__(self, api_key: str, jira_signature_token: str, debug: bool = False):
         super(JiraServerIntegrationApiClient, self).__init__(api_key,
             auth_type='bearer', debug=debug)
+        self.jira_signature_token = jira_signature_token
         self.headers.update({
             'Accept': 'application/json',
+            'x-pagerduty-jira-signature': self.jira_signature_token
         })
 
     @property
