@@ -457,23 +457,21 @@ class RestApiV2Client(RestApiV2BaseClient):
     """
     PagerDuty REST API v2 client class.
 
-    Implements the most generic and oft-implemented aspects of PagerDuty's REST
-    API v2 as an opinionated wrapper of `requests.Session`_.
-
+    Implements abstractions for the particular features of PagerDuty's REST API v2.
     Inherits from :class:`pagerduty.RestApiV2BaseClient`.
 
     :param api_key:
-        REST API access token to use for HTTP requests
+        REST API access token to use for HTTP requests.
     :param default_from:
         The default email address to use in the ``From`` header when making
         API calls using an account-level API access key.
     :param auth_type:
         The type of credential in use. If authenticating with an OAuth access
         token, this must be set to ``oauth2`` or ``bearer``. This will determine the
-        format of ``Authorization`` header that is sent to the API in each request.
+        format of the ``Authorization`` header that is sent to the API in each request.
     :param debug:
-        Sets :attr:`print_debug`. Set to True to enable verbose command line
-        output.
+        Sets :attr:`pagerduty.ApiClient.print_debug`. Set to ``True`` to enable verbose
+        command line output.
     """
 
     default_from = None

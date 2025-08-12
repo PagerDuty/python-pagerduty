@@ -26,11 +26,7 @@ class MsTeamsIntegrationApiClient(RestApiV2BaseClient):
     reason, its constructor does not accept an "auth_type" argument, and it is assumed
     that the provided API key was generated through the PagerDuty web UI.
 
-    :param api_key:
-        REST API access token to use for HTTP requests
-    :param debug:
-        Sets :attr:`print_debug`. Set to True to enable verbose command line
-        output.
+    For constructor arguments, see :class:`pagerduty.ApiClient`.
     """
 
     permitted_methods = ('POST', )

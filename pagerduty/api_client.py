@@ -46,12 +46,10 @@ class ApiClient(Session):
       any other HTTP methods.
 
     :param api_key:
-        REST API access token to use for HTTP requests
+        The API secret to use for authentication in HTTP requests
     :param debug:
-        Sets :attr:`print_debug`. Set to True to enable verbose command line
+        Sets :attr:`print_debug`. Set to ``True`` to enable verbose command line
         output.
-    :type token: str
-    :type debug: bool
     """
 
     log = None

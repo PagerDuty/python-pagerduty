@@ -37,6 +37,14 @@ class OAuthTokenClient(ApiClient):
     - `OAuth Functionality <https://developer.pagerduty.com/docs/oauth-functionality>`_
     - `User OAuth Token via Code Grant <https://developer.pagerduty.com/docs/user-oauth-token-via-code-grant>`_
     - `Obtaining an App OAuth Token <https://developer.pagerduty.com/docs/app-oauth-token>`_
+
+    :param client_secret:
+        The secret associated with the application.
+    :param client_id:
+        The client ID provided when registering the application.
+    :param debug:
+        Passed to the parent constructor as the ``debug`` argument. See:
+        :class:`ApiClient`
     """
 
     permitted_methods = ('POST',)
@@ -61,14 +69,6 @@ class OAuthTokenClient(ApiClient):
     def __init__(self, client_secret: str, client_id: str, debug=False):
         """
         Create an OAuth token client
-
-        :param client_secret:
-            The secret associated with the application.
-        :param client_id:
-            The client ID provided when registering the application.
-        :param debug:
-            Passed to the parent constructor as the ``debug`` argument. See:
-            :class:`ApiClient`
         """
         super(OAuthTokenClient, self).__init__(client_secret, debug=debug)
         self.client_id = client_id

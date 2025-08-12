@@ -27,6 +27,8 @@ class EventsApiV2Client(ApiClient):
     including change events, and inherits from :class:`pagerduty.ApiClient`.  For more
     details on usage of this API, refer to the `Events API v2 documentation
     <https://developer.pagerduty.com/docs/events-api-v2/overview/>`_
+
+    For constructor arguments, see :class:`pagerduty.ApiClient`.
     """
 
     permitted_methods = ('POST',)

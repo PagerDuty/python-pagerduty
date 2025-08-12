@@ -412,7 +412,7 @@ def wrapped_entities(method: callable) -> callable:
 
 class RestApiV2BaseClient(ApiClient):
     """
-    Abstract class for all API clients that support APIs that are similar to REST API v2
+    Abstract base class for all API clients that support APIs similar to REST API v2
 
     This class implements some common features like numeric pagination that also appear
     and are supported to varying degrees outside of REST API v2.
@@ -422,10 +422,10 @@ class RestApiV2BaseClient(ApiClient):
     :param auth_type:
         The type of credential in use. If authenticating with an OAuth access
         token, this must be set to ``oauth2`` or ``bearer``. This will determine the
-        format of ``Authorization`` header that is sent to the API in each request.
+        format of the ``Authorization`` header that is sent to the API in each request.
     :param debug:
-        Sets :attr:`print_debug`. Set to True to enable verbose command line
-        output.
+        Sets :attr:`pagerduty.ApiClient.print_debug`. Set to ``True`` to enable verbose
+        command line output.
     """
 
     api_call_counts = None
