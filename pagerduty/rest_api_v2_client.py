@@ -12,6 +12,7 @@ from warnings import warn
 from requests import Response
 
 # Local
+from . auth_method import AuthMethod
 from . common import (
     datetime_intervals,
     strftime,
@@ -461,8 +462,8 @@ class RestApiV2Client(RestApiV2BaseClient):
     Implements abstractions for the particular features of PagerDuty's REST API v2.
     Inherits from :class:`pagerduty.RestApiV2BaseClient`.
 
-    :param api_key:
-        REST API access token to use for HTTP requests.
+    :param auth_method
+        An instance of the AuthMethod class that provides the authentication header
     :param default_from:
         The default email address to use in the ``From`` header when making
         API calls using an account-level API access key.
@@ -483,9 +484,8 @@ class RestApiV2Client(RestApiV2BaseClient):
     url = 'https://api.pagerduty.com'
     """Base URL of the REST API"""
 
-    def __init__(self, api_key: str, default_from: Optional[str] = None,
-            auth_type: str = 'token', debug: bool = False):
-        super(RestApiV2Client, self).__init__(api_key, auth_type=auth_type, debug=debug)
+    def __init__(self, auth_method: AuthMethod, default_from: Optional[str] = None, debug: bool = False):
+        super(RestApiV2Client, self).__init__(auth_method, debug=debug)
         self.default_from = default_from
         if default_from is not None:
             self.headers.update({
@@ -661,7 +661,7 @@ class RestApiV2Client(RestApiV2BaseClient):
         pagination. This method provides an abstraction for it similar to
         :attr:`iter_all`.
 
-        See: 
+        See:
         `Get raw data - multiple incidents <https://developer.pagerduty.com/api-reference/c2d493e995071-get-raw-data-multiple-incidents>`_
 
         :param filters:

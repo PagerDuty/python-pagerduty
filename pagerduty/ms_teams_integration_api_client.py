@@ -1,5 +1,6 @@
 from typing import List
 
+from . auth_method import ApiKeyAuthMethod
 from . rest_api_v2_base_client import (
     CanonicalPath,
     RestApiV2BaseClient
@@ -39,8 +40,8 @@ class MsTeamsIntegrationApiClient(RestApiV2BaseClient):
     url = "https://api.pagerduty.com/integration-ms-teams"
 
     def __init__(self, api_key: str, debug: bool = False):
-        super(MsTeamsIntegrationApiClient, self).__init__(api_key,
-            auth_type='token', debug=debug)
+        auth_method = ApiKeyAuthMethod(api_key)
+        super(MsTeamsIntegrationApiClient, self).__init__(auth_method, debug=debug)
         self.headers.update({
             'Accept': 'application/json',
         })

@@ -6,14 +6,35 @@ from copy import deepcopy
 from requests import Response
 
 from . api_client import ApiClient
+from . auth_method import AuthMethod, OAuthTokenAuthMethod
 from . common import (
     datetime_to_relative_seconds,
     relative_seconds_to_datetime,
     successful_response,
-    try_decoding
+    try_decoding,
+    last_4
 )
 from . errors import ServerHttpError
 from . rest_api_v2_client import RestApiV2Client
+
+class ClientCredentialsAuthMethod(AuthMethod):
+
+    def __init__(self, client_id, client_secret):
+        self.client_id = client_id
+        self.client_secret = client_secret
+
+    # provided as parameters in the oauth token call, not headers
+    def auth_header(self) -> dict:
+        return {}
+
+    def oauth_params(self) -> dict:
+        return {
+            "client_id": self.client_id,
+            "client_secret": self.client_secret
+        }
+
+    def trunc_key(self) -> str:
+        return last_4(self.client_secret)
 
 class OAuthTokenClient(ApiClient):
     """
@@ -70,8 +91,9 @@ class OAuthTokenClient(ApiClient):
         """
         Create an OAuth token client
         """
-        super(OAuthTokenClient, self).__init__(client_secret, debug=debug)
-        self.client_id = client_id
+        auth_method = ClientCredentialsAuthMethod(client_id, client_secret)
+
+        super(OAuthTokenClient, self).__init__(auth_method, debug=debug)
 
     def amended_auth_response(self, response: Response) -> dict:
         """
@@ -95,10 +117,6 @@ class OAuthTokenClient(ApiClient):
         })
         return response_json
 
-    @property
-    def auth_header(self) -> dict:
-        return {}
-
     def authorize_url(self, scope: str, redirect_uri: str) -> str:
         """
         The authorize URL in PagerDuty that the end user will visit to authorize the app
@@ -112,20 +130,10 @@ class OAuthTokenClient(ApiClient):
             The formatted authorize URL.
         """
         return self.get_authorize_url(
-            self.client_id,
+            self.auth_method.client_id,
             scope,
             redirect_uri
         )
-
-    @property
-    def api_key(self):
-        return self._api_key
-
-    @api_key.setter
-    def api_key(self, api_key: str):
-        if not (isinstance(api_key, str) and api_key):
-            raise ValueError("Client secret must be a non-empty string.")
-        self._api_key = api_key
 
     @classmethod
     def get_authorize_url(cls, client_id: str, scope: str, redirect_uri: str) -> str:
@@ -173,18 +181,18 @@ class OAuthTokenClient(ApiClient):
             ``access_token`` with the new token and ``expiration_date`` containing the
             date and time when the token will expire in ISO8601 format.
         """
-        params = {
-            "client_id": self.client_id,
-            "client_secret": self.api_key
-        }
+        params = self.auth_method.oauth_params()
         params.update(kw)
-        return self.amended_auth_response(self.post(
-            '/oauth/token',
-            data = params,
-            headers = {
-                "Content-Type": "application/x-www-form-urlencoded"
-            }
-        ))
+
+        return self.amended_auth_response(
+            self.post(
+                '/oauth/token',
+                data=params,
+                headers={
+                    "Content-Type": "application/x-www-form-urlencoded"
+                }
+            )
+        )
 
     def get_new_token_from_code(self, auth_code: str, scope: str, redirect_uri: str) \
             -> dict:
@@ -270,12 +278,14 @@ class OAuthTokenClient(ApiClient):
             ``None`` otherwise) as its second element.
         """
         auth = None
+
         current_access_token = access_token
         if datetime_to_relative_seconds(expiration_date) < self.early_refresh_buffer:
             auth = self.get_refreshed_token(refresh_token)
             current_access_token = auth['access_token']
-        client_kw = deepcopy(kw)
-        client_kw.update({'auth_type': 'bearer'})
-        client = RestApiV2Client(current_access_token, **client_kw)
+
+        auth_method = OAuthTokenAuthMethod(current_access_token)
+
+        client = RestApiV2Client(auth_method, **deepcopy(kw))
         client.url = base_url
         return client, auth

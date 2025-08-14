@@ -302,16 +302,17 @@ class FunctionDecoratorsTest(unittest.TestCase):
 class RestApiV2ClientTest(SessionTest):
 
     def test_oauth_headers(self):
-        secret = 'randomly generated lol'
-        for authtype in 'oauth2', 'bearer':
-            sess = pagerduty.RestApiV2Client(secret, auth_type=authtype)
-            self.assertEqual(
-                sess.headers['Authorization'],
-                "Bearer "+secret
-            )
+        oauth_token = "randomly generated lol"
+        auth_method = pagerduty.auth_method.OAuthTokenAuthMethod(oauth_token)
+        sess = pagerduty.RestApiV2Client(auth_method)
+        self.assertEqual(
+            sess.auth_header["Authorization"],
+            "Bearer "+ oauth_token
+        )
 
     def test_print_debug(self):
-        sess = pagerduty.RestApiV2Client('token')
+        auth_method = pagerduty.auth_method.ApiKeyAuthMethod('token')
+        sess = pagerduty.RestApiV2Client(auth_method)
         log = Mock()
         log.setLevel = Mock()
         log.addHandler = Mock()
@@ -640,7 +641,7 @@ class RestApiV2ClientTest(SessionTest):
         """
         # Adjust the recursion limit so we only need 1 level of stub data:
         client = pagerduty.RestApiV2Client('token')
-        original_recursion_limit = pagerduty.rest_api_v2_client.RECURSION_LIMIT 
+        original_recursion_limit = pagerduty.rest_api_v2_client.RECURSION_LIMIT
         pagerduty.rest_api_v2_client.RECURSION_LIMIT = 1
         # Checks for "total" in each sub-interval: The expected breakdown of 3s is a 1s
         # interval followed by a 2s interval at the first level of recursion, and then
@@ -816,7 +817,8 @@ class RestApiV2ClientTest(SessionTest):
 
     @patch.object(pagerduty.RestApiV2Client, 'postprocess')
     def test_request(self, postprocess):
-        sess = pagerduty.RestApiV2Client('12345')
+        auth_method = pagerduty.auth_method.ApiKeyAuthMethod('12345')
+        sess = pagerduty.RestApiV2Client(auth_method)
         parent = Session()
         request = MagicMock()
         # Expected headers:
@@ -1022,5 +1024,6 @@ class RestApiV2ClientTest(SessionTest):
         rget.assert_called_once_with('users', params={'limit':1})
 
     def test_truncated_key(self):
-        sess = pagerduty.RestApiV2Client('abcd1234')
+        auth_method = pagerduty.auth_method.ApiKeyAuthMethod('abc1234')
+        sess = pagerduty.RestApiV2Client(auth_method)
         self.assertEqual('*1234', sess.trunc_key)

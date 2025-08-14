@@ -1,5 +1,6 @@
 from typing import List
 
+from . auth_method import OAuthTokenAuthMethod
 from . rest_api_v2_base_client import (
     CanonicalPath,
     RestApiV2BaseClient
@@ -46,9 +47,10 @@ class JiraServerIntegrationApiClient(RestApiV2BaseClient):
 
     url = "https://app.pagerduty.com/integration-jira-service"
 
-    def __init__(self, api_key: str, jira_signature_token: str, debug: bool = False):
-        super(JiraServerIntegrationApiClient, self).__init__(api_key,
-            auth_type='bearer', debug=debug)
+    def __init__(self, oauth_token: str, jira_signature_token: str, debug: bool = False):
+        auth_method = OAuthTokenAuthMethod(oauth_token)
+        super(JiraServerIntegrationApiClient, self).__init__(auth_method, debug)
+
         self.jira_signature_token = jira_signature_token
         self.headers.update({
             'Accept': 'application/json',
