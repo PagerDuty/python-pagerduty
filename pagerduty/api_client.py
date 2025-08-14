@@ -20,12 +20,10 @@ from pagerduty.auth_method import AuthMethod
 from . version import __version__
 from . errors import (
     Error,
-    HttpError,
-    UrlError
+    HttpError
 )
 from . common import (
     TIMEOUT,
-    last_4,
     normalize_url
 )
 

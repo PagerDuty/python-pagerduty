@@ -1,5 +1,4 @@
 # Local
-from logging import debug
 from . version import __version__
 from . common import last_4
 
@@ -17,6 +16,22 @@ class AuthMethod():
         Returns a truncated version of the API key for display purposes.
         """
         raise NotImplementedError
+
+class HeaderAuthMethod(AuthMethod):
+    def __init__(self, headers):
+        """
+        Authentication method that allows directly specifying the authorization header
+
+        :param headers:
+            A dictionary of headers to include in the request
+        """
+        self.headers = headers
+
+    def auth_header(self) -> dict:
+        return self.headers
+
+    def trunc_key(self):
+        return last_4(self.headers.get('Authorization', ''))
 
 class ApiKeyAuthMethod(AuthMethod):
 
