@@ -1,10 +1,5 @@
 # Core
 from copy import deepcopy
-from datetime import (
-    datetime,
-    timezone
-)
-from sys import getrecursionlimit
 from typing import Iterator, List, Optional, Tuple, Union
 from warnings import warn
 
@@ -15,11 +10,6 @@ from requests import Response
 from . api_client import (
     ApiClient,
     normalize_url
-)
-
-from . auth_method import (
-    ApiKeyAuthMethod,
-    OAuthTokenAuthMethod
 )
 
 from . common import (

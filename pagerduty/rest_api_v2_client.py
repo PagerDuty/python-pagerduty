@@ -1,28 +1,20 @@
 # Core
 from copy import deepcopy
-from datetime import (
-    datetime,
-    timezone
-)
+from datetime import datetime
 from sys import getrecursionlimit
 from typing import Iterator, List, Optional
 from warnings import warn
-
-# PyPI
-from requests import Response
 
 # Local
 from . auth_method import ApiKeyAuthMethod, AuthMethod, OAuthTokenAuthMethod
 from . common import (
     datetime_intervals,
-    strftime,
-    strptime
+    strftime
 )
 from . rest_api_v2_base_client import (
     ITERATION_LIMIT,
     CanonicalPath,
     RestApiV2BaseClient,
-    auto_json,
     canonical_path as canonical_path_common,
     entity_wrappers as entity_wrappers_common,
     wrapped_entities

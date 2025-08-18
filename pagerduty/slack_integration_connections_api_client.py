@@ -1,6 +1,5 @@
 from typing import List
 
-from . auth_method import ApiKeyAuthMethod
 from . rest_api_v2_base_client import (
     CanonicalPath,
     RestApiV2BaseClient
@@ -38,8 +37,7 @@ class SlackIntegrationConnectionsApiClient(RestApiV2BaseClient):
     url = "https://app.pagerduty.com/integration-slack"
 
     def __init__(self, api_key: str, debug: bool = False):
-        auth_method = ApiKeyAuthMethod(api_key)
-        super(SlackIntegrationConnectionsApiClient, self).__init__(auth_method, debug=debug)
+        super(SlackIntegrationConnectionsApiClient, self).__init__(api_key, debug=debug)
         self.headers.update({
             'Accept': 'application/json',
         })

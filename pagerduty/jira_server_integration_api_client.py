@@ -1,11 +1,9 @@
 from typing import List
 
-from . auth_method import OAuthTokenAuthMethod
 from . rest_api_v2_base_client import (
     CanonicalPath,
     RestApiV2BaseClient
 )
-
 
 CANONICAL_PATHS = [
     '/rules'

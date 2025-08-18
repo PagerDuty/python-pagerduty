@@ -6,7 +6,7 @@ from copy import deepcopy
 from requests import Response
 
 from . api_client import ApiClient
-from . auth_method import AuthMethod, OAuthTokenAuthMethod
+from . auth_method import AuthMethod
 from . common import (
     datetime_to_relative_seconds,
     relative_seconds_to_datetime,
