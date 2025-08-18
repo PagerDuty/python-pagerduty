@@ -19,7 +19,7 @@ from . rest_api_v2_client import RestApiV2Client
 
 class ClientCredentialsAuthMethod(AuthMethod):
 
-    def __init__(self, client_id, client_secret):
+    def __init__(self, client_secret, client_id):
         self.client_id = client_id
         self.client_secret = client_secret
 
@@ -91,7 +91,7 @@ class OAuthTokenClient(ApiClient):
         """
         Create an OAuth token client
         """
-        auth_method = ClientCredentialsAuthMethod(client_id, client_secret)
+        auth_method = ClientCredentialsAuthMethod(client_secret, client_id)
 
         super(OAuthTokenClient, self).__init__(auth_method, debug=debug)
 
