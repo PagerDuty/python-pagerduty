@@ -432,6 +432,7 @@ def wrapped_entities(method: callable) -> callable:
 ####################
 
 class ApiKeyAuthMethod(AuthMethod):
+    auth_type = 'token'
 
     def __init__(self, api_key: str):
         """
@@ -449,20 +450,22 @@ class ApiKeyAuthMethod(AuthMethod):
         return last_4(self.api_key)
 
 class OAuthTokenAuthMethod(AuthMethod):
-    def __init__(self, oauth_token: str):
+    auth_type = 'bearer'
+
+    def __init__(self, access_token: str):
         """
         Authentication method using an OAuth token.
 
-        :param oauth_token:
+        :param access_token:
             A static OAuth token to use for authentication in HTTP requests
         """
-        self.oauth_token = oauth_token
+        self.access_token = access_token
 
     def auth_header(self) -> dict:
-        return {"Authorization": f"Bearer {self.oauth_token}"}
+        return {"Authorization": f"Bearer {self.access_token}"}
 
     def trunc_key(self):
-        return last_4(self.oauth_token)
+        return last_4(self.access_token)
 
 
 ####################
@@ -519,7 +522,6 @@ class RestApiV2BaseClient(ApiClient):
         (Deprecated) Property representing the API key used for authentication.
         """
         warn("The api_key property is deprecated, access API credentials via the auth_method instead.")
-
         return self.auth_method.api_key
 
     @api_key.setter
@@ -529,8 +531,25 @@ class RestApiV2BaseClient(ApiClient):
         """
 
         warn("The api_key property is deprecated, access API credentials via the auth_method instead.")
+        self.auth_method = self._build_auth_method(api_key, self.auth_method.auth_type)
 
-        self.auth_method = AuthMethod(api_key=api_key)
+    @property
+    def auth_type(self) -> str:
+        """
+        (Deprecated) Property representing the authentication type used for API requests.
+        """
+
+        warn("The auth_type property is deprecated, access API credentials via the auth_method instead.")
+        return self.auth_method.auth_type
+
+    @auth_type.setter
+    def auth_type(self, auth_type: str):
+        """
+        (Deprecated) Setter for the authentication type used for API requests.
+        """
+
+        warn("The auth_type property is deprecated, access API credentials via the auth_method instead.")
+        self.auth_method = self._build_auth_method(self.auth_method.api_key, auth_type)
 
     def canonical_path(self, url: str) -> CanonicalPath:
         """

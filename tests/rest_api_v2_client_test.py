@@ -302,12 +302,12 @@ class FunctionDecoratorsTest(unittest.TestCase):
 class RestApiV2ClientTest(SessionTest):
 
     def test_oauth_headers(self):
-        oauth_token = 'randomly generated lol'
+        access_token = 'randomly generated lol'
         for authtype in 'oauth2', 'bearer':
-            sess = pagerduty.RestApiV2Client(oauth_token, auth_type=authtype)
+            sess = pagerduty.RestApiV2Client(access_token, auth_type=authtype)
             self.assertEqual(
                 sess.headers["Authorization"],
-                "Bearer "+ oauth_token
+                "Bearer " + access_token
             )
 
     def test_print_debug(self):
@@ -1024,3 +1024,18 @@ class RestApiV2ClientTest(SessionTest):
     def test_truncated_key(self):
         sess = pagerduty.RestApiV2Client('abcd1234')
         self.assertEqual('*1234', sess.trunc_key)
+
+    def test_updating_auth_params_propagates_to_auth_method(self):
+        sess = pagerduty.RestApiV2Client('hello-there')
+        self.assertEqual('token', sess.auth_method.auth_type)
+        self.assertEqual('hello-there', sess.auth_method.api_key)
+        self.assertEqual(sess.headers['authorization'], "Token token=hello-there")
+
+        sess.auth_type = 'bearer'
+        self.assertEqual('bearer', sess.auth_method.auth_type)
+        self.assertEqual('hello-there', sess.auth_method.access_token)
+        self.assertEqual(sess.headers['authorization'], "Bearer hello-there")
+
+        sess.api_key = 'hiya'
+        self.assertEqual('hiya', sess.auth_method.access_token)
+        self.assertEqual(sess.headers['authorization'], "Bearer hiya")

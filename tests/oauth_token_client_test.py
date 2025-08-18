@@ -112,7 +112,7 @@ class OAuthTokenClientTest(unittest.TestCase):
 
         self.assertIsNone(auth)
         self.assertIsInstance(rest_client, RestApiV2Client)
-        self.assertEqual(existing_access_token, rest_client.auth_method.oauth_token)
+        self.assertEqual(existing_access_token, rest_client.auth_method.access_token)
         get_refreshed_token.assert_not_called()
 
     @patch.object(OAuthTokenClient, 'get_refreshed_token')
@@ -151,7 +151,7 @@ class OAuthTokenClientTest(unittest.TestCase):
         get_refreshed_token.assert_called_once_with(refresh_token)
         self.assertIs(dict, type(auth))
         self.assertIsInstance(rest_client, RestApiV2Client)
-        self.assertEqual(api_key_new, rest_client.auth_method.oauth_token)
+        self.assertEqual(api_key_new, rest_client.auth_method.access_token)
         self.assertEqual(api_url, rest_client.url)
         self.assertEqual(from_email, rest_client.default_from)
         self.assertEqual(True, rest_client.print_debug)
