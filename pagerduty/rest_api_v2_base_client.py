@@ -479,9 +479,12 @@ class RestApiV2BaseClient(ApiClient):
     This class implements some common features like numeric pagination that also appear
     and are supported to varying degrees outside of REST API v2.
 
-    :param auth_method:
-        An instance of the AuthMethod class that can provide the Authorization header for
-        the current request
+    :param api_key:
+        REST API access token to use for HTTP requests
+    :param auth_type:
+        The type of credential in use. If authenticating with an OAuth access
+        token, this must be set to ``oauth2`` or ``bearer``. This will determine the
+        format of the ``Authorization`` header that is sent to the API in each request.
     :param debug:
         Sets :attr:`pagerduty.ApiClient.print_debug`. Set to ``True`` to enable verbose
         command line output.
@@ -499,7 +502,7 @@ class RestApiV2BaseClient(ApiClient):
     iterating/querying an index (the ``limit`` parameter).
     """
 
-    def __init__(self, api_key, auth_type, debug: bool = False):
+    def __init__(self, api_key: str, auth_type: str = 'token', debug: bool = False):
         self.api_call_counts = {}
         self.api_time = {}
 
