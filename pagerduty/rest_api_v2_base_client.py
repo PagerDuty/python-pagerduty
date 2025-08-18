@@ -11,6 +11,9 @@ from . api_client import (
     ApiClient,
     normalize_url
 )
+from . auth_method import (
+    AuthMethod
+)
 
 from . common import (
     requires_success,
@@ -18,6 +21,7 @@ from . common import (
     successful_response,
     truncate_text,
     try_decoding,
+    last_4
 )
 from . errors import (
     ServerHttpError,
@@ -64,7 +68,7 @@ def canonical_path(paths: List[CanonicalPath], base_url: str, url: str) \
     endpoint within the client's corresponding API it belongs to, in order to account
     for any antipatterns that the endpoint might have.
 
-    For examle, in
+    For example, in
     `List a user's contact methods
     <https://developer.pagerduty.com/api-reference/50d46c0eb020d-list-a-user-s-contact-methods>`_,
     the canonical path is ``/users/{id}/contact_methods``.
@@ -423,6 +427,43 @@ def wrapped_entities(method: callable) -> callable:
     call.__doc__ = doc
     return call
 
+####################
+### AUTH METHODS ###
+####################
+
+class ApiKeyAuthMethod(AuthMethod):
+
+    def __init__(self, api_key: str):
+        """
+        Authentication method using an API key.
+
+        :param api_key:
+            The API secret to use for authentication in HTTP requests
+        """
+        self.api_key = api_key
+
+    def auth_header(self) -> dict:
+        return {"Authorization": f"Token token={self.api_key}"}
+
+    def trunc_key(self):
+        return last_4(self.api_key)
+
+class OAuthTokenAuthMethod(AuthMethod):
+    def __init__(self, oauth_token: str):
+        """
+        Authentication method using an OAuth token.
+
+        :param oauth_token:
+            A static OAuth token to use for authentication in HTTP requests
+        """
+        self.oauth_token = oauth_token
+
+    def auth_header(self) -> dict:
+        return {"Authorization": f"Bearer {self.oauth_token}"}
+
+    def trunc_key(self):
+        return last_4(self.oauth_token)
+
 
 ####################
 ### CLIENT CLASS ###
@@ -455,11 +496,22 @@ class RestApiV2BaseClient(ApiClient):
     iterating/querying an index (the ``limit`` parameter).
     """
 
-    def __init__(self, auth_method, debug: bool = False):
+    def __init__(self, api_key, auth_type, debug: bool = False):
         self.api_call_counts = {}
         self.api_time = {}
 
+        auth_method = self._build_auth_method(api_key, auth_type)
+
         super(RestApiV2BaseClient, self).__init__(auth_method, debug=debug)
+
+    def _build_auth_method(self, api_key: str, auth_type: str) -> AuthMethod:
+        if auth_type == 'token':
+            return ApiKeyAuthMethod(api_key)
+        elif auth_type == 'bearer' or auth_type == 'oauth2':
+            return OAuthTokenAuthMethod(api_key)
+        else:
+            raise AttributeError("auth_type value must be \"token\" (default) "
+                "or \"bearer\" or \"oauth2\" to use OAuth2 authentication.")
 
     def canonical_path(self, url: str) -> CanonicalPath:
         """

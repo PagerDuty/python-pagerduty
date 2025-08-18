@@ -19,36 +19,3 @@ class AuthMethod():
         Returns a truncated version of the API key for display purposes.
         """
         raise NotImplementedError
-
-class ApiKeyAuthMethod(AuthMethod):
-
-    def __init__(self, api_key: str):
-        """
-        Authentication method using an API key.
-
-        :param api_key:
-            The API secret to use for authentication in HTTP requests
-        """
-        self.api_key = api_key
-
-    def auth_header(self) -> dict:
-        return {"Authorization": f"Token token={self.api_key}"}
-
-    def trunc_key(self):
-        return last_4(self.api_key)
-
-class OAuthTokenAuthMethod(AuthMethod):
-    def __init__(self, oauth_token: str):
-        """
-        Authentication method using an OAuth token.
-
-        :param oauth_token:
-            A static OAuth token to use for authentication in HTTP requests
-        """
-        self.oauth_token = oauth_token
-
-    def auth_header(self) -> dict:
-        return {"Authorization": f"Bearer {self.oauth_token}"}
-
-    def trunc_key(self):
-        return last_4(self.oauth_token)

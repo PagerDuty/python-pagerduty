@@ -6,7 +6,6 @@ from typing import Iterator, List, Optional
 from warnings import warn
 
 # Local
-from . auth_method import ApiKeyAuthMethod, AuthMethod, OAuthTokenAuthMethod
 from . common import (
     datetime_intervals,
     strftime
@@ -479,8 +478,7 @@ class RestApiV2Client(RestApiV2BaseClient):
     def __init__(self, api_key: str, default_from: Optional[str] = None,
                  auth_type: str = "token", debug: bool = False):
 
-        auth_method = self._build_auth_method(api_key, auth_type)
-        super(RestApiV2Client, self).__init__(auth_method, debug=debug)
+        super(RestApiV2Client, self).__init__(api_key, auth_type, debug=debug)
 
         self.default_from = default_from
         if default_from is not None:
@@ -491,15 +489,6 @@ class RestApiV2Client(RestApiV2BaseClient):
         self.headers.update({
             'Accept': 'application/vnd.pagerduty+json;version=2',
         })
-
-    def _build_auth_method(self, api_key: str, auth_type: str) -> AuthMethod:
-        if auth_type == 'token':
-            return ApiKeyAuthMethod(api_key)
-        elif auth_type == 'bearer' or auth_type == 'oauth2':
-            return OAuthTokenAuthMethod(api_key)
-        else:
-            raise AttributeError("auth_type value must be \"token\" (default) "
-                "or \"bearer\" or \"oauth2\" to use OAuth2 authentication.")
 
     def account_has_ability(self, ability: str) -> bool:
         """

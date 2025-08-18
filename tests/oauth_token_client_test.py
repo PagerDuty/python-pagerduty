@@ -5,7 +5,6 @@ from unittest.mock import patch
 
 from mocks import Response
 from pagerduty import OAuthTokenClient
-from pagerduty.auth_method import OAuthTokenAuthMethod
 from pagerduty.common import (
     datetime_to_relative_seconds,
     relative_seconds_to_datetime
