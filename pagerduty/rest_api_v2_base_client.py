@@ -513,6 +513,25 @@ class RestApiV2BaseClient(ApiClient):
             raise AttributeError("auth_type value must be \"token\" (default) "
                 "or \"bearer\" or \"oauth2\" to use OAuth2 authentication.")
 
+    @property
+    def api_key(self) -> str:
+        """
+        (Deprecated) Property representing the API key used for authentication.
+        """
+        warn("The api_key property is deprecated, access API credentials via the auth_method instead.")
+
+        return self.auth_method.api_key
+
+    @api_key.setter
+    def api_key(self, api_key: str):
+        """
+        (Deprecated) Setter for the API key used for authentication.
+        """
+
+        warn("The api_key property is deprecated, access API credentials via the auth_method instead.")
+
+        self.auth_method = AuthMethod(api_key=api_key)
+
     def canonical_path(self, url: str) -> CanonicalPath:
         """
         Return the canonical path of a URL for a particular API implementation.
