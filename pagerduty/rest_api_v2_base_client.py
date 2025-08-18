@@ -538,6 +538,14 @@ class RestApiV2BaseClient(ApiClient):
         warn("The auth_type property is deprecated, access API credentials via the auth_method instead.")
         self.auth_method = self._build_auth_method(self.auth_method.api_key, auth_type)
 
+    def after_set_api_key(self):
+        """
+        (Deprecated) Setter hook for setting or updating the authentication method.
+
+        Will be replaced by after_set_auth_method.
+        """
+        pass
+
     @property
     def api_key(self) -> str:
         """
@@ -554,6 +562,7 @@ class RestApiV2BaseClient(ApiClient):
 
         warn("The api_key property is deprecated, access API credentials via the auth_method instead.")
         self.auth_method = self._build_auth_method(api_key, self.auth_method.auth_type)
+        self.after_set_api_key()
 
     def canonical_path(self, url: str) -> CanonicalPath:
         """
