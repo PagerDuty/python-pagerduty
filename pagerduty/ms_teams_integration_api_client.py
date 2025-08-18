@@ -40,8 +40,8 @@ class MsTeamsIntegrationApiClient(RestApiV2BaseClient):
     url = "https://api.pagerduty.com/integration-ms-teams"
 
     def __init__(self, api_key: str, debug: bool = False):
-        auth_method = ApiKeyAuthMethod(api_key)
-        super(MsTeamsIntegrationApiClient, self).__init__(auth_method, debug=debug)
+        super(MsTeamsIntegrationApiClient, self).__init__(api_key,
+            auth_type='token', debug=debug)
         self.headers.update({
             'Accept': 'application/json',
         })

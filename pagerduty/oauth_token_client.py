@@ -284,8 +284,6 @@ class OAuthTokenClient(ApiClient):
             auth = self.get_refreshed_token(refresh_token)
             current_access_token = auth['access_token']
 
-        auth_method = OAuthTokenAuthMethod(current_access_token)
-
-        client = RestApiV2Client(auth_method, **deepcopy(kw))
+        client = RestApiV2Client(current_access_token, 'bearer', **deepcopy(kw))
         client.url = base_url
         return client, auth

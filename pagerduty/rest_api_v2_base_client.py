@@ -17,6 +17,11 @@ from . api_client import (
     normalize_url
 )
 
+from . auth_method import (
+    ApiKeyAuthMethod,
+    OAuthTokenAuthMethod
+)
+
 from . common import (
     requires_success,
     singular_name,
@@ -463,6 +468,7 @@ class RestApiV2BaseClient(ApiClient):
     def __init__(self, auth_method, debug: bool = False):
         self.api_call_counts = {}
         self.api_time = {}
+
         super(RestApiV2BaseClient, self).__init__(auth_method, debug=debug)
 
     def canonical_path(self, url: str) -> CanonicalPath:

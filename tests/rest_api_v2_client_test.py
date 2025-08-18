@@ -302,17 +302,15 @@ class FunctionDecoratorsTest(unittest.TestCase):
 class RestApiV2ClientTest(SessionTest):
 
     def test_oauth_headers(self):
-        oauth_token = "randomly generated lol"
-        auth_method = pagerduty.auth_method.OAuthTokenAuthMethod(oauth_token)
-        sess = pagerduty.RestApiV2Client(auth_method)
+        oauth_token = 'randomly generated lol'
+        sess = pagerduty.RestApiV2Client(oauth_token, 'oauth2')
         self.assertEqual(
             sess.auth_header["Authorization"],
             "Bearer "+ oauth_token
         )
 
     def test_print_debug(self):
-        auth_method = pagerduty.auth_method.ApiKeyAuthMethod('token')
-        sess = pagerduty.RestApiV2Client(auth_method)
+        sess = pagerduty.RestApiV2Client('token')
         log = Mock()
         log.setLevel = Mock()
         log.addHandler = Mock()
@@ -817,8 +815,7 @@ class RestApiV2ClientTest(SessionTest):
 
     @patch.object(pagerduty.RestApiV2Client, 'postprocess')
     def test_request(self, postprocess):
-        auth_method = pagerduty.auth_method.ApiKeyAuthMethod('12345')
-        sess = pagerduty.RestApiV2Client(auth_method)
+        sess = pagerduty.RestApiV2Client('12345')
         parent = Session()
         request = MagicMock()
         # Expected headers:
@@ -1024,6 +1021,5 @@ class RestApiV2ClientTest(SessionTest):
         rget.assert_called_once_with('users', params={'limit':1})
 
     def test_truncated_key(self):
-        auth_method = pagerduty.auth_method.ApiKeyAuthMethod('abc1234')
-        sess = pagerduty.RestApiV2Client(auth_method)
+        sess = pagerduty.RestApiV2Client('abc1234', 'token')
         self.assertEqual('*1234', sess.trunc_key)

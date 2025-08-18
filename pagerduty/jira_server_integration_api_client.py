@@ -48,8 +48,7 @@ class JiraServerIntegrationApiClient(RestApiV2BaseClient):
     url = "https://app.pagerduty.com/integration-jira-service"
 
     def __init__(self, oauth_token: str, jira_signature_token: str, debug: bool = False):
-        auth_method = OAuthTokenAuthMethod(oauth_token)
-        super(JiraServerIntegrationApiClient, self).__init__(auth_method, debug)
+        super(JiraServerIntegrationApiClient, self).__init__(oauth_token, auth_type='bearer', debug=debug)
 
         self.jira_signature_token = jira_signature_token
         self.headers.update({
