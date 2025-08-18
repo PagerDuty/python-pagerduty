@@ -184,15 +184,13 @@ class OAuthTokenClient(ApiClient):
         params = self.auth_method.oauth_params()
         params.update(kw)
 
-        return self.amended_auth_response(
-            self.post(
-                '/oauth/token',
-                data=params,
-                headers={
-                    "Content-Type": "application/x-www-form-urlencoded"
-                }
-            )
-        )
+        return self.amended_auth_response(self.post(
+            '/oauth/token',
+            data = params,
+            headers = {
+                "Content-Type": "application/x-www-form-urlencoded"
+            }
+        ))
 
     def get_new_token_from_code(self, auth_code: str, scope: str, redirect_uri: str) \
             -> dict:
