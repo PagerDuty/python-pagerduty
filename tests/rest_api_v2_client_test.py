@@ -306,7 +306,7 @@ class RestApiV2ClientTest(SessionTest):
         for authtype in 'oauth2', 'bearer':
             sess = pagerduty.RestApiV2Client(oauth_token, auth_type=authtype)
             self.assertEqual(
-                sess.auth_header["Authorization"],
+                sess.headers["Authorization"],
                 "Bearer "+ oauth_token
             )
 

@@ -31,7 +31,8 @@ class JiraCloudIntegrationApiClient(RestApiV2BaseClient):
     url = "https://api.pagerduty.com/integration-jira-cloud"
 
     def __init__(self, api_key: str, auth_type: str = 'token', debug: bool = False):
-        super(JiraCloudIntegrationApiClient, self).__init__(api_key, auth_type, debug)
+        super(JiraCloudIntegrationApiClient, self).__init__(api_key,
+            auth_type=auth_type, debug=debug)
         self.headers.update({
             'Accept': 'application/json',
             # All requests in the reference and not just data-bearing create/update

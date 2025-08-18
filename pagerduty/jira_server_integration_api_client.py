@@ -5,6 +5,7 @@ from . rest_api_v2_base_client import (
     RestApiV2BaseClient
 )
 
+
 CANONICAL_PATHS = [
     '/rules'
 ]

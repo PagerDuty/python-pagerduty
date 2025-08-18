@@ -278,12 +278,12 @@ class OAuthTokenClient(ApiClient):
             ``None`` otherwise) as its second element.
         """
         auth = None
-
         current_access_token = access_token
         if datetime_to_relative_seconds(expiration_date) < self.early_refresh_buffer:
             auth = self.get_refreshed_token(refresh_token)
             current_access_token = auth['access_token']
-
-        client = RestApiV2Client(current_access_token, 'bearer', **deepcopy(kw))
+        client_kw = deepcopy(kw)
+        client_kw.update({'auth_type': 'bearer'})
+        client = RestApiV2Client(current_access_token, **client_kw)
         client.url = base_url
         return client, auth

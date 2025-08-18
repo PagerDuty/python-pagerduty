@@ -456,13 +456,13 @@ class RestApiV2Client(RestApiV2BaseClient):
 
     :param api_key:
         REST API access token to use for HTTP requests.
+    :param default_from:
+        The default email address to use in the ``From`` header when making
+        API calls using an account-level API access key.
     :param auth_type:
         The type of credential in use. If authenticating with an OAuth access
         token, this must be set to ``oauth2`` or ``bearer``. This will determine the
         format of the ``Authorization`` header that is sent to the API in each request.
-    :param default_from:
-        The default email address to use in the ``From`` header when making
-        API calls using an account-level API access key.
     :param debug:
         Sets :attr:`pagerduty.ApiClient.print_debug`. Set to ``True`` to enable verbose
         command line output.
@@ -476,7 +476,8 @@ class RestApiV2Client(RestApiV2BaseClient):
     url = 'https://api.pagerduty.com'
     """Base URL of the REST API"""
 
-    def __init__(self, api_key: str, auth_type: str = "token", default_from: Optional[str] = None, debug: bool = False):
+    def __init__(self, api_key: str, default_from: Optional[str] = None,
+                 auth_type: str = "token", debug: bool = False):
 
         auth_method = self._build_auth_method(api_key, auth_type)
         super(RestApiV2Client, self).__init__(auth_method, debug=debug)
