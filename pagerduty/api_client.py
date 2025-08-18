@@ -140,13 +140,6 @@ class ApiClient(Session):
         self.print_debug = debug
         self.retry = {}
 
-    @property
-    def auth_header(self) -> dict:
-        """
-        Generates the Authorization header based on auth_method provided.
-        """
-        return self._auth_method.auth_header()
-
     def after_set_auth_method(self):
         """
         Setter hook for setting or updating the authentication method.
@@ -169,6 +162,13 @@ class ApiClient(Session):
         self._auth_method = auth_method
         self.headers.update(self.auth_header)
         self.after_set_auth_method()
+
+    @property
+    def auth_header(self) -> dict:
+        """
+        Generates the Authorization header based on auth_method provided.
+        """
+        return self._auth_method.auth_header()
 
     def cooldown_factor(self) -> float:
         return self.sleep_timer_base*(1+self.stagger_cooldown*random())
