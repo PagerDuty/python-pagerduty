@@ -522,7 +522,12 @@ class RestApiV2BaseClient(ApiClient):
     @property
     def auth_type(self) -> str:
         """
-        (Deprecated) Property representing the authentication type used for API requests.
+        (Deprecated) Defines the method of API authentication.
+
+        This value determines how the Authorization header will be set. By default this
+        is "token", which will result in the format ``Token token=<api_key>``.
+
+        Moving forward, use the `auth_method` property instead.
         """
 
         warn("The auth_type property is deprecated, access API credentials via the auth_method instead.")
@@ -530,10 +535,6 @@ class RestApiV2BaseClient(ApiClient):
 
     @auth_type.setter
     def auth_type(self, auth_type: str):
-        """
-        (Deprecated) Setter for the authentication type used for API requests.
-        """
-
         warn("The auth_type property is deprecated, access API credentials via the auth_method instead.")
         self.auth_method = self._build_auth_method(self.auth_method.api_key, auth_type)
 
