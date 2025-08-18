@@ -14,9 +14,8 @@ from requests.exceptions import RequestException
 from urllib3.exceptions import PoolError
 from urllib3.exceptions import HTTPError as Urllib3HttpError
 
-from pagerduty.auth_method import AuthMethod
-
 # Local
+from . auth_method import AuthMethod
 from . version import __version__
 from . errors import (
     Error,
