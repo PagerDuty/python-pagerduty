@@ -13,17 +13,16 @@ from requests import __version__ as REQUESTS_VERSION
 from requests.exceptions import RequestException
 from urllib3.exceptions import PoolError
 from urllib3.exceptions import HTTPError as Urllib3HttpError
- 
+
 # Local
+from . auth_method import AuthMethod
 from . version import __version__
 from . errors import (
     Error,
-    HttpError,
-    UrlError
+    HttpError
 )
 from . common import (
     TIMEOUT,
-    last_4,
     normalize_url
 )
 
@@ -45,8 +44,9 @@ class ApiClient(Session):
       :attr:`permitted_methods` list, and will raise :class:`Error` for
       any other HTTP methods.
 
-    :param api_key:
-        The API secret to use for authentication in HTTP requests
+    :param auth_method:
+        The authentication method to use for API requests, should be an instance
+        of the AuthMethod class.
     :param debug:
         Sets :attr:`print_debug`. Set to ``True`` to enable verbose command line
         output.
@@ -127,44 +127,48 @@ class ApiClient(Session):
     """
 
     url = ""
+    """
+    The base URL for the API being called (usually https://api.pagerduty.com, but
+    this can vary depending on the specific API being accessed).
+    """
 
-    def __init__(self, api_key: str, debug=False):
+    def __init__(self, auth_method: AuthMethod, debug=False):
         self.parent = super(ApiClient, self)
         self.parent.__init__()
-        self.api_key = api_key
+        self.auth_method = auth_method
         self.log = logging.getLogger(__name__)
         self.print_debug = debug
         self.retry = {}
 
-    def after_set_api_key(self):
+    def after_set_auth_method(self):
         """
-        Setter hook for setting or updating the API key.
-
+        Setter hook for setting or updating the authentication method.
         Child classes should implement this to perform additional steps.
         """
         pass
 
     @property
-    def api_key(self) -> str:
+    def auth_method(self) -> AuthMethod:
         """
-        Property representing the credential used for accessing the given API.
+        Property representing the authentication method used for API requests.
         """
-        return self._api_key
+        return self._auth_method
 
-    @api_key.setter
-    def api_key(self, api_key: str):
-        if not (isinstance(api_key, str) and api_key):
-            raise ValueError("API credential must be a non-empty string.")
-        self._api_key = api_key
+    @auth_method.setter
+    def auth_method(self, auth_method: AuthMethod):
+        if not (isinstance(auth_method, AuthMethod)):
+            raise ValueError("auth_method must be an instance of the AuthMethod class")
+
+        self._auth_method = auth_method
         self.headers.update(self.auth_header)
-        self.after_set_api_key()
+        self.after_set_auth_method()
 
     @property
     def auth_header(self) -> dict:
         """
-        Generates the header with the API credential used for authentication.
+        Generates the Authorization header based on auth_method provided.
         """
-        raise NotImplementedError
+        return self._auth_method.auth_header()
 
     def cooldown_factor(self) -> float:
         return self.sleep_timer_base*(1+self.stagger_cooldown*random())
@@ -386,7 +390,7 @@ class ApiClient(Session):
     @property
     def trunc_key(self) -> str:
         """Truncated key for secure display/identification purposes."""
-        return last_4(self.api_key)
+        return self.auth_method.trunc_key()
 
     @property
     def user_agent(self) -> str:
