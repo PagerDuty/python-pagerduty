@@ -29,9 +29,9 @@ class JiraServerIntegrationApiClient(RestApiV2BaseClient):
     Its documentation indicates that it only supports "Bearer" (OAuth-based)
     authentication and does not support the original token-style API authentication. For
     that reason, its constructor does not accept an "auth_type" argument, and it is
-    assumed that the provided API key was generated using an OAuth flow.
+    assumed that the provided OAuth token was generated using an OAuth flow.
 
-    :param api_key:
+    :param oauth_token:
         REST API access token to use for HTTP requests
     :param jira_signature_token:
         Connected Jira instance signature token. This validates the connection between

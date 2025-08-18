@@ -436,7 +436,7 @@ class RestApiV2BaseClient(ApiClient):
     and are supported to varying degrees outside of REST API v2.
 
     :param auth_method:
-        An instance of the AuthMethod class that provides the Authorization header for
+        An instance of the AuthMethod class that can provide the Authorization header for
         the current request
     :param debug:
         Sets :attr:`pagerduty.ApiClient.print_debug`. Set to ``True`` to enable verbose

@@ -38,8 +38,8 @@ class SlackIntegrationApiClient(RestApiV2BaseClient):
 
     url = "https://api.pagerduty.com/integration-slack"
 
-    def __init__(self, api_key: str, debug: bool = False):
-        super(SlackIntegrationApiClient, self).__init__(api_key, debug=debug)
+    def __init__(self, api_key: str, auth_type: str = 'token', debug: bool = False):
+        super(SlackIntegrationApiClient, self).__init__(api_key, auth_type=auth_type, debug=debug)
         self.headers.update({
             'Accept': 'application/json',
         })

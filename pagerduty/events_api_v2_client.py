@@ -24,9 +24,10 @@ class RoutingKeyAuthMethod(AuthMethod):
 
     def __init__(self, routing_key: str):
         """
-        Authentication method using a routing key for the Pagerduty Events API
+        Authentication method using a routing_key with the Pagerduty Events API
 
-        Also known as an integration_key, or rarely, as a service key.
+        Also sometimes known as the integration_key, or (rarely) as the service_key.
+        Moving forward, the term routing_key is preferred.
         """
         self.routing_key = routing_key
 

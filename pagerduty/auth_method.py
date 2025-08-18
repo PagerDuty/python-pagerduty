@@ -3,6 +3,9 @@ from . version import __version__
 from . common import last_4
 
 class AuthMethod():
+    """
+    An abstract class for authentication methods.
+    """
 
     def auth_header(self) -> dict:
         """
@@ -25,9 +28,6 @@ class ApiKeyAuthMethod(AuthMethod):
 
         :param api_key:
             The API secret to use for authentication in HTTP requests
-        :param debug:
-            Sets :attr:`print_debug`. Set to ``True`` to enable verbose command line
-            output.
         """
         self.api_key = api_key
 

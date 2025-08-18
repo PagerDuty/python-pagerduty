@@ -454,9 +454,12 @@ class RestApiV2Client(RestApiV2BaseClient):
     Implements abstractions for the particular features of PagerDuty's REST API v2.
     Inherits from :class:`pagerduty.RestApiV2BaseClient`.
 
-    :param auth_method
-        An instance of the AuthMethod class that provides the authentication header,
-        such as `ApiKeyAuthMethod` or `OAuthTokenAuthMethod`.
+    :param api_key:
+        REST API access token to use for HTTP requests.
+    :param auth_type:
+        The type of credential in use. If authenticating with an OAuth access
+        token, this must be set to ``oauth2`` or ``bearer``. This will determine the
+        format of the ``Authorization`` header that is sent to the API in each request.
     :param default_from:
         The default email address to use in the ``From`` header when making
         API calls using an account-level API access key.

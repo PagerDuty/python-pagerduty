@@ -45,8 +45,9 @@ class ApiClient(Session):
       :attr:`permitted_methods` list, and will raise :class:`Error` for
       any other HTTP methods.
 
-    :param api_key:
-        The API secret to use for authentication in HTTP requests
+    :param auth_method:
+        The authentication method to use for API requests, should be an instance
+        of the AuthMethod class.
     :param debug:
         Sets :attr:`print_debug`. Set to ``True`` to enable verbose command line
         output.
@@ -127,6 +128,10 @@ class ApiClient(Session):
     """
 
     url = ""
+    """
+    The base URL for the API being called (usually https://api.pagerduty.com, but
+    this can vary depending on the specific API being accessed).
+    """
 
     def __init__(self, auth_method: AuthMethod, debug=False):
         self.parent = super(ApiClient, self)
@@ -139,7 +144,7 @@ class ApiClient(Session):
     @property
     def auth_header(self) -> dict:
         """
-        Generates the header with the API credential used for authentication.
+        Generates the Authorization header based on auth_method provided.
         """
         return self._auth_method.auth_header()
 

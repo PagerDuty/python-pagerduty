@@ -303,11 +303,12 @@ class RestApiV2ClientTest(SessionTest):
 
     def test_oauth_headers(self):
         oauth_token = 'randomly generated lol'
-        sess = pagerduty.RestApiV2Client(oauth_token, 'oauth2')
-        self.assertEqual(
-            sess.auth_header["Authorization"],
-            "Bearer "+ oauth_token
-        )
+        for authtype in 'oauth2', 'bearer':
+            sess = pagerduty.RestApiV2Client(oauth_token, auth_type=authtype)
+            self.assertEqual(
+                sess.auth_header["Authorization"],
+                "Bearer "+ oauth_token
+            )
 
     def test_print_debug(self):
         sess = pagerduty.RestApiV2Client('token')
@@ -1021,5 +1022,5 @@ class RestApiV2ClientTest(SessionTest):
         rget.assert_called_once_with('users', params={'limit':1})
 
     def test_truncated_key(self):
-        sess = pagerduty.RestApiV2Client('abc1234', 'token')
+        sess = pagerduty.RestApiV2Client('abcd1234')
         self.assertEqual('*1234', sess.trunc_key)
