@@ -48,7 +48,13 @@ class EventsApiV2Client(ApiClient):
     details on usage of this API, refer to the `Events API v2 documentation
     <https://developer.pagerduty.com/docs/events-api-v2/overview/>`_
 
-    For constructor arguments, see :class:`pagerduty.ApiClient`.
+    :param routing_key:
+        The routing key to use for authentication with the Events API. Sometimes called
+        an ``integration_key`` or ``service_key`` in legacy integrations
+
+    :param debug:
+        Sets :attr:`pagerduty.ApiClient.print_debug`. Set to ``True`` to enable verbose
+        command line output.
     """
 
     permitted_methods = ('POST',)
@@ -114,9 +120,8 @@ class EventsApiV2Client(ApiClient):
             A list of dictionary objects each with keys ``href`` and ``text``
             representing the target and display text of each link
         :param routing_key:
-            (Deprecated) the routing key. The parameter is set automatically to the
-            :attr:`ApiClient.routing_key` property in the final payload and this argument is
-            ignored.
+            (Deprecated) the routing key. This parameter should be set via the
+            constructor `routing_key` parameter instead -- this argument is ignored.
         :param images:
             Optional list of images to attach to the change event.
         """
