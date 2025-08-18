@@ -141,7 +141,30 @@ class ApiClient(Session):
         """
         Generates the header with the API credential used for authentication.
         """
-        return self.auth_method.auth_header()
+        return self._auth_method.auth_header()
+
+    @property
+    def auth_method(self) -> AuthMethod:
+        """
+        Property representing the authentication method used for API requests.
+        """
+        return self._auth_method
+
+    @auth_method.setter
+    def auth_method(self, auth_method: AuthMethod):
+        if not (isinstance(auth_method, AuthMethod)):
+            raise ValueError("auth_method must be an instance of the AuthMethod class")
+
+        self._auth_method = auth_method
+        self.headers.update(self.auth_header)
+        self.after_set_auth_method()
+
+    def after_set_auth_method(self):
+        """
+        Setter hook for setting or updating the authentication method.
+        Child classes should implement this to perform additional steps.
+        """
+        pass
 
     def cooldown_factor(self) -> float:
         return self.sleep_timer_base*(1+self.stagger_cooldown*random())
@@ -180,7 +203,6 @@ class ApiClient(Session):
             The final list of headers to use in the request
         """
         headers = deepcopy(self.headers)
-        headers.update(self.auth_header)
         headers['User-Agent'] = self.user_agent
         # A universal convention: whenever sending a POST, PUT or PATCH, the
         # Content-Type header is "application/json".
