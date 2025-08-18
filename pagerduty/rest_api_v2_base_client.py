@@ -520,23 +520,6 @@ class RestApiV2BaseClient(ApiClient):
                 "or \"bearer\" or \"oauth2\" to use OAuth2 authentication.")
 
     @property
-    def api_key(self) -> str:
-        """
-        (Deprecated) Property representing the API key used for authentication.
-        """
-        warn("The api_key property is deprecated, access API credentials via the auth_method instead.")
-        return self.auth_method.api_key
-
-    @api_key.setter
-    def api_key(self, api_key: str):
-        """
-        (Deprecated) Setter for the API key used for authentication.
-        """
-
-        warn("The api_key property is deprecated, access API credentials via the auth_method instead.")
-        self.auth_method = self._build_auth_method(api_key, self.auth_method.auth_type)
-
-    @property
     def auth_type(self) -> str:
         """
         (Deprecated) Property representing the authentication type used for API requests.
@@ -553,6 +536,23 @@ class RestApiV2BaseClient(ApiClient):
 
         warn("The auth_type property is deprecated, access API credentials via the auth_method instead.")
         self.auth_method = self._build_auth_method(self.auth_method.api_key, auth_type)
+
+    @property
+    def api_key(self) -> str:
+        """
+        (Deprecated) Property representing the API key used for authentication.
+        """
+        warn("The api_key property is deprecated, access API credentials via the auth_method instead.")
+        return self.auth_method.api_key
+
+    @api_key.setter
+    def api_key(self, api_key: str):
+        """
+        (Deprecated) Setter for the API key used for authentication.
+        """
+
+        warn("The api_key property is deprecated, access API credentials via the auth_method instead.")
+        self.auth_method = self._build_auth_method(api_key, self.auth_method.auth_type)
 
     def canonical_path(self, url: str) -> CanonicalPath:
         """
