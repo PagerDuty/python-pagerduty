@@ -1,3 +1,7 @@
+**2025-08-18: Bugfix: export all features currently imported to the root namespace - Version 4.0.1**
+
+* **Fixes:** adds an explicit ``__all__`` declaration to the root ``pagerduty`` module namespace for all members that are currently imported to that namespace.
+
 **2025-08-12: REST API Base Client Refactor + New Clients - Version 4.0.0**
 
 * **Breaking Changes:**
