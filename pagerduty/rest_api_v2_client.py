@@ -518,7 +518,7 @@ class RestApiV2Client(RestApiV2BaseClient):
                 "404 Not Found.", r)
         return False
 
-    def after_set_api_key(self):
+    def after_set_auth_method(self):
         self._subdomain = None
 
     @property

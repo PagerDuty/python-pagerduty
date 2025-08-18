@@ -147,6 +147,13 @@ class ApiClient(Session):
         """
         return self._auth_method.auth_header()
 
+    def after_set_auth_method(self):
+        """
+        Setter hook for setting or updating the authentication method.
+        Child classes should implement this to perform additional steps.
+        """
+        pass
+
     @property
     def auth_method(self) -> AuthMethod:
         """
@@ -162,13 +169,6 @@ class ApiClient(Session):
         self._auth_method = auth_method
         self.headers.update(self.auth_header)
         self.after_set_auth_method()
-
-    def after_set_auth_method(self):
-        """
-        Setter hook for setting or updating the authentication method.
-        Child classes should implement this to perform additional steps.
-        """
-        pass
 
     def cooldown_factor(self) -> float:
         return self.sleep_timer_base*(1+self.stagger_cooldown*random())

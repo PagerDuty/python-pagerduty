@@ -1021,6 +1021,20 @@ class RestApiV2ClientTest(SessionTest):
         self.assertEqual('something', sess.subdomain)
         rget.assert_called_once_with('users', params={'limit':1})
 
+    @patch.object(pagerduty.RestApiV2Client, 'rget')
+    def test_subdomain_cleared_with_auth_method(self, rget):
+        rget.return_value = [{'html_url': 'https://something.pagerduty.com'}]
+        sess = pagerduty.RestApiV2Client('key')
+        self.assertEqual('something', sess.subdomain)
+
+        # updating the auth method should clear the subdomain
+        sess.auth_method = pagerduty.rest_api_v2_base_client.OAuthTokenAuthMethod('token')
+        self.assertEqual(None, sess._subdomain)
+
+        # and we should get a new subdomain when next accessed
+        rget.return_value = [{'html_url': 'https://another-one.pagerduty.com'}]
+        self.assertEqual('another-one', sess.subdomain)
+
     def test_truncated_key(self):
         sess = pagerduty.RestApiV2Client('abcd1234')
         self.assertEqual('*1234', sess.trunc_key)
