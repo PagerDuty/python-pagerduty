@@ -270,8 +270,8 @@ class OAuthTokenClient(ApiClient):
         ).decode('utf-8').rstrip('=')
         return code_verifier, code_challenge
 
-    def get_pkce_authorize_url(self, scope: str, redirect_uri: str, code_challenge: str,
-                state: Optional[str] = None) -> str:
+    def get_pkce_authorize_url(self, scope: str, redirect_uri: str, \
+                code_challenge: str) -> str:
         """
         Generate an OAuth authorization URL with PKCE parameters ("Leg 1 of 3").
 
@@ -282,8 +282,6 @@ class OAuthTokenClient(ApiClient):
         :param code_challenge:
             The code challenge generated from the code verifier, i.e. as returned by
             :attr:`generate_s256_pkce_params`.
-        :param state:
-            Optional state parameter for security
         :returns:
             The formatted PKCE authorize URL
         """
@@ -295,8 +293,6 @@ class OAuthTokenClient(ApiClient):
             ('code_challenge', code_challenge),
             ('code_challenge_method', 'S256')
         ]
-        if state:
-            params.append(('state', state))
         return self.url + '/oauth/authorize?' + urllib.parse.urlencode(params)
 
     def get_new_token_from_code_with_pkce(self, auth_code: str, scope: str,

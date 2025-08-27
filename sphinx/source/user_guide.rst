@@ -121,16 +121,28 @@ To generate the URL that the user must visit to authorize the application:
     # Without a client object:
     authorize_url = pagerduty.OAuthTokenClient.get_authorize_url(client_id, scope, redirect_uri)
 
-The application must provide a redirect URI at which to receive the
-authorization code parameter. Once the user visits, has authorized the
+    # For PKCE:
+    code_verifier, code_challenge = client.generate_s256_pkce_params()
+    authorize_url = token_client.get_pkce_authorize_url(scope, redirect_uri, code_challenge)
+    # code_verifier must be securely and temporarily stored for the final step of authorization
+
+In all cases, the application must provide a redirect URI at which to receive
+the authorization code parameter. Once the user visits, has authorized the
 application and is redirected back to the application at the redirect URI, the
 ``code`` parameter appended to it will contain the authorization code. The code
-can then be exchanged for an access token as following:
+it contains can then be exchanged for an access token in one of the following ways:
 
 .. code-block:: python
 
-    # auth_code contains the "code" parameter in the redirect URL of the application:
-    auth_response = token_client.get_new_token_from_code(auth_code, scope, redirect_uri)
+    # via code grant:
+    auth_response = token_client.get_new_token_from_code(auth_code, scope,
+        redirect_uri)
+
+    # via PKCE:
+    auth_response = token_client.get_new_token_from_code_with_pkce(auth_code,
+        scope, redirect_uri, code_verifier)
+
+    # the dictionary it returns in either case can then be used as follows:
     access_token = auth_response['access_token']
     refresh_token = auth_response['refresh_token']
 
@@ -166,12 +178,30 @@ token as necessary.
             expiration_date = auth_response['expiration_date']
         )
 
-
 Note, the current default behavior of :class:`OAuthTokenClient` is to refresh
 the token if it is going to expire less than 24 hours in the future. This
 "buffer time" (expressed as a positive integer number of seconds in the future)
 can be controlled by setting the property
 :attr:`pagerduty.OAuthTokenClient.early_refresh_buffer`.
+
+As of this writing, the method only supports returning objects of class
+:class`pagerduty.RestApiV2Client`. Refreshing the token for other use cases
+will have to be done separately from instantiation of the client object. For
+example, to refresh the token if it is less than 24 hours before expiring,
+before using the token:
+
+.. code-block:: python
+
+    # Stored values recalled: expiration_date, access_token, refresh_token
+    from pagerduty.common import datetime_to_relative_seconds as rel_seconds
+    if rel_seconds(expiration_date) < 86400:
+        auth = token_client.get_refreshed_token(refresh_token)
+        access_token = auth['access_token']
+        refresh_token = auth['refresh_token']
+        expiration_date = auth['expiration_date']
+    # API clients can now be constructed with access_token;
+    # stored values of refresh_token and expiration_date must be updated
+
 
 Basic Usage Examples
 --------------------
