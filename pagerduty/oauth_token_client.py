@@ -270,7 +270,7 @@ class OAuthTokenClient(ApiClient):
         ).decode('utf-8').rstrip('=')
         return code_verifier, code_challenge
 
-    def get_pkce_authorize_url(self, scope: str, redirect_uri: str, \
+    def get_pkce_authorize_url(self, scope: str, redirect_uri: str,
                 code_challenge: str) -> str:
         """
         Generate an OAuth authorization URL with PKCE parameters ("Leg 1 of 3").
