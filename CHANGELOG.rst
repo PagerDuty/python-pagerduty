@@ -1,3 +1,7 @@
+**2025-08-27: Feature: PKCE OAuth helpers - Version 4.1.0**
+
+* **Feature:** new methods ``get_new_token_from_code_with_pkce``, ``generate_s256_pkce_params`` and ``get_pkce_authorize_url`` of ``pagerduty.OAuthTokenClient`` to assist with implementation of the OAuth via PKCE token grant flow.
+
 **2025-08-18: Bugfix: export all features currently imported to the root namespace - Version 4.0.1**
 
 * **Fixes:** adds an explicit ``__all__`` declaration to the root ``pagerduty`` module namespace for all members that are currently imported to that namespace.
@@ -17,8 +21,8 @@
 
    - ``pagerduty.SlackIntegrationApiClient`` and ``pagerduty.SlackIntegrationConnectionsApiClient`` provide support for the PagerDuty Slack Integration API.
    - ``pagerduty.MsTeamsIntegrationApiClient`` provides support for the PagerDuty MS Teams Integration API.
-   - ``pagerduty.JiraServerIntegrationApiClient`` provides support ofr the PagerDuty Jira Server Integration API.
-   - ``pagerduty.JiraCloudIntegrationApiClient`` provides support ofr the PagerDuty Jira Cloud Integration API.
+   - ``pagerduty.JiraServerIntegrationApiClient`` provides support for the PagerDuty Jira Server Integration API.
+   - ``pagerduty.JiraCloudIntegrationApiClient`` provides support for the PagerDuty Jira Cloud Integration API.
 
 * **Fixes and Refactoring:**
 
