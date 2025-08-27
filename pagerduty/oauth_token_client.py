@@ -1,4 +1,7 @@
 import urllib.parse
+import base64
+import hashlib
+import secrets
 from typing import Optional, Tuple
 
 from copy import deepcopy
@@ -240,6 +243,79 @@ class OAuthTokenClient(ApiClient):
         return self.get_new_token(
             grant_type = 'client_credentials',
             scope = scope
+        )
+
+    def generate_pkce_params(self) -> Tuple[str, str, str]:
+        """
+        Generate PKCE parameters for OAuth authorization (Leg 1 of 3).
+        
+        :returns:
+            A tuple containing (code_verifier, code_challenge, code_challenge_method)
+        """
+        code_verifier = base64.urlsafe_b64encode(secrets.token_bytes(32)).decode('utf-8').rstrip('=')
+        code_challenge = base64.urlsafe_b64encode(
+            hashlib.sha256(code_verifier.encode('utf-8')).digest()
+        ).decode('utf-8').rstrip('=')
+        code_challenge_method = 'S256'
+        
+        return code_verifier, code_challenge, code_challenge_method
+
+    def get_pkce_authorize_url(self, scope: str, redirect_uri: str, 
+                               code_challenge: str, code_challenge_method: str = 'S256', 
+                               state: Optional[str] = None) -> str:
+        """
+        Generate an OAuth authorization URL with PKCE parameters (Leg 1 of 3).
+        
+        :param scope:
+            Scope of the OAuth grant requested
+        :param redirect_uri:
+            The redirect URI in the application that receives the authorization code
+        :param code_challenge:
+            The code challenge generated from the code verifier
+        :param code_challenge_method:
+            The method used to generate the code challenge (default: 'S256')
+        :param state:
+            Optional state parameter for security
+        :returns:
+            The formatted PKCE authorize URL
+        """
+        params = [
+            ('client_id', self.client_id),
+            ('redirect_uri', redirect_uri),
+            ('response_type', 'code'),
+            ('scope', scope),
+            ('code_challenge', code_challenge),
+            ('code_challenge_method', code_challenge_method)
+        ]
+        
+        if state:
+            params.append(('state', state))
+            
+        return self.url + '/oauth/authorize?' + urllib.parse.urlencode(params)
+
+    def get_new_token_from_code_with_pkce(self, auth_code: str, scope: str, 
+                                          redirect_uri: str, code_verifier: str) -> dict:
+        """
+        Exchange an authorization code for an access token using PKCE (Leg 3 of 3).
+        
+        :param auth_code:
+            The authorization code received by the application at the redirect URI
+        :param scope:
+            The scope of the authorization request
+        :param redirect_uri:
+            The redirect URI that was used in the authorization request
+        :param code_verifier:
+            The code verifier used to generate the code challenge in Leg 1
+        :returns:
+            The JSON response from ``identity.pagerduty.com``, containing a key
+            ``access_token`` with the new token, as a dict
+        """
+        return self.get_new_token(
+            grant_type='authorization_code',
+            code=auth_code,
+            scope=scope,
+            redirect_uri=redirect_uri,
+            code_verifier=code_verifier
         )
 
     def refresh_client(self, access_token: str, refresh_token: str,
