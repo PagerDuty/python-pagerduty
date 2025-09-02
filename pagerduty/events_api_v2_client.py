@@ -20,23 +20,14 @@ from . common import (
     last_4
 )
 
-class RoutingKeyAuthMethod(AuthMethod):
-
-    def __init__(self, routing_key: str):
-        """
-        Authentication method using a routing_key with the Pagerduty Events API
-
-        Also sometimes known as the integration_key, or (rarely) as the service_key.
-        Moving forward, the term routing_key is preferred.
-        """
-        self.routing_key = routing_key
-
-    # routing keys are not provided via an authentication header
-    def auth_header(self) -> dict:
-        return {}
-
-    def trunc_key(self):
-        return last_4(self.routing_key)
+class RoutingKeyAuthMethod(BodyParameterAuthMethod):
+    """
+    AuthMethod for Events API V2, which requires a ``routing_key`` parameter be set in
+    the request body.
+    """
+    @property
+    def auth_param(self) -> dict:
+        return {"routing_key": self.secret}
 
 class EventsApiV2Client(ApiClient):
 
@@ -84,16 +75,6 @@ class EventsApiV2Client(ApiClient):
     @property
     def event_timestamp(self) -> str:
         return datetime.utcnow().isoformat()+'Z'
-
-    def post(self, *args, **kw) -> Response:
-        """
-        Override of ``requests.Session.post``
-
-        Adds the ``routing_key`` parameter to the body before sending.
-        """
-        if 'json' in kw and hasattr(kw['json'], 'update'):
-            kw['json'].update({'routing_key': self.auth_method.routing_key})
-        return super(EventsApiV2Client, self).post(*args, **kw)
 
     def resolve(self, dedup_key: str) -> str:
         """

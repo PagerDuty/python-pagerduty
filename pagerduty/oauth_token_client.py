@@ -6,7 +6,7 @@ from copy import deepcopy
 from requests import Response
 
 from . api_client import ApiClient
-from . auth_method import AuthMethod
+from . auth_method import BodyParameterAuthMethod
 from . common import (
     datetime_to_relative_seconds,
     relative_seconds_to_datetime,
@@ -17,20 +17,17 @@ from . common import (
 from . errors import ServerHttpError
 from . rest_api_v2_client import RestApiV2Client
 
-class ClientCredentialsAuthMethod(AuthMethod):
+class ClientCredentialsAuthMethod(BodyParameterAuthMethod):
 
     def __init__(self, client_secret, client_id):
-        self.client_id = client_id
-        self.client_secret = client_secret
+        self.secret = client_secret
+        self.client_id = client_id # Additional required parameter
 
-    # provided as parameters in the oauth token call, not headers
-    def auth_header(self) -> dict:
-        return {}
-
-    def oauth_params(self) -> dict:
+    @property
+    def auth_param(self) -> dict:
         return {
             "client_id": self.client_id,
-            "client_secret": self.client_secret
+            "client_secret": self.secret
         }
 
     def trunc_key(self) -> str:
@@ -181,9 +178,6 @@ class OAuthTokenClient(ApiClient):
             ``access_token`` with the new token and ``expiration_date`` containing the
             date and time when the token will expire in ISO8601 format.
         """
-        params = self.auth_method.oauth_params()
-        params.update(kw)
-
         return self.amended_auth_response(self.post(
             '/oauth/token',
             data = params,

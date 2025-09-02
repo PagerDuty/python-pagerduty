@@ -160,7 +160,6 @@ class ApiClient(Session):
             raise ValueError("auth_method must be an instance of the AuthMethod class")
 
         self._auth_method = auth_method
-        self.headers.update(self.auth_header)
         self.after_set_auth_method()
 
     @property
@@ -168,7 +167,7 @@ class ApiClient(Session):
         """
         Generates the Authorization header based on auth_method provided.
         """
-        return self._auth_method.auth_header()
+        return self._auth_method.auth_header
 
     def cooldown_factor(self) -> float:
         return self.sleep_timer_base*(1+self.stagger_cooldown*random())
@@ -206,14 +205,19 @@ class ApiClient(Session):
         :returns:
             The final list of headers to use in the request
         """
+        # Utilize any defaults that the implementer has set via the upstream interface:
         headers = deepcopy(self.headers)
+        # Override the default user-agent with the per-class user_agent property:
         headers['User-Agent'] = self.user_agent
         # A universal convention: whenever sending a POST, PUT or PATCH, the
-        # Content-Type header is "application/json".
+        # Content-Type header must be "application/json":
         if method in ('POST', 'PUT', 'PATCH'):
             headers['Content-Type'] = 'application/json'
+        # Add headers passed in per-request as an additional argument:
         if type(user_headers) is dict:
             headers.update(user_headers)
+        # Add authentication header, if the auth_method requires it:
+        headers.update(self.auth_header)
         return headers
 
     @property
@@ -283,7 +287,15 @@ class ApiClient(Session):
             'timeout': self.timeout
         })
 
-        # Special changes to user-supplied parameters, for convenience
+        # Add authentication parameter, if the API requires it and it is a request type
+        # that includes a body:
+        if method in ('POST', 'PUT', 'PATCH'):
+            if 'json' in req_kw:
+                req_kw['json'].update(self.auth_method.auth_param)
+            elif 'data' in req_kw:
+                req_kw['data'].update(self.auth_method.auth_param)
+
+        # Special changes to user-supplied query parameters, for convenience:
         if 'params' in kwargs and kwargs['params']:
             req_kw['params'] = self.normalize_params(kwargs['params'])
 
@@ -390,7 +402,7 @@ class ApiClient(Session):
     @property
     def trunc_key(self) -> str:
         """Truncated key for secure display/identification purposes."""
-        return self.auth_method.trunc_key()
+        return self.auth_method.trunc_secret
 
     @property
     def user_agent(self) -> str:

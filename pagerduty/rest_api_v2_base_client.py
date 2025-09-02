@@ -12,7 +12,7 @@ from . api_client import (
     normalize_url
 )
 from . auth_method import (
-    AuthMethod
+    HeaderAuthMethod
 )
 
 from . common import (
@@ -431,42 +431,19 @@ def wrapped_entities(method: callable) -> callable:
 ### AUTH METHODS ###
 ####################
 
-class ApiKeyAuthMethod(AuthMethod):
-    auth_type = 'token'
-
-    def __init__(self, api_key: str):
-        """
-        Authentication method using an API key.
-
-        :param api_key:
-            The API secret to use for authentication in HTTP requests
-        """
-        self.api_key = api_key
-
+class TokenAuthMethod(HeaderAuthMethod):
+    """
+    AuthMethod class for the "token" header authentication style
+    """
     def auth_header(self) -> dict:
-        return {"Authorization": f"Token token={self.api_key}"}
+        return {"Authorization": f"Token token={self.secret}"}
 
-    def trunc_key(self):
-        return last_4(self.api_key)
-
-class OAuthTokenAuthMethod(AuthMethod):
-    auth_type = 'bearer'
-
-    def __init__(self, access_token: str):
-        """
-        Authentication method using an OAuth token.
-
-        :param access_token:
-            A static OAuth token to use for authentication in HTTP requests
-        """
-        self.access_token = access_token
-
+class OAuthTokenAuthMethod(HeaderAuthMethod):
+    """
+    AuthMethod class for OAuth-created authentication tokens ("Bearer")
+    """
     def auth_header(self) -> dict:
-        return {"Authorization": f"Bearer {self.access_token}"}
-
-    def trunc_key(self):
-        return last_4(self.access_token)
-
+        return {"Authorization": f"Bearer {self.secret}"}
 
 ####################
 ### CLIENT CLASS ###
@@ -512,7 +489,7 @@ class RestApiV2BaseClient(ApiClient):
 
     def _build_auth_method(self, api_key: str, auth_type: str) -> AuthMethod:
         if auth_type == 'token':
-            return ApiKeyAuthMethod(api_key)
+            return TokenAuthMethod(api_key)
         elif auth_type == 'bearer' or auth_type == 'oauth2':
             return OAuthTokenAuthMethod(api_key)
         else:
