@@ -11,7 +11,7 @@ from requests import Response
 
 # Local
 from . api_client import ApiClient
-from . auth_method import AuthMethod
+from . auth_method import BodyParameterAuthMethod
 from . common import (
     deprecated_kwarg,
     successful_response,
