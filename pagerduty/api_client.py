@@ -167,7 +167,9 @@ class ApiClient(Session):
         """
         Generates the Authorization header based on auth_method provided.
         """
-        return self._auth_method.auth_header
+        warn("Property ApiClient.auth_header is deprecated." +
+            "Use ApiClient.auth_method.auth_header instead.")
+        return self.auth_method.auth_header
 
     def cooldown_factor(self) -> float:
         return self.sleep_timer_base*(1+self.stagger_cooldown*random())
@@ -216,8 +218,8 @@ class ApiClient(Session):
         # Add headers passed in per-request as an additional argument:
         if type(user_headers) is dict:
             headers.update(user_headers)
-        # Add authentication header, if the auth_method requires it:
-        headers.update(self.auth_header)
+        # Add authentication header, if the auth_method defines it:
+        headers.update(self.auth_method.auth_header)
         return headers
 
     @property

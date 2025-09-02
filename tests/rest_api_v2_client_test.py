@@ -13,6 +13,10 @@ from common_test import SessionTest
 from mocks import Response, Session
 
 import pagerduty
+from pagerduty.rest_api_v2_base_client import (
+    TokenAuthMethod,
+    OAuthTokenAuthMethod
+)
 
 def page(pagenum: int, total: int, limit: int, resource: str = 'users'):
     """
@@ -301,13 +305,23 @@ class FunctionDecoratorsTest(unittest.TestCase):
 
 class RestApiV2ClientTest(SessionTest):
 
-    def test_oauth_headers(self):
+    @patch.object(requests.Session, 'request')
+    def test_oauth_headers(self, request):
         access_token = 'randomly generated lol'
-        for authtype in 'oauth2', 'bearer':
-            sess = pagerduty.RestApiV2Client(access_token, auth_type=authtype)
+        for auth_type in ('bearer', 'oauth2'):
+            request.reset_mock()
+            client = pagerduty.RestApiV2Client(access_token, auth_type=auth_type)
+            self.assertTrue(isinstance(client.auth_method, OAuthTokenAuthMethod))
+            # Make a request and validate the headers passed to it include the expected
+            # header format from the selected AuthMethod:
+            request.return_value = Response(200, '{}')
+            client.post('/foo', json={})
+            request_call = request.mock_calls[0]
+            self.assertTrue('headers' in request_call[2])
+            self.assertTrue('Authorization' in request_call[2]['headers'])
             self.assertEqual(
-                sess.headers["Authorization"],
-                "Bearer " + access_token
+                "Bearer " + access_token,
+                request_call[2]['headers']['Authorization']
             )
 
     def test_print_debug(self):

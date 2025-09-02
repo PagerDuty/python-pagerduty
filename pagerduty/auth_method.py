@@ -13,7 +13,7 @@ class AuthMethod():
     """
 
     def __init__(self, secret):
-        self._secret = secret
+        self.secret = secret
 
     @property
     def auth_header(self) -> dict:
@@ -36,6 +36,10 @@ class AuthMethod():
         Returns the API secret associated with the authentication method.
         """
         return self._secret
+
+    @secret.setter
+    def secret(self, secret):
+        self._secret = secret
 
     @property
     def trunc_secret(self) -> str:

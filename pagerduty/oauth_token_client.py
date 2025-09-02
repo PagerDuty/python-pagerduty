@@ -30,9 +30,6 @@ class ClientCredentialsAuthMethod(BodyParameterAuthMethod):
             "client_secret": self.secret
         }
 
-    def trunc_key(self) -> str:
-        return last_4(self.client_secret)
-
 class OAuthTokenClient(ApiClient):
     """
     Client with helpers for performing an OAuth exchange to obtain an access token.
@@ -172,6 +169,9 @@ class OAuthTokenClient(ApiClient):
         * :attr:`get_refreshed_token`
         * :attr:`get_scoped_app_token`
 
+        :param kw:
+            Keyword parameters passed to this method are interpreted as parameters to
+            set in the body of the request.
         :returns:
             The JSON response from ``identity.pagerduty.com`` as a dictionary after
             amending via :attr:`amended_auth_response`. It should contain a key
@@ -180,7 +180,7 @@ class OAuthTokenClient(ApiClient):
         """
         return self.amended_auth_response(self.post(
             '/oauth/token',
-            data = params,
+            data = deepcopy(kw),
             headers = {
                 "Content-Type": "application/x-www-form-urlencoded"
             }

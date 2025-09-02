@@ -12,6 +12,7 @@ from . api_client import (
     normalize_url
 )
 from . auth_method import (
+    AuthMethod,
     HeaderAuthMethod
 )
 
@@ -435,6 +436,7 @@ class TokenAuthMethod(HeaderAuthMethod):
     """
     AuthMethod class for the "token" header authentication style
     """
+    @property
     def auth_header(self) -> dict:
         return {"Authorization": f"Token token={self.secret}"}
 
@@ -442,6 +444,7 @@ class OAuthTokenAuthMethod(HeaderAuthMethod):
     """
     AuthMethod class for OAuth-created authentication tokens ("Bearer")
     """
+    @property
     def auth_header(self) -> dict:
         return {"Authorization": f"Bearer {self.secret}"}
 
