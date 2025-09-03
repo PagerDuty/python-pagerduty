@@ -1,3 +1,9 @@
+**2025-09-04: API authentication interface refactor - Version 4.1.0**
+
+In this version, the details of how authentication are performed are offloaded to a new property, ``auth_method``, which is an instance of a new class ``AuthMethod``. The various API authentication methods are implemented in subclasses of it. This provides a generic interface for implementing authentication, minimizing redundant code in child classes.
+
+Its primary motivation was to make the behavior of REST API v2 client objects more stable and predictable when swapping out their API credentials mid-process, for the purposes of an internal project at PagerDuty.
+
 **2025-08-12: REST API Base Client Refactor + New Clients - Version 4.0.0**
 
 * **Breaking Changes:**
