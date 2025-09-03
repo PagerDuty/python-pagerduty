@@ -1042,7 +1042,7 @@ class RestApiV2ClientTest(SessionTest):
         self.assertEqual('something', sess.subdomain)
 
         # updating the auth method should clear the subdomain
-        sess.auth_method = pagerduty.rest_api_v2_base_client.OAuthTokenAuthMethod('token')
+        sess.auth_method = OAuthTokenAuthMethod('token')
         self.assertEqual(None, sess._subdomain)
 
         # and we should get a new subdomain when next accessed
