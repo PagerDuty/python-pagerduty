@@ -6,6 +6,7 @@ import time
 from copy import deepcopy
 from random import random
 from typing import Optional, Union
+from warnings import warn
 
 # PyPI
 from requests import Response, Session
