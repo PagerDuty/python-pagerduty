@@ -18,6 +18,17 @@ from . errors import ServerHttpError
 from . rest_api_v2_client import RestApiV2Client
 
 class ClientCredentialsAuthMethod(BodyParameterAuthMethod):
+    """
+    AuthMethod used in OAuth token exchange requests.
+
+    This AuthMethod requires the client secret and client ID, which are then transmitted
+    to identity.pagerduty.com as parameters in the HTML form-encoded body.
+
+    :param client_secret:
+        The client secret used for creating OAuth tokens for the application
+    :param client_id:
+        The client ID of the provisioned OAuth application
+    """
 
     def __init__(self, client_secret, client_id):
         self.secret = client_secret

@@ -434,7 +434,10 @@ def wrapped_entities(method: callable) -> callable:
 
 class TokenAuthMethod(HeaderAuthMethod):
     """
-    AuthMethod class for the "token" header authentication style
+    AuthMethod class for the "token" header authentication style.
+
+    This AuthMethod is used primarily in REST API v2 but also is used in some similar
+    integration APIs.
     """
     @property
     def auth_header(self) -> dict:

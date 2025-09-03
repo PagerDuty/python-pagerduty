@@ -10,6 +10,9 @@ class AuthMethod():
     auth methods because it does not natively support all the different use cases needed
     for supporting all of PagerDuty's public APIs, i.e. the ``Bearer`` method, or
     placing the API credential into a parameter in the body of the request.
+
+    :param secret:
+        The API credential to be used for authentication.
     """
 
     def __init__(self, secret):
