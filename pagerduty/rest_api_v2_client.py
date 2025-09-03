@@ -520,6 +520,7 @@ class RestApiV2Client(RestApiV2BaseClient):
 
     def after_set_auth_method(self):
         self._subdomain = None
+        self._api_key_access = None
 
     @property
     def api_key_access(self) -> str:
