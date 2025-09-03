@@ -167,7 +167,7 @@ class ApiClient(Session):
         """
         Generates the Authorization header based on auth_method provided.
         """
-        warn("Property ApiClient.auth_header is deprecated." +
+        warn("Property ApiClient.auth_header is deprecated. " +
             "Use ApiClient.auth_method.auth_header instead.")
         return self.auth_method.auth_header
 
@@ -292,10 +292,9 @@ class ApiClient(Session):
         # Add authentication parameter, if the API requires it and it is a request type
         # that includes a body:
         if method in ('POST', 'PUT', 'PATCH'):
-            if 'json' in req_kw:
-                req_kw['json'].update(self.auth_method.auth_param)
-            elif 'data' in req_kw:
-                req_kw['data'].update(self.auth_method.auth_param)
+            for body_key in ('json', 'data'):
+                if body_key in req_kw and type(req_kw[body_key]) is dict:
+                    req_kw[body_key].update(self.auth_method.auth_param)
 
         # Special changes to user-supplied query parameters, for convenience:
         if 'params' in kwargs and kwargs['params']:

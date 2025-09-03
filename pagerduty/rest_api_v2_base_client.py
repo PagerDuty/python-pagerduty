@@ -235,10 +235,10 @@ def entity_wrappers(wrapper_config: dict, method: str, path: CanonicalPath) \
         if wrapper is not None and type(wrapper) not in (tuple, str):
             raise Exception(invalid_config_error)
         elif wrapper is None or type(wrapper) is str:
-            # Both request and response have the same wrapping at this endpoint.
+            # Both request and response have the same wrapping at this endpoint:
             return (wrapper, wrapper)
         elif type(wrapper) is tuple and len(wrapper) == 2:
-            # Endpoint uses different wrapping for request and response bodies.
+            # Endpoint may use different wrapping for request and response bodies.
             #
             # Both elements must be either str or None. The first element is the
             # request body wrapper and the second is the response body wrapper.
@@ -249,7 +249,7 @@ def entity_wrappers(wrapper_config: dict, method: str, path: CanonicalPath) \
                 raise Exception(invalid_config_error)
             return wrapper
         else:
-            # If not a tuple of length 2, or a string, or None, what are we doing here:
+            # If a tuple but not of length 2, what are we doing here?
             raise Exception(invalid_config_error)
     elif len(match) == 0:
         # Nothing in entity wrapper config matches. In this case it is assumed
@@ -485,38 +485,58 @@ class RestApiV2BaseClient(ApiClient):
     def __init__(self, api_key: str, auth_type: str = 'token', debug: bool = False):
         self.api_call_counts = {}
         self.api_time = {}
-
-        auth_method = self._build_auth_method(api_key, auth_type)
+        self.auth_type = auth_type
+        auth_method = self._build_auth_method(api_key)
 
         super(RestApiV2BaseClient, self).__init__(auth_method, debug=debug)
 
-    def _build_auth_method(self, api_key: str, auth_type: str) -> AuthMethod:
-        if auth_type == 'token':
-            return TokenAuthMethod(api_key)
-        elif auth_type == 'bearer' or auth_type == 'oauth2':
-            return OAuthTokenAuthMethod(api_key)
-        else:
-            raise AttributeError("auth_type value must be \"token\" (default) "
-                "or \"bearer\" or \"oauth2\" to use OAuth2 authentication.")
+    def _build_auth_method(self, api_key: str) -> AuthMethod:
+        """
+        Constructs an AuthMethod according to the configured :attr:`auth_type`
+
+        :param api_key:
+            The API credential to use for authentication, and to construct the
+            ``AuthMethod`` object.
+        """
+        return self.auth_type_mapping[self.auth_type](api_key)
 
     @property
     def auth_type(self) -> str:
         """
-        (Deprecated) Defines the method of API authentication.
+        Defines the method of API authentication.
 
         This value determines how the Authorization header will be set. By default this
         is "token", which will result in the format ``Token token=<api_key>``.
 
-        Moving forward, use the `auth_method` property instead.
-        """
+        Moving forward, the preferred method of setting credentials after instantiation
+        will be to set the ``auth_method`` property directly.
 
-        warn("The auth_type property is deprecated, access API credentials via the auth_method instead.")
-        return self.auth_method.auth_type
+        This property was meant to support the backwards-compatible constructor
+        interface where the ``auth_type`` keyword argument selects the appropriate
+        ``Authorization`` header format (which is now done through selecting an
+        ``AuthMethod``), although it also supports and the possibly rare use case of
+        changing the ``auth_type`` and API key directly after instantiation to change to
+        using a different credential and method of authentication.
+        """
+        return self._auth_type
 
     @auth_type.setter
     def auth_type(self, auth_type: str):
-        warn("The auth_type property is deprecated, access API credentials via the auth_method instead.")
-        self.auth_method = self._build_auth_method(self.auth_method.api_key, auth_type)
+        valid_auth_types = list(self.auth_type_mapping.keys())
+        if auth_type not in valid_auth_types:
+            raise AttributeError(f"auth_type value must be one of: {valid_auth_types}")
+        self._auth_type = auth_type
+
+    @property
+    def auth_type_mapping(self) -> dict:
+        """
+        Defines a mapping of valid auth_type values to corresponding AuthMethod classes
+        """
+        return {
+            'token':  TokenAuthMethod,
+            'bearer': OAuthTokenAuthMethod,
+            'oauth2': OAuthTokenAuthMethod
+        }
 
     def after_set_api_key(self):
         """
@@ -531,17 +551,16 @@ class RestApiV2BaseClient(ApiClient):
         """
         (Deprecated) Property representing the API key used for authentication.
         """
-        warn("The api_key property is deprecated, access API credentials via the auth_method instead.")
-        return self.auth_method.api_key
+        warn("The api_key property is deprecated; use auth_method instead.")
+        return self.auth_method.secret
 
     @api_key.setter
     def api_key(self, api_key: str):
         """
         (Deprecated) Setter for the API key used for authentication.
         """
-
-        warn("The api_key property is deprecated, access API credentials via the auth_method instead.")
-        self.auth_method = self._build_auth_method(api_key, self.auth_method.auth_type)
+        warn("The api_key property is deprecated; use auth_method instead.")
+        self.auth_method = self._build_auth_method(api_key)
         self.after_set_api_key()
 
     def canonical_path(self, url: str) -> CanonicalPath:

@@ -1,7 +1,8 @@
 import json
 import unittest
-
 from unittest.mock import patch
+
+import requests
 
 from mocks import Response
 from pagerduty import OAuthTokenClient
@@ -31,11 +32,11 @@ class OAuthTokenClientTest(unittest.TestCase):
             OAuthTokenClient.get_authorize_url(client_id, scope, redirect_uri)
         )
 
-    @patch.object(OAuthTokenClient, 'post')
-    def test_get_new_token(self, post):
+    @patch.object(requests.Session, 'request')
+    def test_get_new_token(self, request):
         (client_secret, client_id, client) = self.new_client()
         # The following adapted from the documentation page
-        post.return_value = Response(200, json.dumps({
+        request.return_value = Response(200, json.dumps({
           "client_info":"prefix_legacy_app",
           "id_token":"super_long_jwt_string",
           "token_type":"bearer",
@@ -49,17 +50,24 @@ class OAuthTokenClientTest(unittest.TestCase):
         self.assertTrue(
             abs(864000 - datetime_to_relative_seconds(response['expiration_date'])) < 1
         )
-        post.assert_called_once_with(
-            '/oauth/token',
-            data = {
+        request.assert_called_once()
+        calls = request.mock_calls
+        self.assertEqual(
+            'https://identity.pagerduty.com/oauth/token',
+            calls[0][1][1]
+        )
+        self.assertEqual(
+            {
                 'client_id': client_id,
                 'client_secret': client_secret,
                 'foo': 'bar',
                 'bar': 'baz'
             },
-            headers = {
-                "Content-Type": "application/x-www-form-urlencoded"
-            }
+            calls[0][2]['data']
+        )
+        self.assertEqual(
+            "application/x-www-form-urlencoded",
+            calls[0][2]['headers']['Content-Type']
         )
 
     @patch.object(OAuthTokenClient, 'get_new_token')

@@ -1061,15 +1061,21 @@ class RestApiV2ClientTest(SessionTest):
 
     def test_updating_auth_params_propagates_to_auth_method(self):
         sess = pagerduty.RestApiV2Client('hello-there')
-        self.assertEqual('token', sess.auth_method.auth_type)
-        self.assertEqual('hello-there', sess.auth_method.api_key)
-        self.assertEqual(sess.headers['authorization'], "Token token=hello-there")
+        self.assertEqual('token', sess.auth_type)
+        self.assertEqual('hello-there', sess.auth_method.secret)
+        self.assertEqual(
+            sess.auth_method.auth_header['Authorization'],
+            "Token token=hello-there"
+        )
 
-        sess.auth_type = 'bearer'
-        self.assertEqual('bearer', sess.auth_method.auth_type)
-        self.assertEqual('hello-there', sess.auth_method.access_token)
-        self.assertEqual(sess.headers['authorization'], "Bearer hello-there")
+        sess = pagerduty.RestApiV2Client('hello-there', auth_type='bearer')
+        self.assertEqual('bearer', sess.auth_type)
+        self.assertEqual('hello-there', sess.auth_method.secret)
+        self.assertEqual(
+            sess.auth_method.auth_header['Authorization'],
+            "Bearer hello-there"
+        )
 
         sess.api_key = 'hiya'
-        self.assertEqual('hiya', sess.auth_method.access_token)
-        self.assertEqual(sess.headers['authorization'], "Bearer hiya")
+        self.assertEqual('hiya', sess.auth_method.secret)
+        self.assertEqual(sess.auth_method.auth_header['Authorization'], "Bearer hiya")
