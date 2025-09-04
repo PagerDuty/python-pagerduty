@@ -196,7 +196,7 @@ class OAuthTokenClient(ApiClient):
         return self.amended_auth_response(self.post(
             '/oauth/token',
             data = deepcopy(kw),
-            headers = {
+            headers = { # Overrides the default which would be `application/json`:
                 "Content-Type": "application/x-www-form-urlencoded"
             }
         ))
