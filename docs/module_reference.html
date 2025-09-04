@@ -809,6 +809,19 @@ command line output.</p></li>
 <dt class="sig sig-object py" id="pagerduty.RestApiV2BaseClient.api_key">
 <em class="property"><span class="k"><span class="pre">property</span></span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">api_key</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">str</span></em><a class="headerlink" href="#pagerduty.RestApiV2BaseClient.api_key" title="Link to this definition"></a></dt>
 <dd><p>(Deprecated) Property representing the API key used for authentication.</p>
+<p>If this property is updated to swap out the API credential in a preexisting
+client object, the <a class="reference internal" href="#pagerduty.RestApiV2BaseClient.auth_type" title="pagerduty.RestApiV2BaseClient.auth_type"><code class="xref py py-attr docutils literal notranslate"><span class="pre">auth_type</span></code></a> property MUST be updated first, or the
+authentication header format may end up being incorrect for the type of the new
+credential. This behavior is the same as it has always been since the API client
+first supported Bearer tokens for authentication.</p>
+<p>The setter in previous versions would update the client’s <code class="docutils literal notranslate"><span class="pre">headers</span></code> property
+using the <code class="xref py py-attr docutils literal notranslate"><span class="pre">auth_header</span></code> property, which depended on the value of
+<a class="reference internal" href="#pagerduty.RestApiV2BaseClient.auth_type" title="pagerduty.RestApiV2BaseClient.auth_type"><code class="xref py py-attr docutils literal notranslate"><span class="pre">auth_type</span></code></a> at that point in the execution flow. As of version 5.0.0,
+<a class="reference internal" href="#pagerduty.RestApiV2BaseClient.auth_type" title="pagerduty.RestApiV2BaseClient.auth_type"><code class="xref py py-attr docutils literal notranslate"><span class="pre">auth_type</span></code></a> selects the class when constructing the new
+<a class="reference internal" href="#pagerduty.ApiClient.auth_method" title="pagerduty.ApiClient.auth_method"><code class="xref py py-attr docutils literal notranslate"><span class="pre">pagerduty.ApiClient.auth_method</span></code></a>.</p>
+<p>Moving forward, the preferred method of changing credentials of a preexisting
+client object will be to set the <a class="reference internal" href="#pagerduty.ApiClient.auth_method" title="pagerduty.ApiClient.auth_method"><code class="xref py py-attr docutils literal notranslate"><span class="pre">pagerduty.ApiClient.auth_method</span></code></a>
+property directly.</p>
 </dd></dl>
 
 <dl class="py attribute">
@@ -823,20 +836,16 @@ command line output.</p></li>
 <dd><p>Defines the method of API authentication.</p>
 <p>This value determines how the Authorization header will be set. By default this
 is “token”, which will result in the format <code class="docutils literal notranslate"><span class="pre">Token</span> <span class="pre">token=&lt;api_key&gt;</span></code>.</p>
-<p>Moving forward, the preferred method of setting credentials after instantiation
-will be to set the <code class="docutils literal notranslate"><span class="pre">auth_method</span></code> property directly.</p>
 <p>This property was meant to support the backwards-compatible constructor
 interface where the <code class="docutils literal notranslate"><span class="pre">auth_type</span></code> keyword argument selects the appropriate
-<code class="docutils literal notranslate"><span class="pre">Authorization</span></code> header format (which is now done through selecting an
-<code class="docutils literal notranslate"><span class="pre">AuthMethod</span></code>), although it also supports and the possibly rare use case of
-changing the <code class="docutils literal notranslate"><span class="pre">auth_type</span></code> and API key directly after instantiation to change to
-using a different credential and method of authentication.</p>
+<code class="docutils literal notranslate"><span class="pre">Authorization</span></code> header format (which internally is done through selecting an
+<code class="docutils literal notranslate"><span class="pre">AuthMethod</span></code>).</p>
 </dd></dl>
 
 <dl class="py property">
 <dt class="sig sig-object py" id="pagerduty.RestApiV2BaseClient.auth_type_mapping">
 <em class="property"><span class="k"><span class="pre">property</span></span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">auth_type_mapping</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">dict</span></em><a class="headerlink" href="#pagerduty.RestApiV2BaseClient.auth_type_mapping" title="Link to this definition"></a></dt>
-<dd><p>Defines a mapping of valid auth_type values to corresponding AuthMethod classes</p>
+<dd><p>Defines a mapping of valid <a class="reference internal" href="#pagerduty.RestApiV2BaseClient.auth_type" title="pagerduty.RestApiV2BaseClient.auth_type"><code class="xref py py-attr docutils literal notranslate"><span class="pre">auth_type</span></code></a> values to AuthMethod classes.</p>
 </dd></dl>
 
 <dl class="py method">
