@@ -76,9 +76,12 @@
 <li class="toctree-l4"><a class="reference internal" href="#pagerduty.OAuthTokenClient.amended_auth_response"><code class="docutils literal notranslate"><span class="pre">OAuthTokenClient.amended_auth_response()</span></code></a></li>
 <li class="toctree-l4"><a class="reference internal" href="#pagerduty.OAuthTokenClient.authorize_url"><code class="docutils literal notranslate"><span class="pre">OAuthTokenClient.authorize_url()</span></code></a></li>
 <li class="toctree-l4"><a class="reference internal" href="#pagerduty.OAuthTokenClient.early_refresh_buffer"><code class="docutils literal notranslate"><span class="pre">OAuthTokenClient.early_refresh_buffer</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#pagerduty.OAuthTokenClient.generate_s256_pkce_params"><code class="docutils literal notranslate"><span class="pre">OAuthTokenClient.generate_s256_pkce_params()</span></code></a></li>
 <li class="toctree-l4"><a class="reference internal" href="#pagerduty.OAuthTokenClient.get_authorize_url"><code class="docutils literal notranslate"><span class="pre">OAuthTokenClient.get_authorize_url()</span></code></a></li>
 <li class="toctree-l4"><a class="reference internal" href="#pagerduty.OAuthTokenClient.get_new_token"><code class="docutils literal notranslate"><span class="pre">OAuthTokenClient.get_new_token()</span></code></a></li>
 <li class="toctree-l4"><a class="reference internal" href="#pagerduty.OAuthTokenClient.get_new_token_from_code"><code class="docutils literal notranslate"><span class="pre">OAuthTokenClient.get_new_token_from_code()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#pagerduty.OAuthTokenClient.get_new_token_from_code_with_pkce"><code class="docutils literal notranslate"><span class="pre">OAuthTokenClient.get_new_token_from_code_with_pkce()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#pagerduty.OAuthTokenClient.get_pkce_authorize_url"><code class="docutils literal notranslate"><span class="pre">OAuthTokenClient.get_pkce_authorize_url()</span></code></a></li>
 <li class="toctree-l4"><a class="reference internal" href="#pagerduty.OAuthTokenClient.get_refreshed_token"><code class="docutils literal notranslate"><span class="pre">OAuthTokenClient.get_refreshed_token()</span></code></a></li>
 <li class="toctree-l4"><a class="reference internal" href="#pagerduty.OAuthTokenClient.get_scoped_app_token"><code class="docutils literal notranslate"><span class="pre">OAuthTokenClient.get_scoped_app_token()</span></code></a></li>
 <li class="toctree-l4"><a class="reference internal" href="#pagerduty.OAuthTokenClient.refresh_client"><code class="docutils literal notranslate"><span class="pre">OAuthTokenClient.refresh_client()</span></code></a></li>
@@ -580,6 +583,25 @@ set higher.</p>
 </dd></dl>
 
 <dl class="py method">
+<dt class="sig sig-object py" id="pagerduty.OAuthTokenClient.generate_s256_pkce_params">
+<span class="sig-name descname"><span class="pre">generate_s256_pkce_params</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">Tuple</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">str</span><span class="p"><span class="pre">]</span></span></span></span><a class="headerlink" href="#pagerduty.OAuthTokenClient.generate_s256_pkce_params" title="Link to this definition"></a></dt>
+<dd><p>Generate PKCE parameters for OAuth authorization with S256 code challenge method</p>
+<p>Creates a code verifier and corresponding SHA256-hashed code challenge parameter
+for OAuth login with PKCE.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p>A tuple containing <code class="docutils literal notranslate"><span class="pre">(code_verifier,</span> <span class="pre">code_challenge)</span></code>. The code verifier
+must be temporarily stored so that it can be used in the final step of
+authorization, i.e. as the <code class="docutils literal notranslate"><span class="pre">code_verifier</span></code> argument to
+<code class="docutils literal notranslate"><span class="pre">get_new_token_from_code_with_pkce</span></code>. The code challenge must be included
+in the query parameters of the initial authorize URL, i.e. set it as the the
+<code class="docutils literal notranslate"><span class="pre">code_challenge</span></code> argument to <a class="reference internal" href="#pagerduty.OAuthTokenClient.get_pkce_authorize_url" title="pagerduty.OAuthTokenClient.get_pkce_authorize_url"><code class="xref py py-attr docutils literal notranslate"><span class="pre">get_pkce_authorize_url</span></code></a> to generate
+the URL.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
 <dt class="sig sig-object py" id="pagerduty.OAuthTokenClient.get_authorize_url">
 <em class="property"><span class="k"><span class="pre">classmethod</span></span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">get_authorize_url</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">client_id</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">scope</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">redirect_uri</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">str</span></span></span><a class="headerlink" href="#pagerduty.OAuthTokenClient.get_authorize_url" title="Link to this definition"></a></dt>
 <dd><p>Generate an authorize URL.</p>
@@ -613,6 +635,7 @@ types of token exchange requests are implemented in other methods:</p>
 <li><p><a class="reference internal" href="#pagerduty.OAuthTokenClient.get_new_token_from_code" title="pagerduty.OAuthTokenClient.get_new_token_from_code"><code class="xref py py-attr docutils literal notranslate"><span class="pre">get_new_token_from_code</span></code></a></p></li>
 <li><p><a class="reference internal" href="#pagerduty.OAuthTokenClient.get_refreshed_token" title="pagerduty.OAuthTokenClient.get_refreshed_token"><code class="xref py py-attr docutils literal notranslate"><span class="pre">get_refreshed_token</span></code></a></p></li>
 <li><p><a class="reference internal" href="#pagerduty.OAuthTokenClient.get_scoped_app_token" title="pagerduty.OAuthTokenClient.get_scoped_app_token"><code class="xref py py-attr docutils literal notranslate"><span class="pre">get_scoped_app_token</span></code></a></p></li>
+<li><p><a class="reference internal" href="#pagerduty.OAuthTokenClient.get_new_token_from_code_with_pkce" title="pagerduty.OAuthTokenClient.get_new_token_from_code_with_pkce"><code class="xref py py-attr docutils literal notranslate"><span class="pre">get_new_token_from_code_with_pkce</span></code></a></p></li>
 </ul>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
@@ -646,6 +669,46 @@ provided.</p></li>
 <dt class="field-odd">Returns<span class="colon">:</span></dt>
 <dd class="field-odd"><p>The JSON response from <code class="docutils literal notranslate"><span class="pre">identity.pagerduty.com</span></code>, containing a key
 <code class="docutils literal notranslate"><span class="pre">access_token</span></code> with the new token, as a dict</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="pagerduty.OAuthTokenClient.get_new_token_from_code_with_pkce">
+<span class="sig-name descname"><span class="pre">get_new_token_from_code_with_pkce</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">auth_code</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">scope</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">redirect_uri</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">code_verifier</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">dict</span></span></span><a class="headerlink" href="#pagerduty.OAuthTokenClient.get_new_token_from_code_with_pkce" title="Link to this definition"></a></dt>
+<dd><p>Exchange an authorization code for an access token using PKCE (Leg 3 of 3).</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>auth_code</strong> – The authorization code received by the application at the redirect URI</p></li>
+<li><p><strong>scope</strong> – The scope of the authorization request</p></li>
+<li><p><strong>redirect_uri</strong> – The redirect URI that was used in the authorization request</p></li>
+<li><p><strong>code_verifier</strong> – The code verifier used to generate the code challenge in Leg 1, i.e. as
+returned by <a class="reference internal" href="#pagerduty.OAuthTokenClient.generate_s256_pkce_params" title="pagerduty.OAuthTokenClient.generate_s256_pkce_params"><code class="xref py py-attr docutils literal notranslate"><span class="pre">generate_s256_pkce_params</span></code></a>.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>The JSON response from <code class="docutils literal notranslate"><span class="pre">identity.pagerduty.com</span></code>, containing a key
+<code class="docutils literal notranslate"><span class="pre">access_token</span></code> with the new token, as a dict.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="pagerduty.OAuthTokenClient.get_pkce_authorize_url">
+<span class="sig-name descname"><span class="pre">get_pkce_authorize_url</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">scope</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">redirect_uri</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">code_challenge</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">str</span></span></span><a class="headerlink" href="#pagerduty.OAuthTokenClient.get_pkce_authorize_url" title="Link to this definition"></a></dt>
+<dd><p>Generate an OAuth authorization URL with PKCE parameters (“Leg 1 of 3”).</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>scope</strong> – Scope of the OAuth grant requested</p></li>
+<li><p><strong>redirect_uri</strong> – The redirect URI in the application that receives the authorization code</p></li>
+<li><p><strong>code_challenge</strong> – The code challenge generated from the code verifier, i.e. as returned by
+<a class="reference internal" href="#pagerduty.OAuthTokenClient.generate_s256_pkce_params" title="pagerduty.OAuthTokenClient.generate_s256_pkce_params"><code class="xref py py-attr docutils literal notranslate"><span class="pre">generate_s256_pkce_params</span></code></a>.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>The formatted PKCE authorize URL</p>
 </dd>
 </dl>
 </dd></dl>

@@ -89,6 +89,14 @@
 </dl>
 </li>
 </ul>
+<p><strong>2025-08-27: Feature: PKCE OAuth helpers - Version 4.1.0</strong></p>
+<ul class="simple">
+<li><p><strong>Feature:</strong> new methods <code class="docutils literal notranslate"><span class="pre">get_new_token_from_code_with_pkce</span></code>, <code class="docutils literal notranslate"><span class="pre">generate_s256_pkce_params</span></code> and <code class="docutils literal notranslate"><span class="pre">get_pkce_authorize_url</span></code> of <code class="docutils literal notranslate"><span class="pre">pagerduty.OAuthTokenClient</span></code> to assist with implementation of the OAuth via PKCE token grant flow.</p></li>
+</ul>
+<p><strong>2025-08-18: Bugfix: export all features currently imported to the root namespace - Version 4.0.1</strong></p>
+<ul class="simple">
+<li><p><strong>Fixes:</strong> adds an explicit <code class="docutils literal notranslate"><span class="pre">__all__</span></code> declaration to the root <code class="docutils literal notranslate"><span class="pre">pagerduty</span></code> module namespace for all members that are currently imported to that namespace.</p></li>
+</ul>
 <p><strong>2025-08-12: REST API Base Client Refactor + New Clients - Version 4.0.0</strong></p>
 <ul>
 <li><p><strong>Breaking Changes:</strong></p>
@@ -112,8 +120,8 @@
 <div><ul class="simple">
 <li><p><code class="docutils literal notranslate"><span class="pre">pagerduty.SlackIntegrationApiClient</span></code> and <code class="docutils literal notranslate"><span class="pre">pagerduty.SlackIntegrationConnectionsApiClient</span></code> provide support for the PagerDuty Slack Integration API.</p></li>
 <li><p><code class="docutils literal notranslate"><span class="pre">pagerduty.MsTeamsIntegrationApiClient</span></code> provides support for the PagerDuty MS Teams Integration API.</p></li>
-<li><p><code class="docutils literal notranslate"><span class="pre">pagerduty.JiraServerIntegrationApiClient</span></code> provides support ofr the PagerDuty Jira Server Integration API.</p></li>
-<li><p><code class="docutils literal notranslate"><span class="pre">pagerduty.JiraCloudIntegrationApiClient</span></code> provides support ofr the PagerDuty Jira Cloud Integration API.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">pagerduty.JiraServerIntegrationApiClient</span></code> provides support for the PagerDuty Jira Server Integration API.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">pagerduty.JiraCloudIntegrationApiClient</span></code> provides support for the PagerDuty Jira Cloud Integration API.</p></li>
 </ul>
 </div></blockquote>
 </li>

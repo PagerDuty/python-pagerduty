@@ -218,15 +218,27 @@ Token via Code Grant</a> and
 
 <span class="c1"># Without a client object:</span>
 <span class="n">authorize_url</span> <span class="o">=</span> <span class="n">pagerduty</span><span class="o">.</span><span class="n">OAuthTokenClient</span><span class="o">.</span><span class="n">get_authorize_url</span><span class="p">(</span><span class="n">client_id</span><span class="p">,</span> <span class="n">scope</span><span class="p">,</span> <span class="n">redirect_uri</span><span class="p">)</span>
+
+<span class="c1"># For PKCE:</span>
+<span class="n">code_verifier</span><span class="p">,</span> <span class="n">code_challenge</span> <span class="o">=</span> <span class="n">client</span><span class="o">.</span><span class="n">generate_s256_pkce_params</span><span class="p">()</span>
+<span class="n">authorize_url</span> <span class="o">=</span> <span class="n">token_client</span><span class="o">.</span><span class="n">get_pkce_authorize_url</span><span class="p">(</span><span class="n">scope</span><span class="p">,</span> <span class="n">redirect_uri</span><span class="p">,</span> <span class="n">code_challenge</span><span class="p">)</span>
+<span class="c1"># code_verifier must be securely and temporarily stored for the final step of authorization</span>
 </pre></div>
 </div>
-<p>The application must provide a redirect URI at which to receive the
-authorization code parameter. Once the user visits, has authorized the
+<p>In all cases, the application must provide a redirect URI at which to receive
+the authorization code parameter. Once the user visits, has authorized the
 application and is redirected back to the application at the redirect URI, the
 <code class="docutils literal notranslate"><span class="pre">code</span></code> parameter appended to it will contain the authorization code. The code
-can then be exchanged for an access token as following:</p>
-<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="c1"># auth_code contains the &quot;code&quot; parameter in the redirect URL of the application:</span>
-<span class="n">auth_response</span> <span class="o">=</span> <span class="n">token_client</span><span class="o">.</span><span class="n">get_new_token_from_code</span><span class="p">(</span><span class="n">auth_code</span><span class="p">,</span> <span class="n">scope</span><span class="p">,</span> <span class="n">redirect_uri</span><span class="p">)</span>
+it contains can then be exchanged for an access token in one of the following ways:</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="c1"># via code grant:</span>
+<span class="n">auth_response</span> <span class="o">=</span> <span class="n">token_client</span><span class="o">.</span><span class="n">get_new_token_from_code</span><span class="p">(</span><span class="n">auth_code</span><span class="p">,</span> <span class="n">scope</span><span class="p">,</span>
+    <span class="n">redirect_uri</span><span class="p">)</span>
+
+<span class="c1"># via PKCE:</span>
+<span class="n">auth_response</span> <span class="o">=</span> <span class="n">token_client</span><span class="o">.</span><span class="n">get_new_token_from_code_with_pkce</span><span class="p">(</span><span class="n">auth_code</span><span class="p">,</span>
+    <span class="n">scope</span><span class="p">,</span> <span class="n">redirect_uri</span><span class="p">,</span> <span class="n">code_verifier</span><span class="p">)</span>
+
+<span class="c1"># the dictionary it returns in either case can then be used as follows:</span>
 <span class="n">access_token</span> <span class="o">=</span> <span class="n">auth_response</span><span class="p">[</span><span class="s1">&#39;access_token&#39;</span><span class="p">]</span>
 <span class="n">refresh_token</span> <span class="o">=</span> <span class="n">auth_response</span><span class="p">[</span><span class="s1">&#39;refresh_token&#39;</span><span class="p">]</span>
 </pre></div>
@@ -267,6 +279,22 @@ the token if it is going to expire less than 24 hours in the future. This
 “buffer time” (expressed as a positive integer number of seconds in the future)
 can be controlled by setting the property
 <a class="reference internal" href="module_reference.html#pagerduty.OAuthTokenClient.early_refresh_buffer" title="pagerduty.OAuthTokenClient.early_refresh_buffer"><code class="xref py py-attr docutils literal notranslate"><span class="pre">pagerduty.OAuthTokenClient.early_refresh_buffer</span></code></a>.</p>
+<p>As of this writing, the method only supports returning objects of class
+:class`pagerduty.RestApiV2Client`. Refreshing the token for other use cases
+will have to be done separately from instantiation of the client object. For
+example, to refresh the token if it is less than 24 hours before expiring,
+before using the token:</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="c1"># Stored values recalled: expiration_date, access_token, refresh_token</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">pagerduty.common</span><span class="w"> </span><span class="kn">import</span> <span class="n">datetime_to_relative_seconds</span> <span class="k">as</span> <span class="n">rel_seconds</span>
+<span class="k">if</span> <span class="n">rel_seconds</span><span class="p">(</span><span class="n">expiration_date</span><span class="p">)</span> <span class="o">&lt;</span> <span class="mi">86400</span><span class="p">:</span>
+    <span class="n">auth</span> <span class="o">=</span> <span class="n">token_client</span><span class="o">.</span><span class="n">get_refreshed_token</span><span class="p">(</span><span class="n">refresh_token</span><span class="p">)</span>
+    <span class="n">access_token</span> <span class="o">=</span> <span class="n">auth</span><span class="p">[</span><span class="s1">&#39;access_token&#39;</span><span class="p">]</span>
+    <span class="n">refresh_token</span> <span class="o">=</span> <span class="n">auth</span><span class="p">[</span><span class="s1">&#39;refresh_token&#39;</span><span class="p">]</span>
+    <span class="n">expiration_date</span> <span class="o">=</span> <span class="n">auth</span><span class="p">[</span><span class="s1">&#39;expiration_date&#39;</span><span class="p">]</span>
+<span class="c1"># API clients can now be constructed with access_token;</span>
+<span class="c1"># stored values of refresh_token and expiration_date must be updated</span>
+</pre></div>
+</div>
 </section>
 </section>
 <section id="basic-usage-examples">
