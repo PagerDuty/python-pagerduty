@@ -490,7 +490,6 @@ class RestApiV2BaseClient(ApiClient):
         self.api_time = {}
         self.auth_type = auth_type
         auth_method = self._build_auth_method(api_key)
-
         super(RestApiV2BaseClient, self).__init__(auth_method, debug=debug)
 
     def _build_auth_method(self, api_key: str) -> AuthMethod:
@@ -511,16 +510,10 @@ class RestApiV2BaseClient(ApiClient):
         This value determines how the Authorization header will be set. By default this
         is "token", which will result in the format ``Token token=<api_key>``.
 
-        Moving forward, the preferred method of setting credentials after instantiation
-        will be to set the ``auth_method`` property directly.
-
         This property was meant to support the backwards-compatible constructor
         interface where the ``auth_type`` keyword argument selects the appropriate
-        ``Authorization`` header format (which is now done through selecting an
-        ``AuthMethod``), although it also supports the (possibly rare) use case of
-        changing the API key directly after instantiation (assuming ``auth_type`` is
-        correctly set first), to change to using a different credential and method of
-        authentication.
+        ``Authorization`` header format (which internally is done through selecting an
+        ``AuthMethod``).
         """
         return self._auth_type
 
@@ -534,7 +527,7 @@ class RestApiV2BaseClient(ApiClient):
     @property
     def auth_type_mapping(self) -> dict:
         """
-        Defines a mapping of valid auth_type values to corresponding AuthMethod classes
+        Defines a mapping of valid :attr:`auth_type` values to AuthMethod classes.
         """
         return {
             'token':  TokenAuthMethod,
@@ -554,6 +547,22 @@ class RestApiV2BaseClient(ApiClient):
     def api_key(self) -> str:
         """
         (Deprecated) Property representing the API key used for authentication.
+
+        If this property is updated to swap out the API credential in a preexisting
+        client object, the :attr:`auth_type` property MUST be updated first, or the
+        authentication header format may end up being incorrect for the type of the new
+        credential. This behavior is the same as it has always been since the API client
+        first supported Bearer tokens for authentication.
+
+        The setter in previous versions would update the client's ``headers`` property
+        using the :attr:`auth_header` property, which depended on the value of
+        :attr:`auth_type` at that point in the execution flow. As of version 5.0.0,
+        :attr:`auth_type` selects the class when constructing the new
+        :attr:`pagerduty.ApiClient.auth_method`.
+
+        Moving forward, the preferred method of changing credentials of a preexisting
+        client object will be to set the :attr:`pagerduty.ApiClient.auth_method`
+        property directly.
         """
         warn("The api_key property is deprecated; use auth_method instead.")
         return self.auth_method.secret
