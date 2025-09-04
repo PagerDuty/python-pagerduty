@@ -76,7 +76,7 @@ may not authenticate properly with the API in question. Refer to its
 
 .. autoclass:: pagerduty.auth_method.HeaderAuthMethod
 
-.. autoclass:: pagerduty.auth_method.HeaderAuthMethod
+.. autoclass:: pagerduty.auth_method.BodyParameterAuthMethod
 
 .. autoclass:: pagerduty.rest_api_v2_base_client.TokenAuthMethod
 
