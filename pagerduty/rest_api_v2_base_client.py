@@ -517,9 +517,10 @@ class RestApiV2BaseClient(ApiClient):
         This property was meant to support the backwards-compatible constructor
         interface where the ``auth_type`` keyword argument selects the appropriate
         ``Authorization`` header format (which is now done through selecting an
-        ``AuthMethod``), although it also supports and the possibly rare use case of
-        changing the ``auth_type`` and API key directly after instantiation to change to
-        using a different credential and method of authentication.
+        ``AuthMethod``), although it also supports the (possibly rare) use case of
+        changing the API key directly after instantiation (assuming ``auth_type`` is
+        correctly set first), to change to using a different credential and method of
+        authentication.
         """
         return self._auth_type
 
