@@ -302,12 +302,12 @@ class FunctionDecoratorsTest(unittest.TestCase):
 class RestApiV2ClientTest(SessionTest):
 
     def test_oauth_headers(self):
-        secret = 'randomly generated lol'
+        access_token = 'randomly generated lol'
         for authtype in 'oauth2', 'bearer':
-            sess = pagerduty.RestApiV2Client(secret, auth_type=authtype)
+            sess = pagerduty.RestApiV2Client(access_token, auth_type=authtype)
             self.assertEqual(
-                sess.headers['Authorization'],
-                "Bearer "+secret
+                sess.headers["Authorization"],
+                "Bearer " + access_token
             )
 
     def test_print_debug(self):
@@ -640,7 +640,7 @@ class RestApiV2ClientTest(SessionTest):
         """
         # Adjust the recursion limit so we only need 1 level of stub data:
         client = pagerduty.RestApiV2Client('token')
-        original_recursion_limit = pagerduty.rest_api_v2_client.RECURSION_LIMIT 
+        original_recursion_limit = pagerduty.rest_api_v2_client.RECURSION_LIMIT
         pagerduty.rest_api_v2_client.RECURSION_LIMIT = 1
         # Checks for "total" in each sub-interval: The expected breakdown of 3s is a 1s
         # interval followed by a 2s interval at the first level of recursion, and then
@@ -1021,6 +1021,41 @@ class RestApiV2ClientTest(SessionTest):
         self.assertEqual('something', sess.subdomain)
         rget.assert_called_once_with('users', params={'limit':1})
 
+    @patch.object(pagerduty.RestApiV2Client, 'rget')
+    def test_subdomain_cleared_with_auth_method(self, rget):
+        rget.return_value = [{'html_url': 'https://something.pagerduty.com'}]
+        sess = pagerduty.RestApiV2Client('key')
+        self.assertEqual('something', sess.subdomain)
+
+        # updating the auth method should clear the subdomain
+        sess.auth_method = pagerduty.rest_api_v2_base_client.OAuthTokenAuthMethod('token')
+        self.assertEqual(None, sess._subdomain)
+
+        # and we should get a new subdomain when next accessed
+        rget.return_value = [{'html_url': 'https://another-one.pagerduty.com'}]
+        self.assertEqual('another-one', sess.subdomain)
+
+        # also with the deprecated access methods
+        sess.api_key = 'so-secret'
+        self.assertEqual(None, sess._subdomain)
+        rget.return_value = [{'html_url': 'https://dj-khaled.pagerduty.com'}]
+        self.assertEqual('dj-khaled', sess.subdomain)
+
     def test_truncated_key(self):
         sess = pagerduty.RestApiV2Client('abcd1234')
         self.assertEqual('*1234', sess.trunc_key)
+
+    def test_updating_auth_params_propagates_to_auth_method(self):
+        sess = pagerduty.RestApiV2Client('hello-there')
+        self.assertEqual('token', sess.auth_method.auth_type)
+        self.assertEqual('hello-there', sess.auth_method.api_key)
+        self.assertEqual(sess.headers['authorization'], "Token token=hello-there")
+
+        sess.auth_type = 'bearer'
+        self.assertEqual('bearer', sess.auth_method.auth_type)
+        self.assertEqual('hello-there', sess.auth_method.access_token)
+        self.assertEqual(sess.headers['authorization'], "Bearer hello-there")
+
+        sess.api_key = 'hiya'
+        self.assertEqual('hiya', sess.auth_method.access_token)
+        self.assertEqual(sess.headers['authorization'], "Bearer hiya")

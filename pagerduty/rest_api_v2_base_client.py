@@ -1,10 +1,5 @@
 # Core
 from copy import deepcopy
-from datetime import (
-    datetime,
-    timezone
-)
-from sys import getrecursionlimit
 from typing import Iterator, List, Optional, Tuple, Union
 from warnings import warn
 
@@ -16,6 +11,9 @@ from . api_client import (
     ApiClient,
     normalize_url
 )
+from . auth_method import (
+    AuthMethod
+)
 
 from . common import (
     requires_success,
@@ -23,6 +21,7 @@ from . common import (
     successful_response,
     truncate_text,
     try_decoding,
+    last_4
 )
 from . errors import (
     ServerHttpError,
@@ -69,7 +68,7 @@ def canonical_path(paths: List[CanonicalPath], base_url: str, url: str) \
     endpoint within the client's corresponding API it belongs to, in order to account
     for any antipatterns that the endpoint might have.
 
-    For examle, in 
+    For example, in
     `List a user's contact methods
     <https://developer.pagerduty.com/api-reference/50d46c0eb020d-list-a-user-s-contact-methods>`_,
     the canonical path is ``/users/{id}/contact_methods``.
@@ -428,6 +427,46 @@ def wrapped_entities(method: callable) -> callable:
     call.__doc__ = doc
     return call
 
+####################
+### AUTH METHODS ###
+####################
+
+class ApiKeyAuthMethod(AuthMethod):
+    auth_type = 'token'
+
+    def __init__(self, api_key: str):
+        """
+        Authentication method using an API key.
+
+        :param api_key:
+            The API secret to use for authentication in HTTP requests
+        """
+        self.api_key = api_key
+
+    def auth_header(self) -> dict:
+        return {"Authorization": f"Token token={self.api_key}"}
+
+    def trunc_key(self):
+        return last_4(self.api_key)
+
+class OAuthTokenAuthMethod(AuthMethod):
+    auth_type = 'bearer'
+
+    def __init__(self, access_token: str):
+        """
+        Authentication method using an OAuth token.
+
+        :param access_token:
+            A static OAuth token to use for authentication in HTTP requests
+        """
+        self.access_token = access_token
+
+    def auth_header(self) -> dict:
+        return {"Authorization": f"Bearer {self.access_token}"}
+
+    def trunc_key(self):
+        return last_4(self.access_token)
+
 
 ####################
 ### CLIENT CLASS ###
@@ -466,32 +505,64 @@ class RestApiV2BaseClient(ApiClient):
     def __init__(self, api_key: str, auth_type: str = 'token', debug: bool = False):
         self.api_call_counts = {}
         self.api_time = {}
-        self.auth_type = auth_type
-        super(RestApiV2BaseClient, self).__init__(api_key, debug=debug)
+
+        auth_method = self._build_auth_method(api_key, auth_type)
+
+        super(RestApiV2BaseClient, self).__init__(auth_method, debug=debug)
+
+    def _build_auth_method(self, api_key: str, auth_type: str) -> AuthMethod:
+        if auth_type == 'token':
+            return ApiKeyAuthMethod(api_key)
+        elif auth_type == 'bearer' or auth_type == 'oauth2':
+            return OAuthTokenAuthMethod(api_key)
+        else:
+            raise AttributeError("auth_type value must be \"token\" (default) "
+                "or \"bearer\" or \"oauth2\" to use OAuth2 authentication.")
 
     @property
     def auth_type(self) -> str:
         """
-        Defines the method of API authentication.
+        (Deprecated) Defines the method of API authentication.
 
         This value determines how the Authorization header will be set. By default this
         is "token", which will result in the format ``Token token=<api_key>``.
+
+        Moving forward, use the `auth_method` property instead.
         """
-        return self._auth_type
+
+        warn("The auth_type property is deprecated, access API credentials via the auth_method instead.")
+        return self.auth_method.auth_type
 
     @auth_type.setter
-    def auth_type(self, value: str):
-        if value not in ('token', 'bearer', 'oauth2'):
-            raise AttributeError("auth_type value must be \"token\" (default) "
-                "or \"bearer\" or \"oauth\" to use OAuth2 authentication.")
-        self._auth_type = value
+    def auth_type(self, auth_type: str):
+        warn("The auth_type property is deprecated, access API credentials via the auth_method instead.")
+        self.auth_method = self._build_auth_method(self.auth_method.api_key, auth_type)
+
+    def after_set_api_key(self):
+        """
+        (Deprecated) Setter hook for setting or updating the authentication method.
+
+        Will be replaced by after_set_auth_method.
+        """
+        pass
 
     @property
-    def auth_header(self) -> dict:
-        if self.auth_type in ('bearer', 'oauth2'):
-            return {"Authorization": "Bearer "+self.api_key}
-        else:
-            return {"Authorization": "Token token="+self.api_key}
+    def api_key(self) -> str:
+        """
+        (Deprecated) Property representing the API key used for authentication.
+        """
+        warn("The api_key property is deprecated, access API credentials via the auth_method instead.")
+        return self.auth_method.api_key
+
+    @api_key.setter
+    def api_key(self, api_key: str):
+        """
+        (Deprecated) Setter for the API key used for authentication.
+        """
+
+        warn("The api_key property is deprecated, access API credentials via the auth_method instead.")
+        self.auth_method = self._build_auth_method(api_key, self.auth_method.auth_type)
+        self.after_set_api_key()
 
     def canonical_path(self, url: str) -> CanonicalPath:
         """
