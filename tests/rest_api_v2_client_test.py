@@ -508,9 +508,9 @@ class RestApiV2ClientTest(SessionTest):
         self.assertEqual(30, len(items))
         get.assert_has_calls(
             [
-                call(weirdurl, params={'limit':10, 'total':1, 'offset':0}),
-                call(weirdurl, params={'limit':10, 'total':1, 'offset':10}),
-                call(weirdurl, params={'limit':10, 'total':1, 'offset':20}),
+                call(weirdurl, params={'limit':10, 'total':'true', 'offset':0}),
+                call(weirdurl, params={'limit':10, 'total':'true', 'offset':10}),
+                call(weirdurl, params={'limit':10, 'total':'true', 'offset':20}),
             ],
         )
         hook.assert_any_call({'id':14}, 15, 30)

@@ -706,7 +706,7 @@ class RestApiV2BaseClient(ApiClient):
 
     def iter_all(self, url, params: Optional[dict] = None,
                 page_size: Optional[int] = None, item_hook: Optional[callable] = None,
-                total: bool = False) -> Iterator[dict]:
+                total: Optional[bool] = False) -> Iterator[dict]:
         """
         Iterator for the contents of an index endpoint or query.
 
@@ -778,8 +778,13 @@ class RestApiV2BaseClient(ApiClient):
         # Parameters to send:
         data = {
             'limit': (self.default_page_size, page_size)[int(bool(page_size))],
-            'total': bool(total)
         }
+        if total is not None:
+            # The reason this is necessary is because urllib.parse.urlencode (called by
+            # Requests to serialize querystring parameters) serializes booleans as
+            # capitalized values, whereas the PagerDuty API requires lower case
+            # "true/false".
+            data['total'] = str(total).lower()
         if isinstance(params, (dict, list)):
             # Override defaults with values given:
             data.update(dict(params))
