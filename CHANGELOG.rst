@@ -1,3 +1,7 @@
+**2025-09-08: Bugfix: iter_all parameter serialization - Version 4.1.1**
+
+* Fixes a regression wherein a boolean is serialized to the capitalized ``True`` / ``False`` for the ``total`` parameter in classic pagination, whereas the API requires lower case values.
+
 **2025-08-27: Feature: PKCE OAuth helpers - Version 4.1.0**
 
 * **Feature:** new methods ``get_new_token_from_code_with_pkce``, ``generate_s256_pkce_params`` and ``get_pkce_authorize_url`` of ``pagerduty.OAuthTokenClient`` to assist with implementation of the OAuth via PKCE token grant flow.
