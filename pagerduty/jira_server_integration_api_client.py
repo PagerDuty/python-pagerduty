@@ -33,7 +33,7 @@ class JiraServerIntegrationApiClient(RestApiV2BaseClient):
     assumed that the provided OAuth token was generated using an OAuth flow.
 
     :param access_token:
-        REST API access token to use for HTTP requests
+        OAuth access token (Bearer token) obtained via an OAuth flow, used for HTTP requests.
     :param jira_signature_token:
         Connected Jira instance signature token. This validates the connection between
         PagerDuty and a specific Jira instance.
