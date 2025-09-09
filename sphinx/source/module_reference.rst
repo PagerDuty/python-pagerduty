@@ -50,6 +50,43 @@ this library are imported into the root namespace of the module. For example:
 .. autoclass:: pagerduty.SlackIntegrationConnectionsApiClient
     :members:
 
+AuthMethod Classes
+------------------
+Constructing an API client requires setting its ``auth_method`` property to an
+``AuthMethod`` object. This object stores API credentials and specifies how the
+credentials are sent to the API. In most implementations of
+:class:`ApiClient`, for backwards compatibility, this is done without user
+intervention i.e. by accepting a string argument in the constructor that
+represents the API credential and then constructing an object of the
+appropriate ``AuthMethod`` subclass for its corresponding API.
+
+In most use cases, to use a new API key in an existing process, it is
+appropriate to simply instantiate a new client object with the new key.
+
+For use cases that require reusing existing client objects, it is necessary to
+set the :attr:`pagerduty.ApiClient.auth_method` property to a new
+``AuthMethod`` object with the new credential. Note that each API client must
+be supplied with an instance of an appropriate ``AuthMethod`` subclass, or it
+may not authenticate properly with the API in question. Refer to its
+``__init__`` definition to discover this class, or find the corresponding
+``AuthMethod`` class for it below:
+
+.. autoclass:: pagerduty.auth_method.AuthMethod
+    :members:
+
+.. autoclass:: pagerduty.auth_method.HeaderAuthMethod
+
+.. autoclass:: pagerduty.auth_method.BodyParameterAuthMethod
+
+.. autoclass:: pagerduty.rest_api_v2_base_client.TokenAuthMethod
+
+.. autoclass:: pagerduty.rest_api_v2_base_client.OAuthTokenAuthMethod
+
+.. autoclass:: pagerduty.events_api_v2_client.RoutingKeyAuthMethod
+
+.. autoclass:: pagerduty.oauth_token_client.ClientCredentialsAuthMethod
+
+
 Errors
 ------
 As with client classes, all errors are imported to the root module

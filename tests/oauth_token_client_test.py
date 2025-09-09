@@ -1,7 +1,8 @@
 import json
 import unittest
+from unittest.mock import patch
 
-from unittest.mock import Mock, MagicMock, patch, call
+import requests
 
 from mocks import Response
 from pagerduty import OAuthTokenClient
@@ -31,11 +32,11 @@ class OAuthTokenClientTest(unittest.TestCase):
             OAuthTokenClient.get_authorize_url(client_id, scope, redirect_uri)
         )
 
-    @patch.object(OAuthTokenClient, 'post')
-    def test_get_new_token(self, post):
+    @patch.object(requests.Session, 'request')
+    def test_get_new_token(self, request):
         (client_secret, client_id, client) = self.new_client()
         # The following adapted from the documentation page
-        post.return_value = Response(200, json.dumps({
+        request.return_value = Response(200, json.dumps({
           "client_info":"prefix_legacy_app",
           "id_token":"super_long_jwt_string",
           "token_type":"bearer",
@@ -49,17 +50,24 @@ class OAuthTokenClientTest(unittest.TestCase):
         self.assertTrue(
             abs(864000 - datetime_to_relative_seconds(response['expiration_date'])) < 1
         )
-        post.assert_called_once_with(
-            '/oauth/token',
-            data = {
+        request.assert_called_once()
+        calls = request.mock_calls
+        self.assertEqual(
+            'https://identity.pagerduty.com/oauth/token',
+            calls[0][1][1]
+        )
+        self.assertEqual(
+            {
                 'client_id': client_id,
                 'client_secret': client_secret,
                 'foo': 'bar',
                 'bar': 'baz'
             },
-            headers = {
-                "Content-Type": "application/x-www-form-urlencoded"
-            }
+            calls[0][2]['data']
+        )
+        self.assertEqual(
+            "application/x-www-form-urlencoded",
+            calls[0][2]['headers']['Content-Type']
         )
 
     @patch.object(OAuthTokenClient, 'get_new_token')
@@ -103,16 +111,16 @@ class OAuthTokenClientTest(unittest.TestCase):
         """
         (client_secret, client_id, client) = self.new_client()
         fresh_enough_s_in_future = client.early_refresh_buffer + 864000
-        api_key = 'not_an_access_token'
+        existing_access_token = 'not_an_access_token'
         rest_client, auth = client.refresh_client(
-            api_key,
+            existing_access_token,
             'not_a_refresh_token',
             expiration_date=relative_seconds_to_datetime(fresh_enough_s_in_future)
         )
+
         self.assertIsNone(auth)
         self.assertIsInstance(rest_client, RestApiV2Client)
-        self.assertEqual('bearer', rest_client.auth_type)
-        self.assertEqual(api_key, rest_client.api_key)
+        self.assertEqual(existing_access_token, rest_client.auth_method.secret)
         get_refreshed_token.assert_not_called()
 
     @patch.object(OAuthTokenClient, 'get_refreshed_token')
@@ -151,8 +159,7 @@ class OAuthTokenClientTest(unittest.TestCase):
         get_refreshed_token.assert_called_once_with(refresh_token)
         self.assertIs(dict, type(auth))
         self.assertIsInstance(rest_client, RestApiV2Client)
-        self.assertEqual('bearer', rest_client.auth_type)
-        self.assertEqual(api_key_new, rest_client.api_key)
+        self.assertEqual(api_key_new, rest_client.auth_method.secret)
         self.assertEqual(api_url, rest_client.url)
         self.assertEqual(from_email, rest_client.default_from)
         self.assertEqual(True, rest_client.print_debug)

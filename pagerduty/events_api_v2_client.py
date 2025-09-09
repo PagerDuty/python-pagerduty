@@ -11,12 +11,23 @@ from requests import Response
 
 # Local
 from . api_client import ApiClient
+from . auth_method import BodyParameterAuthMethod
 from . common import (
     deprecated_kwarg,
     successful_response,
     try_decoding,
-    truncate_text
+    truncate_text,
+    last_4
 )
+
+class RoutingKeyAuthMethod(BodyParameterAuthMethod):
+    """
+    AuthMethod for Events API V2, which requires a ``routing_key`` parameter be set in
+    the request body.
+    """
+    @property
+    def auth_param(self) -> dict:
+        return {"routing_key": self.secret}
 
 class EventsApiV2Client(ApiClient):
 
@@ -28,24 +39,27 @@ class EventsApiV2Client(ApiClient):
     details on usage of this API, refer to the `Events API v2 documentation
     <https://developer.pagerduty.com/docs/events-api-v2/overview/>`_
 
-    For constructor arguments, see :class:`pagerduty.ApiClient`.
+    :param routing_key:
+        The routing key to use for authentication with the Events API. Sometimes called
+        an ``integration_key`` or ``service_key`` in legacy integrations.
+
+    :param debug:
+        Sets :attr:`pagerduty.ApiClient.print_debug`. Set to ``True`` to enable verbose
+        command line output.
     """
 
     permitted_methods = ('POST',)
 
     url = "https://events.pagerduty.com"
 
-    def __init__(self, api_key: str, debug: bool = False):
-        super(EventsApiV2Client, self).__init__(api_key, debug)
+    def __init__(self, routing_key: str, debug: bool = False):
+        auth_method = RoutingKeyAuthMethod(routing_key)
+        super(EventsApiV2Client, self).__init__(auth_method, debug)
         # See: https://developer.pagerduty.com/docs/3d063fd4814a6-events-api-v2-overview#response-codes--retry-logic
         self.retry[500] = 2 # internal server error
         self.retry[502] = 4 # bad gateway
         self.retry[503] = 6 # service unavailable
         self.retry[504] = 6 # gateway timeout
-
-    @property
-    def auth_header(self) -> dict:
-        return {}
 
     def acknowledge(self, dedup_key: str) -> str:
         """
@@ -61,16 +75,6 @@ class EventsApiV2Client(ApiClient):
     @property
     def event_timestamp(self) -> str:
         return datetime.utcnow().isoformat()+'Z'
-
-    def post(self, *args, **kw) -> Response:
-        """
-        Override of ``requests.Session.post``
-
-        Adds the ``routing_key`` parameter to the body before sending.
-        """
-        if 'json' in kw and hasattr(kw['json'], 'update'):
-            kw['json'].update({'routing_key': self.api_key})
-        return super(EventsApiV2Client, self).post(*args, **kw)
 
     def resolve(self, dedup_key: str) -> str:
         """
@@ -97,9 +101,8 @@ class EventsApiV2Client(ApiClient):
             A list of dictionary objects each with keys ``href`` and ``text``
             representing the target and display text of each link
         :param routing_key:
-            (Deprecated) the routing key. The parameter is set automatically to the
-            :attr:`ApiClient.api_key` property in the final payload and this argument is
-            ignored.
+            (Deprecated) the routing key. This parameter should be set via the
+            constructor `routing_key` parameter instead -- this argument is ignored.
         :param images:
             Optional list of images to attach to the change event.
         """
