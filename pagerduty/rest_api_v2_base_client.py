@@ -235,7 +235,7 @@ def entity_wrappers(wrapper_config: dict, method: str, path: CanonicalPath) \
         if wrapper is not None and type(wrapper) not in (tuple, str):
             raise Exception(invalid_config_error)
         elif wrapper is None or type(wrapper) is str:
-            # Both request and response have the same wrapping at this endpoint:
+            # Both request and response have the same wrapping at this endpoint.
             return (wrapper, wrapper)
         elif type(wrapper) is tuple and len(wrapper) == 2:
             # Endpoint may use different wrapping for request and response bodies.
