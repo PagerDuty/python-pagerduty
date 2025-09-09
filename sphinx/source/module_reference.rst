@@ -54,7 +54,7 @@ AuthMethod Classes
 ------------------
 Constructing an API client requires setting its ``auth_method`` property to an
 ``AuthMethod`` object. This object stores API credentials and specifies how the
-credentials are sent to the API. In most implementantions of
+credentials are sent to the API. In most implementations of
 :class:`ApiClient`, for backwards compatibility, this is done without user
 intervention i.e. by accepting a string argument in the constructor that
 represents the API credential and then constructing an object of the
