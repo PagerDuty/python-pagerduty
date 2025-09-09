@@ -41,7 +41,7 @@ class EventsApiV2Client(ApiClient):
 
     :param routing_key:
         The routing key to use for authentication with the Events API. Sometimes called
-        an ``integration_key`` or ``service_key`` in legacy integrations
+        an ``integration_key`` or ``service_key`` in legacy integrations.
 
     :param debug:
         Sets :attr:`pagerduty.ApiClient.print_debug`. Set to ``True`` to enable verbose
