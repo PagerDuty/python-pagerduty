@@ -233,6 +233,7 @@ def entity_wrappers(wrapper_config: dict, method: str, path: CanonicalPath) \
         invalid_config_error = 'Invalid entity wrapping configuration for ' \
                     f"{endpoint}: {wrapper}; this is most likely a bug."
         if wrapper is not None and type(wrapper) not in (tuple, str):
+            # Catch-all for invalid types.
             raise Exception(invalid_config_error)
         elif wrapper is None or type(wrapper) is str:
             # Both request and response have the same wrapping at this endpoint.
@@ -240,10 +241,10 @@ def entity_wrappers(wrapper_config: dict, method: str, path: CanonicalPath) \
         elif type(wrapper) is tuple and len(wrapper) == 2:
             # Endpoint may use different wrapping for request and response bodies.
             #
-            # Both elements must be either str or None. The first element is the
-            # request body wrapper and the second is the response body wrapper.
-            # If a value is None, that indicates that the request or response
-            # value should be encoded and decoded as-is without modifications.
+            # Each element must be either str or None. The first element is the request
+            # body wrapper and the second is the response body wrapper. If a value is
+            # None, that indicates that the request or response value should be encoded
+            # and decoded as-is without modifications.
             if False in [w is None or type(w) is str for w in wrapper]:
                 # One or both is neither a string nor None, which is invalid:
                 raise Exception(invalid_config_error)
