@@ -1,11 +1,11 @@
-**2025-09-04: API authentication interface refactor - Version 5.0.0**
+**2025-09-24: API authentication interface refactor - Version 5.0.0**
 
-In this version, the details of how authentication are performed are offloaded to a new property, ``auth_method``, which is an instance of a new class ``AuthMethod``. The various API authentication methods are implemented in subclasses of it. This provides a generic interface for implementing authentication, minimizing redundant code in child classes.
+In this version, the details of how authentication are performed are offloaded to a new class, ``AuthMethod``. Each instance of ``ApiClient`` have a new property, ``auth_method``, which is an instance of ``AuthMethod``. This provides a generic framework for implementing all the forms of authentication (using headers or parameters in the request body) utilized in all of PagerDuty's APIs, minimizing redundant code in ``ApiClient`` subclasses.
 
-Its primary motivation was to make the behavior of REST API v2 client objects more stable and predictable when swapping out their API credentials mid-process, for the purposes of an internal project at PagerDuty.
+The primary motivation of this change was to make the behavior of REST API v2 client objects more stable and predictable when swapping out their API credentials mid-process. This is needed for the purposes of an internal project at PagerDuty.
 
 * **Breaking Changes:**
-   - The ``api_key`` property has been removed from all client classes except ``pagerduty.RestApiV2BaseClient`` and subclasses thereof, wherein it is deprecated.
+   - The ``api_key`` property has been removed from all client classes except for ``pagerduty.RestApiV2BaseClient`` and subclasses thereof, wherein it is deprecated.
    - The hook method ``after_set_api_key`` will be ignored in all classes where the ``api_key`` property has been removed.
 
 **2025-09-08: Bugfix: iter_all parameter serialization - Version 4.1.1**
