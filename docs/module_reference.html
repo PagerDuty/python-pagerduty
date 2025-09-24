@@ -1457,7 +1457,7 @@ details on usage of this API, refer to the <a class="reference external" href="h
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
 <li><p><strong>routing_key</strong> – The routing key to use for authentication with the Events API. Sometimes called
-an <code class="docutils literal notranslate"><span class="pre">integration_key</span></code> or <code class="docutils literal notranslate"><span class="pre">service_key</span></code> in legacy integrations</p></li>
+an <code class="docutils literal notranslate"><span class="pre">integration_key</span></code> or <code class="docutils literal notranslate"><span class="pre">service_key</span></code> in legacy integrations.</p></li>
 <li><p><strong>debug</strong> – Sets <a class="reference internal" href="#pagerduty.ApiClient.print_debug" title="pagerduty.ApiClient.print_debug"><code class="xref py py-attr docutils literal notranslate"><span class="pre">pagerduty.ApiClient.print_debug</span></code></a>. Set to <code class="docutils literal notranslate"><span class="pre">True</span></code> to enable verbose
 command line output.</p></li>
 </ul>
@@ -1607,7 +1607,7 @@ assumed that the provided OAuth token was generated using an OAuth flow.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
-<li><p><strong>access_token</strong> – REST API access token to use for HTTP requests</p></li>
+<li><p><strong>access_token</strong> – OAuth access token (Bearer token) obtained via an OAuth flow, used for HTTP requests.</p></li>
 <li><p><strong>jira_signature_token</strong> – Connected Jira instance signature token. This validates the connection between
 PagerDuty and a specific Jira instance.</p></li>
 <li><p><strong>debug</strong> – Sets <a class="reference internal" href="#pagerduty.ApiClient.print_debug" title="pagerduty.ApiClient.print_debug"><code class="xref py py-attr docutils literal notranslate"><span class="pre">pagerduty.ApiClient.print_debug</span></code></a>. Set to <code class="docutils literal notranslate"><span class="pre">True</span></code> to enable verbose
@@ -1660,7 +1660,7 @@ the base URL, <code class="docutils literal notranslate"><span class="pre">app.p
 <h2>AuthMethod Classes<a class="headerlink" href="#authmethod-classes" title="Link to this heading"></a></h2>
 <p>Constructing an API client requires setting its <code class="docutils literal notranslate"><span class="pre">auth_method</span></code> property to an
 <code class="docutils literal notranslate"><span class="pre">AuthMethod</span></code> object. This object stores API credentials and specifies how the
-credentials are sent to the API. In most implementantions of
+credentials are sent to the API. In most implementations of
 <code class="xref py py-class docutils literal notranslate"><span class="pre">ApiClient</span></code>, for backwards compatibility, this is done without user
 intervention i.e. by accepting a string argument in the constructor that
 represents the API credential and then constructing an object of the

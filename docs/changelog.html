@@ -76,13 +76,13 @@
              
   <section id="changelog">
 <h1>Changelog<a class="headerlink" href="#changelog" title="Link to this heading"></a></h1>
-<p><strong>2025-09-04: API authentication interface refactor - Version 5.0.0</strong></p>
-<p>In this version, the details of how authentication are performed are offloaded to a new property, <code class="docutils literal notranslate"><span class="pre">auth_method</span></code>, which is an instance of a new class <code class="docutils literal notranslate"><span class="pre">AuthMethod</span></code>. The various API authentication methods are implemented in subclasses of it. This provides a generic interface for implementing authentication, minimizing redundant code in child classes.</p>
-<p>Its primary motivation was to make the behavior of REST API v2 client objects more stable and predictable when swapping out their API credentials mid-process, for the purposes of an internal project at PagerDuty.</p>
+<p><strong>2025-09-24: API authentication interface refactor - Version 5.0.0</strong></p>
+<p>In this version, the details of how authentication are performed are offloaded to a new class, <code class="docutils literal notranslate"><span class="pre">AuthMethod</span></code>. Each instance of <code class="docutils literal notranslate"><span class="pre">ApiClient</span></code> have a new property, <code class="docutils literal notranslate"><span class="pre">auth_method</span></code>, which is an instance of <code class="docutils literal notranslate"><span class="pre">AuthMethod</span></code>. This provides a generic framework for implementing all the forms of authentication (using headers or parameters in the request body) utilized in all of PagerDuty’s APIs, minimizing redundant code in <code class="docutils literal notranslate"><span class="pre">ApiClient</span></code> subclasses.</p>
+<p>The primary motivation of this change was to make the behavior of REST API v2 client objects more stable and predictable when swapping out their API credentials mid-process. This is needed for the purposes of an internal project at PagerDuty.</p>
 <ul class="simple">
 <li><dl class="simple">
 <dt><strong>Breaking Changes:</strong></dt><dd><ul>
-<li><p>The <code class="docutils literal notranslate"><span class="pre">api_key</span></code> property has been removed from all client classes except <code class="docutils literal notranslate"><span class="pre">pagerduty.RestApiV2BaseClient</span></code> and subclasses thereof, wherein it is deprecated.</p></li>
+<li><p>The <code class="docutils literal notranslate"><span class="pre">api_key</span></code> property has been removed from all client classes except for <code class="docutils literal notranslate"><span class="pre">pagerduty.RestApiV2BaseClient</span></code> and subclasses thereof, wherein it is deprecated.</p></li>
 <li><p>The hook method <code class="docutils literal notranslate"><span class="pre">after_set_api_key</span></code> will be ignored in all classes where the <code class="docutils literal notranslate"><span class="pre">api_key</span></code> property has been removed.</p></li>
 </ul>
 </dd>
