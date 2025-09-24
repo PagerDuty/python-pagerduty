@@ -1,27 +1,19 @@
 # Core
 from copy import deepcopy
-from datetime import (
-    datetime,
-    timezone
-)
+from datetime import datetime
 from sys import getrecursionlimit
 from typing import Iterator, List, Optional
 from warnings import warn
 
-# PyPI
-from requests import Response
-
 # Local
 from . common import (
     datetime_intervals,
-    strftime,
-    strptime
+    strftime
 )
 from . rest_api_v2_base_client import (
     ITERATION_LIMIT,
     CanonicalPath,
     RestApiV2BaseClient,
-    auto_json,
     canonical_path as canonical_path_common,
     entity_wrappers as entity_wrappers_common,
     wrapped_entities
@@ -484,13 +476,16 @@ class RestApiV2Client(RestApiV2BaseClient):
     """Base URL of the REST API"""
 
     def __init__(self, api_key: str, default_from: Optional[str] = None,
-            auth_type: str = 'token', debug: bool = False):
-        super(RestApiV2Client, self).__init__(api_key, auth_type=auth_type, debug=debug)
+                 auth_type: str = "token", debug: bool = False):
+
+        super(RestApiV2Client, self).__init__(api_key, auth_type, debug=debug)
+
         self.default_from = default_from
         if default_from is not None:
             self.headers.update({
                 'From': default_from
             })
+
         self.headers.update({
             'Accept': 'application/vnd.pagerduty+json;version=2',
         })
@@ -523,8 +518,9 @@ class RestApiV2Client(RestApiV2BaseClient):
                 "404 Not Found.", r)
         return False
 
-    def after_set_api_key(self):
+    def after_set_auth_method(self):
         self._subdomain = None
+        self._api_key_access = None
 
     @property
     def api_key_access(self) -> str:
@@ -661,7 +657,7 @@ class RestApiV2Client(RestApiV2BaseClient):
         pagination. This method provides an abstraction for it similar to
         :attr:`iter_all`.
 
-        See: 
+        See:
         `Get raw data - multiple incidents <https://developer.pagerduty.com/api-reference/c2d493e995071-get-raw-data-multiple-incidents>`_
 
         :param filters:

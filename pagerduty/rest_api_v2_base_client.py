@@ -1,10 +1,5 @@
 # Core
 from copy import deepcopy
-from datetime import (
-    datetime,
-    timezone
-)
-from sys import getrecursionlimit
 from typing import Iterator, List, Optional, Tuple, Union
 from warnings import warn
 
@@ -16,6 +11,10 @@ from . api_client import (
     ApiClient,
     normalize_url
 )
+from . auth_method import (
+    AuthMethod,
+    HeaderAuthMethod
+)
 
 from . common import (
     requires_success,
@@ -23,6 +22,7 @@ from . common import (
     successful_response,
     truncate_text,
     try_decoding,
+    last_4
 )
 from . errors import (
     ServerHttpError,
@@ -69,7 +69,7 @@ def canonical_path(paths: List[CanonicalPath], base_url: str, url: str) \
     endpoint within the client's corresponding API it belongs to, in order to account
     for any antipatterns that the endpoint might have.
 
-    For examle, in 
+    For example, in
     `List a user's contact methods
     <https://developer.pagerduty.com/api-reference/50d46c0eb020d-list-a-user-s-contact-methods>`_,
     the canonical path is ``/users/{id}/contact_methods``.
@@ -233,23 +233,24 @@ def entity_wrappers(wrapper_config: dict, method: str, path: CanonicalPath) \
         invalid_config_error = 'Invalid entity wrapping configuration for ' \
                     f"{endpoint}: {wrapper}; this is most likely a bug."
         if wrapper is not None and type(wrapper) not in (tuple, str):
+            # Catch-all for invalid types.
             raise Exception(invalid_config_error)
         elif wrapper is None or type(wrapper) is str:
             # Both request and response have the same wrapping at this endpoint.
             return (wrapper, wrapper)
         elif type(wrapper) is tuple and len(wrapper) == 2:
-            # Endpoint uses different wrapping for request and response bodies.
+            # Endpoint may use different wrapping for request and response bodies.
             #
-            # Both elements must be either str or None. The first element is the
-            # request body wrapper and the second is the response body wrapper.
-            # If a value is None, that indicates that the request or response
-            # value should be encoded and decoded as-is without modifications.
+            # Each element must be either str or None. The first element is the request
+            # body wrapper and the second is the response body wrapper. If a value is
+            # None, that indicates that the request or response value should be encoded
+            # and decoded as-is without modifications.
             if False in [w is None or type(w) is str for w in wrapper]:
                 # One or both is neither a string nor None, which is invalid:
                 raise Exception(invalid_config_error)
             return wrapper
         else:
-            # If not a tuple of length 2, or a string, or None, what are we doing here:
+            # If a tuple but not of length 2, what are we doing here?
             raise Exception(invalid_config_error)
     elif len(match) == 0:
         # Nothing in entity wrapper config matches. In this case it is assumed
@@ -428,6 +429,28 @@ def wrapped_entities(method: callable) -> callable:
     call.__doc__ = doc
     return call
 
+####################
+### AUTH METHODS ###
+####################
+
+class TokenAuthMethod(HeaderAuthMethod):
+    """
+    AuthMethod class for the "token" header authentication style.
+
+    This AuthMethod is used primarily in REST API v2 but also is used in some similar
+    integration APIs.
+    """
+    @property
+    def auth_header(self) -> dict:
+        return {"Authorization": f"Token token={self.secret}"}
+
+class OAuthTokenAuthMethod(HeaderAuthMethod):
+    """
+    AuthMethod class for OAuth-created authentication tokens ("Bearer")
+    """
+    @property
+    def auth_header(self) -> dict:
+        return {"Authorization": f"Bearer {self.secret}"}
 
 ####################
 ### CLIENT CLASS ###
@@ -467,7 +490,18 @@ class RestApiV2BaseClient(ApiClient):
         self.api_call_counts = {}
         self.api_time = {}
         self.auth_type = auth_type
-        super(RestApiV2BaseClient, self).__init__(api_key, debug=debug)
+        auth_method = self._build_auth_method(api_key)
+        super(RestApiV2BaseClient, self).__init__(auth_method, debug=debug)
+
+    def _build_auth_method(self, api_key: str) -> AuthMethod:
+        """
+        Constructs an AuthMethod according to the configured :attr:`auth_type`
+
+        :param api_key:
+            The API credential to use for authentication, and to construct the
+            ``AuthMethod`` object.
+        """
+        return self.auth_type_mapping[self.auth_type](api_key)
 
     @property
     def auth_type(self) -> str:
@@ -476,22 +510,72 @@ class RestApiV2BaseClient(ApiClient):
 
         This value determines how the Authorization header will be set. By default this
         is "token", which will result in the format ``Token token=<api_key>``.
+
+        This property was meant to support the backwards-compatible constructor
+        interface where the ``auth_type`` keyword argument selects the appropriate
+        ``Authorization`` header format (which internally is done through selecting an
+        ``AuthMethod``).
         """
         return self._auth_type
 
     @auth_type.setter
-    def auth_type(self, value: str):
-        if value not in ('token', 'bearer', 'oauth2'):
-            raise AttributeError("auth_type value must be \"token\" (default) "
-                "or \"bearer\" or \"oauth\" to use OAuth2 authentication.")
-        self._auth_type = value
+    def auth_type(self, auth_type: str):
+        valid_auth_types = list(self.auth_type_mapping.keys())
+        if auth_type not in valid_auth_types:
+            raise AttributeError(f"auth_type value must be one of: {valid_auth_types}")
+        self._auth_type = auth_type
 
     @property
-    def auth_header(self) -> dict:
-        if self.auth_type in ('bearer', 'oauth2'):
-            return {"Authorization": "Bearer "+self.api_key}
-        else:
-            return {"Authorization": "Token token="+self.api_key}
+    def auth_type_mapping(self) -> dict:
+        """
+        Defines a mapping of valid :attr:`auth_type` values to AuthMethod classes.
+        """
+        return {
+            'token':  TokenAuthMethod,
+            'bearer': OAuthTokenAuthMethod,
+            'oauth2': OAuthTokenAuthMethod
+        }
+
+    def after_set_api_key(self):
+        """
+        (Deprecated) Setter hook for setting or updating the authentication method.
+
+        Will be replaced by after_set_auth_method.
+        """
+        pass
+
+    @property
+    def api_key(self) -> str:
+        """
+        (Deprecated) Property representing the API key used for authentication.
+
+        If this property is updated to swap out the API credential in a preexisting
+        client object, the :attr:`auth_type` property MUST be updated first, or the
+        authentication header format may end up being incorrect for the type of the new
+        credential. This behavior is the same as it has always been since the API client
+        first supported Bearer tokens for authentication.
+
+        The setter in previous versions would update the client's ``headers`` property
+        using the :attr:`auth_header` property, which depended on the value of
+        :attr:`auth_type` at that point in the execution flow. As of version 5.0.0,
+        :attr:`auth_type` selects the class when constructing the new
+        :attr:`pagerduty.ApiClient.auth_method`.
+
+        Moving forward, the preferred method of changing credentials of a preexisting
+        client object will be to set the :attr:`pagerduty.ApiClient.auth_method`
+        property directly.
+        """
+        warn("The api_key property is deprecated; use auth_method instead.")
+        return self.auth_method.secret
+
+    @api_key.setter
+    def api_key(self, api_key: str):
+        """
+        (Deprecated) Setter for the API key used for authentication.
+        """
+        warn("The api_key property is deprecated; use auth_method instead.")
+        self.auth_method = self._build_auth_method(api_key)
+        self.after_set_api_key()
 
     def canonical_path(self, url: str) -> CanonicalPath:
         """

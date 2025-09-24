@@ -6,14 +6,14 @@
   <meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" />
 
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Changelog &mdash; python-pagerduty 4.1.1 documentation</title>
+  <title>Changelog &mdash; python-pagerduty 5.0.0 documentation</title>
       <link rel="stylesheet" type="text/css" href="_static/pygments.css?v=03e43079" />
       <link rel="stylesheet" type="text/css" href="_static/css/theme.css?v=e59714d7" />
 
   
       <script src="_static/jquery.js?v=5d32c60e"></script>
       <script src="_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
-      <script src="_static/documentation_options.js?v=e6a937a4"></script>
+      <script src="_static/documentation_options.js?v=ce74c6a2"></script>
       <script src="_static/doctools.js?v=9bcbadda"></script>
       <script src="_static/sphinx_highlight.js?v=dc90522c"></script>
     <script src="_static/js/theme.js"></script>
@@ -76,6 +76,19 @@
              
   <section id="changelog">
 <h1>Changelog<a class="headerlink" href="#changelog" title="Link to this heading"></a></h1>
+<p><strong>2025-09-24: API authentication interface refactor - Version 5.0.0</strong></p>
+<p>In this version, the details of how authentication are performed are offloaded to a new class, <code class="docutils literal notranslate"><span class="pre">AuthMethod</span></code>. Each instance of <code class="docutils literal notranslate"><span class="pre">ApiClient</span></code> have a new property, <code class="docutils literal notranslate"><span class="pre">auth_method</span></code>, which is an instance of <code class="docutils literal notranslate"><span class="pre">AuthMethod</span></code>. This provides a generic framework for implementing all the forms of authentication (using headers or parameters in the request body) utilized in all of PagerDuty’s APIs, minimizing redundant code in <code class="docutils literal notranslate"><span class="pre">ApiClient</span></code> subclasses.</p>
+<p>The primary motivation of this change was to make the behavior of REST API v2 client objects more stable and predictable when swapping out their API credentials mid-process. This is needed for the purposes of an internal project at PagerDuty.</p>
+<ul class="simple">
+<li><dl class="simple">
+<dt><strong>Breaking Changes:</strong></dt><dd><ul>
+<li><p>The <code class="docutils literal notranslate"><span class="pre">api_key</span></code> property has been removed from all client classes except for <code class="docutils literal notranslate"><span class="pre">pagerduty.RestApiV2BaseClient</span></code> and subclasses thereof, wherein it is deprecated.</p></li>
+<li><p>The hook method <code class="docutils literal notranslate"><span class="pre">after_set_api_key</span></code> will be ignored in all classes where the <code class="docutils literal notranslate"><span class="pre">api_key</span></code> property has been removed.</p></li>
+</ul>
+</dd>
+</dl>
+</li>
+</ul>
 <p><strong>2025-09-08: Bugfix: iter_all parameter serialization - Version 4.1.1</strong></p>
 <ul class="simple">
 <li><p>Fixes a regression wherein a boolean is serialized to the capitalized <code class="docutils literal notranslate"><span class="pre">True</span></code> / <code class="docutils literal notranslate"><span class="pre">False</span></code> for the <code class="docutils literal notranslate"><span class="pre">total</span></code> parameter in classic pagination, whereas the API requires lower case values.</p></li>

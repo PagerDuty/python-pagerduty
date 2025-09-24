@@ -28,7 +28,7 @@ class SlackIntegrationApiClient(RestApiV2BaseClient):
     This client provides an abstraction layer for all of the endpoints of the
     `PagerDuty Slack Integration API
     <https://developer.pagerduty.com/api-reference/56fee4184eabc-pager-duty-slack-integration-api>`_
-    except for the "Slack Connections" features, which are supported by 
+    except for the "Slack Connections" features, which are supported by
     :class:`pagerduty.SlackIntegrationConnectionsApiClient`.
 
     For constructor arguments, see :class:`pagerduty.RestApiV2BaseClient`.
