@@ -405,8 +405,14 @@ ENTITY_WRAPPER_CONFIG = {
     # Service Dependencies
     'POST /service_dependencies/associate': 'relationships',
 
-    # Services
+    # Service Custom Fields
+    'POST /services/custom_fields': 'field',
+    'GET /services/custom_fields': 'fields',
+    '* /services/custom_fields/{field_id}': 'field',
     '* /services/{id}/custom_fields/values': 'custom_fields',
+    # follows orthodox schema patterns:
+    # /services/{id}/custom_fields/{field_id}/field_options
+    # /services/custom_fields/{field_id}/field_options/{field_option_id}
 
     # Webhooks
     'POST /webhook_subscriptions/{id}/enable': (None, 'webhook_subscription'),
