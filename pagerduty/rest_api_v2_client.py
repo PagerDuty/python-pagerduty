@@ -362,6 +362,8 @@ ENTITY_WRAPPER_CONFIG = {
     '* /event_orchestrations/{id}/integrations/migration': None,
     '* /event_orchestrations/{id}/router': 'orchestration_path',
     '* /event_orchestrations/{id}/unrouted': 'orchestration_path',
+    # follows orthodox schema patterns:
+    # /event_orchestrations/{id}/cache_variables/{cache_variable_id}
     '* /event_orchestrations/services/{service_id}/cache_variables/{cache_variable_id}/data': None,
 
     # Extensions
@@ -390,7 +392,9 @@ ENTITY_WRAPPER_CONFIG = {
     'GET /incidents/types/{type_id_or_name}/custom_fields': 'fields',
     'POST /incidents/types/{type_id_or_name}/custom_fields': 'field',
     '* /incidents/types/{type_id_or_name}/custom_fields/{field_id}': 'field',
-    # follows orthodox schema patterns: /incidents/types/{type_id_or_name}/custom_fields/{field_id}/field_options
+    # follows orthodox schema patterns:
+    # /incidents/types/{type_id_or_name}/custom_fields/{field_id}/field_options
+    # /incidents/types/{type_id_or_name}/custom_fields/{field_id}/field_options/{field_option_id}
 
     # Incident Workflows
     'POST /incident_workflows/{id}/instances': 'incident_workflow_instance',
@@ -417,6 +421,11 @@ ENTITY_WRAPPER_CONFIG = {
     # Webhooks
     'POST /webhook_subscriptions/{id}/enable': (None, 'webhook_subscription'),
     'POST /webhook_subscriptions/{id}/ping': None,
+    # follows orthodox schema patterns:
+    # /webhook_subscriptions
+    # /webhook_subscriptions/{id}
+    # /webhook_subscriptions/oauth_clients
+    # /webhook_subscriptions/oauth_clients/{id}
 
     # Status Dashboards
     'GET /status_dashboards/{id}/service_impacts': 'services',
