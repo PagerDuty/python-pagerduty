@@ -168,6 +168,7 @@ CANONICAL_PATHS = [
     '/paused_incident_reports/alerts',
     '/paused_incident_reports/counts',
     '/priorities',
+    # TODO: remove support for response_plays in a future major version update
     '/response_plays',
     '/response_plays/{id}',
     '/response_plays/{response_play_id}/run',

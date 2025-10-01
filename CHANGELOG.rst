@@ -1,12 +1,12 @@
 **2025-10-01: 5.1.0: Maintenance update with entity wrapping support for new API endpoints**
 
-* Entityh wrapping support added for new endpoints of APIs:
+* Entity wrapping support added for endpoints including:
    * Incident types API
    * Webhooks API
    * Event Orchestrations cache variables
    * Per-service custom fields
    * OAuth clients (webhook subscriptions)
-* Entity wrapping support not yet removed for deprecated APIs i.e. "Response Plays" to avoid breaking changes
+* Entity wrapping support not yet removed for deprecated APIs i.e. "Response Plays" to avoid breaking changes.
 
 **2025-09-24: 5.0.0: API authentication interface refactor**
 
