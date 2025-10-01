@@ -273,11 +273,6 @@ CANONICAL_PATHS = [
     '/workflows/integrations/{integration_id}/connections',
     '/workflows/integrations/{integration_id}/connections/{id}',
 ]
-"""
-Explicit list of supported canonical REST API v2 paths
-
-:meta hide-value:
-"""
 
 CURSOR_BASED_PAGINATION_PATHS = [
     '/audit/records',
@@ -294,11 +289,7 @@ CURSOR_BASED_PAGINATION_PATHS = [
     '/workflows/integrations/connections',
     '/workflows/integrations/{integration_id}/connections',
 ]
-"""
-Explicit list of paths that support cursor-based pagination
 
-:meta hide-value:
-"""
 # END auto-generated content
 
 HISTORICAL_RECORD_PATHS = [
