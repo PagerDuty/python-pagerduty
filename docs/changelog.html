@@ -6,14 +6,14 @@
   <meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" />
 
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Changelog &mdash; python-pagerduty 5.0.0 documentation</title>
+  <title>Changelog &mdash; python-pagerduty 5.1.0 documentation</title>
       <link rel="stylesheet" type="text/css" href="_static/pygments.css?v=03e43079" />
       <link rel="stylesheet" type="text/css" href="_static/css/theme.css?v=e59714d7" />
 
   
       <script src="_static/jquery.js?v=5d32c60e"></script>
       <script src="_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
-      <script src="_static/documentation_options.js?v=ce74c6a2"></script>
+      <script src="_static/documentation_options.js?v=bfa18cfb"></script>
       <script src="_static/doctools.js?v=9bcbadda"></script>
       <script src="_static/sphinx_highlight.js?v=dc90522c"></script>
     <script src="_static/js/theme.js"></script>
@@ -76,7 +76,22 @@
              
   <section id="changelog">
 <h1>Changelog<a class="headerlink" href="#changelog" title="Link to this heading"></a></h1>
-<p><strong>2025-09-24: API authentication interface refactor - Version 5.0.0</strong></p>
+<p><strong>2025-10-01: 5.1.0: Maintenance update with entity wrapping support for new API endpoints</strong></p>
+<ul class="simple">
+<li><dl class="simple">
+<dt>Entity wrapping support added for endpoints including:</dt><dd><ul>
+<li><p>Incident types API</p></li>
+<li><p>Webhooks API</p></li>
+<li><p>Event Orchestrations cache variables</p></li>
+<li><p>Per-service custom fields</p></li>
+<li><p>OAuth clients (webhook subscriptions)</p></li>
+</ul>
+</dd>
+</dl>
+</li>
+<li><p>Entity wrapping support not yet removed for deprecated APIs i.e. “Response Plays” to avoid breaking changes.</p></li>
+</ul>
+<p><strong>2025-09-24: 5.0.0: API authentication interface refactor</strong></p>
 <p>In this version, the details of how authentication are performed are offloaded to a new class, <code class="docutils literal notranslate"><span class="pre">AuthMethod</span></code>. Each instance of <code class="docutils literal notranslate"><span class="pre">ApiClient</span></code> have a new property, <code class="docutils literal notranslate"><span class="pre">auth_method</span></code>, which is an instance of <code class="docutils literal notranslate"><span class="pre">AuthMethod</span></code>. This provides a generic framework for implementing all the forms of authentication (using headers or parameters in the request body) utilized in all of PagerDuty’s APIs, minimizing redundant code in <code class="docutils literal notranslate"><span class="pre">ApiClient</span></code> subclasses.</p>
 <p>The primary motivation of this change was to make the behavior of REST API v2 client objects more stable and predictable when swapping out their API credentials mid-process. This is needed for the purposes of an internal project at PagerDuty.</p>
 <ul class="simple">
@@ -89,19 +104,19 @@
 </dl>
 </li>
 </ul>
-<p><strong>2025-09-08: Bugfix: iter_all parameter serialization - Version 4.1.1</strong></p>
+<p><strong>2025-09-08: 4.1.1: Bugfix: iter_all parameter serialization</strong></p>
 <ul class="simple">
 <li><p>Fixes a regression wherein a boolean is serialized to the capitalized <code class="docutils literal notranslate"><span class="pre">True</span></code> / <code class="docutils literal notranslate"><span class="pre">False</span></code> for the <code class="docutils literal notranslate"><span class="pre">total</span></code> parameter in classic pagination, whereas the API requires lower case values.</p></li>
 </ul>
-<p><strong>2025-08-27: Feature: PKCE OAuth helpers - Version 4.1.0</strong></p>
+<p><strong>2025-08-27: 4.1.0: Feature: PKCE OAuth helpers</strong></p>
 <ul class="simple">
 <li><p><strong>Feature:</strong> new methods <code class="docutils literal notranslate"><span class="pre">get_new_token_from_code_with_pkce</span></code>, <code class="docutils literal notranslate"><span class="pre">generate_s256_pkce_params</span></code> and <code class="docutils literal notranslate"><span class="pre">get_pkce_authorize_url</span></code> of <code class="docutils literal notranslate"><span class="pre">pagerduty.OAuthTokenClient</span></code> to assist with implementation of the OAuth via PKCE token grant flow.</p></li>
 </ul>
-<p><strong>2025-08-18: Bugfix: export all features currently imported to the root namespace - Version 4.0.1</strong></p>
+<p><strong>2025-08-18: 4.0.1: Bugfix: export all features currently imported to the root namespace</strong></p>
 <ul class="simple">
 <li><p><strong>Fixes:</strong> adds an explicit <code class="docutils literal notranslate"><span class="pre">__all__</span></code> declaration to the root <code class="docutils literal notranslate"><span class="pre">pagerduty</span></code> module namespace for all members that are currently imported to that namespace.</p></li>
 </ul>
-<p><strong>2025-08-12: REST API Base Client Refactor + New Clients - Version 4.0.0</strong></p>
+<p><strong>2025-08-12: 4.0.0: REST API Base Client Refactor + New Clients</strong></p>
 <ul>
 <li><p><strong>Breaking Changes:</strong></p>
 <blockquote>
@@ -148,7 +163,7 @@
 </div></blockquote>
 </li>
 </ul>
-<p><strong>2025-07-15: New features - Version 3.1.0</strong></p>
+<p><strong>2025-07-15: 3.1.0: New features</strong></p>
 <ul>
 <li><p>New features in <code class="docutils literal notranslate"><span class="pre">RestApiV2Client</span></code></p>
 <blockquote>
@@ -161,7 +176,7 @@
 </li>
 <li><p>Fix: Update the “Unknown version” (for versioned user-agent headers in Python prior to version 3.8) and add a test to validate that it is up to date with the true current major version</p></li>
 </ul>
-<p><strong>2025-07-08: New features - Version 3.0.0</strong></p>
+<p><strong>2025-07-08: 3.0.0: New features</strong></p>
 <ul>
 <li><p><strong>Breaking Change:</strong> the method <code class="docutils literal notranslate"><span class="pre">ApiClient.normalize_params</span></code> no longer modifies parameters. The implementation of it that previously did, which was meant only for the child class <code class="docutils literal notranslate"><span class="pre">RestApiV2Client</span></code>, has been migrated to that class as an override.</p></li>
 <li><p><strong>New Features:</strong></p>
@@ -184,15 +199,15 @@
 </div></blockquote>
 </li>
 </ul>
-<p><strong>2025-06-23: Add a new OAuth token exchange client class - Version 2.3.0</strong></p>
+<p><strong>2025-06-23: 2.3.0: Add a new OAuth token exchange client class</strong></p>
 <ul class="simple">
 <li><p>This version introduces a new client class for obtaining OAuth tokens using code grant / token refresh or for a scoped app.</p></li>
 </ul>
-<p><strong>2025-06-03: Add py.typed marker file - Version 2.2.0</strong></p>
+<p><strong>2025-06-03: 2.2.0: Add py.typed marker file</strong></p>
 <ul class="simple">
 <li><p>Add a <code class="docutils literal notranslate"><span class="pre">py.typed</span></code> marker file so that type checkers recognize that <code class="docutils literal notranslate"><span class="pre">pagerduty</span></code> supports type checking.</p></li>
 </ul>
-<p><strong>2025-05-19: Bug fixes for iter_cursor and HTTP 204 response handling - Version 2.1.2</strong></p>
+<p><strong>2025-05-19: 2.1.2: Bug fixes for iter_cursor and HTTP 204 response handling</strong></p>
 <ul>
 <li><p>Allow <code class="docutils literal notranslate"><span class="pre">try_decoding</span></code> to return <code class="docutils literal notranslate"><span class="pre">None</span></code> for empty input; fixes GitHub issue #46.</p></li>
 <li><p>Non-breaking changes to <code class="docutils literal notranslate"><span class="pre">RestApiV2Client.iter_cursor</span></code>, to fix GitHub issue #45:</p>
@@ -205,15 +220,15 @@
 </div></blockquote>
 </li>
 </ul>
-<p><strong>2025-05-14: Bug fix - Version 2.1.1</strong></p>
+<p><strong>2025-05-14: 2.1.1: Bug fix</strong></p>
 <ul class="simple">
 <li><p>The “main” method in the entry script is expected to receive no arguments, but in v2.1.0, it requires one positional argument.</p></li>
 </ul>
-<p><strong>2025-05-13: Command line interface - Version 2.1.0</strong></p>
+<p><strong>2025-05-13: 2.1.0: Command line interface</strong></p>
 <ul class="simple">
 <li><p>Add a basic command line interface for Events API v2, for feature parity with the legacy library that is used in the <a class="reference external" href="https://www.pagerduty.com/docs/guides/monit-integration-guide/">Monit Integration Guide</a>.</p></li>
 </ul>
-<p><strong>2025-04-08: Multi-file refactor - Version 2.0.0</strong></p>
+<p><strong>2025-04-08: 2.0.0: Multi-file refactor</strong></p>
 <p>This release introduces major structural changes to the module and how it is built and tested. These changes were made for long-term maintainability of the codebase. Previously, it was all contained within a monolithic <code class="docutils literal notranslate"><span class="pre">.py</span></code> file (with a single Python script for all unit tests); now it is organized into smaller, appropriately-named Python files.</p>
 <p>Some lesser changes are also included:</p>
 <ul class="simple">
@@ -221,7 +236,7 @@
 <li><p>The default user agent header has been updated: the prefix has been changed from <code class="docutils literal notranslate"><span class="pre">pagerduty</span></code> to <code class="docutils literal notranslate"><span class="pre">python-pagerduty</span></code>.</p></li>
 <li><p>The version number <code class="docutils literal notranslate"><span class="pre">pagerduty.__version__</span></code> is now maintained in <code class="docutils literal notranslate"><span class="pre">pyproject.toml</span></code> and discovered through package metadata introspection at import time. In Python versions prior to 3.8, the version will be <code class="docutils literal notranslate"><span class="pre">2.*.*</span></code> because the new <code class="docutils literal notranslate"><span class="pre">importlib</span></code> feature required for it is unavailable.</p></li>
 </ul>
-<p><strong>2025-01-02: Migrate from PDPYRAS - Version 1.0.0</strong></p>
+<p><strong>2025-01-02: 1.0.0: Migrate from PDPYRAS</strong></p>
 <ul class="simple">
 <li><p><strong>BREAKING CHANGE:</strong> class names have changed from what they were in <code class="docutils literal notranslate"><span class="pre">pdpyras</span></code>; see: <a class="reference external" href="https://pagerduty.github.io/python-pagerduty/pdpyras_migration_guide.html">PDPYRAS Migration Guide</a></p></li>
 <li><p>The REST API client now supports new status page, event orchestrations, custom incident fields, OAuth delegations and alert grouping settings APIs.</p></li>
