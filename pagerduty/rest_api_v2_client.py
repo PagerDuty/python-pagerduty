@@ -106,8 +106,10 @@ CANONICAL_PATHS = [
     '/event_orchestrations/services/{service_id}/active',
     '/event_orchestrations/{id}/cache_variables',
     '/event_orchestrations/{id}/cache_variables/{cache_variable_id}',
+    '/event_orchestrations/{id}/cache_variables/{cache_variable_id}/data',
     '/event_orchestrations/services/{service_id}/cache_variables',
     '/event_orchestrations/services/{service_id}/cache_variables/{cache_variable_id}',
+    '/event_orchestrations/services/{service_id}/cache_variables/{cache_variable_id}/data',
     '/extension_schemas',
     '/extension_schemas/{id}',
     '/extensions',
@@ -142,6 +144,12 @@ CANONICAL_PATHS = [
     '/incidents/{id}/status_updates/subscribers',
     '/incidents/{id}/status_updates/unsubscribe',
     '/incidents/count',
+    '/incidents/types',
+    '/incidents/types/{type_id_or_name}',
+    '/incidents/types/{type_id_or_name}/custom_fields',
+    '/incidents/types/{type_id_or_name}/custom_fields/{field_id}',
+    '/incidents/types/{type_id_or_name}/custom_fields/{field_id}/field_options',
+    '/incidents/types/{type_id_or_name}/custom_fields/{field_id}/field_options/{field_option_id}',
     '/incidents/custom_fields',
     '/incidents/custom_fields/{field_id}',
     '/incidents/custom_fields/{field_id}/field_options',
@@ -160,6 +168,7 @@ CANONICAL_PATHS = [
     '/paused_incident_reports/alerts',
     '/paused_incident_reports/counts',
     '/priorities',
+    # TODO: remove support for response_plays in a future major version update
     '/response_plays',
     '/response_plays/{id}',
     '/response_plays/{response_play_id}/run',
@@ -187,6 +196,11 @@ CANONICAL_PATHS = [
     '/services/{id}/rules',
     '/services/{id}/rules/convert',
     '/services/{id}/rules/{rule_id}',
+    '/services/custom_fields',
+    '/services/custom_fields/{field_id}',
+    '/services/custom_fields/{field_id}/field_options',
+    '/services/custom_fields/{field_id}/field_options/{field_option_id}',
+    '/services/{id}/custom_fields/values',
     '/standards',
     '/standards/{id}',
     '/standards/scores/{resource_type}',
@@ -252,6 +266,8 @@ CANONICAL_PATHS = [
     '/webhook_subscriptions/{id}',
     '/webhook_subscriptions/{id}/enable',
     '/webhook_subscriptions/{id}/ping',
+    '/webhook_subscriptions/oauth_clients',
+    '/webhook_subscriptions/oauth_clients/{id}',
     '/workflows/integrations',
     '/workflows/integrations/{id}',
     '/workflows/integrations/connections',
@@ -338,6 +354,9 @@ ENTITY_WRAPPER_CONFIG = {
     '* /event_orchestrations/{id}/integrations/migration': None,
     '* /event_orchestrations/{id}/router': 'orchestration_path',
     '* /event_orchestrations/{id}/unrouted': 'orchestration_path',
+    # follows orthodox schema patterns:
+    # /event_orchestrations/{id}/cache_variables/{cache_variable_id}
+    '* /event_orchestrations/services/{service_id}/cache_variables/{cache_variable_id}/data': None,
 
     # Extensions
     'POST /extensions/{id}/enable': (None, 'extension'),
@@ -359,8 +378,15 @@ ENTITY_WRAPPER_CONFIG = {
     '* /incidents/custom_fields/{field_id}': 'field',
 
     # Incident Types
-    # TODO: Update after this is GA and no longer early-access (for now we are manually
-    # excluding the canonical paths in the update)
+    'GET /incidents/types': 'incident_types',
+    'POST /incidents/types': 'incident_type',
+    '* /incidents/types/{type_id_or_name}': 'incident_type',
+    'GET /incidents/types/{type_id_or_name}/custom_fields': 'fields',
+    'POST /incidents/types/{type_id_or_name}/custom_fields': 'field',
+    '* /incidents/types/{type_id_or_name}/custom_fields/{field_id}': 'field',
+    # follows orthodox schema patterns:
+    # /incidents/types/{type_id_or_name}/custom_fields/{field_id}/field_options
+    # /incidents/types/{type_id_or_name}/custom_fields/{field_id}/field_options/{field_option_id}
 
     # Incident Workflows
     'POST /incident_workflows/{id}/instances': 'incident_workflow_instance',
@@ -375,9 +401,23 @@ ENTITY_WRAPPER_CONFIG = {
     # Service Dependencies
     'POST /service_dependencies/associate': 'relationships',
 
+    # Service Custom Fields
+    'POST /services/custom_fields': 'field',
+    'GET /services/custom_fields': 'fields',
+    '* /services/custom_fields/{field_id}': 'field',
+    '* /services/{id}/custom_fields/values': 'custom_fields',
+    # follows orthodox schema patterns:
+    # /services/{id}/custom_fields/{field_id}/field_options
+    # /services/custom_fields/{field_id}/field_options/{field_option_id}
+
     # Webhooks
     'POST /webhook_subscriptions/{id}/enable': (None, 'webhook_subscription'),
     'POST /webhook_subscriptions/{id}/ping': None,
+    # follows orthodox schema patterns:
+    # /webhook_subscriptions
+    # /webhook_subscriptions/{id}
+    # /webhook_subscriptions/oauth_clients
+    # /webhook_subscriptions/oauth_clients/{id}
 
     # Status Dashboards
     'GET /status_dashboards/{id}/service_impacts': 'services',
