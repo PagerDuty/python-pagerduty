@@ -19,6 +19,8 @@ from . api_client import ApiClient
 
 from . events_api_v2_client import EventsApiV2Client
 
+from . mcp_api_client import McpApiClient
+
 from . oauth_token_client import OAuthTokenClient
 
 from . rest_api_v2_base_client import (
@@ -72,6 +74,7 @@ __all__ = [
     'ITERATION_LIMIT',
     'JiraCloudIntegrationApiClient',
     'JiraServerIntegrationApiClient',
+    'McpApiClient',
     'MsTeamsIntegrationApiClient',
     'OAuthTokenClient',
     'RestApiV2BaseClient',
