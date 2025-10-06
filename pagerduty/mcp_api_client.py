@@ -17,20 +17,27 @@ class McpApiClient(ApiClient):
 
     .. code-bloock:: python
 
-        # Import OAuthTokenMethod instead of TokenAuthMethod to use an OAuth API token:
+        # Import OAuthTokenAuthMethod instead of TokenAuthMethod to use an OAuth token:
         from pagerduty.mcp_api_client import (
             McpApiClient,
             TokenAuthMethod
         )
 
+        # Instantiate:
         auth_method = TokenAuthMethod(API_KEY)
         client = McpApiClient(auth_method)
+
+        # Call a method and get the result:
         result = client.call('tools/list')['result']
     """
 
     url = 'https://mcp.pagerduty.com'
 
-    def call(self, method: str, params = None: Optional[dict], req_id=None) -> dict:
+    def __init__(self, auth_method: AuthMethod, debug=False):
+        super(McpApiClient, self).__init__(auth_method, debug=debug)
+        self.headers.update({'Accept': 'application/json, text/event-stream'})
+
+    def call(self, method: str, params: Optional[dict] = None, req_id = None) -> dict:
         """
         Make a JSON-RPC request to the MCP API.
 
@@ -52,7 +59,7 @@ class McpApiClient(ApiClient):
         }
         if params:
             body['params'] = params
-        return successful_response(self.post("/mcp", json = body).json()
+        return successful_response(self.post("/mcp", json=body)).json()
 
 __all__ = [
     'McpApiClient',
