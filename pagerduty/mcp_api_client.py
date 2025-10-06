@@ -1,13 +1,12 @@
 from typing import Optional
 import uuid
 
-import requests
-
-from api_client import ApiClient
-from common import successful_response
-from rest_api_v2_base_client import (
-    TokenAuthMethod,
-    OAuthTokenAuthMethod
+from . api_client import ApiClient
+from . auth_method import AuthMethod
+from . common import successful_response
+from . rest_api_v2_base_client import (
+    OAuthTokenAuthMethod,
+    TokenAuthMethod
 )
 
 class McpApiClient(ApiClient):

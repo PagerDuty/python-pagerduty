@@ -10,7 +10,7 @@ from pagerduty.common import (
     datetime_to_relative_seconds,
     relative_seconds_to_datetime
 )
-from pagerduty.rest_api_v2_client import RestApiV2Client
+from pagerduty import RestApiV2Client
 
 class OAuthTokenClientTest(unittest.TestCase):
 

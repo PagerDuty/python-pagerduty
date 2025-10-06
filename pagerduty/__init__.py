@@ -17,7 +17,10 @@ from . common import (
 
 from . api_client import ApiClient
 
-from . events_api_v2_client import EventsApiV2Client
+from . events_api_v2_client import (
+    EventsApiV2Client,
+    RoutingKeyAuthMethod
+)
 
 from . mcp_api_client import McpApiClient
 
@@ -25,7 +28,9 @@ from . oauth_token_client import OAuthTokenClient
 
 from . rest_api_v2_base_client import (
     ITERATION_LIMIT,
+    OAuthTokenAuthMethod,
     RestApiV2BaseClient,
+    TokenAuthMethod,
     auto_json,
     endpoint_matches,
     infer_entity_wrapper,
@@ -77,13 +82,16 @@ __all__ = [
     'McpApiClient',
     'MsTeamsIntegrationApiClient',
     'OAuthTokenClient',
+    'OAuthTokenAuthMethod',
     'RestApiV2BaseClient',
     'RestApiV2Client',
+    'RoutingKeyAuthMethod',
     'ServerHttpError',
     'SlackIntegrationApiClient',
     'SlackIntegrationConnectionsApiClient',
     'TEXT_LEN_LIMIT',
     'TIMEOUT',
+    'TokenAuthMethod',
     'UrlError',
     'auto_json',
     'canonical_path',
