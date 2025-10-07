@@ -33,17 +33,17 @@ class ScimApiClient(ApiClient):
 
     url = 'https://api.pagerduty.com/scim/v2'
 
-    def list_users(self, start_index: int = 1, count: int = 100,
-                   fltr: Optional[str] = None) -> List[dict]:
+    def list_users(self, fltr: Optional[str] = None, start_index: int = 1,
+            page_size: int = 100) -> List[dict]:
         """
         List all users using SCIM API with automatic pagination.
 
-        :param start_index:
-            The 1-based index of the first result to return (SCIM standard)
-        :param count:
-            Number of results per page (default 100)
         :param fltr:
             Optional SCIM filter expression to limit results
+        :param start_index:
+            The 1-based index of the first result to return (SCIM standard)
+        :param page_size:
+            Number of results per page (default 100)
         :returns:
             List of all user entries from the SCIM Users endpoint
         """
@@ -53,7 +53,7 @@ class ScimApiClient(ApiClient):
         while True:
             params = {
                 'startIndex': current_start_index,
-                'count': count
+                'count': page_size
             }
 
             if fltr:
