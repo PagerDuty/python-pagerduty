@@ -4,6 +4,7 @@ import uuid
 from . api_client import ApiClient
 from . auth_method import AuthMethod
 from . common import successful_response
+from . errors import HttpServerError
 from . rest_api_v2_base_client import (
     OAuthTokenAuthMethod,
     TokenAuthMethod
@@ -11,7 +12,7 @@ from . rest_api_v2_base_client import (
 
 class McpApiClient(ApiClient):
     """
-    API client for the PagerDuty MCP endpoint.
+    Client class for the PagerDuty MCP API
 
     Usage example:
 
@@ -46,9 +47,11 @@ class McpApiClient(ApiClient):
         :param params:
             The parameters to send to the RPC method.
         :param req_id:
-            A unique ID to send with the request. Will be a random UUID if unspecified.
+            A unique ID to send with the request. A random UUID will be used if this
+            argument is unspecified; the ID will then be passed back in the response.
         :returns:
-            The JSON-decoded response body object, which should contain a "result" key.
+            The JSON-decoded response body; it will be a dictionary containing a
+            "result" key with the response data.
         """
         if not req_id:
             req_id = str(uuid.uuid4())
@@ -59,7 +62,12 @@ class McpApiClient(ApiClient):
         }
         if params:
             body['params'] = params
-        return successful_response(self.post("/mcp", json=body)).json()
+        response = successful_response(self.post("/mcp", json=body))
+        response_body = response.json()
+        if 'result' not in response_body:
+            raise HttpServerError('JSON-RPC response from PagerDuty did not include ' +
+                'the expected "result" key.', response)
+        return response_body
 
 __all__ = [
     'McpApiClient',
