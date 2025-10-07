@@ -18,7 +18,8 @@ class McpApiClient(ApiClient):
 
     .. code-block:: python
 
-        # Import OAuthTokenAuthMethod instead of TokenAuthMethod to use an OAuth token:
+        # Import and use OAuthTokenAuthMethod instead of TokenAuthMethod to use an
+        # application OAuth token:
         from pagerduty import (
             McpApiClient,
             TokenAuthMethod
@@ -70,7 +71,5 @@ class McpApiClient(ApiClient):
         return response_body
 
 __all__ = [
-    'McpApiClient',
-    'OAuthTokenAuthMethod',
-    'TokenAuthMethod'
+    'McpApiClient'
 ]
