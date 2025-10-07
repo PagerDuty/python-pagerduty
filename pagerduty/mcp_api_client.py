@@ -15,10 +15,10 @@ class McpApiClient(ApiClient):
 
     Usage example:
 
-    .. code-bloock:: python
+    .. code-block:: python
 
         # Import OAuthTokenAuthMethod instead of TokenAuthMethod to use an OAuth token:
-        from pagerduty.mcp_api_client import (
+        from pagerduty import (
             McpApiClient,
             TokenAuthMethod
         )
