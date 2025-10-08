@@ -4,7 +4,7 @@ import uuid
 from . api_client import ApiClient
 from . auth_method import AuthMethod
 from . common import successful_response
-from . errors import HttpServerError
+from . errors import ServerHttpError
 from . rest_api_v2_base_client import (
     OAuthTokenAuthMethod,
     TokenAuthMethod
@@ -66,7 +66,7 @@ class McpApiClient(ApiClient):
         response = successful_response(self.post("/mcp", json=body))
         response_body = response.json()
         if 'result' not in response_body:
-            raise HttpServerError('JSON-RPC response from PagerDuty did not include ' +
+            raise ServerHttpError('JSON-RPC response from PagerDuty did not include ' +
                 'the expected "result" key.', response)
         return response_body
 
