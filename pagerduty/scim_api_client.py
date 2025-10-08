@@ -74,8 +74,9 @@ class ScimApiClient(ApiClient):
             total_results = body.get('totalResults', 0)
             items_per_page = body.get('itemsPerPage', len(users))
 
-            # If we've retrieved all results, break
-            if current_start_index + items_per_page - 1 >= total_results:
+            # If no results are left, break:
+            next_start_index = current_start_index + items_per_page - 1
+            if next_start_index >= total_results or len(users) == 0:
                 break
 
             # Move to next page
