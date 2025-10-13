@@ -1676,8 +1676,7 @@ the base URL, <code class="docutils literal notranslate"><span class="pre">app.p
 <span class="p">)</span>
 
 <span class="c1"># Instantiate:</span>
-<span class="n">auth_method</span> <span class="o">=</span> <span class="n">TokenAuthMethod</span><span class="p">(</span><span class="n">API_KEY</span><span class="p">)</span>
-<span class="n">client</span> <span class="o">=</span> <span class="n">McpApiClient</span><span class="p">(</span><span class="n">auth_method</span><span class="p">)</span>
+<span class="n">client</span> <span class="o">=</span> <span class="n">McpApiClient</span><span class="p">(</span><span class="n">TokenAuthMethod</span><span class="p">(</span><span class="n">API_KEY</span><span class="p">))</span>
 
 <span class="c1"># Call a method and get the result:</span>
 <span class="n">result</span> <span class="o">=</span> <span class="n">client</span><span class="o">.</span><span class="n">call</span><span class="p">(</span><span class="s1">&#39;tools/list&#39;</span><span class="p">)[</span><span class="s1">&#39;result&#39;</span><span class="p">]</span>

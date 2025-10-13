@@ -26,8 +26,7 @@ class McpApiClient(ApiClient):
         )
 
         # Instantiate:
-        auth_method = TokenAuthMethod(API_KEY)
-        client = McpApiClient(auth_method)
+        client = McpApiClient(TokenAuthMethod(API_KEY))
 
         # Call a method and get the result:
         result = client.call('tools/list')['result']
