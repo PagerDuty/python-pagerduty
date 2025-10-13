@@ -4,7 +4,6 @@ import uuid
 from . api_client import ApiClient
 from . auth_method import AuthMethod
 from . common import successful_response, try_decoding
-from . errors import HttpServerError
 from . rest_api_v2_base_client import (
     OAuthTokenAuthMethod,
     TokenAuthMethod
