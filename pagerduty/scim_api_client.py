@@ -13,6 +13,12 @@ class ScimApiClient(ApiClient):
     """
     Client class for the PagerDuty SCIM API.
 
+    This class features a method :attr:`list_users` that provides an interface for
+    retrieving all users that match a given filter.
+
+    Other endpoints of the PagerDuty SCIM API can be accessed through the standard
+    methods named after the HTTP methods.
+
     Usage example:
 
     .. code-block:: python
