@@ -1,3 +1,8 @@
+**2025-10-13: 5.2.0: New clients for new APIs**
+
+* Client class ``ScimApiClient`` for the PagerDuty SCIM API
+* Client class ``McpApiClient`` for the PagerDuty MCP API
+
 **2025-10-01: 5.1.0: Maintenance update with entity wrapping support for new API endpoints**
 
 * Entity wrapping support added for endpoints including:

@@ -6,14 +6,14 @@
   <meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" />
 
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Module Reference &mdash; python-pagerduty 5.1.0 documentation</title>
+  <title>Module Reference &mdash; python-pagerduty 5.2.0 documentation</title>
       <link rel="stylesheet" type="text/css" href="_static/pygments.css?v=03e43079" />
       <link rel="stylesheet" type="text/css" href="_static/css/theme.css?v=e59714d7" />
 
   
       <script src="_static/jquery.js?v=5d32c60e"></script>
       <script src="_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
-      <script src="_static/documentation_options.js?v=bfa18cfb"></script>
+      <script src="_static/documentation_options.js?v=2dde5210"></script>
       <script src="_static/doctools.js?v=9bcbadda"></script>
       <script src="_static/sphinx_highlight.js?v=dc90522c"></script>
     <script src="_static/js/theme.js"></script>
@@ -147,6 +147,14 @@
 <li class="toctree-l3"><a class="reference internal" href="#pagerduty.MsTeamsIntegrationApiClient"><code class="docutils literal notranslate"><span class="pre">MsTeamsIntegrationApiClient</span></code></a></li>
 <li class="toctree-l3"><a class="reference internal" href="#pagerduty.SlackIntegrationApiClient"><code class="docutils literal notranslate"><span class="pre">SlackIntegrationApiClient</span></code></a></li>
 <li class="toctree-l3"><a class="reference internal" href="#pagerduty.SlackIntegrationConnectionsApiClient"><code class="docutils literal notranslate"><span class="pre">SlackIntegrationConnectionsApiClient</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#pagerduty.McpApiClient"><code class="docutils literal notranslate"><span class="pre">McpApiClient</span></code></a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#pagerduty.McpApiClient.call"><code class="docutils literal notranslate"><span class="pre">McpApiClient.call()</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="#pagerduty.ScimApiClient"><code class="docutils literal notranslate"><span class="pre">ScimApiClient</span></code></a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#pagerduty.ScimApiClient.list_users"><code class="docutils literal notranslate"><span class="pre">ScimApiClient.list_users()</span></code></a></li>
+</ul>
+</li>
 </ul>
 </li>
 <li class="toctree-l2"><a class="reference internal" href="#authmethod-classes">AuthMethod Classes</a><ul>
@@ -1653,6 +1661,100 @@ except for the “Slack Connections” features, which are supported by
 specifically the “Connections” API endpoints, which use a different hostname in
 the base URL, <code class="docutils literal notranslate"><span class="pre">app.pagerduty.com</span></code>, as opposed to <code class="docutils literal notranslate"><span class="pre">api.pagerduty.com</span></code>.</p>
 <p>For constructor arguments, see <a class="reference internal" href="#pagerduty.RestApiV2BaseClient" title="pagerduty.RestApiV2BaseClient"><code class="xref py py-class docutils literal notranslate"><span class="pre">pagerduty.RestApiV2BaseClient</span></code></a>.</p>
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="pagerduty.McpApiClient">
+<em class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">pagerduty.</span></span><span class="sig-name descname"><span class="pre">McpApiClient</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">auth_method</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="#pagerduty.auth_method.AuthMethod" title="pagerduty.auth_method.AuthMethod"><span class="pre">AuthMethod</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">debug</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#pagerduty.McpApiClient" title="Link to this definition"></a></dt>
+<dd><p>Client class for the PagerDuty MCP API</p>
+<p>Usage example:</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="c1"># Import and use OAuthTokenAuthMethod instead of TokenAuthMethod to use an</span>
+<span class="c1"># application OAuth token:</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">pagerduty</span><span class="w"> </span><span class="kn">import</span> <span class="p">(</span>
+    <span class="n">McpApiClient</span><span class="p">,</span>
+    <span class="n">TokenAuthMethod</span>
+<span class="p">)</span>
+
+<span class="c1"># Instantiate:</span>
+<span class="n">client</span> <span class="o">=</span> <span class="n">McpApiClient</span><span class="p">(</span><span class="n">TokenAuthMethod</span><span class="p">(</span><span class="n">API_KEY</span><span class="p">))</span>
+
+<span class="c1"># Call a method and get the result:</span>
+<span class="n">result</span> <span class="o">=</span> <span class="n">client</span><span class="o">.</span><span class="n">call</span><span class="p">(</span><span class="s1">&#39;tools/list&#39;</span><span class="p">)[</span><span class="s1">&#39;result&#39;</span><span class="p">]</span>
+</pre></div>
+</div>
+<dl class="py method">
+<dt class="sig sig-object py" id="pagerduty.McpApiClient.call">
+<span class="sig-name descname"><span class="pre">call</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">method</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">params</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">dict</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">req_id</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">dict</span></span></span><a class="headerlink" href="#pagerduty.McpApiClient.call" title="Link to this definition"></a></dt>
+<dd><p>Make a JSON-RPC request to the MCP API.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>method</strong> – The JSON-RPC method to invoke.</p></li>
+<li><p><strong>params</strong> – The parameters to send to the RPC method.</p></li>
+<li><p><strong>req_id</strong> – A unique ID to send with the request. A random UUID will be used if this
+argument is unspecified; the ID will then be passed back in the response.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>The JSON-decoded response body; it will be a dictionary containing a
+“result” key with the response data.</p>
+</dd>
+</dl>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="pagerduty.ScimApiClient">
+<em class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">pagerduty.</span></span><span class="sig-name descname"><span class="pre">ScimApiClient</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">auth_method</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="#pagerduty.auth_method.AuthMethod" title="pagerduty.auth_method.AuthMethod"><span class="pre">AuthMethod</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">debug</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#pagerduty.ScimApiClient" title="Link to this definition"></a></dt>
+<dd><p>Client class for the PagerDuty SCIM API.</p>
+<p>This class features a method <a class="reference internal" href="#pagerduty.ScimApiClient.list_users" title="pagerduty.ScimApiClient.list_users"><code class="xref py py-attr docutils literal notranslate"><span class="pre">list_users</span></code></a> that provides an interface for
+retrieving all users that match a given filter.</p>
+<p>Other endpoints of the PagerDuty SCIM API can be accessed through the standard
+methods named after the HTTP methods.</p>
+<p>Usage example:</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="c1"># Import and use OAuthTokenAuthMethod instead of TokenAuthMethod to use an</span>
+<span class="c1"># application OAuth token:</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">pagerduty</span><span class="w"> </span><span class="kn">import</span> <span class="p">(</span>
+    <span class="n">ScimApiClient</span><span class="p">,</span>
+    <span class="n">TokenAuthMethod</span>
+<span class="p">)</span>
+
+<span class="c1"># Instantiate:</span>
+<span class="n">client</span> <span class="o">=</span> <span class="n">ScimApiClient</span><span class="p">(</span><span class="n">TokenAuthMethod</span><span class="p">(</span><span class="n">API_KEY</span><span class="p">))</span>
+
+<span class="n">scim_users</span> <span class="o">=</span> <span class="n">client</span><span class="o">.</span><span class="n">list_users</span><span class="p">()</span>
+
+<span class="n">create_users_response</span> <span class="o">=</span> <span class="n">client</span><span class="o">.</span><span class="n">post</span><span class="p">(</span>
+    <span class="s1">&#39;/Users&#39;</span><span class="p">,</span>
+    <span class="n">json</span> <span class="o">=</span> <span class="p">{</span>
+        <span class="o">...</span>
+    <span class="p">}</span>
+<span class="p">)</span>
+<span class="k">if</span> <span class="n">create_users_response</span><span class="o">.</span><span class="n">status</span> <span class="o">==</span> <span class="mi">201</span><span class="p">:</span>
+    <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;User successfully created&quot;</span><span class="p">)</span>
+
+<span class="n">scim_user_dict</span> <span class="o">=</span> <span class="n">create_users_response</span><span class="o">.</span><span class="n">json</span><span class="p">()</span>
+</pre></div>
+</div>
+<dl class="py method">
+<dt class="sig sig-object py" id="pagerduty.ScimApiClient.list_users">
+<span class="sig-name descname"><span class="pre">list_users</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">fltr</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">start_index</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">1</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">page_size</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">100</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">List</span><span class="p"><span class="pre">[</span></span><span class="pre">dict</span><span class="p"><span class="pre">]</span></span></span></span><a class="headerlink" href="#pagerduty.ScimApiClient.list_users" title="Link to this definition"></a></dt>
+<dd><p>List all users using SCIM API with automatic pagination.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>fltr</strong> – Optional SCIM filter expression to limit results</p></li>
+<li><p><strong>start_index</strong> – The 1-based index of the first result to return (SCIM standard)</p></li>
+<li><p><strong>page_size</strong> – Number of results per page (default 100)</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>List of all user entries from the SCIM Users endpoint</p>
+</dd>
+</dl>
+</dd></dl>
+
 </dd></dl>
 
 </section>

@@ -50,6 +50,12 @@ this library are imported into the root namespace of the module. For example:
 .. autoclass:: pagerduty.SlackIntegrationConnectionsApiClient
     :members:
 
+.. autoclass:: pagerduty.McpApiClient
+    :members:
+
+.. autoclass:: pagerduty.ScimApiClient
+    :members:
+
 AuthMethod Classes
 ------------------
 Constructing an API client requires setting its ``auth_method`` property to an
