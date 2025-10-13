@@ -17,13 +17,22 @@ from . common import (
 
 from . api_client import ApiClient
 
+from . errors import (
+    Error,
+    HttpError,
+    ServerHttpError,
+    UrlError
+)
+
 from . events_api_v2_client import (
     EventsApiV2Client,
     RoutingKeyAuthMethod
 )
 
+from . jira_cloud_integration_api_client import JiraCloudIntegrationApiClient
+from . jira_server_integration_api_client import JiraServerIntegrationApiClient
 from . mcp_api_client import McpApiClient
-
+from . ms_teams_integration_api_client import MsTeamsIntegrationApiClient
 from . oauth_token_client import OAuthTokenClient
 
 from . rest_api_v2_base_client import (
@@ -49,18 +58,9 @@ from . rest_api_v2_client import (
     entity_wrappers
 )
 
-from . jira_cloud_integration_api_client import JiraCloudIntegrationApiClient
-from . jira_server_integration_api_client import JiraServerIntegrationApiClient
-from . ms_teams_integration_api_client import MsTeamsIntegrationApiClient
+from . scim_api_client import ScimApiClient
 from . slack_integration_api_client import SlackIntegrationApiClient
 from . slack_integration_connections_api_client import SlackIntegrationConnectionsApiClient
-
-from . errors import (
-    Error,
-    HttpError,
-    ServerHttpError,
-    UrlError
-)
 
 # For backwards compatibility, __all__ currently includes all of the above. This should
 # eventually be cleaned up so that it includes only the most-used interfaces, i.e.
@@ -86,6 +86,7 @@ __all__ = [
     'RestApiV2BaseClient',
     'RestApiV2Client',
     'RoutingKeyAuthMethod',
+    'ScimApiClient',
     'ServerHttpError',
     'SlackIntegrationApiClient',
     'SlackIntegrationConnectionsApiClient',
