@@ -25,8 +25,20 @@ class ScimApiClient(ApiClient):
         )
 
         # Instantiate:
-        auth_method = TokenAuthMethod(API_KEY)
-        client = ScimApiClient(auth_method)
+        client = ScimApiClient(TokenAuthMethod(API_KEY))
+
+        scim_users = client.list_users()
+
+        create_users_response = client.post(
+            '/Users',
+            json = {
+                ...
+            }
+        )
+        if create_users_response.status == 201:
+            print("User successfully created")
+
+        scim_user_dict = create_users_response.json()
 
     """
 
