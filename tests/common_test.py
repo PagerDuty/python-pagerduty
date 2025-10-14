@@ -7,7 +7,7 @@ from mocks import Response
 
 import pagerduty
 
-class SessionTest(unittest.TestCase):
+class ClientTest(unittest.TestCase):
     def assertDictContainsSubset(self, d0, d1):
         self.assertTrue(set(d0.keys()).issubset(set(d1.keys())),
             msg="First dict is not a subset of second dict")

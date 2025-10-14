@@ -1,9 +1,9 @@
 [project]
 name = "pagerduty"
-version = "5.3.0"
+version = "6.0.0"
 description = "Clients for PagerDuty's Public APIs"
 requires-python = ">=3.6"
-dependencies = ["certifi", "requests", "urllib3"]
+dependencies = ["certifi", "httpx"]
 maintainers = [
   {name = "Demitri Morgan", email = "demitri@pagerduty.com"},
   {name = "Mandi Walls", email = "mwalls@pagerduty.com"},

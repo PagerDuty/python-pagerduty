@@ -14,7 +14,7 @@ from warnings import warn
 from json.decoder import JSONDecodeError
 
 # PyPI
-from requests import Response
+from httpx import Response
 
 # Local
 from . errors import (

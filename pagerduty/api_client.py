@@ -9,11 +9,12 @@ from typing import Optional, Union
 from warnings import warn
 
 # PyPI
-from requests import Response, Session
-from requests import __version__ as REQUESTS_VERSION
-from requests.exceptions import RequestException
-from urllib3.exceptions import PoolError
-from urllib3.exceptions import HTTPError as Urllib3HttpError
+from httpx import __version__ as HTTPX_VERSION
+from httpx import (
+    Client,
+    TransportError,
+    Response
+)
 
 # Local
 from . auth_method import AuthMethod
@@ -27,11 +28,11 @@ from . common import (
     normalize_url
 )
 
-class ApiClient(Session):
+class ApiClient(Client):
     """
     Base class for making HTTP requests to PagerDuty APIs
 
-    This is an opinionated wrapper of `requests.Session`_, with a few additional
+    This is an opinionated wrapper of `httpx.Client`_, with a few additional
     features:
 
     - The client will reattempt the request with auto-increasing cooldown/retry
@@ -75,7 +76,7 @@ class ApiClient(Session):
     """
 
     parent = None
-    """The ``super`` object (`requests.Session`_)"""
+    """The ``super`` object (`httpx.Client`_)"""
 
     permitted_methods = ()
     """
@@ -101,7 +102,7 @@ class ApiClient(Session):
       encountered first), and then return the final response.
 
     The default behavior is to retry without limit on status 429, raise an
-    exception on a 401, and return the `requests.Response`_ object in any other case
+    exception on a 401, and return the `httpx.Response`_ object in any other case
     (assuming a HTTP response was received from the server).
     """
 
@@ -264,11 +265,11 @@ class ApiClient(Session):
             The path/URL to request. If it does not start with the base URL, the
             base URL will be prepended.
         :param **kwargs:
-            Custom keyword arguments to pass to ``requests.Session.request``.
+            Custom keyword arguments to pass to ``httpx.Client.request``.
         :type method: str
         :type url: str
         :returns:
-            The `requests.Response`_ object corresponding to the HTTP response
+            The `httpx.Response`_ object corresponding to the HTTP response
         """
         sleep_timer = self.sleep_timer
         network_attempts = 0
@@ -306,7 +307,7 @@ class ApiClient(Session):
             try:
                 response = self.parent.request(method, full_url, **req_kw)
                 self.postprocess(response)
-            except (Urllib3HttpError, PoolError, RequestException) as e:
+            except TransportError as e:
                 network_attempts += 1
                 if network_attempts > self.max_network_attempts:
                     error_msg = f"{endpoint}: Non-transient network " \
@@ -408,9 +409,9 @@ class ApiClient(Session):
 
     @property
     def user_agent(self) -> str:
-        return 'python-pagerduty/%s python-requests/%s Python/%d.%d'%(
+        return 'python-pagerduty/%s python-httpx/%s Python/%d.%d'%(
             __version__,
-            REQUESTS_VERSION,
+            HTTPX_VERSION,
             sys.version_info.major,
             sys.version_info.minor
         )

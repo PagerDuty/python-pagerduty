@@ -2,15 +2,15 @@ import copy
 import datetime
 import json
 import logging
-import requests
+import httpx
 import sys
 import unittest
 from datetime import timezone
 from typing import Optional
 from unittest.mock import Mock, MagicMock, patch, call
 
-from common_test import SessionTest
-from mocks import Response, Session
+from common_test import ClientTest
+from mocks import Client, Response
 
 import pagerduty
 from pagerduty.rest_api_v2_base_client import (
@@ -303,9 +303,9 @@ class FunctionDecoratorsTest(unittest.TestCase):
             {'incidents': incidents}
         )
 
-class RestApiV2ClientTest(SessionTest):
+class RestApiV2ClientTest(ClientTest):
 
-    @patch.object(requests.Session, 'request')
+    @patch.object(httpx.Client, 'request')
     def test_oauth_headers(self, request):
         access_token = 'randomly generated lol'
         for auth_type in ('bearer', 'oauth2'):
@@ -831,15 +831,15 @@ class RestApiV2ClientTest(SessionTest):
     @patch.object(pagerduty.RestApiV2Client, 'postprocess')
     def test_request(self, postprocess):
         sess = pagerduty.RestApiV2Client('12345')
-        parent = Session()
+        parent = Client()
         request = MagicMock()
         # Expected headers:
         headers_get = {
             'Accept': 'application/vnd.pagerduty+json;version=2',
             'Authorization': 'Token token=12345',
-            'User-Agent': 'python-pagerduty/%s python-requests/%s Python/%d.%d'%(
+            'User-Agent': 'python-pagerduty/%s python-httpx/%s Python/%d.%d'%(
                 pagerduty.__version__,
-                requests.__version__,
+                httpx.__version__,
                 sys.version_info.major,
                 sys.version_info.minor
             ),

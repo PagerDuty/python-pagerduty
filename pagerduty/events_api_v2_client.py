@@ -7,7 +7,7 @@ from typing import (
 )
 
 # PyPI
-from requests import Response
+from httpx import Response
 
 # Local
 from . api_client import ApiClient
@@ -32,7 +32,7 @@ class RoutingKeyAuthMethod(BodyParameterAuthMethod):
 class EventsApiV2Client(ApiClient):
 
     """
-    Session class for submitting events to the PagerDuty v2 Events API.
+    Client class for submitting events to the PagerDuty v2 Events API.
 
     Implements methods for submitting events to PagerDuty through the Events API,
     including change events, and inherits from :class:`pagerduty.ApiClient`.  For more

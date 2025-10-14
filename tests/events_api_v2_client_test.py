@@ -1,13 +1,13 @@
 from unittest.mock import Mock, MagicMock, patch, call
 
-from common_test import SessionTest
+from common_test import ClientTest
 from mocks import Response
 
 import pagerduty
 
 EVENT_TIMESTAMP = '2020-03-25T00:00:00Z'
 
-class EventsApiV2ClientTest(SessionTest):
+class EventsApiV2ClientTest(ClientTest):
 
     def test_send_event(self):
         sess = pagerduty.EventsApiV2Client('routingkey')

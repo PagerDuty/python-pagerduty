@@ -3,15 +3,15 @@ import json
 from unittest.mock import Mock, MagicMock, patch, call
 from json.decoder import JSONDecodeError
 
-class Session(object):
+class Client(object):
     """
-    Python reqeusts.Session mockery class
+    Python reqeusts.Client mockery class
     """
     request = None
     headers = None
 
 class Response(object):
-    """Specialized mock class for emulating requests.Response objects
+    """Specialized mock class for emulating httpx.Response objects
 
     Look for existing use of this class for examples on how to use.
     """

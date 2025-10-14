@@ -6,7 +6,7 @@ from typing import Optional, Tuple
 
 from copy import deepcopy
 
-from requests import Response
+from httpx import Response
 
 from . api_client import ApiClient
 from . auth_method import BodyParameterAuthMethod
