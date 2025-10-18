@@ -12,6 +12,7 @@ from warnings import warn
 from httpx import __version__ as HTTPX_VERSION
 from httpx import (
     Client,
+    Headers,
     TransportError,
     Response
 )
@@ -200,7 +201,17 @@ class ApiClient(Client):
 
     def prepare_headers(self, method: str, user_headers: Optional[dict] = None) -> dict:
         """
-        Append special additional per-request headers.
+        Append all necessary headers per-request.
+
+        The upstream client class `httpx.Client`_ will merge headers into the default
+        instance headers, so any defaults set by the end user in the mutable ``headers``
+        property will already be merged in, and the headers specified at request time
+        will take precendence.
+
+        This method just merges in the PagerDuty API client's defaults on a per-request
+        basis to avoid storing per-API header settings like API keys in drift-able
+        mutable stateful instance attributes, and to enforce the correct headers on each
+        request, especially where they might differ per-API / per request.
 
         :param method:
             The HTTP method, in upper case.
@@ -209,18 +220,18 @@ class ApiClient(Client):
         :returns:
             The final list of headers to use in the request
         """
-        # Utilize any defaults that the implementer has set via the upstream interface:
-        headers = deepcopy(self.headers)
+        headers = Headers({})
         # Override the default user-agent with the per-class user_agent property:
         headers['User-Agent'] = self.user_agent
-        # A universal convention: whenever sending a POST, PUT or PATCH, the
+        # A nearly universal convention: whenever sending a POST, PUT or PATCH, the
         # Content-Type header must be "application/json":
         if method in ('POST', 'PUT', 'PATCH'):
             headers['Content-Type'] = 'application/json'
-        # Add headers passed in per-request as an additional argument:
+        # Add headers passed in per-request as an additional argument, letting them take
+        # precedence over the defaults:
         if type(user_headers) is dict:
             headers.update(user_headers)
-        # Add authentication header, if the auth_method defines it:
+        # Add authentication header:
         headers.update(self.auth_method.auth_header)
         return headers
 
@@ -285,10 +296,14 @@ class ApiClient(Client):
 
         # Add in any headers specified in keyword arguments:
         headers = kwargs.get('headers', {})
+        # Add some defaults:
         req_kw.update({
             'headers': self.prepare_headers(method, user_headers=headers),
             'stream': False,
-            'timeout': self.timeout
+            'timeout': self.timeout,
+            'auth': None,
+            'follow_redirects': False,
+            'cookies': None
         })
 
         # Add authentication parameter, if the API requires it and it is a request type

@@ -6,10 +6,17 @@ class AuthMethod():
     """
     An abstract class for authentication methods.
 
-    We implement our own interface instead of using the upstream library's interface for
-    auth methods because it does not natively support all the different use cases needed
-    for supporting all of PagerDuty's public APIs, i.e. the ``Bearer`` method, or
-    placing the API credential into a parameter in the body of the request.
+    **Design note:** we currently still implement our own interface for API authentication
+    instead of making a custom ``httpx.AuthType`` (which would be more elegant and
+    require less bespoke code) because some of our APIs' authorization methods require
+    adding parameters to the body. Once the ``Request`` object has been instantiated,
+    its body is already encoded based on the ``json`` keyword argument to its
+    constructor. Therefore, it has no concept of "body parameters" that can be trivially
+    updated in the scope of ``AuthType.auth_flow()``, unless we were to implement our
+    own custom ``Request`` subclass that is aware of its body payload being a map-like
+    object and rewrite the :attr:`pagerduty.ApiClient.request` method to prepare and
+    send requests. Such a deep level of customization may make the client more brittle
+    to upstream changes.
 
     :param secret:
         The API credential to be used for authentication.

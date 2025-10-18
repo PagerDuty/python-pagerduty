@@ -10,7 +10,7 @@ EVENT_TIMESTAMP = '2020-03-25T00:00:00Z'
 class EventsApiV2ClientTest(ClientTest):
 
     def test_send_event(self):
-        sess = pagerduty.EventsApiV2Client('routingkey')
+        client = pagerduty.EventsApiV2Client('routingkey')
         parent = MagicMock()
         parent.request = MagicMock()
         parent.request.side_effect = [
@@ -18,8 +18,8 @@ class EventsApiV2ClientTest(ClientTest):
             Response(202, '{"dedup_key":"abc123"}'),
             Response(202, '{"dedup_key":"abc123"}')
         ]
-        with patch.object(sess, 'parent', new=parent):
-            ddk = sess.trigger('testing 123', 'triggered.from.pagerduty',
+        with patch.object(client, 'parent', new=parent):
+            ddk = client.trigger('testing 123', 'triggered.from.pagerduty',
                 custom_details={"this":"that"}, severity='warning',
                 images=[{'url':'https://http.cat/502.jpg'}])
             self.assertEqual('abc123', ddk)
@@ -29,11 +29,12 @@ class EventsApiV2ClientTest(ClientTest):
             self.assertEqual(
                 'https://events.pagerduty.com/v2/enqueue',
                 parent.request.call_args[0][1])
-            self.assertDictContainsSubset(
+            print(parent.request.call_args)
+            self.assertDictContainsCaseInsensitiveSubset(
                 {'Content-Type': 'application/json'},
                 parent.request.call_args[1]['headers'])
             self.assertNotIn(
-                'X-Routing-Key',
+                'x-routing-key',
                 parent.request.call_args[1]['headers'])
             self.assertEqual(
                 {
@@ -48,7 +49,7 @@ class EventsApiV2ClientTest(ClientTest):
                     'images': [{'url':'https://http.cat/502.jpg'}]
                 },
                 parent.request.call_args[1]['json'])
-            ddk = sess.resolve('abc123')
+            ddk = client.resolve('abc123')
             self.assertEqual(
                 {
                     'event_action':'resolve',
@@ -57,7 +58,7 @@ class EventsApiV2ClientTest(ClientTest):
                 },
                 parent.request.call_args[1]['json'])
 
-            ddk = sess.acknowledge('abc123')
+            ddk = client.acknowledge('abc123')
             self.assertEqual(
                 {
                     'event_action':'acknowledge',
@@ -69,12 +70,12 @@ class EventsApiV2ClientTest(ClientTest):
     def test_send_explicit_event(self):
         # test sending an event by calling `post` directly as opposed to any of
         # the methods written into the client for sending events
-        sess = pagerduty.EventsApiV2Client('routingkey')
+        client = pagerduty.EventsApiV2Client('routingkey')
         parent = MagicMock()
         parent.request = MagicMock()
         parent.request.side_effect = [Response(202, '{"dedup_key":"abc123"}')]
-        with patch.object(sess, 'parent', new=parent):
-            response = sess.post('/v2/enqueue', json={
+        with patch.object(client, 'parent', new=parent):
+            response = client.post('/v2/enqueue', json={
                 'payload': {
                     'summary': 'testing 123',
                     'source': 'pagerduty integration',
@@ -88,15 +89,15 @@ class EventsApiV2ClientTest(ClientTest):
 
     @patch('pagerduty.EventsApiV2Client.event_timestamp', EVENT_TIMESTAMP)
     def test_submit_change_event(self):
-        sess = pagerduty.EventsApiV2Client('routingkey')
+        client = pagerduty.EventsApiV2Client('routingkey')
         parent = MagicMock()
         parent.request = MagicMock()
         # The dedup key for change events is unused so we don't care about the response
         # schema, only that it is valid JSON:
         parent.request.side_effect = [ Response(202, '{}') ]
-        with patch.object(sess, 'parent', new=parent):
+        with patch.object(client, 'parent', new=parent):
             self.assertEqual(
-                sess.submit(
+                client.submit(
                     'testing 123',
                     'triggered.from.pagerduty',
                     custom_details={"this":"that"},
@@ -110,7 +111,7 @@ class EventsApiV2ClientTest(ClientTest):
             self.assertEqual(
                 'https://events.pagerduty.com/v2/change/enqueue',
                 parent.request.call_args[0][1])
-            self.assertDictContainsSubset(
+            self.assertDictContainsCaseInsensitiveSubset(
                 {'Content-Type': 'application/json'},
                 parent.request.call_args[1]['headers'])
             self.assertNotIn(
@@ -129,14 +130,14 @@ class EventsApiV2ClientTest(ClientTest):
                 },
                 parent.request.call_args[1]['json'])
         # Same as above but with a custom timestamp:
-        sess = pagerduty.EventsApiV2Client('routingkey')
+        client = pagerduty.EventsApiV2Client('routingkey')
         parent = MagicMock()
         parent.request = MagicMock()
         parent.request.side_effect = [ Response(202, '{}') ]
-        with patch.object(sess, 'parent', new=parent):
+        with patch.object(client, 'parent', new=parent):
             custom_timestamp = '2023-06-26T00:00:00Z'
             self.assertEqual(
-                    sess.submit(
+                    client.submit(
                     'testing 123',
                     'triggered.from.pagerduty',
                     custom_details={"this":"that"},
@@ -152,19 +153,19 @@ class EventsApiV2ClientTest(ClientTest):
 
     @patch('pagerduty.EventsApiV2Client.event_timestamp', EVENT_TIMESTAMP)
     def test_submit_lite_change_event(self):
-        sess = pagerduty.EventsApiV2Client('routingkey')
+        client = pagerduty.EventsApiV2Client('routingkey')
         parent = MagicMock()
         parent.request = MagicMock()
         parent.request.side_effect = [ Response(202, '{}') ]
-        with patch.object(sess, 'parent', new=parent):
-            sess.submit('testing 123')
+        with patch.object(client, 'parent', new=parent):
+            client.submit('testing 123')
             self.assertEqual(
                 'POST',
                 parent.request.call_args[0][0])
             self.assertEqual(
                 'https://events.pagerduty.com/v2/change/enqueue',
                 parent.request.call_args[0][1])
-            self.assertDictContainsSubset(
+            self.assertDictContainsCaseInsensitiveSubset(
                 {'Content-Type': 'application/json'},
                 parent.request.call_args[1]['headers'])
             self.assertNotIn(
