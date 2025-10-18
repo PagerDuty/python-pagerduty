@@ -3,7 +3,7 @@ name = "pagerduty"
 version = "6.0.0"
 description = "Clients for PagerDuty's Public APIs"
 requires-python = ">=3.6"
-dependencies = ["certifi", "httpx"]
+dependencies = ["httpx"]
 maintainers = [
   {name = "Demitri Morgan", email = "demitri@pagerduty.com"},
   {name = "Mandi Walls", email = "mwalls@pagerduty.com"},
