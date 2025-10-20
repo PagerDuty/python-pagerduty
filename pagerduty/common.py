@@ -130,7 +130,7 @@ def http_error_message(r: Response, context: Optional[str] = None) -> str:
     context_msg = ""
     if type(context) is str:
         context_msg=f" in {context}"
-    if received_http_response and not r.ok:
+    if received_http_response and not r.is_success:
         err_type = 'unknown'
         if r.status_code / 100 == 4:
             err_type = 'client'
@@ -271,7 +271,7 @@ def successful_response(r: Response, context: Optional[str] = None) -> Response:
     :returns:
         The response object, if it was successful
     """
-    if r.ok and bool(r.status_code):
+    if r.is_success and bool(r.status_code):
         return r
     elif r.status_code / 100 == 5:
         raise ServerHttpError(http_error_message(r, context=context), r)

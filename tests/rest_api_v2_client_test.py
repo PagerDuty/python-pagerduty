@@ -882,9 +882,8 @@ class RestApiV2ClientTest(ClientTest):
             headers = headers_get.copy()
             request.assert_called_once_with('GET',
                 'https://api.pagerduty.com/users',
-                headers=client.prepare_headers('GET'),
-                stream=False, timeout=pagerduty.TIMEOUT, auth=None,
-                follow_redirects=False, cookies=None)
+                headers=client.prepare_headers('GET'), timeout=pagerduty.TIMEOUT,
+                auth=None, follow_redirects=False, cookies=None)
             request.reset_mock()
 
             # Test POST/PUT (in terms of code coverage they're identical)
@@ -892,9 +891,9 @@ class RestApiV2ClientTest(ClientTest):
             client.request('post', 'users', json={'user':user})
             request.assert_called_once_with(
                 'POST', 'https://api.pagerduty.com/users',
-                headers=client.prepare_headers('POST'),
-                json={'user':user}, stream=False, timeout=pagerduty.TIMEOUT, auth=None,
-                follow_redirects=False, cookies=None)
+                headers=client.prepare_headers('POST'), json={'user':user},
+                timeout=pagerduty.TIMEOUT, auth=None, follow_redirects=False,
+                cookies=None)
             request.reset_mock()
 
             # Test GET with parameters and using a HTTP verb method
@@ -903,7 +902,7 @@ class RestApiV2ClientTest(ClientTest):
             r = client.get('/users', params=user_query)
             request.assert_called_once_with(
                 'GET', 'https://api.pagerduty.com/users',
-                headers=client.prepare_headers('GET'), params=user_query, stream=False,
+                headers=client.prepare_headers('GET'), params=user_query,
                 follow_redirects=False, timeout=pagerduty.TIMEOUT, auth=None,
                 cookies=None, extensions=None)
             request.reset_mock()
@@ -918,8 +917,8 @@ class RestApiV2ClientTest(ClientTest):
             request.assert_called_once_with(
                 'GET', 'https://api.pagerduty.com/users',
                 params=modified_user_query, headers=client.prepare_headers('GET'),
-                cookies=None, stream=False, follow_redirects=False,
-                timeout=pagerduty.TIMEOUT, extensions=None, auth=None)
+                cookies=None, follow_redirects=False, timeout=pagerduty.TIMEOUT,
+                extensions=None, auth=None)
             request.reset_mock()
 
             # Test a POST request with additional headers
@@ -932,8 +931,8 @@ class RestApiV2ClientTest(ClientTest):
                 'https://api.pagerduty.com/users/PD6LYSO/future_endpoint',
                 content=None, data=None, files=None, json={'user': user}, params=None,
                 headers=client.prepare_headers('POST', user_headers=headers_special),
-                stream=False, timeout=pagerduty.TIMEOUT, follow_redirects=False,
-                extensions=None, auth=None, cookies=None)
+                timeout=pagerduty.TIMEOUT, follow_redirects=False, extensions=None,
+                auth=None, cookies=None)
             request.reset_mock()
 
             # Test hitting the rate limit

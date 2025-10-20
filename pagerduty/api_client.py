@@ -299,7 +299,6 @@ class ApiClient(Client):
         # Add some defaults:
         req_kw.update({
             'headers': self.prepare_headers(method, user_headers=headers),
-            'stream': False,
             'timeout': self.timeout,
             'auth': None,
             'follow_redirects': False,
@@ -338,7 +337,7 @@ class ApiClient(Client):
 
             status = response.status_code
             retry_logic = self.retry.get(status, 0)
-            if not response.ok and retry_logic != 0:
+            if not response.is_success and retry_logic != 0:
                 # Take special action as defined by the retry logic
                 if retry_logic != -1:
                     # Retry a specific number of times (-1 implies infinite)

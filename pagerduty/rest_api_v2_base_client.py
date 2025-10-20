@@ -965,7 +965,7 @@ class RestApiV2BaseClient(ApiClient):
         :type suffix: str or None
         """
         method = response.request.method.upper()
-        url = response.request.url
+        url = str(response.request.url)
         status = response.status_code
         request_date = response.headers.get('date', '(missing header)')
         request_id = response.headers.get('x-request-id', '(missing header)')
