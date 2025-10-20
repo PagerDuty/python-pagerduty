@@ -127,7 +127,7 @@ class ApiClient(Client):
 
     timeout = TIMEOUT
     """
-    This is the value sent to `Requests`_ as the ``timeout`` parameter that
+    This is the value sent to `HTTPX`_ as the ``timeout`` parameter that
     determines the TCP read timeout.
     """
 

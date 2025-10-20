@@ -6,14 +6,14 @@
   <meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" />
 
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Changelog &mdash; python-pagerduty 5.3.0 documentation</title>
+  <title>Changelog &mdash; python-pagerduty 6.0.0 documentation</title>
       <link rel="stylesheet" type="text/css" href="_static/pygments.css?v=03e43079" />
       <link rel="stylesheet" type="text/css" href="_static/css/theme.css?v=e59714d7" />
 
   
       <script src="_static/jquery.js?v=5d32c60e"></script>
       <script src="_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
-      <script src="_static/documentation_options.js?v=5c0b1849"></script>
+      <script src="_static/documentation_options.js?v=12958129"></script>
       <script src="_static/doctools.js?v=9bcbadda"></script>
       <script src="_static/sphinx_highlight.js?v=dc90522c"></script>
     <script src="_static/js/theme.js"></script>
@@ -76,6 +76,29 @@
              
   <section id="changelog">
 <h1>Changelog<a class="headerlink" href="#changelog" title="Link to this heading"></a></h1>
+<p><strong>2025-10-21: 6.0.0: Change upstream HTTP client to python-httpx</strong></p>
+<p>The underlying HTTP client on which this library is based has been changed to <a class="reference external" href="https://www.python-httpx.org">python-httpx</a>. The primary motivation of this change is to provide thread safety with a very similar interface to <code class="docutils literal notranslate"><span class="pre">requests</span></code>, and the possibility to add support for asynchronous usage in future releases.</p>
+<ul class="simple">
+<li><dl class="simple">
+<dt><strong>Breaking Changes:</strong> beyond the fact of the superclass changing:</dt><dd><ul>
+<li><p>The <code class="docutils literal notranslate"><span class="pre">proxies</span></code> property no longer exists in client classes, and proxy configuration must be passed to the constructor in one of the <code class="docutils literal notranslate"><span class="pre">proxy</span></code> or <code class="docutils literal notranslate"><span class="pre">mounts</span></code> keyword arguments.</p></li>
+<li><p>Response objects no longer have an <code class="docutils literal notranslate"><span class="pre">ok</span></code> property; use <code class="docutils literal notranslate"><span class="pre">is_success</span></code> instead.</p></li>
+<li><dl class="simple">
+<dt>Deprecated properties and methods have been removed:</dt><dd><ul>
+<li><p><code class="docutils literal notranslate"><span class="pre">ApiClient.auth_header</span></code></p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">RestApiV2BaseClient.after_set_api_key</span></code></p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">RestApiV2BaseClient.api_key</span></code></p></li>
+</ul>
+</dd>
+</dl>
+</li>
+<li><p>The deprecated keyword argument <code class="docutils literal notranslate"><span class="pre">routing_key</span></code> to <code class="docutils literal notranslate"><span class="pre">EventsApiV2Client.send_change_event</span></code> has been removed.</p></li>
+<li><p>Support for the deprecated Response Plays API has been removed from <code class="docutils literal notranslate"><span class="pre">RestApiV2Client</span></code>.</p></li>
+</ul>
+</dd>
+</dl>
+</li>
+</ul>
 <p><strong>2025-10-23: 5.3.0: New AuthMethod class for verbatim authorization header setting</strong></p>
 <ul class="simple">
 <li><p>New authentication method class <code class="docutils literal notranslate"><span class="pre">PassThruHeaderAuthMethod</span></code> that treats the secret as the whole content of the <code class="docutils literal notranslate"><span class="pre">Authorization</span></code> header.</p></li>
