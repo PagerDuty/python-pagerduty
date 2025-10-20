@@ -1060,11 +1060,6 @@ class RestApiV2ClientTest(ClientTest):
         rget.return_value = [{'html_url': 'https://another-one.pagerduty.com'}]
         self.assertEqual('another-one', client.subdomain)
 
-        # also with the deprecated access methods
-        client.api_key = 'so-secret'
-        self.assertEqual(None, client._subdomain)
-        rget.return_value = [{'html_url': 'https://dj-khaled.pagerduty.com'}]
-        self.assertEqual('dj-khaled', client.subdomain)
 
     def test_truncated_key(self):
         client = pagerduty.RestApiV2Client('abcd1234')
@@ -1086,7 +1081,3 @@ class RestApiV2ClientTest(ClientTest):
             client.auth_method.auth_header['Authorization'],
             "Bearer hello-there"
         )
-
-        client.api_key = 'hiya'
-        self.assertEqual('hiya', client.auth_method.secret)
-        self.assertEqual(client.auth_method.auth_header['Authorization'], "Bearer hiya")
