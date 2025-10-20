@@ -160,7 +160,7 @@ constructor is the secret to use for accessing the API:</p>
 <span class="n">events_client</span> <span class="o">=</span> <span class="n">pagerduty</span><span class="o">.</span><span class="n">EventsApiV2Client</span><span class="p">(</span><span class="n">ROUTING_KEY</span><span class="p">)</span>
 </pre></div>
 </div>
-<p>Session objects, being descendants of <a class="reference external" href="https://www.python-httpx.org/api/#client">httpx.Session</a>, can also be used as
+<p>Client objects, being descendants of <a class="reference external" href="https://www.python-httpx.org/api/#client">httpx.Client</a>, can also be used as
 context managers. For example:</p>
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="k">with</span> <span class="n">pagerduty</span><span class="o">.</span><span class="n">RestApiV2Client</span><span class="p">(</span><span class="n">API_KEY</span><span class="p">)</span> <span class="k">as</span> <span class="n">client</span><span class="p">:</span>
     <span class="n">do_application</span><span class="p">(</span><span class="n">client</span><span class="p">)</span>
@@ -469,12 +469,17 @@ also are based on inherit the features of <a class="reference internal" href="mo
 </section>
 <section id="generic-client-features">
 <h2>Generic Client Features<a class="headerlink" href="#generic-client-features" title="Link to this heading"></a></h2>
-<p>Generally, all of the features of <a class="reference external" href="https://www.python-httpx.org/api/#client">httpx.Session</a> are available to the user
+<p>Generally, all of the features of <a class="reference external" href="https://www.python-httpx.org/api/#client">httpx.Client</a> are available to the user
 as they would be if using the <a class="reference external" href="https://www.python-httpx.org">HTTPX</a> Python library directly, since
 <a class="reference internal" href="module_reference.html#pagerduty.ApiClient" title="pagerduty.ApiClient"><code class="xref py py-class docutils literal notranslate"><span class="pre">pagerduty.ApiClient</span></code></a> and its subclasses for the REST/Events APIs are
 descendants of it.</p>
+<p>Generally, all client classes pass along all keyword arguments at the end of
+their constructor function signatures (the splat-operator catch-all <code class="docutils literal notranslate"><span class="pre">**kw</span></code>)
+to the constructor of the superclass. Any keyword arguments not specifically
+named in the function signature will be passed along in this way, allowing users
+to pass additional options to <a class="reference external" href="https://www.python-httpx.org/api/#client">httpx.Client</a>.</p>
 <p>The <code class="docutils literal notranslate"><span class="pre">get</span></code>, <code class="docutils literal notranslate"><span class="pre">post</span></code>, <code class="docutils literal notranslate"><span class="pre">put</span></code> and <code class="docutils literal notranslate"><span class="pre">delete</span></code> methods of REST/Events API
-client classes are similar to the analogous functions in <a class="reference external" href="https://www.python-httpx.org/api/#client">httpx.Session</a>.
+client classes are similar to the analogous functions in <a class="reference external" href="https://www.python-httpx.org/api/#client">httpx.Client</a>.
 The arguments they accept are the same and they all return <a class="reference external" href="https://www.python-httpx.org/api/#response">httpx.Response</a>
 objects.</p>
 <p>Any keyword arguments passed to the <code class="docutils literal notranslate"><span class="pre">j*</span></code> or <code class="docutils literal notranslate"><span class="pre">r*</span></code> methods will be passed
@@ -906,10 +911,11 @@ production systems.</p>
 <h2>Using a Proxy Server<a class="headerlink" href="#using-a-proxy-server" title="Link to this heading"></a></h2>
 <p>Client classes pass <code class="docutils literal notranslate"><span class="pre">proxy</span></code> and <code class="docutils literal notranslate"><span class="pre">mounts</span></code> keyword arguments through to the
 constructor of the superclass, thus allowing them to be used as described in:
-<a class="reference external" href="https://www.python-httpx.org/advanced/proxies/">HTTPX: Proxies</a>.</p>
-<p>Generally, all client classes pass all additional keyword arguments not
-explicitly named in the function definition to <code class="docutils literal notranslate"><span class="pre">httpx.Client</span></code> during
-<code class="docutils literal notranslate"><span class="pre">__init__</span></code>.</p>
+<a class="reference external" href="https://www.python-httpx.org/advanced/proxies/">HTTPX: Proxies</a>. For example:</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="c1"># To tunnel traffic through HTTP proxy at 192.168.1.2:8080 i.e. via CONNECT:</span>
+<span class="n">client</span> <span class="o">=</span> <span class="n">pagerduty</span><span class="o">.</span><span class="n">RestApiV2Client</span><span class="p">(</span><span class="n">API_KEY</span><span class="p">,</span> <span class="n">proxy</span><span class="o">=</span><span class="s1">&#39;http://192.168.1.2:8080&#39;</span><span class="p">)</span>
+</pre></div>
+</div>
 <p><strong>In Versions Prior to 6.0.0:</strong> To configure the client to use a host as a
 proxy for HTTPS traffic, update the <code class="docutils literal notranslate"><span class="pre">proxies</span></code> attribute:</p>
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="c1"># Host 10.42.187.3 port 4012 protocol https:</span>
@@ -919,7 +925,7 @@ proxy for HTTPS traffic, update the <code class="docutils literal notranslate"><
 </section>
 <section id="http-retry-configuration">
 <h2>HTTP Retry Configuration<a class="headerlink" href="#http-retry-configuration" title="Link to this heading"></a></h2>
-<p>Session objects support retrying API requests if they receive a non-success
+<p>Client objects support retrying API requests if they receive a non-success
 response or if they encounter a network error.</p>
 <p>This behavior is configurable through the following properties:</p>
 <ul class="simple">
