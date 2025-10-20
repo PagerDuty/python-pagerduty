@@ -8,7 +8,6 @@ This is a topical guide to general API client usage. :ref:`module_reference`
 has in-depth documentation on client classes and methods.
 
 
-
 Installation
 ------------
 This library is available on the Python Package Index as `pagerduty <https://pypi.org/project/pagerduty/>`_, e.g.: 
@@ -47,7 +46,7 @@ constructor is the secret to use for accessing the API:
     # Events API v2, including change events:
     events_client = pagerduty.EventsApiV2Client(ROUTING_KEY)
 
-Session objects, being descendants of `requests.Session`_, can also be used as
+Session objects, being descendants of `httpx.Session`_, can also be used as
 context managers. For example:
 
 .. code-block:: python
@@ -217,7 +216,7 @@ and having them represented as a dictionary object using three different methods
     # Using get:
     response = client.get('/users/PABC123')
     user = None
-    if response.ok:
+    if response.is_success:
         user = response.json()['user']
 
     # Using jget (return the full body after decoding):
@@ -239,7 +238,7 @@ and having them represented as a dictionary object using three different methods
         print(user['id'], user['email'], user['name'])
 
 **Pagination with query parameters:** set the ``params`` keyword argument, which is
-converted to URL query parameters by Requests_:
+converted to URL query parameters by HTTPX_:
 
 .. code-block:: python
 
@@ -290,7 +289,7 @@ that supports classic pagination:
             'name': 'Jane Doe'
         }
     })
-    if response.ok:
+    if response.is_success:
         updated_user = response.json()['user']
 
     # (2) using rput:
@@ -404,22 +403,22 @@ also are based on inherit the features of :class:`pagerduty.RestApiV2BaseClient`
 
 Generic Client Features
 -----------------------
-Generally, all of the features of `requests.Session`_ are available to the user
-as they would be if using the Requests Python library directly, since
+Generally, all of the features of `httpx.Session`_ are available to the user
+as they would be if using the `HTTPX`_ Python library directly, since
 :class:`pagerduty.ApiClient` and its subclasses for the REST/Events APIs are
 descendants of it. 
 
 The ``get``, ``post``, ``put`` and ``delete`` methods of REST/Events API
-client classes are similar to the analogous functions in `requests.Session`_.
-The arguments they accept are the same and they all return `requests.Response`_
+client classes are similar to the analogous functions in `httpx.Session`_.
+The arguments they accept are the same and they all return `httpx.Response`_
 objects.
 
 Any keyword arguments passed to the ``j*`` or ``r*`` methods will be passed
-through to the analogous method in Requests_, though in some cases the
+through to the analogous method in HTTPX_, though in some cases the
 arguments (i.e. ``json``) are first modified.
 
 For documentation on any generic HTTP client features that are available, refer
-to the Requests_ documentation.
+to the HTTPX_ documentation.
 
 URLs
 ----
@@ -440,7 +439,7 @@ value at its ``self`` key will be used as the request URL.
 
 Query Parameters
 ----------------
-As with `Requests`_, there is no need to compose the query string (everything
+As with `HTTPX`_, there is no need to compose the query string (everything
 that will follow ``?`` in the URL). Simply set the ``params`` keyword argument
 to a dictionary, and each of the key/value pairs will be serialized to the
 query string in the final URL of the request:
@@ -480,7 +479,7 @@ To set the request body in a post or put request, pass as the ``json`` keyword
 argument an object that will be JSON-encoded as the body.
 
 To obtain the response from the API, if using plain ``get``, ``post``, ``put``
-or ``delete``, use the returned `requests.Response`_ object. That object's
+or ``delete``, use the returned `httpx.Response`_ object. That object's
 ``json()`` method will return the result of JSON-decoding the response body (it
 will typically of type ``dict``). Other metadata such as headers can also be
 obtained:
@@ -497,7 +496,7 @@ will be the full body of the response from the API after JSON-decoding, and
 the ``json`` keyword argument is not modified.
 
 When using the ``r*`` methods, the ``json`` keyword argument is modified before
-sending to Requests_, if necessary, to encapsulate the body inside an entity
+sending to HTTPX_, if necessary, to encapsulate the body inside an entity
 wrapper.  The response is the decoded body after unwrapping, if the API
 endpoint returns wrapped entities. For more details, refer to :ref:`wrapping`.
 
@@ -827,7 +826,7 @@ exception raised by the underlying HTTP library.
 
 All errors that involve a response from the API are instances of
 :class:`pagerduty.HttpError` and will have a ``response`` property containing
-the `requests.Response`_ object. Its subclass
+the `httpx.Response`_ object. Its subclass
 :class:`pagerduty.HttpServerError` is used for special cases when the API is
 responding in an unexpected way.
 
@@ -889,8 +888,16 @@ production systems.
 
 Using a Proxy Server
 --------------------
-To configure the client to use a host as a proxy for HTTPS traffic, update the
-``proxies`` attribute:
+Client classes pass ``proxy`` and ``mounts`` keyword arguments through to the
+constructor of the superclass, thus allowing them to be used as described in:
+`HTTPX: Proxies <https://www.python-httpx.org/advanced/proxies/>`_.
+
+Generally, all client classes pass all additional keyword arguments not
+explicitly named in the function definition to ``httpx.Client`` during
+``__init__``.
+
+**In Versions Prior to 6.0.0:** To configure the client to use a host as a
+proxy for HTTPS traffic, update the ``proxies`` attribute:
 
 .. code-block:: python
 
@@ -920,7 +927,7 @@ will immediately raise :attr:`pagerduty.HttpError`; this is a non-transient erro
 caused by an invalid credential.
 
 For all other success or error statuses, the underlying request method in the
-client will return the `requests.Response`_ object.
+client will return the `httpx.Response`_ object.
 
 Exponential Cooldown
 ********************
@@ -961,7 +968,7 @@ supersede the maximum number of retries for any status defined in
 :attr:`pagerduty.ApiClient.retry` if it is lower.
 
 Low-level HTTP request functions in client classes, i.e. ``get``, will return
-`requests.Response`_ objects when they run out of retries. Higher-level
+`httpx.Response`_ objects when they run out of retries. Higher-level
 functions that require a success status response, i.e.
 :attr:`pagerduty.RestApiV2Client.list_all` and
 :attr:`pagerduty.EventsApiV2Client.trigger`, will raise instances of
@@ -989,12 +996,12 @@ reached in the underlying HTTP request methods.
 .. References:
 .. -----------
 
-.. _`Requests`: https://docs.python-requests.org/en/master/
+.. _`HTTPX`: https://www.python-httpx.org
 .. _`Errors`: https://developer.pagerduty.com/docs/ZG9jOjExMDI5NTYz-errors
 .. _`Events API v2`: https://developer.pagerduty.com/docs/ZG9jOjExMDI5NTgw-events-api-v2-overview
 .. _`PagerDuty API Reference`: https://developer.pagerduty.com/api-reference/
 .. _`REST API v2`: https://developer.pagerduty.com/docs/ZG9jOjExMDI5NTUw-rest-api-v2-overview
-.. _requests.Response: https://docs.python-requests.org/en/master/api/#requests.Response
-.. _requests.Session: https://docs.python-requests.org/en/master/api/#request-sessions
+.. _httpx.Response: https://www.python-httpx.org/api/#response
+.. _httpx.Session: https://www.python-httpx.org/api/#client
 .. _`resource references`: https://developer.pagerduty.com/docs/resource-references
 .. _`REST API v2 Overview`: https://developer.pagerduty.com/docs/rest-api-overview

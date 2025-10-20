@@ -134,6 +134,6 @@ able to repurpose them in APIs that follow similar conventions.
 .. References:
 .. -----------
 
-.. _`Requests`: https://docs.python-requests.org/en/master/
-.. _requests.Response: https://docs.python-requests.org/en/master/api/#requests.Response
-.. _requests.Session: https://docs.python-requests.org/en/master/api/#request-sessions
+.. _`HTTPX`: https://www.python-httpx.org/
+.. _httpx.Response: https://docs.python-requests.org/en/master/api/#requests.Response
+.. _httpx.Client: https://docs.python-requests.org/en/master/api/#request-sessions
