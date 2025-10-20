@@ -19,7 +19,7 @@ class Response(object):
         super(Response, self).__init__()
         self.status_code = code
         self.text = text
-        self.ok = code < 400
+        self.is_success = code < 400
         self.headers = MagicMock()
         if url:
             self.url = url

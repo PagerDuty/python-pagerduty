@@ -200,7 +200,7 @@ class FunctionDecoratorsTest(unittest.TestCase):
             dummy_client.reset_mock()
 
         # OK response, good JSON: JSON-decode and unpack response
-        response.ok = True
+        response.is_success = True
         response.json.return_value = {'service': {'name': 'value'}}
         do_http_things.__name__ = 'rput' # just for instance
         self.assertEqual(
@@ -211,7 +211,7 @@ class FunctionDecoratorsTest(unittest.TestCase):
         reset_mocks()
 
         # OK response, bad JSON: raise exception.
-        response.ok = True
+        response.is_success = True
         do_http_things.__name__ = 'rput' # just for instance
         response.json.side_effect = [ValueError('Bad JSON!')]
         self.assertRaises(pagerduty.Error,
@@ -222,7 +222,7 @@ class FunctionDecoratorsTest(unittest.TestCase):
         do_http_things.reset_mock()
         response.reset_mock()
         response.json = MagicMock()
-        response.ok = True
+        response.is_success = True
         do_http_things.return_value = response
         do_http_things.__name__ = 'rput' # just for instance
         response.json.return_value = {'nope': 'nopenope'}
@@ -232,14 +232,14 @@ class FunctionDecoratorsTest(unittest.TestCase):
 
         # Not OK response, raise
         response.reset_mock()
-        response.ok = False
+        response.is_success = False
         do_http_things.__name__ = 'rput' # just for instance
         self.assertRaises(pagerduty.Error,
             pagerduty.wrapped_entities(do_http_things), client, '/services')
         reset_mocks()
 
         # GET /<index>: use a different envelope name
-        response.ok = True
+        response.is_success = True
         users_array = [{"type":"user","email":"user@example.com",
             "summary":"User McUserson"}]
         response.json.return_value = {'users': users_array}
@@ -271,7 +271,7 @@ class FunctionDecoratorsTest(unittest.TestCase):
         dummy_client.url = 'https://api.pagerduty.com'
         dummy_client.canonical_path.return_value = '/users'
         do_http_things.__name__ = 'rpost'
-        response.ok = True
+        response.is_success = True
         created_user = user_payload.copy()
         created_user['id'] = 'P456XYZ'
         response.json.return_value = {'user':created_user}
@@ -290,7 +290,7 @@ class FunctionDecoratorsTest(unittest.TestCase):
         dummy_client.canonical_path.return_value = '/incidents'
         dummy_client.entity_wrappers.return_value = ('incidents', 'incidents')
         do_http_things.__name__ = 'rput'
-        response.ok = True
+        response.is_success = True
         updated_incidents = copy.deepcopy(incidents)
         response.json.return_value = {'incidents': updated_incidents}
         self.assertEqual(
@@ -943,7 +943,7 @@ class RestApiV2ClientTest(ClientTest):
             ]
             with patch.object(pagerduty.api_client.time, 'sleep') as sleep:
                 r = client.get('/users')
-                self.assertTrue(r.ok) # should only return after success
+                self.assertTrue(r.is_success) # should only return after success
                 self.assertEqual(3, request.call_count)
                 self.assertEqual(2, sleep.call_count)
             request.reset_mock()
@@ -975,7 +975,7 @@ class RestApiV2ClientTest(ClientTest):
                         request.call_count)
                     self.assertEqual(client.max_network_attempts, sleep.call_count)
                     self.assertEqual(client.max_network_attempts, cdf.call_count)
-                    self.assertTrue(r.ok)
+                    self.assertTrue(r.is_success)
                 request.reset_mock()
                 sleep.reset_mock()
 
