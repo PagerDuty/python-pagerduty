@@ -22,7 +22,8 @@ from . auth_method import AuthMethod
 from . version import __version__
 from . errors import (
     Error,
-    HttpError
+    HttpError,
+    UrlError
 )
 from . common import (
     TIMEOUT,
@@ -127,12 +128,6 @@ class ApiClient(Client):
     """
     This is the value sent to `Requests`_ as the ``timeout`` parameter that
     determines the TCP read timeout.
-    """
-
-    url = ""
-    """
-    The base URL for the API being called (usually https://api.pagerduty.com, but
-    this can vary depending on the specific API being accessed).
     """
 
     def __init__(self, auth_method: AuthMethod, debug=False):
@@ -420,6 +415,24 @@ class ApiClient(Client):
     def trunc_key(self) -> str:
         """Truncated key for secure display/identification purposes."""
         return self.auth_method.trunc_secret
+
+    @property
+    def url(self) -> str:
+        """
+        The base URL for the API being called.
+
+        Must be a HTTPS URL. For REST API v2 in the US service region, this is
+        ``https://api.pagerduty.com``; for Events API v2 it is
+        ``https://events.pagerduty.com``.  This property must be set when using a
+        service region other than US Production.
+        """
+        return self._url
+
+    @url.setter
+    def url(self, new_base_url: str):
+        if not new_base_url.startswith('https://'):
+            raise UrlError('API base URL must use scheme https://')
+        self._url = new_base_url
 
     @property
     def user_agent(self) -> str:

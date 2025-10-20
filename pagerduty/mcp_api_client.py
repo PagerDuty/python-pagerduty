@@ -32,9 +32,9 @@ class McpApiClient(ApiClient):
         result = client.call('tools/list')['result']
     """
 
-    permitted_methods = ('POST',)
+    _url = 'https://mcp.pagerduty.com'
 
-    url = 'https://mcp.pagerduty.com'
+    permitted_methods = ('POST',)
 
     def __init__(self, auth_method: AuthMethod, debug=False):
         super(McpApiClient, self).__init__(auth_method, debug=debug)

@@ -507,13 +507,12 @@ class RestApiV2Client(RestApiV2BaseClient):
         command line output.
     """
 
+    _url = 'https://api.pagerduty.com'
+
     default_from = None
     """The default value to use as the ``From`` request header"""
 
     permitted_methods = ('GET', 'PATCH', 'POST', 'PUT', 'DELETE')
-
-    url = 'https://api.pagerduty.com'
-    """Base URL of the REST API"""
 
     def __init__(self, api_key: str, default_from: Optional[str] = None,
                  auth_type: str = "token", debug: bool = False):

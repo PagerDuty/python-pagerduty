@@ -42,9 +42,9 @@ class JiraServerIntegrationApiClient(RestApiV2BaseClient):
         command line output.
     """
 
-    permitted_methods = ('GET', 'POST', 'PUT', 'DELETE')
+    _url = "https://app.pagerduty.com/integration-jira-service"
 
-    url = "https://app.pagerduty.com/integration-jira-service"
+    permitted_methods = ('GET', 'POST', 'PUT', 'DELETE')
 
     def __init__(self, access_token: str, jira_signature_token: str, debug: bool = False):
         super(JiraServerIntegrationApiClient, self).__init__(access_token, auth_type='bearer', debug=debug)

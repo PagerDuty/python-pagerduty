@@ -48,9 +48,9 @@ class EventsApiV2Client(ApiClient):
         command line output.
     """
 
-    permitted_methods = ('POST',)
+    _url = "https://events.pagerduty.com"
 
-    url = "https://events.pagerduty.com"
+    permitted_methods = ('POST',)
 
     def __init__(self, routing_key: str, debug: bool = False):
         auth_method = RoutingKeyAuthMethod(routing_key)

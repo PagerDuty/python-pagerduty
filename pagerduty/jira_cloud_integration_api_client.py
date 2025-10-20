@@ -26,9 +26,9 @@ class JiraCloudIntegrationApiClient(RestApiV2BaseClient):
     For constructor arguments, see :class:`pagerduty.RestApiV2BaseClient`.
     """
 
-    permitted_methods = ('GET', )
+    _url = "https://api.pagerduty.com/integration-jira-cloud"
 
-    url = "https://api.pagerduty.com/integration-jira-cloud"
+    permitted_methods = ('GET', )
 
     def __init__(self, api_key: str, auth_type: str = 'token', debug: bool = False):
         super(JiraCloudIntegrationApiClient, self).__init__(api_key,
