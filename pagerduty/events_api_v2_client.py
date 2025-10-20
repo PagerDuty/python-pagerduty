@@ -13,7 +13,6 @@ from httpx import Response
 from . api_client import ApiClient
 from . auth_method import BodyParameterAuthMethod
 from . common import (
-    deprecated_kwarg,
     successful_response,
     try_decoding,
     truncate_text,
@@ -87,7 +86,6 @@ class EventsApiV2Client(ApiClient):
 
     def send_change_event(self, payload: Optional[dict] = None,
                 links: Optional[List[dict]] = None,
-                routing_key: Optional[str] = None,
                 images: Optional[List[dict]] = None):
         """
         Send a change event to the v2 Change Events API.
@@ -100,9 +98,6 @@ class EventsApiV2Client(ApiClient):
         :param links:
             A list of dictionary objects each with keys ``href`` and ``text``
             representing the target and display text of each link
-        :param routing_key:
-            (Deprecated) the routing key. This parameter should be set via the
-            constructor `routing_key` parameter instead -- this argument is ignored.
         :param images:
             Optional list of images to attach to the change event.
         """
@@ -112,11 +107,6 @@ class EventsApiV2Client(ApiClient):
             links = []
         if images is None:
             images = []
-        if routing_key is not None:
-            deprecated_kwarg(
-                'routing_key',
-                method='EventsApiV2Client.send_change_event'
-            )
         event = {'payload': deepcopy(payload)}
         if links:
             event['links'] = deepcopy(links)

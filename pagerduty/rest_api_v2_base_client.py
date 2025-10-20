@@ -542,47 +542,6 @@ class RestApiV2BaseClient(ApiClient):
             "header_passthru": PassThruHeaderAuthMethod
         }
 
-    def after_set_api_key(self):
-        """
-        (Deprecated) Setter hook for setting or updating the authentication method.
-
-        Will be replaced by after_set_auth_method.
-        """
-        pass
-
-    @property
-    def api_key(self) -> str:
-        """
-        (Deprecated) Property representing the API key used for authentication.
-
-        If this property is updated to swap out the API credential in a preexisting
-        client object, the :attr:`auth_type` property MUST be updated first, or the
-        authentication header format may end up being incorrect for the type of the new
-        credential. This behavior is the same as it has always been since the API client
-        first supported Bearer tokens for authentication.
-
-        The setter in previous versions would update the client's ``headers`` property
-        using the :attr:`auth_header` property, which depended on the value of
-        :attr:`auth_type` at that point in the execution flow. As of version 5.0.0,
-        :attr:`auth_type` selects the class when constructing the new
-        :attr:`pagerduty.ApiClient.auth_method`.
-
-        Moving forward, the preferred method of changing credentials of a preexisting
-        client object will be to set the :attr:`pagerduty.ApiClient.auth_method`
-        property directly.
-        """
-        warn("The api_key property is deprecated; use auth_method instead.")
-        return self.auth_method.secret
-
-    @api_key.setter
-    def api_key(self, api_key: str):
-        """
-        (Deprecated) Setter for the API key used for authentication.
-        """
-        warn("The api_key property is deprecated; use auth_method instead.")
-        self.auth_method = self._build_auth_method(api_key)
-        self.after_set_api_key()
-
     def canonical_path(self, url: str) -> CanonicalPath:
         """
         Return the canonical path of a URL for a particular API implementation.

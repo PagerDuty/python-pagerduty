@@ -23,6 +23,7 @@ from . version import __version__
 from . errors import (
     Error,
     HttpError,
+    ServerHttpError,
     UrlError
 )
 from . common import (
@@ -159,15 +160,6 @@ class ApiClient(Client):
 
         self._auth_method = auth_method
         self.after_set_auth_method()
-
-    @property
-    def auth_header(self) -> dict:
-        """
-        Generates the Authorization header based on auth_method provided.
-        """
-        warn("Property ApiClient.auth_header is deprecated. " +
-            "Use ApiClient.auth_method.auth_header instead.")
-        return self.auth_method.auth_header
 
     def cooldown_factor(self) -> float:
         return self.sleep_timer_base*(1+self.stagger_cooldown*random())
@@ -332,7 +324,14 @@ class ApiClient(Client):
 
             status = response.status_code
             retry_logic = self.retry.get(status, 0)
-            if not response.is_success and retry_logic != 0:
+            if status // 100 == 3:
+                # This is not expected, but if it ever does happen, fail noisily:
+                raise ServerHttpError(
+                    f"Received status {status} in response to {method} {full_url}, " \
+                        f"but PagerDuty APIs are not expected to issue redirects.",
+                    response
+                )
+            elif not response.is_success and retry_logic != 0:
                 # Take special action as defined by the retry logic
                 if retry_logic != -1:
                     # Retry a specific number of times (-1 implies infinite)

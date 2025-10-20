@@ -168,10 +168,6 @@ CANONICAL_PATHS = [
     '/paused_incident_reports/alerts',
     '/paused_incident_reports/counts',
     '/priorities',
-    # TODO: remove support for response_plays in a future major version update
-    '/response_plays',
-    '/response_plays/{id}',
-    '/response_plays/{response_play_id}/run',
     '/rulesets',
     '/rulesets/{id}',
     '/rulesets/{id}/rules',
@@ -391,9 +387,6 @@ ENTITY_WRAPPER_CONFIG = {
     # Incident Workflows
     'POST /incident_workflows/{id}/instances': 'incident_workflow_instance',
     'POST /incident_workflows/triggers/{id}/services': ('service', 'trigger'),
-
-    # Response Plays
-    'POST /response_plays/{response_play_id}/run': None, # (deprecated)
 
     # Schedules
     'POST /schedules/{id}/overrides': ('overrides', None),
