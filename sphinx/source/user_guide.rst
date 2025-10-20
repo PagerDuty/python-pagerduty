@@ -46,7 +46,7 @@ constructor is the secret to use for accessing the API:
     # Events API v2, including change events:
     events_client = pagerduty.EventsApiV2Client(ROUTING_KEY)
 
-Session objects, being descendants of `httpx.Session`_, can also be used as
+Client objects, being descendants of `httpx.Client`_, can also be used as
 context managers. For example:
 
 .. code-block:: python
@@ -403,13 +403,19 @@ also are based on inherit the features of :class:`pagerduty.RestApiV2BaseClient`
 
 Generic Client Features
 -----------------------
-Generally, all of the features of `httpx.Session`_ are available to the user
+Generally, all of the features of `httpx.Client`_ are available to the user
 as they would be if using the `HTTPX`_ Python library directly, since
 :class:`pagerduty.ApiClient` and its subclasses for the REST/Events APIs are
 descendants of it. 
 
+Generally, all client classes pass along all keyword arguments at the end of
+their constructor function signatures (the splat-operator catch-all ``**kw``)
+to the constructor of the superclass. Any keyword arguments not specifically
+named in the function signature will be passed along in this way, allowing users
+to pass additional options to `httpx.Client`_.
+
 The ``get``, ``post``, ``put`` and ``delete`` methods of REST/Events API
-client classes are similar to the analogous functions in `httpx.Session`_.
+client classes are similar to the analogous functions in `httpx.Client`_.
 The arguments they accept are the same and they all return `httpx.Response`_
 objects.
 
@@ -890,11 +896,12 @@ Using a Proxy Server
 --------------------
 Client classes pass ``proxy`` and ``mounts`` keyword arguments through to the
 constructor of the superclass, thus allowing them to be used as described in:
-`HTTPX: Proxies <https://www.python-httpx.org/advanced/proxies/>`_.
+`HTTPX: Proxies <https://www.python-httpx.org/advanced/proxies/>`_. For example:
 
-Generally, all client classes pass all additional keyword arguments not
-explicitly named in the function definition to ``httpx.Client`` during
-``__init__``.
+.. code-block:: python
+
+    # To tunnel traffic through HTTP proxy at 192.168.1.2:8080 i.e. via CONNECT:
+    client = pagerduty.RestApiV2Client(API_KEY, proxy='http://192.168.1.2:8080')
 
 **In Versions Prior to 6.0.0:** To configure the client to use a host as a
 proxy for HTTPS traffic, update the ``proxies`` attribute:
@@ -906,7 +913,7 @@ proxy for HTTPS traffic, update the ``proxies`` attribute:
 
 HTTP Retry Configuration
 ------------------------
-Session objects support retrying API requests if they receive a non-success
+Client objects support retrying API requests if they receive a non-success
 response or if they encounter a network error.
 
 This behavior is configurable through the following properties:
@@ -1002,6 +1009,6 @@ reached in the underlying HTTP request methods.
 .. _`PagerDuty API Reference`: https://developer.pagerduty.com/api-reference/
 .. _`REST API v2`: https://developer.pagerduty.com/docs/ZG9jOjExMDI5NTUw-rest-api-v2-overview
 .. _httpx.Response: https://www.python-httpx.org/api/#response
-.. _httpx.Session: https://www.python-httpx.org/api/#client
+.. _httpx.Client: https://www.python-httpx.org/api/#client
 .. _`resource references`: https://developer.pagerduty.com/docs/resource-references
 .. _`REST API v2 Overview`: https://developer.pagerduty.com/docs/rest-api-overview
