@@ -515,9 +515,9 @@ class RestApiV2Client(RestApiV2BaseClient):
     permitted_methods = ('GET', 'PATCH', 'POST', 'PUT', 'DELETE')
 
     def __init__(self, api_key: str, default_from: Optional[str] = None,
-                 auth_type: str = "token", debug: bool = False):
+                 auth_type: str = "token", debug: bool = False, **kw):
 
-        super(RestApiV2Client, self).__init__(api_key, auth_type, debug=debug)
+        super(RestApiV2Client, self).__init__(api_key, auth_type, debug=debug, **kw)
 
         self.default_from = default_from
         if default_from is not None:

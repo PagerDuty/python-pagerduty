@@ -46,8 +46,14 @@ class JiraServerIntegrationApiClient(RestApiV2BaseClient):
 
     permitted_methods = ('GET', 'POST', 'PUT', 'DELETE')
 
-    def __init__(self, access_token: str, jira_signature_token: str, debug: bool = False):
-        super(JiraServerIntegrationApiClient, self).__init__(access_token, auth_type='bearer', debug=debug)
+    def __init__(self, access_token: str, jira_signature_token: str,
+            debug: bool = False, **kw):
+        super(JiraServerIntegrationApiClient, self).__init__(
+            access_token,
+            auth_type='bearer',
+            debug=debug,
+            **kw
+        )
 
         self.jira_signature_token = jira_signature_token
         self.headers.update({

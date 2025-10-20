@@ -490,12 +490,13 @@ class RestApiV2BaseClient(ApiClient):
     iterating/querying an index (the ``limit`` parameter).
     """
 
-    def __init__(self, api_key: str, auth_type: str = 'token', debug: bool = False):
+    def __init__(self, api_key: str, auth_type: str = 'token', debug: bool = False,
+            **kw):
         self.api_call_counts = {}
         self.api_time = {}
         self.auth_type = auth_type
         auth_method = self._build_auth_method(api_key)
-        super(RestApiV2BaseClient, self).__init__(auth_method, debug=debug)
+        super(RestApiV2BaseClient, self).__init__(auth_method, debug=debug, **kw)
 
     def _build_auth_method(self, api_key: str) -> AuthMethod:
         """

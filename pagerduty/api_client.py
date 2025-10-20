@@ -130,9 +130,9 @@ class ApiClient(Client):
     determines the TCP read timeout.
     """
 
-    def __init__(self, auth_method: AuthMethod, debug=False):
+    def __init__(self, auth_method: AuthMethod, debug=False, **kw):
         self.parent = super(ApiClient, self)
-        self.parent.__init__()
+        self.parent.__init__(**kw)
         self.auth_method = auth_method
         self.log = logging.getLogger(__name__)
         self.print_debug = debug

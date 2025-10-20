@@ -95,13 +95,13 @@ class OAuthTokenClient(ApiClient):
     By default, this is 24 hours.
     """
 
-    def __init__(self, client_secret: str, client_id: str, debug=False):
+    def __init__(self, client_secret: str, client_id: str, debug=False, **kw):
         """
         Create an OAuth token client
         """
         auth_method = ClientCredentialsAuthMethod(client_secret, client_id)
 
-        super(OAuthTokenClient, self).__init__(auth_method, debug=debug)
+        super(OAuthTokenClient, self).__init__(auth_method, debug=debug, **kw)
 
     def amended_auth_response(self, response: Response) -> dict:
         """

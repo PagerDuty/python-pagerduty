@@ -52,9 +52,9 @@ class EventsApiV2Client(ApiClient):
 
     permitted_methods = ('POST',)
 
-    def __init__(self, routing_key: str, debug: bool = False):
+    def __init__(self, routing_key: str, debug: bool = False, **kw):
         auth_method = RoutingKeyAuthMethod(routing_key)
-        super(EventsApiV2Client, self).__init__(auth_method, debug)
+        super(EventsApiV2Client, self).__init__(auth_method, debug=debug, **kw)
         # See: https://developer.pagerduty.com/docs/3d063fd4814a6-events-api-v2-overview#response-codes--retry-logic
         self.retry[500] = 2 # internal server error
         self.retry[502] = 4 # bad gateway
