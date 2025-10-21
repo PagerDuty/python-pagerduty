@@ -746,10 +746,9 @@ class RestApiV2BaseClient(ApiClient):
             'limit': (self.default_page_size, page_size)[int(bool(page_size))],
         }
         if total is not None:
-            # The reason this is necessary is because urllib.parse.urlencode (called by
-            # Requests to serialize querystring parameters) serializes booleans as
-            # capitalized values, whereas the PagerDuty API requires lower case
-            # "true/false".
+            # This is to ensure that the correct literal string is passed through as the
+            # final parameter value rather than letting the middleware serialize it as
+            # it sees fit. The PagerDuty API requires lower case "true/false".
             data['total'] = str(total).lower()
         if isinstance(params, (dict, list)):
             # Override defaults with values given:
