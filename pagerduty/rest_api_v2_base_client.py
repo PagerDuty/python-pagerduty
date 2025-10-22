@@ -1077,3 +1077,5 @@ class RestApiV2BaseClient(ApiClient):
     def total_call_time(self) -> float:
         """The total time spent making API calls."""
         return sum(self.api_time.values())
+
+
