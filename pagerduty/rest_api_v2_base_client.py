@@ -442,7 +442,10 @@ class TokenAuthMethod(HeaderAuthMethod):
     """
     @property
     def auth_header(self) -> dict:
-        return {"Authorization": f"Token token={self.secret}"}
+        secret = str(self.secret).strip()
+        if not secret.lower().startswith("token token="):
+            secret = f"Token token={secret}"
+        return {"Authorization": secret}
 
 class OAuthTokenAuthMethod(HeaderAuthMethod):
     """
@@ -450,7 +453,10 @@ class OAuthTokenAuthMethod(HeaderAuthMethod):
     """
     @property
     def auth_header(self) -> dict:
-        return {"Authorization": f"Bearer {self.secret}"}
+        secret = str(self.secret).strip()
+        if not secret.lower().startswith("bearer "):
+            secret = f"Bearer {secret}"
+        return {"Authorization": secret}
 
 ####################
 ### CLIENT CLASS ###
@@ -1071,5 +1077,3 @@ class RestApiV2BaseClient(ApiClient):
     def total_call_time(self) -> float:
         """The total time spent making API calls."""
         return sum(self.api_time.values())
-
-
