@@ -13,7 +13,8 @@ from . api_client import (
 )
 from . auth_method import (
     AuthMethod,
-    HeaderAuthMethod
+    HeaderAuthMethod,
+    PassThruHeaderAuthMethod
 )
 
 from . common import (
@@ -453,18 +454,6 @@ class OAuthTokenAuthMethod(HeaderAuthMethod):
     def auth_header(self) -> dict:
         return {"Authorization": f"Bearer {self.secret}"}
 
-    
-class PassThruHeaderAuthMethod(HeaderAuthMethod):
-    """
-    Auth method that sets the ``Authorization`` header verbatim according to the ``secret`` property.
-
-    This is for use cases where an ``Authorization`` header must be passed through for authentication,
-    i.e. in an API proxy or MCP server.
-    """
-    @property
-    def auth_header(self) -> dict:
-        return {"Authorization": self.secret}
-    
 ####################
 ### CLIENT CLASS ###
 ####################
@@ -479,10 +468,12 @@ class RestApiV2BaseClient(ApiClient):
     :param api_key:
         REST API access token to use for HTTP requests.
     :param auth_type:
-        The type of credential in use. This parameter determines how the ``Authorization`` header is constructed for API requests.
-
+        The type of credential in use. This parameter determines how the
+        ``Authorization`` header is constructed for API requests.
             - For OAuth access tokens, set this to ``oauth2`` or ``bearer``.
-            - To send the credential string exactly as provided (without any prefix formatting), set this to ``header_passthru``.
+            - To send the credential string exactly as provided (without any prefix
+              formatting), set this to ``header_passthru``.
+            - For classic API tokens, the default value ``token`` should be used.
     :param debug:
         Sets :attr:`pagerduty.ApiClient.print_debug`. Set to ``True`` to enable verbose
         command-line output.

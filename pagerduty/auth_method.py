@@ -74,3 +74,16 @@ class BodyParameterAuthMethod(AuthMethod):
     @property
     def auth_header(self):
         return {}
+
+class PassThruHeaderAuthMethod(HeaderAuthMethod):
+    """
+    Auth method that sets the ``Authorization`` header equal to ``secret``, verbatim.
+
+    This is for use cases where an ``Authorization`` header must be passed through for
+    authentication, i.e. in an API proxy or MCP server.
+    """
+    @property
+    def auth_header(self) -> dict:
+        return {"Authorization": self.secret}
+
+
