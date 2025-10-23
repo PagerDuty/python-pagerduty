@@ -210,6 +210,7 @@
 <li class="toctree-l3"><a class="reference internal" href="#pagerduty.rest_api_v2_base_client.EntityWrappingSpec"><code class="docutils literal notranslate"><span class="pre">EntityWrappingSpec</span></code></a></li>
 <li class="toctree-l3"><a class="reference internal" href="#pagerduty.rest_api_v2_base_client.ITERATION_LIMIT"><code class="docutils literal notranslate"><span class="pre">ITERATION_LIMIT</span></code></a></li>
 <li class="toctree-l3"><a class="reference internal" href="#id0"><code class="docutils literal notranslate"><span class="pre">OAuthTokenAuthMethod</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#pagerduty.rest_api_v2_base_client.PassThruHeaderAuthMethod"><code class="docutils literal notranslate"><span class="pre">PassThruHeaderAuthMethod</span></code></a></li>
 <li class="toctree-l3"><a class="reference internal" href="#id15"><code class="docutils literal notranslate"><span class="pre">TokenAuthMethod</span></code></a></li>
 <li class="toctree-l3"><a class="reference internal" href="#pagerduty.rest_api_v2_base_client.auto_json"><code class="docutils literal notranslate"><span class="pre">auto_json()</span></code></a></li>
 <li class="toctree-l3"><a class="reference internal" href="#pagerduty.rest_api_v2_base_client.canonical_path"><code class="docutils literal notranslate"><span class="pre">canonical_path()</span></code></a></li>
@@ -792,9 +793,14 @@ and are supported to varying degrees outside of REST API v2.</p>
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
 <li><p><strong>api_key</strong> – REST API access token to use for HTTP requests</p></li>
-<li><p><strong>auth_type</strong> – The type of credential in use. If authenticating with an OAuth access
-token, this must be set to <code class="docutils literal notranslate"><span class="pre">oauth2</span></code> or <code class="docutils literal notranslate"><span class="pre">bearer</span></code>. This will determine the
-format of the <code class="docutils literal notranslate"><span class="pre">Authorization</span></code> header that is sent to the API in each request.</p></li>
+<li><p><strong>auth_type</strong> – <p>The type of credential in use. There are several options:
+- For OAuth access tokens, set this to <code class="docutils literal notranslate"><span class="pre">oauth2</span></code> or <code class="docutils literal notranslate"><span class="pre">bearer</span></code>.
+- To send the credential string exactly as provided (without any prefix formatting),</p>
+<blockquote>
+<div><p>set this to <code class="docutils literal notranslate"><span class="pre">header_passthru</span></code>.</p>
+</div></blockquote>
+<p>This parameter determines how the <code class="docutils literal notranslate"><span class="pre">Authorization</span></code> header is constructed for API requests.</p>
+</p></li>
 <li><p><strong>debug</strong> – Sets <a class="reference internal" href="#pagerduty.ApiClient.print_debug" title="pagerduty.ApiClient.print_debug"><code class="xref py py-attr docutils literal notranslate"><span class="pre">pagerduty.ApiClient.print_debug</span></code></a>. Set to <code class="docutils literal notranslate"><span class="pre">True</span></code> to enable verbose
 command line output.</p></li>
 </ul>
@@ -2222,6 +2228,14 @@ error that will result if the sum of the limit and offset parameters exceeds it.
 <dt class="sig sig-object py" id="id0">
 <em class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">pagerduty.rest_api_v2_base_client.</span></span><span class="sig-name descname"><span class="pre">OAuthTokenAuthMethod</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">secret</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#id0" title="Link to this definition"></a></dt>
 <dd><p>AuthMethod class for OAuth-created authentication tokens (“Bearer”)</p>
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="pagerduty.rest_api_v2_base_client.PassThruHeaderAuthMethod">
+<em class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">pagerduty.rest_api_v2_base_client.</span></span><span class="sig-name descname"><span class="pre">PassThruHeaderAuthMethod</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">secret</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#pagerduty.rest_api_v2_base_client.PassThruHeaderAuthMethod" title="Link to this definition"></a></dt>
+<dd><p>Auth method that sets the <code class="docutils literal notranslate"><span class="pre">Authorization</span></code> header verbatim according to the <code class="docutils literal notranslate"><span class="pre">secret</span></code> property.</p>
+<p>This is for use cases where an <code class="docutils literal notranslate"><span class="pre">Authorization</span></code> header must be passed through for authentication,
+i.e. in an API proxy or MCP server.</p>
 </dd></dl>
 
 <dl class="py class">
