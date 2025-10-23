@@ -38,6 +38,7 @@ from . oauth_token_client import OAuthTokenClient
 from . rest_api_v2_base_client import (
     ITERATION_LIMIT,
     OAuthTokenAuthMethod,
+    PassThruHeaderAuthMethod,
     RestApiV2BaseClient,
     TokenAuthMethod,
     auto_json,
@@ -83,6 +84,7 @@ __all__ = [
     'MsTeamsIntegrationApiClient',
     'OAuthTokenClient',
     'OAuthTokenAuthMethod',
+    'PassThruHeaderAuthMethod',
     'RestApiV2BaseClient',
     'RestApiV2Client',
     'RoutingKeyAuthMethod',

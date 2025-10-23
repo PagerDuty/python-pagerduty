@@ -88,6 +88,8 @@ may not authenticate properly with the API in question. Refer to its
 
 .. autoclass:: pagerduty.rest_api_v2_base_client.OAuthTokenAuthMethod
 
+.. autoclass:: pagerduty.auth_method.PassThruHeaderAuthMethod
+
 .. autoclass:: pagerduty.events_api_v2_client.RoutingKeyAuthMethod
 
 .. autoclass:: pagerduty.oauth_token_client.ClientCredentialsAuthMethod

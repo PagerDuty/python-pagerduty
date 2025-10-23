@@ -479,9 +479,11 @@ class RestApiV2BaseClient(ApiClient):
     :param api_key:
         REST API access token to use for HTTP requests
     :param auth_type:
-        The type of credential in use. If authenticating with an OAuth access
-        token, this must be set to ``oauth2`` or ``bearer``. This will determine the
-        format of the ``Authorization`` header that is sent to the API in each request.
+        The type of credential in use. There are several options:
+        - For OAuth access tokens, set this to ``oauth2`` or ``bearer``.
+        - To send the credential string exactly as provided (without any prefix formatting),
+            set this to ``header_passthru``.
+        This parameter determines how the ``Authorization`` header is constructed for API requests.
     :param debug:
         Sets :attr:`pagerduty.ApiClient.print_debug`. Set to ``True`` to enable verbose
         command line output.
