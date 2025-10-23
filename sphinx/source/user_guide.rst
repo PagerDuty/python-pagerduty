@@ -46,7 +46,7 @@ constructor is the secret to use for accessing the API:
     # Events API v2, including change events:
     events_client = pagerduty.EventsApiV2Client(ROUTING_KEY)
 
-Client objects, being descendants of `httpx.Client`_, can also be used as
+Client objects, being instances also of `httpx.Client`_, can be used as
 context managers. For example:
 
 .. code-block:: python

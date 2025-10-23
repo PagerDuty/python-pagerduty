@@ -135,5 +135,5 @@ able to repurpose them in APIs that follow similar conventions.
 .. -----------
 
 .. _`HTTPX`: https://www.python-httpx.org/
-.. _httpx.Response: https://docs.python-requests.org/en/master/api/#requests.Response
-.. _httpx.Client: https://docs.python-requests.org/en/master/api/#request-sessions
+.. _httpx.Response: https://www.python-httpx.org/api/#response
+.. _httpx.Client: https://www.python-httpx.org/api/#client
