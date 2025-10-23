@@ -1,3 +1,7 @@
+**2025-10-23: 5.3.0: New AuthMethod class for verbatim authorization header setting**
+
+* New authentication method class ``PassThruHeaderAuthMethod`` that treats the secret as the whole content of the ``Authorization`` header.
+
 **2025-10-13: 5.2.0: New clients for new APIs**
 
 * Client class ``ScimApiClient`` for the PagerDuty SCIM API

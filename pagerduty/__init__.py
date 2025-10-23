@@ -17,6 +17,8 @@ from . common import (
 
 from . api_client import ApiClient
 
+from . auth_method import PassThruHeaderAuthMethod
+
 from . errors import (
     Error,
     HttpError,
@@ -83,6 +85,7 @@ __all__ = [
     'MsTeamsIntegrationApiClient',
     'OAuthTokenClient',
     'OAuthTokenAuthMethod',
+    'PassThruHeaderAuthMethod',
     'RestApiV2BaseClient',
     'RestApiV2Client',
     'RoutingKeyAuthMethod',

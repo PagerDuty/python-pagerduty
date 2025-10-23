@@ -13,7 +13,8 @@ from . api_client import (
 )
 from . auth_method import (
     AuthMethod,
-    HeaderAuthMethod
+    HeaderAuthMethod,
+    PassThruHeaderAuthMethod
 )
 
 from . common import (
@@ -458,20 +459,23 @@ class OAuthTokenAuthMethod(HeaderAuthMethod):
 
 class RestApiV2BaseClient(ApiClient):
     """
-    Abstract base class for all API clients that support APIs similar to REST API v2
+    Abstract base class for all API clients that support APIs similar to REST API v2.
 
     This class implements some common features like numeric pagination that also appear
     and are supported to varying degrees outside of REST API v2.
 
     :param api_key:
-        REST API access token to use for HTTP requests
+        REST API access token to use for HTTP requests.
     :param auth_type:
-        The type of credential in use. If authenticating with an OAuth access
-        token, this must be set to ``oauth2`` or ``bearer``. This will determine the
-        format of the ``Authorization`` header that is sent to the API in each request.
+        The type of credential in use. This parameter determines how the
+        ``Authorization`` header is constructed for API requests.
+            - For OAuth access tokens, set this to ``oauth2`` or ``bearer``.
+            - To send the credential string exactly as provided (without any prefix
+              formatting), set this to ``header_passthru``.
+            - For classic API tokens, the default value ``token`` should be used.
     :param debug:
         Sets :attr:`pagerduty.ApiClient.print_debug`. Set to ``True`` to enable verbose
-        command line output.
+        command-line output.
     """
 
     api_call_counts = None
@@ -533,7 +537,8 @@ class RestApiV2BaseClient(ApiClient):
         return {
             'token':  TokenAuthMethod,
             'bearer': OAuthTokenAuthMethod,
-            'oauth2': OAuthTokenAuthMethod
+            'oauth2': OAuthTokenAuthMethod,
+            "header_passthru": PassThruHeaderAuthMethod
         }
 
     def after_set_api_key(self):
