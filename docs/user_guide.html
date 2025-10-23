@@ -160,7 +160,7 @@ constructor is the secret to use for accessing the API:</p>
 <span class="n">events_client</span> <span class="o">=</span> <span class="n">pagerduty</span><span class="o">.</span><span class="n">EventsApiV2Client</span><span class="p">(</span><span class="n">ROUTING_KEY</span><span class="p">)</span>
 </pre></div>
 </div>
-<p>Client objects, being descendants of <a class="reference external" href="https://www.python-httpx.org/api/#client">httpx.Client</a>, can also be used as
+<p>Client objects, being instances also of <a class="reference external" href="https://www.python-httpx.org/api/#client">httpx.Client</a>, can be used as
 context managers. For example:</p>
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="k">with</span> <span class="n">pagerduty</span><span class="o">.</span><span class="n">RestApiV2Client</span><span class="p">(</span><span class="n">API_KEY</span><span class="p">)</span> <span class="k">as</span> <span class="n">client</span><span class="p">:</span>
     <span class="n">do_application</span><span class="p">(</span><span class="n">client</span><span class="p">)</span>
