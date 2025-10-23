@@ -72,7 +72,7 @@ class BodyParameterAuthMethod(AuthMethod):
     """
 
     @property
-    def auth_header(self):
+    def auth_header(self) -> dict:
         return {}
 
 class PassThruHeaderAuthMethod(HeaderAuthMethod):
