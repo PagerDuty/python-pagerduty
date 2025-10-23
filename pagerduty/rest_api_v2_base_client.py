@@ -445,7 +445,6 @@ class TokenAuthMethod(HeaderAuthMethod):
     def auth_header(self) -> dict:
         return {"Authorization": f"Token token={self.secret}"}
 
-
 class OAuthTokenAuthMethod(HeaderAuthMethod):
     """
     AuthMethod class for OAuth-created authentication tokens ("Bearer")
