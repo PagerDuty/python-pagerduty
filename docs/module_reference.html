@@ -786,23 +786,23 @@ element and the the amended OAuth response if a refresh was performed (and
 <dl class="py class">
 <dt class="sig sig-object py" id="pagerduty.RestApiV2BaseClient">
 <em class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">pagerduty.</span></span><span class="sig-name descname"><span class="pre">RestApiV2BaseClient</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">api_key</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">auth_type</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">'token'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">debug</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">bool</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#pagerduty.RestApiV2BaseClient" title="Link to this definition"></a></dt>
-<dd><p>Abstract base class for all API clients that support APIs similar to REST API v2</p>
+<dd><p>Abstract base class for all API clients that support APIs similar to REST API v2.</p>
 <p>This class implements some common features like numeric pagination that also appear
 and are supported to varying degrees outside of REST API v2.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
-<li><p><strong>api_key</strong> – REST API access token to use for HTTP requests</p></li>
-<li><p><strong>auth_type</strong> – <p>The type of credential in use. There are several options:
-- For OAuth access tokens, set this to <code class="docutils literal notranslate"><span class="pre">oauth2</span></code> or <code class="docutils literal notranslate"><span class="pre">bearer</span></code>.
-- To send the credential string exactly as provided (without any prefix formatting),</p>
+<li><p><strong>api_key</strong> – REST API access token to use for HTTP requests.</p></li>
+<li><p><strong>auth_type</strong> – <p>The type of credential in use. This parameter determines how the <code class="docutils literal notranslate"><span class="pre">Authorization</span></code> header is constructed for API requests.</p>
 <blockquote>
-<div><p>set this to <code class="docutils literal notranslate"><span class="pre">header_passthru</span></code>.</p>
+<div><ul>
+<li><p>For OAuth access tokens, set this to <code class="docutils literal notranslate"><span class="pre">oauth2</span></code> or <code class="docutils literal notranslate"><span class="pre">bearer</span></code>.</p></li>
+<li><p>To send the credential string exactly as provided (without any prefix formatting), set this to <code class="docutils literal notranslate"><span class="pre">header_passthru</span></code>.</p></li>
+</ul>
 </div></blockquote>
-<p>This parameter determines how the <code class="docutils literal notranslate"><span class="pre">Authorization</span></code> header is constructed for API requests.</p>
 </p></li>
 <li><p><strong>debug</strong> – Sets <a class="reference internal" href="#pagerduty.ApiClient.print_debug" title="pagerduty.ApiClient.print_debug"><code class="xref py py-attr docutils literal notranslate"><span class="pre">pagerduty.ApiClient.print_debug</span></code></a>. Set to <code class="docutils literal notranslate"><span class="pre">True</span></code> to enable verbose
-command line output.</p></li>
+command-line output.</p></li>
 </ul>
 </dd>
 </dl>

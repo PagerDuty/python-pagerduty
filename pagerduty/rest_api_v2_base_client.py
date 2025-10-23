@@ -471,22 +471,21 @@ class PassThruHeaderAuthMethod(HeaderAuthMethod):
 
 class RestApiV2BaseClient(ApiClient):
     """
-    Abstract base class for all API clients that support APIs similar to REST API v2
+    Abstract base class for all API clients that support APIs similar to REST API v2.
 
     This class implements some common features like numeric pagination that also appear
     and are supported to varying degrees outside of REST API v2.
 
     :param api_key:
-        REST API access token to use for HTTP requests
+        REST API access token to use for HTTP requests.
     :param auth_type:
-        The type of credential in use. There are several options:
-        - For OAuth access tokens, set this to ``oauth2`` or ``bearer``.
-        - To send the credential string exactly as provided (without any prefix formatting),
-            set this to ``header_passthru``.
-        This parameter determines how the ``Authorization`` header is constructed for API requests.
+        The type of credential in use. This parameter determines how the ``Authorization`` header is constructed for API requests.
+
+            - For OAuth access tokens, set this to ``oauth2`` or ``bearer``.
+            - To send the credential string exactly as provided (without any prefix formatting), set this to ``header_passthru``.
     :param debug:
         Sets :attr:`pagerduty.ApiClient.print_debug`. Set to ``True`` to enable verbose
-        command line output.
+        command-line output.
     """
 
     api_call_counts = None
