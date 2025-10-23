@@ -2,10 +2,10 @@
 
 The underlying HTTP client on which this library is based has been changed to `python-httpx <https://www.python-httpx.org>`_. The primary motivation of this change is to provide thread safety with a very similar interface to ``requests``, and the possibility to add support for asynchronous usage in future releases.
 
-* **Breaking Changes:** beyond the fact of the superclass changing:
-   * The ``proxies`` property no longer exists in client classes, and proxy configuration must be passed to the constructor in one of the ``proxy`` or ``mounts`` keyword arguments.
+* **Breaking Changes:**
+   * The ``proxies`` property no longer exists in client classes, and proxy configuration must be passed to the constructor in one of the ``proxy`` or ``mounts`` keyword arguments. See: `HTTPX: Advanced: Proxies <https://www.python-httpx.org/advanced/proxies/>`_
    * Response objects no longer have an ``ok`` property; use ``is_success`` instead.
-   * Deprecated properties and methods have been removed:
+   * The following deprecated properties and methods have been removed:
       * ``ApiClient.auth_header``
       * ``RestApiV2BaseClient.after_set_api_key``
       * ``RestApiV2BaseClient.api_key``

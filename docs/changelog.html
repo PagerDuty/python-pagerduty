@@ -80,11 +80,11 @@
 <p>The underlying HTTP client on which this library is based has been changed to <a class="reference external" href="https://www.python-httpx.org">python-httpx</a>. The primary motivation of this change is to provide thread safety with a very similar interface to <code class="docutils literal notranslate"><span class="pre">requests</span></code>, and the possibility to add support for asynchronous usage in future releases.</p>
 <ul class="simple">
 <li><dl class="simple">
-<dt><strong>Breaking Changes:</strong> beyond the fact of the superclass changing:</dt><dd><ul>
-<li><p>The <code class="docutils literal notranslate"><span class="pre">proxies</span></code> property no longer exists in client classes, and proxy configuration must be passed to the constructor in one of the <code class="docutils literal notranslate"><span class="pre">proxy</span></code> or <code class="docutils literal notranslate"><span class="pre">mounts</span></code> keyword arguments.</p></li>
+<dt><strong>Breaking Changes:</strong></dt><dd><ul>
+<li><p>The <code class="docutils literal notranslate"><span class="pre">proxies</span></code> property no longer exists in client classes, and proxy configuration must be passed to the constructor in one of the <code class="docutils literal notranslate"><span class="pre">proxy</span></code> or <code class="docutils literal notranslate"><span class="pre">mounts</span></code> keyword arguments. See: <a class="reference external" href="https://www.python-httpx.org/advanced/proxies/">HTTPX: Advanced: Proxies</a></p></li>
 <li><p>Response objects no longer have an <code class="docutils literal notranslate"><span class="pre">ok</span></code> property; use <code class="docutils literal notranslate"><span class="pre">is_success</span></code> instead.</p></li>
 <li><dl class="simple">
-<dt>Deprecated properties and methods have been removed:</dt><dd><ul>
+<dt>The following deprecated properties and methods have been removed:</dt><dd><ul>
 <li><p><code class="docutils literal notranslate"><span class="pre">ApiClient.auth_header</span></code></p></li>
 <li><p><code class="docutils literal notranslate"><span class="pre">RestApiV2BaseClient.after_set_api_key</span></code></p></li>
 <li><p><code class="docutils literal notranslate"><span class="pre">RestApiV2BaseClient.api_key</span></code></p></li>
