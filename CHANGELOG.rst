@@ -1,4 +1,4 @@
-**2025-10-21: 6.0.0: Change upstream HTTP client to python-httpx**
+**2025-10-24: 6.0.0: Change base HTTP client to python-httpx**
 
 The underlying HTTP client on which this library is based has been changed to `python-httpx <https://www.python-httpx.org>`_. The primary motivation of this change is to provide thread safety with a very similar interface to ``requests``, and the possibility to add support for asynchronous usage in future releases.
 
