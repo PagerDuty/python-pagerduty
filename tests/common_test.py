@@ -7,11 +7,21 @@ from mocks import Response
 
 import pagerduty
 
-class SessionTest(unittest.TestCase):
+class ClientTest(unittest.TestCase):
+
     def assertDictContainsSubset(self, d0, d1):
-        self.assertTrue(set(d0.keys()).issubset(set(d1.keys())),
-            msg="First dict is not a subset of second dict")
+        d0_keys = list(dict(d0).keys())
+        d1_keys = list(dict(d1).keys())
+        self.assertTrue(set(d0_keys).issubset(set(d1_keys)),
+            msg=f"First dict (keys={d0_keys}) is not a subset of second dict " \
+                f"(keys={d1_keys})")
         self.assertEqual(d0, dict([(k, d1[k]) for k in d0]))
+
+    def assertDictContainsCaseInsensitiveSubset(self, d0, d1):
+        self.assertDictContainsSubset(
+            {k.lower():v for (k, v) in d0.items()},
+            {k.lower():v for (k, v) in d1.items()}
+        )
 
 class UrlHandlingTest(unittest.TestCase):
 

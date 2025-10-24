@@ -48,9 +48,9 @@ class ScimApiClient(ApiClient):
 
     """
 
-    permitted_methods = ('DELETE', 'GET', 'PATCH', 'POST', 'PUT')
+    _url = 'https://api.pagerduty.com/scim/v2'
 
-    url = 'https://api.pagerduty.com/scim/v2'
+    permitted_methods = ('DELETE', 'GET', 'PATCH', 'POST', 'PUT')
 
     def list_users(self, fltr: Optional[str] = None, start_index: int = 1,
             page_size: int = 100) -> List[dict]:

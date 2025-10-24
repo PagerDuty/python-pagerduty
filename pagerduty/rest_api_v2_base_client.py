@@ -4,7 +4,7 @@ from typing import Iterator, List, Optional, Tuple, Union
 from warnings import warn
 
 # PyPI
-from requests import Response
+from httpx import Response
 
 # Local
 from . api_client import (
@@ -342,7 +342,7 @@ def auto_json(method: callable) -> callable:
     Decorator to return the full response body object after decoding from JSON.
 
     Intended for use on functions that take a URL positional argument followed
-    by keyword arguments and return a `requests.Response`_ object.
+    by keyword arguments and return a `httpx.Response`_ object.
 
     The new return value is the JSON-decoded response body (``dict`` or ``list``).
     """
@@ -397,14 +397,14 @@ def wrapped_entities(method: callable) -> callable:
     the ``json`` keyword argument will be normalized to include the wrapper.
 
     Methods using this decorator will raise a :class:`pagerduty.HttpError` with its
-    ``response`` property being being the `requests.Response`_ object in the case of any
+    ``response`` property being being the `httpx.Response`_ object in the case of any
     error, so that the implementer can access it by catching the exception, and thus
     design their own custom logic around different types of error responses.
 
     :param method:
         Method being decorated. Must take one positional argument after ``self`` that is
         the URL/path to the resource, followed by keyword any number of keyword
-        arguments, and must return an object of class `requests.Response`_, and be named
+        arguments, and must return an object of class `httpx.Response`_, and be named
         after the HTTP method but with "r" prepended.
     :returns:
         A callable object; the reformed method
@@ -490,12 +490,13 @@ class RestApiV2BaseClient(ApiClient):
     iterating/querying an index (the ``limit`` parameter).
     """
 
-    def __init__(self, api_key: str, auth_type: str = 'token', debug: bool = False):
+    def __init__(self, api_key: str, auth_type: str = 'token', debug: bool = False,
+            **kw):
         self.api_call_counts = {}
         self.api_time = {}
         self.auth_type = auth_type
         auth_method = self._build_auth_method(api_key)
-        super(RestApiV2BaseClient, self).__init__(auth_method, debug=debug)
+        super(RestApiV2BaseClient, self).__init__(auth_method, debug=debug, **kw)
 
     def _build_auth_method(self, api_key: str) -> AuthMethod:
         """
@@ -540,47 +541,6 @@ class RestApiV2BaseClient(ApiClient):
             'oauth2': OAuthTokenAuthMethod,
             "header_passthru": PassThruHeaderAuthMethod
         }
-
-    def after_set_api_key(self):
-        """
-        (Deprecated) Setter hook for setting or updating the authentication method.
-
-        Will be replaced by after_set_auth_method.
-        """
-        pass
-
-    @property
-    def api_key(self) -> str:
-        """
-        (Deprecated) Property representing the API key used for authentication.
-
-        If this property is updated to swap out the API credential in a preexisting
-        client object, the :attr:`auth_type` property MUST be updated first, or the
-        authentication header format may end up being incorrect for the type of the new
-        credential. This behavior is the same as it has always been since the API client
-        first supported Bearer tokens for authentication.
-
-        The setter in previous versions would update the client's ``headers`` property
-        using the :attr:`auth_header` property, which depended on the value of
-        :attr:`auth_type` at that point in the execution flow. As of version 5.0.0,
-        :attr:`auth_type` selects the class when constructing the new
-        :attr:`pagerduty.ApiClient.auth_method`.
-
-        Moving forward, the preferred method of changing credentials of a preexisting
-        client object will be to set the :attr:`pagerduty.ApiClient.auth_method`
-        property directly.
-        """
-        warn("The api_key property is deprecated; use auth_method instead.")
-        return self.auth_method.secret
-
-    @api_key.setter
-    def api_key(self, api_key: str):
-        """
-        (Deprecated) Setter for the API key used for authentication.
-        """
-        warn("The api_key property is deprecated; use auth_method instead.")
-        self.auth_method = self._build_auth_method(api_key)
-        self.after_set_api_key()
 
     def canonical_path(self, url: str) -> CanonicalPath:
         """
@@ -786,10 +746,9 @@ class RestApiV2BaseClient(ApiClient):
             'limit': (self.default_page_size, page_size)[int(bool(page_size))],
         }
         if total is not None:
-            # The reason this is necessary is because urllib.parse.urlencode (called by
-            # Requests to serialize querystring parameters) serializes booleans as
-            # capitalized values, whereas the PagerDuty API requires lower case
-            # "true/false".
+            # This is to ensure that the correct literal string is passed through as the
+            # final parameter value rather than letting the middleware serialize it as
+            # it sees fit. The PagerDuty API requires lower case "true/false".
             data['total'] = str(total).lower()
         if isinstance(params, (dict, list)):
             # Override defaults with values given:
@@ -957,15 +916,15 @@ class RestApiV2BaseClient(ApiClient):
         Records performance information / request metadata about the API call.
 
         :param response:
-            The `requests.Response`_ object returned by the request method
+            The `httpx.Response`_ object returned by the request method
         :param suffix:
             Optional suffix to append to the key
         :type method: str
-        :type response: `requests.Response`_
+        :type response: `httpx.Response`_
         :type suffix: str or None
         """
         method = response.request.method.upper()
-        url = response.request.url
+        url = str(response.request.url)
         status = response.status_code
         request_date = response.headers.get('date', '(missing header)')
         request_id = response.headers.get('x-request-id', '(missing header)')
@@ -1004,7 +963,7 @@ class RestApiV2BaseClient(ApiClient):
             representing an API resource that contains an item with key ``self``
             whose value is the URL of the resource.
         :param **kw:
-            Custom keyword arguments to pass to ``requests.Session.delete``
+            Custom keyword arguments to pass to ``httpx.Client.delete``
         """
         return self.delete(resource, **kw)
 
@@ -1022,7 +981,7 @@ class RestApiV2BaseClient(ApiClient):
             representing an API resource that contains an item with key ``self``
             whose value is the URL of the resource.
         :param **kw:
-            Custom keyword arguments to pass to ``requests.Session.get``
+            Custom keyword arguments to pass to ``httpx.Client.get``
         :returns:
             The API response after JSON-decoding and unwrapping
         """
@@ -1039,7 +998,7 @@ class RestApiV2BaseClient(ApiClient):
             The path/URL to which to send the POST request, which should be an
             index endpoint.
         :param **kw:
-            Custom keyword arguments to pass to ``requests.Session.post``
+            Custom keyword arguments to pass to ``httpx.Client.post``
         :returns:
             The API response after JSON-decoding and unwrapping
         """
@@ -1059,7 +1018,7 @@ class RestApiV2BaseClient(ApiClient):
             representing an API resource that contains an item with key ``self``
             whose value is the URL of the resource.
         :param **kw:
-            Custom keyword arguments to pass to ``requests.Session.put``
+            Custom keyword arguments to pass to ``httpx.Client.put``
         :returns:
             The API response after JSON-decoding and unwrapping. In the case of at least
             one Teams endpoint (within REST API v2) and any other future API endpoint

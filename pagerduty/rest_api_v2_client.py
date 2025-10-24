@@ -168,10 +168,6 @@ CANONICAL_PATHS = [
     '/paused_incident_reports/alerts',
     '/paused_incident_reports/counts',
     '/priorities',
-    # TODO: remove support for response_plays in a future major version update
-    '/response_plays',
-    '/response_plays/{id}',
-    '/response_plays/{response_play_id}/run',
     '/rulesets',
     '/rulesets/{id}',
     '/rulesets/{id}/rules',
@@ -392,9 +388,6 @@ ENTITY_WRAPPER_CONFIG = {
     'POST /incident_workflows/{id}/instances': 'incident_workflow_instance',
     'POST /incident_workflows/triggers/{id}/services': ('service', 'trigger'),
 
-    # Response Plays
-    'POST /response_plays/{response_play_id}/run': None, # (deprecated)
-
     # Schedules
     'POST /schedules/{id}/overrides': ('overrides', None),
 
@@ -507,18 +500,17 @@ class RestApiV2Client(RestApiV2BaseClient):
         command line output.
     """
 
+    _url = 'https://api.pagerduty.com'
+
     default_from = None
     """The default value to use as the ``From`` request header"""
 
     permitted_methods = ('GET', 'PATCH', 'POST', 'PUT', 'DELETE')
 
-    url = 'https://api.pagerduty.com'
-    """Base URL of the REST API"""
-
     def __init__(self, api_key: str, default_from: Optional[str] = None,
-                 auth_type: str = "token", debug: bool = False):
+                 auth_type: str = "token", debug: bool = False, **kw):
 
-        super(RestApiV2Client, self).__init__(api_key, auth_type, debug=debug)
+        super(RestApiV2Client, self).__init__(api_key, auth_type, debug=debug, **kw)
 
         self.default_from = default_from
         if default_from is not None:

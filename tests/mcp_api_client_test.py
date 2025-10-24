@@ -2,7 +2,7 @@ import json
 import unittest
 from unittest.mock import patch
 
-import requests
+import httpx
 
 from mocks import Response
 from pagerduty import (

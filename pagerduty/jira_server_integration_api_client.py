@@ -33,7 +33,7 @@ class JiraServerIntegrationApiClient(RestApiV2BaseClient):
     assumed that the provided OAuth token was generated using an OAuth flow.
 
     :param access_token:
-        OAuth access token (Bearer token) obtained via an OAuth flow, used for HTTP requests.
+        OAuth access token (Bearer token) obtained via an OAuth flow
     :param jira_signature_token:
         Connected Jira instance signature token. This validates the connection between
         PagerDuty and a specific Jira instance.
@@ -42,12 +42,18 @@ class JiraServerIntegrationApiClient(RestApiV2BaseClient):
         command line output.
     """
 
+    _url = "https://app.pagerduty.com/integration-jira-service"
+
     permitted_methods = ('GET', 'POST', 'PUT', 'DELETE')
 
-    url = "https://app.pagerduty.com/integration-jira-service"
-
-    def __init__(self, access_token: str, jira_signature_token: str, debug: bool = False):
-        super(JiraServerIntegrationApiClient, self).__init__(access_token, auth_type='bearer', debug=debug)
+    def __init__(self, access_token: str, jira_signature_token: str,
+            debug: bool = False, **kw):
+        super(JiraServerIntegrationApiClient, self).__init__(
+            access_token,
+            auth_type='bearer',
+            debug=debug,
+            **kw
+        )
 
         self.jira_signature_token = jira_signature_token
         self.headers.update({

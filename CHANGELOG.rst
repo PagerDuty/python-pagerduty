@@ -1,3 +1,17 @@
+**2025-10-24: 6.0.0: Change base HTTP client to python-httpx**
+
+The underlying HTTP client on which this library is based has been changed to `python-httpx <https://www.python-httpx.org>`_. The primary motivation of this change is to provide thread safety with a very similar interface to ``requests``, and the possibility to add support for asynchronous usage in future releases.
+
+* **Breaking Changes:**
+   * The ``proxies`` property no longer exists in client classes, and proxy configuration must be passed to the constructor in one of the ``proxy`` or ``mounts`` keyword arguments. See: `HTTPX: Advanced: Proxies <https://www.python-httpx.org/advanced/proxies/>`_
+   * Response objects no longer have an ``ok`` property; use ``is_success`` instead.
+   * The following deprecated properties and methods have been removed:
+      * ``ApiClient.auth_header``
+      * ``RestApiV2BaseClient.after_set_api_key``
+      * ``RestApiV2BaseClient.api_key``
+   * The deprecated keyword argument ``routing_key`` to ``EventsApiV2Client.send_change_event`` has been removed.
+   * Support for the deprecated Response Plays API has been removed from ``RestApiV2Client``.
+
 **2025-10-23: 5.3.0: New AuthMethod class for verbatim authorization header setting**
 
 * New authentication method class ``PassThruHeaderAuthMethod`` that treats the secret as the whole content of the ``Authorization`` header.

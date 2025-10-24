@@ -7,13 +7,12 @@ from typing import (
 )
 
 # PyPI
-from requests import Response
+from httpx import Response
 
 # Local
 from . api_client import ApiClient
 from . auth_method import BodyParameterAuthMethod
 from . common import (
-    deprecated_kwarg,
     successful_response,
     try_decoding,
     truncate_text,
@@ -32,7 +31,7 @@ class RoutingKeyAuthMethod(BodyParameterAuthMethod):
 class EventsApiV2Client(ApiClient):
 
     """
-    Session class for submitting events to the PagerDuty v2 Events API.
+    Client class for submitting events to the PagerDuty v2 Events API.
 
     Implements methods for submitting events to PagerDuty through the Events API,
     including change events, and inherits from :class:`pagerduty.ApiClient`.  For more
@@ -48,13 +47,13 @@ class EventsApiV2Client(ApiClient):
         command line output.
     """
 
+    _url = "https://events.pagerduty.com"
+
     permitted_methods = ('POST',)
 
-    url = "https://events.pagerduty.com"
-
-    def __init__(self, routing_key: str, debug: bool = False):
+    def __init__(self, routing_key: str, debug: bool = False, **kw):
         auth_method = RoutingKeyAuthMethod(routing_key)
-        super(EventsApiV2Client, self).__init__(auth_method, debug)
+        super(EventsApiV2Client, self).__init__(auth_method, debug=debug, **kw)
         # See: https://developer.pagerduty.com/docs/3d063fd4814a6-events-api-v2-overview#response-codes--retry-logic
         self.retry[500] = 2 # internal server error
         self.retry[502] = 4 # bad gateway
@@ -87,7 +86,6 @@ class EventsApiV2Client(ApiClient):
 
     def send_change_event(self, payload: Optional[dict] = None,
                 links: Optional[List[dict]] = None,
-                routing_key: Optional[str] = None,
                 images: Optional[List[dict]] = None):
         """
         Send a change event to the v2 Change Events API.
@@ -100,9 +98,6 @@ class EventsApiV2Client(ApiClient):
         :param links:
             A list of dictionary objects each with keys ``href`` and ``text``
             representing the target and display text of each link
-        :param routing_key:
-            (Deprecated) the routing key. This parameter should be set via the
-            constructor `routing_key` parameter instead -- this argument is ignored.
         :param images:
             Optional list of images to attach to the change event.
         """
@@ -112,11 +107,6 @@ class EventsApiV2Client(ApiClient):
             links = []
         if images is None:
             images = []
-        if routing_key is not None:
-            deprecated_kwarg(
-                'routing_key',
-                method='EventsApiV2Client.send_change_event'
-            )
         event = {'payload': deepcopy(payload)}
         if links:
             event['links'] = deepcopy(links)

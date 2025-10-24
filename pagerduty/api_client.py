@@ -9,29 +9,33 @@ from typing import Optional, Union
 from warnings import warn
 
 # PyPI
-from requests import Response, Session
-from requests import __version__ as REQUESTS_VERSION
-from requests.exceptions import RequestException
-from urllib3.exceptions import PoolError
-from urllib3.exceptions import HTTPError as Urllib3HttpError
+from httpx import __version__ as HTTPX_VERSION
+from httpx import (
+    Client,
+    Headers,
+    TransportError,
+    Response
+)
 
 # Local
 from . auth_method import AuthMethod
 from . version import __version__
 from . errors import (
     Error,
-    HttpError
+    HttpError,
+    ServerHttpError,
+    UrlError
 )
 from . common import (
     TIMEOUT,
     normalize_url
 )
 
-class ApiClient(Session):
+class ApiClient(Client):
     """
     Base class for making HTTP requests to PagerDuty APIs
 
-    This is an opinionated wrapper of `requests.Session`_, with a few additional
+    This is an opinionated wrapper of `httpx.Client`_, with a few additional
     features:
 
     - The client will reattempt the request with auto-increasing cooldown/retry
@@ -75,7 +79,7 @@ class ApiClient(Session):
     """
 
     parent = None
-    """The ``super`` object (`requests.Session`_)"""
+    """The ``super`` object (`httpx.Client`_)"""
 
     permitted_methods = ()
     """
@@ -101,7 +105,7 @@ class ApiClient(Session):
       encountered first), and then return the final response.
 
     The default behavior is to retry without limit on status 429, raise an
-    exception on a 401, and return the `requests.Response`_ object in any other case
+    exception on a 401, and return the `httpx.Response`_ object in any other case
     (assuming a HTTP response was received from the server).
     """
 
@@ -123,19 +127,13 @@ class ApiClient(Session):
 
     timeout = TIMEOUT
     """
-    This is the value sent to `Requests`_ as the ``timeout`` parameter that
+    This is the value sent to `HTTPX`_ as the ``timeout`` parameter that
     determines the TCP read timeout.
     """
 
-    url = ""
-    """
-    The base URL for the API being called (usually https://api.pagerduty.com, but
-    this can vary depending on the specific API being accessed).
-    """
-
-    def __init__(self, auth_method: AuthMethod, debug=False):
+    def __init__(self, auth_method: AuthMethod, debug=False, **kw):
         self.parent = super(ApiClient, self)
-        self.parent.__init__()
+        self.parent.__init__(**kw)
         self.auth_method = auth_method
         self.log = logging.getLogger(__name__)
         self.print_debug = debug
@@ -162,15 +160,6 @@ class ApiClient(Session):
 
         self._auth_method = auth_method
         self.after_set_auth_method()
-
-    @property
-    def auth_header(self) -> dict:
-        """
-        Generates the Authorization header based on auth_method provided.
-        """
-        warn("Property ApiClient.auth_header is deprecated. " +
-            "Use ApiClient.auth_method.auth_header instead.")
-        return self.auth_method.auth_header
 
     def cooldown_factor(self) -> float:
         return self.sleep_timer_base*(1+self.stagger_cooldown*random())
@@ -199,7 +188,17 @@ class ApiClient(Session):
 
     def prepare_headers(self, method: str, user_headers: Optional[dict] = None) -> dict:
         """
-        Append special additional per-request headers.
+        Append all necessary headers per-request.
+
+        The upstream client class `httpx.Client`_ will merge headers into the default
+        instance headers, so any defaults set by the end user in the mutable ``headers``
+        property will already be merged in, and the headers specified at request time
+        will take precendence.
+
+        This method just merges in the PagerDuty API client's defaults on a per-request
+        basis to avoid storing per-API header settings like API keys in drift-able
+        mutable stateful instance attributes, and to enforce the correct headers on each
+        request, especially where they might differ per-API / per request.
 
         :param method:
             The HTTP method, in upper case.
@@ -208,18 +207,18 @@ class ApiClient(Session):
         :returns:
             The final list of headers to use in the request
         """
-        # Utilize any defaults that the implementer has set via the upstream interface:
-        headers = deepcopy(self.headers)
+        headers = Headers({})
         # Override the default user-agent with the per-class user_agent property:
         headers['User-Agent'] = self.user_agent
-        # A universal convention: whenever sending a POST, PUT or PATCH, the
+        # A nearly universal convention: whenever sending a POST, PUT or PATCH, the
         # Content-Type header must be "application/json":
         if method in ('POST', 'PUT', 'PATCH'):
             headers['Content-Type'] = 'application/json'
-        # Add headers passed in per-request as an additional argument:
+        # Add headers passed in per-request as an additional argument, letting them take
+        # precedence over the defaults:
         if type(user_headers) is dict:
             headers.update(user_headers)
-        # Add authentication header, if the auth_method defines it:
+        # Add authentication header:
         headers.update(self.auth_method.auth_header)
         return headers
 
@@ -264,11 +263,11 @@ class ApiClient(Session):
             The path/URL to request. If it does not start with the base URL, the
             base URL will be prepended.
         :param **kwargs:
-            Custom keyword arguments to pass to ``requests.Session.request``.
+            Custom keyword arguments to pass to ``httpx.Client.request``.
         :type method: str
         :type url: str
         :returns:
-            The `requests.Response`_ object corresponding to the HTTP response
+            The `httpx.Response`_ object corresponding to the HTTP response
         """
         sleep_timer = self.sleep_timer
         network_attempts = 0
@@ -284,10 +283,13 @@ class ApiClient(Session):
 
         # Add in any headers specified in keyword arguments:
         headers = kwargs.get('headers', {})
+        # Add some defaults:
         req_kw.update({
             'headers': self.prepare_headers(method, user_headers=headers),
-            'stream': False,
-            'timeout': self.timeout
+            'timeout': self.timeout,
+            'auth': None,
+            'follow_redirects': False,
+            'cookies': None
         })
 
         # Add authentication parameter, if the API requires it and it is a request type
@@ -306,7 +308,7 @@ class ApiClient(Session):
             try:
                 response = self.parent.request(method, full_url, **req_kw)
                 self.postprocess(response)
-            except (Urllib3HttpError, PoolError, RequestException) as e:
+            except TransportError as e:
                 network_attempts += 1
                 if network_attempts > self.max_network_attempts:
                     error_msg = f"{endpoint}: Non-transient network " \
@@ -322,7 +324,14 @@ class ApiClient(Session):
 
             status = response.status_code
             retry_logic = self.retry.get(status, 0)
-            if not response.ok and retry_logic != 0:
+            if status // 100 == 3:
+                # This is not expected, but if it ever does happen, fail noisily:
+                raise ServerHttpError(
+                    f"Received status {status} in response to {method} {full_url}, " \
+                        f"but PagerDuty APIs are not expected to issue redirects.",
+                    response
+                )
+            elif not response.is_success and retry_logic != 0:
                 # Take special action as defined by the retry logic
                 if retry_logic != -1:
                     # Retry a specific number of times (-1 implies infinite)
@@ -407,10 +416,28 @@ class ApiClient(Session):
         return self.auth_method.trunc_secret
 
     @property
+    def url(self) -> str:
+        """
+        The base URL for the API being called.
+
+        Must be a HTTPS URL. For REST API v2 in the US service region, this is
+        ``https://api.pagerduty.com``; for Events API v2 it is
+        ``https://events.pagerduty.com``.  This property must be set when using a
+        service region other than US Production.
+        """
+        return self._url
+
+    @url.setter
+    def url(self, new_base_url: str):
+        if not new_base_url.startswith('https://'):
+            raise UrlError('API base URL must use scheme https://')
+        self._url = new_base_url
+
+    @property
     def user_agent(self) -> str:
-        return 'python-pagerduty/%s python-requests/%s Python/%d.%d'%(
+        return 'python-pagerduty/%s python-httpx/%s Python/%d.%d'%(
             __version__,
-            REQUESTS_VERSION,
+            HTTPX_VERSION,
             sys.version_info.major,
             sys.version_info.minor
         )

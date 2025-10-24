@@ -32,12 +32,12 @@ class McpApiClient(ApiClient):
         result = client.call('tools/list')['result']
     """
 
+    _url = 'https://mcp.pagerduty.com'
+
     permitted_methods = ('POST',)
 
-    url = 'https://mcp.pagerduty.com'
-
-    def __init__(self, auth_method: AuthMethod, debug=False):
-        super(McpApiClient, self).__init__(auth_method, debug=debug)
+    def __init__(self, auth_method: AuthMethod, debug=False, **kw):
+        super(McpApiClient, self).__init__(auth_method, debug=debug, **kw)
         self.headers.update({'Accept': 'application/json, text/event-stream'})
 
     def call(self, method: str, params: Optional[dict] = None, req_id = None) -> dict:

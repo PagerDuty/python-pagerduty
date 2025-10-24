@@ -27,22 +27,19 @@ For more details, use the ``-h`` flag to display the script's helptext.
 
 Overview
 --------
-This library supplies classes extending `requests.Session`_ from the Requests_
-HTTP library that serve as Python interfaces to the `REST API v2`_ and `Events
-API v2`_ of PagerDuty. One might call it an opinionated wrapper library. It is
-the successor to the popular `pdpyras`_ library and is based on the same source
-code.
+This library supplies classes for making requests to PagerDuty's public APIs
+that extend the `httpx.Client`_ class from the python-httpx_ HTTP library . It
+is the successor to the popular `pdpyras`_ library and was originally based on
+the same source code.
 
-The client was designed with the philosophy that `Requests`_ is a perfectly
-adequate HTTP client, and that abstraction should focus only on the most
-generally applicable and frequently-implemented core features, requirements and
-patterns of APIs. Design decisions concerning how any particular PagerDuty
-resource is accessed or manipulated through APIs are left to the user or
-implementer to make.
+The client was designed with the philosophy that API clients' abstractions
+should focus only on the most generally applicable and frequently-implemented
+core features, requirements and patterns of APIs, while reusing a common HTTP
+client as a platform to cover the basics.
 
 Features
 --------
-- Uses Requests' automatic HTTP connection pooling and persistence
+- Uses HTTPX's automatic HTTP connection pooling and persistence
 - Tested in / support for Python 3.6 through 3.13
 - Abstraction layer for authentication, pagination, filtering and wrapped
   entities
@@ -61,7 +58,7 @@ that provided easy access to features of the underlying HTTP library (i.e. to
 obtain the response headers, or set special request headers). We also needed
 something that eliminated tedious tasks like querying objects by name,
 pagination and authentication. Finally, we discovered that the way we were
-using `Requests`_ wasn't making use of its connection pooling feature, and
+using ``requests`` wasn't making use of its connection pooling feature, and
 wanted a way to easily enforce this as a standard practice.
 
 We evaluated at the time a few other open-source API libraries and deemed them
@@ -106,12 +103,8 @@ Warranty
 .. References:
 .. -----------
 
-.. _`Requests`: https://docs.python-requests.org/en/master/
+.. _`python-httpx`: https://www.python-httpx.org/
 .. _`pdpyras`: https://github.com/PagerDuty/pdpyras
 .. _`Errors`: https://developer.pagerduty.com/docs/ZG9jOjExMDI5NTYz-errors
-.. _`Events API v2`: https://developer.pagerduty.com/docs/ZG9jOjExMDI5NTgw-events-api-v2-overview
 .. _`PagerDuty API Reference`: https://developer.pagerduty.com/api-reference/
-.. _`REST API v2`: https://developer.pagerduty.com/docs/ZG9jOjExMDI5NTUw-rest-api-v2-overview
 .. _`setuptools`: https://pypi.org/project/setuptools/
-.. _requests.Response: https://docs.python-requests.org/en/master/api/#requests.Response
-.. _requests.Session: https://docs.python-requests.org/en/master/api/#request-sessions
