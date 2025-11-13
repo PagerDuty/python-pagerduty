@@ -11,33 +11,15 @@ ensure code coverage. If the change(s) fix a bug, please add assertions that
 reproduce the bug along with code changes themselves, and include the GitHub
 issue number in the commit message.
 
-Initial Setup
--------------
+Initial Setup and Unit Tests
+----------------------------
 To be able to rebuild the documentation, apply formatting and release new
 versions, first make sure you have `make <https://www.gnu.org/software/make/>`_
-and `uv <https://docs.astral.sh/uv/>`_ installed in your local development
-environment, as well as Python version 3.11 or later.
+installed in your local development environment, as well as
+[uv](https://docs.astral.sh/uv/) for dependency management.
 
-Next, install Python dependencies for building and publishing as well as
-testing locally:
-
-.. code-block:: shell
-
-    pip install .
-    pip install -r requirements-publish.txt 
-
-If asdf-vm was used to install Python locally, run the following after the above:
-
-.. code-block:: shell
-
-    asdf reshim python
-
-Finally, run ``test.sh`` in the root path of the repository to run the unit
-test suite locally, or run this command by itself:
-
-.. code-block:: shell
-
-    python -m unittest discover -p '*_test.py' -s tests
+Run ``uv run test.sh`` in the root path of the repository to validate that unit
+tests can be run locally.
 
 Maintaining Entity Wrapper Configuration
 ----------------------------------------
@@ -125,10 +107,12 @@ the same as the last node of the path. Examples: ``GET /services`` (wrapper =
 ``services``), ``PUT /incidents`` (wrapper = ``incidents``)
 
 If all of the above apply to new endpoints for all request methods, then no new
-entries need to be added to :attr:`pagerduty.rest_api_v2_client.ENTITY_WRAPPER_CONFIG` to support
-them; they are supported automatically by virtue of following preexisting
-already-supported API patterns and having corresponding entries in
-:attr:`pagerduty.rest_api_v2_client.CANONICAL_PATHS`.
+entries need to be added to
+:attr:`pagerduty.rest_api_v2_client.ENTITY_WRAPPER_CONFIG` to support them;
+they are supported automatically by virtue of following preexisting
+already-supported API patterns. Their corresponding entries in
+:attr:`pagerduty.rest_api_v2_client.CANONICAL_PATHS` officiates their support
+for entity-wrapping-aware functions.
 
 Adding Support for Non-Conforming Endpoints
 *******************************************
@@ -164,13 +148,13 @@ lives. To rebuild the HTML documentation from the source, run:
 
 .. code-block:: shell
 
-    make docs
+    uv run make docs
 
 To force a rebuild, run ``touch CHANGELOG.rst`` first.
 
 **NOTE:** Python version 3.13 or later must be used when rebuilding
 documentation, or the version number in the documentation will be
-``2.?.?-metadata-unavailable``.
+``[V].?.?-metadata-unavailable``, where ``[V]`` is the current major version.
 
 Releasing a New Version
 -----------------------
@@ -200,7 +184,7 @@ To perform end-to-end tests, run the following, entering credentials for
 
 .. code-block:: shell
 
-    make testpublish
+    uv run make testpublish
 
 The make target ``testpublish`` performs the following:
 
@@ -233,7 +217,7 @@ The HTML documentation can be rebuilt with the ``docs`` make target:
 
 .. code-block:: shell
 
-    make docs
+    uv run make docs
 
 After rebuilding the documentation, it can then be viewed by opening the file
 ``docs/index.html`` in a web browser. Including rebuilt documentation helps
@@ -258,7 +242,7 @@ local file tree is clean (has no uncommitted changes). Then run:
 
 .. code-block:: shell
 
-    make publish
+    uv run make publish
 
 When prompted, enter ``__token__`` as your username and your API token as the password.
 
