@@ -9,6 +9,7 @@ from typing import List, Optional
 from .api_client import ApiClient
 from .auth_method import BodyParameterAuthMethod
 from .common import successful_response, try_decoding, truncate_text
+from .errors import ServerHttpError
 
 
 class RoutingKeyAuthMethod(BodyParameterAuthMethod):

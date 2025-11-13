@@ -66,6 +66,7 @@ from .slack_integration_connections_api_client import (
 # future breaking change that ends the practice of importing the helper methods
 # and module configuration globals.
 __all__ = [
+    "__version__",
     "ApiClient",
     "CANONICAL_PATHS",
     "CURSOR_BASED_PAGINATION_PATHS",
