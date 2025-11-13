@@ -106,7 +106,7 @@ issue number in the commit message.</p>
 versions, first make sure you have <a class="reference external" href="https://www.gnu.org/software/make/">make</a>
 installed in your local development environment, as well as
 [uv](<a class="reference external" href="https://docs.astral.sh/uv/">https://docs.astral.sh/uv/</a>) for dependency management.</p>
-<p>Run <code class="docutils literal notranslate"><span class="pre">uv</span> <span class="pre">run</span> <span class="pre">test.sh</span></code> in the root path of the repository to validate that unit
+<p>Next, run <code class="docutils literal notranslate"><span class="pre">test.sh</span></code> in the root path of the repository to validate that unit
 tests can be run locally.</p>
 </section>
 <section id="maintaining-entity-wrapper-configuration">
@@ -222,7 +222,7 @@ Subscribers” looks like this:</p>
 <h2>Updating Documentation<a class="headerlink" href="#updating-documentation" title="Link to this heading"></a></h2>
 <p>The <code class="docutils literal notranslate"><span class="pre">.rst</span></code> files in <code class="docutils literal notranslate"><span class="pre">sphinx/source</span></code> are where most of the documentation
 lives. To rebuild the HTML documentation from the source, run:</p>
-<div class="highlight-shell notranslate"><div class="highlight"><pre><span></span>uv<span class="w"> </span>run<span class="w"> </span>make<span class="w"> </span>docs
+<div class="highlight-shell notranslate"><div class="highlight"><pre><span></span>make<span class="w"> </span>docs
 </pre></div>
 </div>
 <p>To force a rebuild, run <code class="docutils literal notranslate"><span class="pre">touch</span> <span class="pre">CHANGELOG.rst</span></code> first.</p>
@@ -298,7 +298,7 @@ installed.</p>
 <p>Once the changes are merged and tagged, make sure your local repository clone
 has the <code class="docutils literal notranslate"><span class="pre">main</span></code> branch checked out at the latest available commit, and the
 local file tree is clean (has no uncommitted changes). Then run:</p>
-<div class="highlight-shell notranslate"><div class="highlight"><pre><span></span>uv<span class="w"> </span>run<span class="w"> </span>make<span class="w"> </span>publish
+<div class="highlight-shell notranslate"><div class="highlight"><pre><span></span>make<span class="w"> </span>publish
 </pre></div>
 </div>
 <p>When prompted, enter <code class="docutils literal notranslate"><span class="pre">__token__</span></code> as your username and your API token as the password.</p>

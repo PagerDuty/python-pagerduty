@@ -18,7 +18,7 @@ versions, first make sure you have `make <https://www.gnu.org/software/make/>`_
 installed in your local development environment, as well as
 [uv](https://docs.astral.sh/uv/) for dependency management.
 
-Run ``uv run test.sh`` in the root path of the repository to validate that unit
+Next, run ``test.sh`` in the root path of the repository to validate that unit
 tests can be run locally.
 
 Maintaining Entity Wrapper Configuration
@@ -148,7 +148,7 @@ lives. To rebuild the HTML documentation from the source, run:
 
 .. code-block:: shell
 
-    uv run make docs
+    make docs
 
 To force a rebuild, run ``touch CHANGELOG.rst`` first.
 
@@ -242,7 +242,7 @@ local file tree is clean (has no uncommitted changes). Then run:
 
 .. code-block:: shell
 
-    uv run make publish
+    make publish
 
 When prompted, enter ``__token__`` as your username and your API token as the password.
 
