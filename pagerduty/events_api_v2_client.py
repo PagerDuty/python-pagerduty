@@ -7,7 +7,6 @@ from typing import (
 )
 
 # PyPI
-from httpx import Response
 
 # Local
 from . api_client import ApiClient
@@ -15,8 +14,7 @@ from . auth_method import BodyParameterAuthMethod
 from . common import (
     successful_response,
     try_decoding,
-    truncate_text,
-    last_4
+    truncate_text
 )
 
 class RoutingKeyAuthMethod(BodyParameterAuthMethod):

@@ -8,7 +8,6 @@ sys.path.insert(0, os.path.abspath(os.path.join(
     '..', '..'
 )))
 from pagerduty import __version__
-import pagerduty
 
 # -- Project information -----------------------------------------------------
 import datetime

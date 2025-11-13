@@ -1,4 +1,4 @@
-from unittest.mock import Mock, MagicMock, patch, call
+from unittest.mock import MagicMock, patch
 
 from common_test import ClientTest
 from mocks import Response

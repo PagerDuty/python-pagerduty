@@ -1,13 +1,7 @@
-from typing import Iterator, List, Optional
-import uuid
+from typing import List, Optional
 
 from . api_client import ApiClient
-from . auth_method import AuthMethod
 from . common import successful_response, try_decoding
-from . rest_api_v2_base_client import (
-    OAuthTokenAuthMethod,
-    TokenAuthMethod
-)
 
 class ScimApiClient(ApiClient):
     """

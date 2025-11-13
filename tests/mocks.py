@@ -1,6 +1,6 @@
 import datetime
 import json
-from unittest.mock import Mock, MagicMock, patch, call
+from unittest.mock import Mock, MagicMock
 from json.decoder import JSONDecodeError
 
 class Client(object):

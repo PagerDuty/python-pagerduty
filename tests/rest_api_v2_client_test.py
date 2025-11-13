@@ -6,7 +6,6 @@ import httpx
 import sys
 import unittest
 from datetime import timezone
-from httpx import Headers
 from typing import Optional
 from unittest.mock import Mock, MagicMock, patch, call
 
@@ -16,7 +15,6 @@ from mocks import Client, Response
 
 import pagerduty
 from pagerduty.rest_api_v2_base_client import (
-    TokenAuthMethod,
     OAuthTokenAuthMethod
 )
 

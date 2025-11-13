@@ -22,8 +22,7 @@ from . common import (
     singular_name,
     successful_response,
     truncate_text,
-    try_decoding,
-    last_4
+    try_decoding
 )
 from . errors import (
     ServerHttpError,

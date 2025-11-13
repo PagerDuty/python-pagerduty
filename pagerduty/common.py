@@ -302,7 +302,7 @@ def try_decoding(r: Response) -> Optional[Union[dict, list, str]]:
     """
     try:
         return r.json()
-    except (JSONDecodeError, ValueError) as e:
+    except (JSONDecodeError, ValueError):
         if r.text.strip() == '':
             # Some endpoints return HTTP 204 for request types other than delete
             return None

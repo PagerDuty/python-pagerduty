@@ -6,7 +6,6 @@ import time
 from copy import deepcopy
 from random import random
 from typing import Optional, Union
-from warnings import warn
 
 # PyPI
 from httpx import __version__ as HTTPX_VERSION
@@ -341,7 +340,7 @@ class ApiClient(Client):
                         if lower_limit > self.max_http_attempts:
                             lower_limit = self.max_http_attempts
                         self.log.error(
-                            f"%s: Non-transient HTTP error: exceeded " \
+                            "%s: Non-transient HTTP error: exceeded " \
                             'maximum number of attempts (%d) to make a ' \
                             'successful request. Currently encountering ' \
                             'status %d.', endpoint, lower_limit, status)

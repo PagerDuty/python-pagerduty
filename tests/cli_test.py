@@ -1,5 +1,5 @@
 import unittest
-from unittest.mock import Mock, MagicMock, patch, call
+from unittest.mock import patch
 
 import pagerduty
 from pagerduty import cli

@@ -1,5 +1,4 @@
 # Local
-from . version import __version__
 from . common import last_4
 
 class AuthMethod():

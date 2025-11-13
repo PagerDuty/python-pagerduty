@@ -5,10 +5,6 @@ from . api_client import ApiClient
 from . auth_method import AuthMethod
 from . common import successful_response
 from . errors import ServerHttpError
-from . rest_api_v2_base_client import (
-    OAuthTokenAuthMethod,
-    TokenAuthMethod
-)
 
 class McpApiClient(ApiClient):
     """

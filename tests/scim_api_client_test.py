@@ -3,8 +3,6 @@ import unittest
 import unittest.mock
 from unittest.mock import patch
 
-import httpx
-
 from mocks import Response
 from pagerduty import (
     ApiClient,

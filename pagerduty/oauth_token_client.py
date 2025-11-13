@@ -14,8 +14,7 @@ from . common import (
     datetime_to_relative_seconds,
     relative_seconds_to_datetime,
     successful_response,
-    try_decoding,
-    last_4
+    try_decoding
 )
 from . errors import ServerHttpError
 from . rest_api_v2_client import RestApiV2Client
