@@ -13,14 +13,10 @@ issue number in the commit message.
 
 Initial Setup
 -------------
-To be able to rebuild the documentation and release a new version, first make
-sure you have `make <https://www.gnu.org/software/make/>`_ and `pip
-<https://pip.pypa.io/en/stable/installation/>`_ installed in your shell
+To be able to rebuild the documentation, apply formatting and release new
+versions, first make sure you have `make <https://www.gnu.org/software/make/>`_
+and `uv <https://docs.astral.sh/uv/>`_ installed in your local development
 environment, as well as Python version 3.11 or later.
-
-The recommended way of setting up the Python environment is using `asdf-vm
-<https://asdf-vm.com/>`_, i.e. run ``asdf install`` in your clone of the
-repository.
 
 Next, install Python dependencies for building and publishing as well as
 testing locally:

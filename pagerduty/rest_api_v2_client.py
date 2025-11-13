@@ -23,9 +23,11 @@ from .rest_api_v2_base_client import (
 
 RECURSION_LIMIT = getrecursionlimit() // 2
 
-ITER_HIST_RECURSION_WARNING_TEMPLATE = """RestApiV2Client.iter_history cannot continue
-bisecting historical time intervals because {reason}, but the total number of results in
-the current requested time sub-interval ({since_until}) still exceeds the hard limit for
+ITER_HIST_RECURSION_WARNING_TEMPLATE = \
+"""
+RestApiV2Client.iter_history cannot continue bisecting historical time
+intervals because {reason}, but the total number of results in the current
+requested time sub-interval ({since_until}) still exceeds the hard limit for
 classic pagination, {iteration_limit}. Results will be incomplete.{suggestion}
 """.replace("\n", " ")
 
@@ -450,9 +452,9 @@ def canonical_path(base_url: str, url: str) -> str:
     """
     Return the REST API v2 canonical path for a given URL.
 
-    This method should eventually be deprecated. For now it is included so that the
-    changes to unit testing and the base namespace of the module don't have to change
-    dramatically and can still use this wrapper.
+    This method should eventually be deprecated. For now it is included so that
+    the changes to unit testing and the base namespace of the module don't have
+    to change dramatically and can still use this wrapper.
     """
     return canonical_path_common(CANONICAL_PATHS, base_url, url)
 
@@ -466,9 +468,9 @@ def entity_wrappers(method: str, path: str) -> tuple:
     """
     Return the REST API v2 canonical path for a given URL.
 
-    This method should eventually be deprecated. For now it is included so that the
-    changes to unit testing and the base namespace of the module don't have to change
-    dramatically and can still use this wrapper.
+    This method should eventually be deprecated. For now it is included so that
+    the changes to unit testing and the base namespace of the module don't have
+    to change dramatically and can still use this wrapper.
     """
     return entity_wrappers_common(ENTITY_WRAPPER_CONFIG, method, path)
 
@@ -482,8 +484,8 @@ class RestApiV2Client(RestApiV2BaseClient):
     """
     PagerDuty REST API v2 client class.
 
-    Implements abstractions for the particular features of PagerDuty's REST API v2.
-    Inherits from :class:`pagerduty.RestApiV2BaseClient`.
+    Implements abstractions for the particular features of PagerDuty's REST API
+    v2.  Inherits from :class:`pagerduty.RestApiV2BaseClient`.
 
     :param api_key:
         REST API access token to use for HTTP requests.
@@ -492,11 +494,12 @@ class RestApiV2Client(RestApiV2BaseClient):
         API calls using an account-level API access key.
     :param auth_type:
         The type of credential in use. If authenticating with an OAuth access
-        token, this must be set to ``oauth2`` or ``bearer``. This will determine the
-        format of the ``Authorization`` header that is sent to the API in each request.
+        token, this must be set to ``oauth2`` or ``bearer``. This will
+        determine the format of the ``Authorization`` header that is sent to
+        the API in each request.
     :param debug:
-        Sets :attr:`pagerduty.ApiClient.print_debug`. Set to ``True`` to enable verbose
-        command line output.
+        Sets :attr:`pagerduty.ApiClient.print_debug`. Set to ``True`` to enable
+        verbose command line output.
     """
 
     _url = "https://api.pagerduty.com"
@@ -543,9 +546,10 @@ class RestApiV2Client(RestApiV2BaseClient):
         elif r.status_code == 402:
             return False
         elif r.status_code == 403:
-            # Stop. Authorization failed. This is expected to be non-transient. This
-            # may be added at a later time to ApiClient, i.e. to add a new default
-            # action similar to HTTP 401. It would be a be a breaking change...
+            # Stop. Authorization failed. This is expected to be non-transient.
+            # This may be added at a later time to ApiClient, i.e. to add a new
+            # default action similar to HTTP 401. It would be a be a breaking
+            # change...
             raise HttpError(
                 "Received 403 Forbidden response from the API. The identity "
                 "associated with the credentials does not have permission to "
@@ -554,8 +558,8 @@ class RestApiV2Client(RestApiV2BaseClient):
             )
         elif r.status_code == 404:
             raise HttpError(
-                f'Invalid or unknown ability "{ability}"; API responded with status '
-                "404 Not Found.",
+                f'Invalid or unknown ability "{ability}"; API responded with '
+                "status 404 Not Found.",
                 r,
             )
         return False
@@ -618,24 +622,27 @@ class RestApiV2Client(RestApiV2BaseClient):
         """
         Finds an object of a given resource type exactly matching a query.
 
-        Works by querying a given resource index endpoint using the ``query`` parameter.
-        To use this function on any given resource, the resource's index must support
-        the ``query`` parameter; otherwise, the function may not work as expected. If
-        the index ignores the parameter, for instance, this function will take much
-        longer to return; results will not be constrained to those matching the query,
-        and so every result in the index will be downloaded and compared against the
-        query up until a matching result is found or all results have been checked.
+        Works by querying a given resource index endpoint using the ``query``
+        parameter.  To use this function on any given resource, the resource's
+        index must support the ``query`` parameter; otherwise, the function may
+        not work as expected. If the index ignores the parameter, for instance,
+        this function will take much longer to return; results will not be
+        constrained to those matching the query, and so every result in the
+        index will be downloaded and compared against the query up until a
+        matching result is found or all results have been checked.
 
-        The comparison between the query and matching results is case-insenitive. When
-        determining uniqueness, APIs are mostly case-insensitive, and therefore objects
-        with similar characters but differing case can't even exist. All results (and
-        the search query) are for this reason reduced pre-comparison to a common form
-        (all-lowercase strings) so that case doesn't need to match in the query argument
+        The comparison between the query and matching results is
+        case-insenitive. When determining uniqueness, APIs are mostly
+        case-insensitive, and therefore objects with similar characters but
+        differing case can't even exist. All results (and the search query) are
+        for this reason reduced pre-comparison to a common form (all-lowercase
+        strings) so that case doesn't need to match in the query argument
         (which is also interpreted by the API as case-insensitive).
 
-        If said behavior differs for a given API, i.e. the uniqueness constraint on a
-        field is case-sensitive, it should still return the correct results because the
-        search term sent to the index in the querystring is not lower-cased.
+        If said behavior differs for a given API, i.e. the uniqueness
+        constraint on a field is case-sensitive, it should still return the
+        correct results because the search term sent to the index in the
+        querystring is not lower-cased.
 
         :param resource:
             The name of the resource endpoint to query, i.e.
@@ -645,12 +652,13 @@ class RestApiV2Client(RestApiV2BaseClient):
         :param attribute:
             The property of each result to compare against the query value when
             searching for an exact match. By default it is ``name``, but when
-            searching for user by email (for example) it can be set to ``email``
+            searching for user by email (for example) it can be set to
+            ``email``
         :param params:
             Optional additional parameters to use when querying.
         :returns:
-            The dictionary representation of the result, if found; ``None`` will
-            be returned if there is no exact match result.
+            The dictionary representation of the result, if found; ``None``
+            will be returned if there is no exact match result.
         """
         query_params = {}
         if params is not None:
@@ -666,11 +674,12 @@ class RestApiV2Client(RestApiV2BaseClient):
         self, service_ids: Optional[list] = None, limit: Optional[int] = None
     ) -> Iterator[dict]:
         """
-        Iterator for the contents of the "List alert grouping settings" endpoint.
+        Iterator for the contents of "List alert grouping settings"
 
-        The API endpoint "GET /alert_grouping_settings" has its own unique method of
-        pagination. This method provides an abstraction for it similar to what
-        :attr:`iter_all` provides for endpoints that implement classic pagination.
+        The API endpoint "GET /alert_grouping_settings" has its own unique
+        method of pagination. This method provides an abstraction for it
+        similar to what :attr:`iter_all` provides for endpoints that implement
+        classic pagination.
 
         See:
         `List alert grouping settings <https://developer.pagerduty.com/api-reference/b9fe211cc2748-list-alert-grouping-settings>`_
@@ -681,7 +690,8 @@ class RestApiV2Client(RestApiV2BaseClient):
             The number of results retrieved per page. By default, the value
             :attr:`default_page_size` will be used.
         :yields:
-            Results from each page in the ``alert_grouping_settings`` response property.
+            Results from each page in the ``alert_grouping_settings`` response
+            property.
         """
         more = True
         after = None
@@ -711,9 +721,9 @@ class RestApiV2Client(RestApiV2BaseClient):
         """
         Iterator for raw analytics data on multiple incidents.
 
-        The API endpoint ``POST /analytics/raw/incidents`` has its own unique method of
-        pagination. This method provides an abstraction for it similar to
-        :attr:`iter_all`.
+        The API endpoint ``POST /analytics/raw/incidents`` has its own unique
+        method of pagination. This method provides an abstraction for it
+        similar to :attr:`iter_all`.
 
         See:
         `Get raw data - multiple incidents <https://developer.pagerduty.com/api-reference/c2d493e995071-get-raw-data-multiple-incidents>`_
@@ -723,14 +733,15 @@ class RestApiV2Client(RestApiV2BaseClient):
         :param order:
             The order in which to sort results. Must be ``asc`` or ``desc``.
         :param order_by:
-            The attribute of results by which to order results. Must be ``created_at``
-            or ``seconds_to_resolve``.
+            The attribute of results by which to order results. Must be
+            ``created_at`` or ``seconds_to_resolve``.
         :param limit:
-            The number of results to yield per page before requesting the next page. If
-            unspecified, :attr:`default_page_size` will be used. The particular API
-            endpoint permits values up to 1000.
+            The number of results to yield per page before requesting the next
+            page. If unspecified, :attr:`default_page_size` will be used. The
+            particular API endpoint permits values up to 1000.
         :yields:
-            Entries of the ``data`` property in the response body from each page
+            Entries of the ``data`` property in the response body from each
+            page of results
         """
         page_size = self.default_page_size
         if limit is not None:
@@ -765,43 +776,50 @@ class RestApiV2Client(RestApiV2BaseClient):
         """
         Yield all historical records from an endpoint in a given time interval.
 
-        This method works around the limitation of classic pagination (see
-        :attr:`pagerduty.rest_api_v2_base_client.ITERATION_LIMIT`) by recursively
-        bisecting the initially-provided time interval until the total number of results
-        in each sub-interval is less than the hard pagination limit.
+        This method works around the hard maximum result limit in classic
+        pagination (see: `Pagination
+        <https://developer.pagerduty.com/docs/pagination>`_) by recursively
+        bisecting the initially-provided time interval until the total number
+        of results in each sub-interval is less than the hard pagination limit.
 
         :param url:
-            Index endpoint (API URL) from which to yield results. In the event that a
-            cursor-based pagination endpoint is given, this method calls
-            :attr:`iter_cursor` directly, as cursor-based pagination has no such
-            limitation.
+            Index endpoint (API URL) from which to yield results. In the event
+            that a cursor-based pagination endpoint is given, this method calls
+            :attr:`iter_cursor` directly, as cursor-based pagination has no
+            such limitation.
         :param since:
-            The beginning of the time interval. This must be a non-naïve datetime object
-            (i.e. it must be timezone-aware), in order to format the ``since`` parameter
-            when transmitting it to the API such that it unambiguously takes the time
-            zone into account. See: `datetime (Python documentation)
+            The beginning of the time interval. This must be a non-naïve
+            datetime object (i.e. it must be timezone-aware), in order to
+            format the ``since`` parameter when transmitting it to the API such
+            that it unambiguously takes the time zone into account. See:
+            `datetime (Python documentation)
             <https://docs.python.org/3/library/datetime.html>`_
         :param until:
-            The end of the time interval. A timezone-aware datetime object must be
-            supplied for the same reason as for the ``since`` parameter.
+            The end of the time interval. A timezone-aware datetime object must
+            be supplied for the same reason as for the ``since`` parameter.
         :param kw:
-            Custom keyword arguments to pass to the iteration method. Note, if providing
-            ``params`` in order to add query string parameters for filtering, the
-            ``since`` and ``until`` keys (if present) will be ignored.
+            Custom keyword arguments to pass to the iteration method. Note, if
+            providing ``params`` in order to add query string parameters for
+            filtering, the ``since`` and ``until`` keys (if present) will be
+            ignored.
         :yields:
-            All results from the resource collection API within the time range specified
-            by ``since`` and ``until``.
+            All results from the resource collection API within the time range
+            specified by ``since`` and ``until``.
         """
         path = self.canonical_path(url)
         since_until = {"since": strftime(since), "until": strftime(until)}
         iter_kw = deepcopy(kw)
         if path not in HISTORICAL_RECORD_PATHS:
-            # Cannot continue; incompatible endpoint that doesn't accept since/until:
-            raise UrlError(f"Method iter_history does not support {path}")
+            # Cannot continue; incompatible endpoint that doesn't accept
+            # since/until parameters:
+            raise UrlError(
+                f"Method iter_history does not support endpoint GET {path}"
+            )
         elif path == "/oncalls":
             # Warn for this specific endpoint but continue:
             warn(
-                "iter_history may yield duplicate results when used with /oncalls"
+                "iter_history may yield duplicate results when used with "
+                "GET /oncalls"
             )
         elif path in self.cursor_based_pagination_paths:
             # Short-circuit to iter_cursor:
@@ -821,7 +839,7 @@ class RestApiV2Client(RestApiV2BaseClient):
             # Nothing to be done for this interval
             pass
         elif can_fully_paginate or min_interval_len or stop_recursion:
-            # Do not subdivide any further; it is either not necessary or not feasible.
+            # Do not subdivide; it is not necessary or not feasible.
             if not can_fully_paginate:
                 # Issue a warning log message
                 if stop_recursion:
@@ -834,10 +852,12 @@ class RestApiV2Client(RestApiV2BaseClient):
                     reason = (
                         "the time interval is already the minimum length (1s)"
                     )
-                    # In practice, this scenario can only happen when PagerDuty ingests
-                    # and processes, for a single account, >10k alert history events per
-                    # second (to use `/log_entries` as an example). There is
-                    # unfortunately nothing more that can be done in this case.
+                    # In practice, this scenario can only happen if PagerDuty
+                    # ingests and processes, for a single account, >10k alert
+                    # history events in less than one second (to use
+                    # `/log_entries` as an example). There is unfortunately
+                    # nothing more that can be done in this case, though it is
+                    # a very extreme case that we have yet to encounter.
                     suggestion = ""
                 self.log.warning(
                     ITER_HIST_RECURSION_WARNING_TEMPLATE.format(
@@ -866,11 +886,13 @@ class RestApiV2Client(RestApiV2BaseClient):
         """
         Iterator for incident notes.
 
-        This is a filtered iterator for log entries of type ``annotate_log_entry``.
+        This is a filtered iterator for log entry records of the
+        ``annotate_log_entry`` type.
 
         :param incident_id:
-            Optionally, request log entries for a specific incident. If included, the
-            ``team_ids[]`` query parameter will be removed and ignored.
+            Optionally, request log entries for a specific incident. If
+            included, the ``team_ids[]`` query parameter will be removed and
+            ignored.
         :param kw:
             Custom keyword arguments to send to :attr:`iter_all`.
         :yields:
@@ -886,8 +908,8 @@ class RestApiV2Client(RestApiV2BaseClient):
             for key in ("team_ids", "team_ids[]"):
                 if "params" in my_kw and key in my_kw["params"]:
                     self.log.warn(
-                        f'iter_incident_notes: query parameter "{key}" will be '
-                        "ignored because argument incident_id was specified"
+                        f'iter_incident_notes: query parameter "{key}" will '
+                        "be ignored because argument incident_id was specified"
                     )
                     del my_kw["params"][key]
         return iter(
@@ -899,14 +921,14 @@ class RestApiV2Client(RestApiV2BaseClient):
 
     def normalize_params(self, params: dict) -> dict:
         """
-        Modify the user-supplied parameters to ease implementation
+        Modify the user-supplied parameters to ease implementation.
 
         Current behavior:
 
         * If a parameter's value is of type list, and the parameter name does
-          not already end in "[]", then the square brackets are appended to keep
-          in line with the requirement that all set filters' parameter names end
-          in "[]".
+          not already end in "[]", then the square brackets are appended to
+          keep in line with the requirement that all set filters' parameter
+          names end in "[]".
 
         :returns:
             The query parameters after modification
@@ -927,8 +949,8 @@ class RestApiV2Client(RestApiV2BaseClient):
 
         Given a resource name, an attribute to use as an idempotency key and a
         set of attribute:value pairs as a dict, create a resource with the
-        specified attributes if it doesn't exist already and return the resource
-        persisted via the API (whether or not it already existed).
+        specified attributes if it doesn't exist already and return the
+        resource persisted via the API (whether or not it already existed).
 
         :param resource:
             The URL to use when creating the new resource or searching for an
@@ -943,13 +965,13 @@ class RestApiV2Client(RestApiV2BaseClient):
             exist. This must contain an item with a key that is the same as the
             ``attr`` argument.
         :param update:
-            (New in 4.4.0) If set to True, any existing resource will be updated
-            with the values supplied.
+            (New in 4.4.0) If set to True, any existing resource will be
+            updated with the values supplied.
         """
         if attr not in values:
             raise ValueError(
-                "Argument `values` must contain a key equal "
-                "to the `attr` argument (expected idempotency key: '%s')."
+                "Argument `values` must contain a key equal to the `attr` "
+                "argument (expected idempotency key: '%s')."
                 % attr
             )
         existing = self.find(resource, values[attr], attribute=attr)
@@ -969,12 +991,13 @@ class RestApiV2Client(RestApiV2BaseClient):
         """
         Wrapped-entity-aware PATCH function.
 
-        Currently the only API endpoint that uses or supports this method is "Update
-        Workflow Integration Connection": ``PATCH
+        Currently the only API endpoint that uses or supports this method is
+        "Update Workflow Integration Connection": ``PATCH
         /workflows/integrations/{integration_id}/connections/{id}``
 
-        It cannot use the :attr:`resource_url` decorator because the schema in that case
-        has no ``self`` property, and so the URL or path must be supplied.
+        It cannot use the ``@resource_url`` decorator because the schema in
+        that case has no ``self`` property, and so the URL or path must be
+        supplied.
 
         :param path:
             The URL to be requested

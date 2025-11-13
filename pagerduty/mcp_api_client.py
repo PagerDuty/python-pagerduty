@@ -15,8 +15,8 @@ class McpApiClient(ApiClient):
 
     .. code-block:: python
 
-        # Import and use OAuthTokenAuthMethod instead of TokenAuthMethod to use an
-        # application OAuth token:
+        # Import and use OAuthTokenAuthMethod instead of TokenAuthMethod to use
+        # an application OAuth token:
         from pagerduty import (
             McpApiClient,
             TokenAuthMethod
@@ -48,11 +48,12 @@ class McpApiClient(ApiClient):
         :param params:
             The parameters to send to the RPC method.
         :param req_id:
-            A unique ID to send with the request. A random UUID will be used if this
-            argument is unspecified; the ID will then be passed back in the response.
+            A unique ID to send with the request. A random UUID will be used if
+            this argument is unspecified; the ID will then be passed back in
+            the response.
         :returns:
-            The JSON-decoded response body; it will be a dictionary containing a
-            "result" key with the response data.
+            The JSON-decoded response body; it will be a dictionary containing
+            a "result" key with the response data.
         """
         if not req_id:
             req_id = str(uuid.uuid4())
@@ -67,8 +68,8 @@ class McpApiClient(ApiClient):
         response_body = response.json()
         if "result" not in response_body:
             raise ServerHttpError(
-                "JSON-RPC response from PagerDuty did not include "
-                + 'the expected "result" key.',
+                "JSON-RPC response from PagerDuty did not include the "
+                + 'expected "result" key.',
                 response,
             )
         return response_body

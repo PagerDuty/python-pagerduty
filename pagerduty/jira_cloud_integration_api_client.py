@@ -13,7 +13,8 @@ class JiraCloudIntegrationApiClient(RestApiV2BaseClient):
 
     Inherits from :class:`pagerduty.RestApiV2BaseClient`.
 
-    This client provides an abstraction layer for the `PagerDuty Jira Cloud Integration API
+    This client provides an abstraction layer for the `PagerDuty Jira Cloud
+    Integration API
     <https://developer.pagerduty.com/api-reference/70ea43d07719f-pager-duty-jira-cloud-integration-api>`_.
 
     For constructor arguments, see :class:`pagerduty.RestApiV2BaseClient`.

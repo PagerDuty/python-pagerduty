@@ -21,11 +21,12 @@ class SlackIntegrationConnectionsApiClient(RestApiV2BaseClient):
 
     Inherits from :class:`pagerduty.RestApiV2BaseClient`.
 
-    This client provides an abstraction layer for the
-    `PagerDuty Slack Integration API
+    This client provides an abstraction layer for the `PagerDuty Slack
+    Integration API
     <https://developer.pagerduty.com/api-reference/56fee4184eabc-pager-duty-slack-integration-api>`_,
-    specifically the "Connections" API endpoints, which use a different hostname in
-    the base URL, ``app.pagerduty.com``, as opposed to ``api.pagerduty.com``.
+    specifically the "Connections" API endpoints, which use a different
+    hostname in the base URL, ``app.pagerduty.com``, as opposed to
+    ``api.pagerduty.com``.
 
     For constructor arguments, see :class:`pagerduty.RestApiV2BaseClient`.
     """

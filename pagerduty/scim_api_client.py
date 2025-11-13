@@ -8,22 +8,19 @@ class ScimApiClient(ApiClient):
     """
     Client class for the PagerDuty SCIM API.
 
-    This class features a method :attr:`list_users` that provides an interface for
-    retrieving all users that match a given filter.
+    This class features a method :attr:`list_users` that provides an interface
+    for retrieving all users that match a given filter.
 
-    Other endpoints of the PagerDuty SCIM API can be accessed through the standard
-    methods named after the HTTP methods.
+    Other endpoints of the PagerDuty SCIM API can be accessed through the
+    standard methods named after the HTTP methods.
 
     Usage example:
 
     .. code-block:: python
 
-        # Import and use OAuthTokenAuthMethod instead of TokenAuthMethod to use an
-        # application OAuth token:
-        from pagerduty import (
-            ScimApiClient,
-            TokenAuthMethod
-        )
+        # Import and use OAuthTokenAuthMethod instead of TokenAuthMethod to use
+        # an application OAuth token:
+        from pagerduty import ScimApiClient, TokenAuthMethod
 
         # Instantiate:
         client = ScimApiClient(TokenAuthMethod(API_KEY))

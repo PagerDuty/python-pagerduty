@@ -76,9 +76,10 @@ class ServerHttpError(HttpError):
     """
     Error class representing failed expectations made of the server.
 
-    This is raised in cases where the response schema differs from the expected schema
-    because of an API bug, or because it's an early access endpoint and changes before
-    GA, or in cases of HTTP status 5xx where a successful response is required.
+    This is raised in cases where the response schema differs from the expected
+    schema because of an API bug, or because it's an early access endpoint and
+    changes before GA, or in cases of HTTP status 5xx where a successful
+    response is required.
     """
 
     pass

@@ -13,8 +13,9 @@ from .common import successful_response, try_decoding, truncate_text
 
 class RoutingKeyAuthMethod(BodyParameterAuthMethod):
     """
-    AuthMethod for Events API V2, which requires a ``routing_key`` parameter be set in
-    the request body.
+    AuthMethod for Events API V2.
+
+    Requires a ``routing_key`` parameter be set in the request body.
     """
 
     @property
@@ -26,18 +27,20 @@ class EventsApiV2Client(ApiClient):
     """
     Client class for submitting events to the PagerDuty v2 Events API.
 
-    Implements methods for submitting events to PagerDuty through the Events API,
-    including change events, and inherits from :class:`pagerduty.ApiClient`.  For more
-    details on usage of this API, refer to the `Events API v2 documentation
+    Implements methods for submitting events to PagerDuty through the Events
+    API, including change events, and inherits from
+    :class:`pagerduty.ApiClient`.  For more details on usage of this API, refer
+    to the `Events API v2 documentation
     <https://developer.pagerduty.com/docs/events-api-v2/overview/>`_
 
     :param routing_key:
-        The routing key to use for authentication with the Events API. Sometimes called
-        an ``integration_key`` or ``service_key`` in legacy integrations.
+        The routing key to use for authentication with the Events API.
+        Sometimes called an ``integration_key`` or ``service_key`` in legacy
+        integrations.
 
     :param debug:
-        Sets :attr:`pagerduty.ApiClient.print_debug`. Set to ``True`` to enable verbose
-        command line output.
+        Sets :attr:`pagerduty.ApiClient.print_debug`. Set to ``True`` to enable
+        verbose command line output.
     """
 
     _url = "https://events.pagerduty.com"
@@ -58,7 +61,7 @@ class EventsApiV2Client(ApiClient):
         Acknowledge an alert via Events API.
 
         :param dedup_key:
-            The deduplication key of the alert to set to the acknowledged state.
+            The deduplication key of the alert to set as acknowledged.
         :returns:
             The deduplication key
         """
@@ -89,8 +92,9 @@ class EventsApiV2Client(ApiClient):
         See: https://developer.pagerduty.com/docs/events-api-v2/send-change-events/
 
         :param payload:
-            A dictionary object with keys ``summary``, ``source``, ``timestamp`` and
-            ``custom_details`` as described in the above documentation.
+            A dictionary object with keys ``summary``, ``source``,
+            ``timestamp`` and ``custom_details`` as described in the above
+            documentation.
         :param links:
             A list of dictionary objects each with keys ``href`` and ``text``
             representing the target and display text of each link
@@ -179,9 +183,10 @@ class EventsApiV2Client(ApiClient):
 
         See: https://developer.pagerduty.com/docs/send-change-event
 
-        This is a wrapper method for :attr:`send_change_event` that composes an event
-        payload from keyword arguments and an auto-generated event timestamp. To send an
-        event with a wholly custom payload, use :attr:`send_change_event` instead.
+        This is a wrapper method for :attr:`send_change_event` that composes an
+        event payload from keyword arguments and an auto-generated event
+        timestamp. To send an event with a wholly custom payload, use
+        :attr:`send_change_event` instead.
 
         :param summary:
             Summary / brief description of the change, for ``payload.summary``.
@@ -189,9 +194,9 @@ class EventsApiV2Client(ApiClient):
             A human-readable name identifying the source of the change, for the
             ``payload.source`` event property.
         :param custom_details:
-            A dictionary object to use as the ``payload.custom_details`` property.
+            A dictionary object to use as property ``payload.custom_details``
         :param links:
-            A list of dict objects to use as the ``links`` property of the event.
+            A list of dict objects to use as property ``links`` in the event.
         :param timestamp:
             Specifies an event timestamp. Must be an ISO8601-format date/time.
         :type summary: str

@@ -30,7 +30,8 @@ The default timeout in seconds for any given HTTP request.
 
 Modifying this value will not affect any preexisting API session instances.
 Rather, it will only affect new instances. It is recommended to use
-:attr:`pagerduty.ApiClient.timeout` to configure the timeout for a given session.
+:attr:`pagerduty.ApiClient.timeout` to configure the timeout for a given
+session.
 """
 
 
@@ -43,7 +44,7 @@ def datetime_intervals(
     since: datetime, until: datetime, n=10
 ) -> List[Tuple[datetime, datetime]]:
     """
-    Break up a given time interval into a series of smaller consecutive time intervals.
+    Subdivide a given time interval into smaller consecutive intervals.
 
     :param since:
         A datetime object repesenting the beginning of the time interval.
@@ -52,9 +53,9 @@ def datetime_intervals(
     :param n:
         The target number of sub-intervals to generate.
     :returns:
-        A list of tuples representing beginnings and ends of sub-intervals within the
-        time interval. If the resulting intervals would be less than one second, they
-        will be one second.
+        A list of tuples representing beginnings and ends of sub-intervals
+        within the time interval. If the resulting intervals would be less than
+        one second, they will be one second.
     """
     total_s = int((until - since).total_seconds())
     if total_s <= 0:
@@ -78,7 +79,7 @@ def datetime_intervals(
 
 def datetime_to_relative_seconds(datestr: str):
     """
-    Convert an ISO8601 string to a relative number of seconds from the current time.
+    Convert an ISO8601 string to a relative number of seconds from now.
     """
     deadline = strptime(datestr)
     now = datetime.now(timezone.utc)
@@ -93,9 +94,12 @@ def deprecated_kwarg(
     """
     Raises a warning if a deprecated keyword argument is used.
 
-    :param deprecated_name: The name of the deprecated function
-    :param details: An optional message to append to the deprecation message
-    :param method: An optional method name
+    :param deprecated_name:
+        The name of the deprecated function
+    :param details:
+        An optional message to append to the deprecation message
+    :param method:
+        An optional method name
     """
     details_msg = ""
     method_msg = ""
@@ -202,7 +206,7 @@ def plural_name(obj_type: str) -> str:
 
 def relative_seconds_to_datetime(seconds_remaining: int) -> str:
     """
-    Convert a number of seconds in the future to an absolute UTC ISO8601 time string.
+    Convert a number of seconds in the future to a UTC ISO8601 time string.
     """
     now = datetime.now(timezone.utc)
     target_time = now + timedelta(seconds=seconds_remaining)
@@ -260,7 +264,7 @@ def strptime(datestr: str) -> datetime:
     Parse a string in full ISO8601 format into a ``datetime.datetime`` object.
 
     :param datestr:
-        Full ISO8601 string representation of the date and time, including time zone
+        Full ISO8601 representation of the date and time, including time zone
     :returns:
         The datetime object representing the string
     """
@@ -278,7 +282,7 @@ def successful_response(
     :param r:
         Response object corresponding to the response received.
     :param context:
-        A description of when the HTTP request is happening, for error reporting
+        A description of when the HTTP request is happening
     :returns:
         The response object, if it was successful
     """
@@ -307,8 +311,8 @@ def try_decoding(r: Response) -> Optional[Union[dict, list, str]]:
     """
     JSON-decode a response body
 
-    Returns the decoded body if successful; raises :class:`pagerduty.ServerHttpError`
-    otherwise.
+    Returns the decoded body if successful; raises
+    :class:`pagerduty.ServerHttpError` otherwise.
 
     :param r:
         The response object

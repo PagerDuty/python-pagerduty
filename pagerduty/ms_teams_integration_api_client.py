@@ -18,14 +18,15 @@ class MsTeamsIntegrationApiClient(RestApiV2BaseClient):
 
     Inherits from :class:`pagerduty.RestApiV2BaseClient`.
 
-    This client provides an abstraction layer for the `PagerDuty MS Teams Integration
-    API
+    This client provides an abstraction layer for the `PagerDuty MS Teams
+    Integration API
     <https://developer.pagerduty.com/api-reference/2a7de89c77dc8-pager-duty-ms-teams-integration-api>`_.
 
-    Its documentation indicates that it only supports the original "Token" style
-    authentication and does not support OAuth token ("Bearer") authentication. For that
-    reason, its constructor does not accept an "auth_type" argument, and it is assumed
-    that the provided API key was generated through the PagerDuty web UI.
+    Its documentation indicates that it only supports the original "Token"
+    style authentication and does not support OAuth token ("Bearer")
+    authentication. For that reason, its constructor does not accept an
+    "auth_type" argument, and it is assumed that the provided API key was
+    generated through the PagerDuty web UI.
 
     For constructor arguments, see :class:`pagerduty.ApiClient`.
     """

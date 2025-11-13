@@ -58,12 +58,13 @@ from .slack_integration_connections_api_client import (
     SlackIntegrationConnectionsApiClient,
 )
 
-# For backwards compatibility, __all__ currently includes all of the above. This should
-# eventually be cleaned up so that it includes only the most-used interfaces, i.e.
-# client classes. That could be done as a minor breaking change in a new future major
-# version, i.e. it would break "from pagerduty import *" use cases, which would be an
-# opportunity to lessen the impact of a future breaking change that ends the practice of
-# importing the helper methods and module configuration globals.
+# For backwards compatibility, __all__ currently includes all of the above.
+# This should eventually be cleaned up so that it includes only the most-used
+# interfaces, i.e.  client classes. That could be done as a minor breaking
+# change in a new future major version, i.e. it would break "from pagerduty
+# import *" use cases, which would be an opportunity to lessen the impact of a
+# future breaking change that ends the practice of importing the helper methods
+# and module configuration globals.
 __all__ = [
     "ApiClient",
     "CANONICAL_PATHS",
