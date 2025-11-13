@@ -82,7 +82,7 @@ class EventsApiV2ClientTest(ClientTest):
         parent.request = MagicMock()
         parent.request.side_effect = [Response(202, '{"dedup_key":"abc123"}')]
         with patch.object(client, "parent", new=parent):
-            response = client.post(
+            client.post(
                 "/v2/enqueue",
                 json={
                     "payload": {

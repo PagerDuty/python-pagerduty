@@ -29,7 +29,7 @@ def get_version():
             from importlib.metadata import version
 
             return version(__package__)
-        except:
+        except Exception:
             # No package has been built/installed yet, so this is a stopgap to
             # avoid errors in local unit tests and documentation builds:
             if sys.version_info.minor < 11:

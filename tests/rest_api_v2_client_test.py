@@ -553,9 +553,6 @@ class RestApiV2ClientTest(ClientTest):
             lambda p: list(client.iter_all(p)),
             "/analytics/raw/incidents/Q3R8ZN19Z8K083/responses",
         )
-        iter_param = lambda p: json.dumps(
-            {"limit": 10, "total": True, "offset": 0}
-        )
         get.side_effect = [
             Response(200, page(0, 30, 10)),
             Response(200, page(1, 30, 10)),
@@ -610,9 +607,6 @@ class RestApiV2ClientTest(ClientTest):
         # the result count to increment offset instead of `limit` reported in
         # API response
         get.reset_mock()
-        iter_param = lambda p: json.dumps(
-            {"limit": 10, "total": True, "offset": 0}
-        )
         get.side_effect = [
             Response(200, page(0, 30, None)),
             Response(200, page(1, 30, 42)),
@@ -770,7 +764,7 @@ class RestApiV2ClientTest(ClientTest):
         now = datetime.datetime.now(timezone.utc)
         future6 = now + datetime.timedelta(seconds=6)
         iter_cursor.side_effect = [iter([{"type": "record"}])]
-        deletions = list(
+        list(
             client.iter_history(
                 "/audit/records", now, future6, params={"actions": ["delete"]}
             )
@@ -975,7 +969,6 @@ class RestApiV2ClientTest(ClientTest):
             request.return_value = Response(200, json.dumps(users))
             r = client.request("get", "/users")
             postprocess.assert_called_with(request.return_value)
-            headers = headers_get.copy()
             request.assert_called_once_with(
                 "GET",
                 "https://api.pagerduty.com/users",

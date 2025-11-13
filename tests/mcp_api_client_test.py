@@ -17,7 +17,7 @@ class McpApiClientTest(unittest.TestCase):
         )
         auth = TokenAuthMethod("foo")
         client = McpApiClient(auth)
-        r = client.call("tools/list", req_id="42")
+        client.call("tools/list", req_id="42")
         post.assert_called_once_with(
             "/mcp", json={"jsonrpc": "2.0", "id": "42", "method": "tools/list"}
         )

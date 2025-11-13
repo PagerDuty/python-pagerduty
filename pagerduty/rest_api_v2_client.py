@@ -6,7 +6,7 @@ from typing import Iterator, List, Optional
 from warnings import warn
 
 # Local
-from .common import datetime_intervals, strftime
+from .common import datetime_intervals, strftime, truncate_text, try_decoding
 from .errors import Error, HttpError, UrlError
 from .rest_api_v2_base_client import (
     ITERATION_LIMIT,
@@ -365,7 +365,6 @@ ENTITY_WRAPPER_CONFIG = {
     "GET /incidents/{id}/business_services/impacts": "services",
     "PUT /incidents/{id}/business_services/{business_service_id}/impacts": None,
     "* /incidents/{id}/custom_fields/values": "custom_fields",
-    "POST /incidents/{id}/responder_requests": None,
     # Incident Custom Fields
     "* /incidents/custom_fields": ("field", "fields"),
     "* /incidents/custom_fields/{field_id}": "field",

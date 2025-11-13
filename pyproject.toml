@@ -38,3 +38,8 @@ dev = [
 [tool.ruff]
 # Set the maximum line length to 79
 line-length = 79
+
+[tool.ruff.lint]
+ignore = [
+  "E731" # In the author's opinion it is clearer to assign lambdas to variables than define functions within functions
+]

@@ -385,8 +385,8 @@ def resource_url(method: callable) -> callable:
     such a resource dictionary as the ``path`` argument, thus eliminating the
     need to re-construct the resource URL or hold it in a temporary variable.
     """
-    doc = method.__doc__
-    name = method.__name__
+    DOC = method.__doc__
+    NAME = method.__name__
 
     def call(self, resource, **kw):
         url = resource
@@ -396,18 +396,17 @@ def resource_url(method: callable) -> callable:
             else:
                 # Unsupported APIs for this feature:
                 raise UrlError(
-                    f"The dict object passed to {name} in place of a URL has "
+                    f"The dict object passed to {NAME} in place of a URL has "
                     "no 'self' key and cannot be used in place of an API "
                     "resource path/URL."
                 )
         elif type(resource) is not str:
-            name = method.__name__
             raise UrlError(
-                f"Value passed to {name} is not a str or dict with key 'self'"
+                f"Value passed to {NAME} is not a str or dict with key 'self'"
             )
         return method(self, url, **kw)
 
-    call.__doc__ = doc
+    call.__doc__ = DOC
     return call
 
 
@@ -440,19 +439,18 @@ def wrapped_entities(method: callable) -> callable:
     :returns:
         A callable object; the reformed method
     """
-    http_method = method.__name__.lstrip("r")
-    doc = method.__doc__
+    HTTP_METHOD = method.__name__.lstrip("r")
+    DOC = method.__doc__
 
     def call(self, url, **kw):
         pass_kw = deepcopy(kw)  # Make a copy for modification
         path = self.canonical_path(url)
-        endpoint = "%s %s" % (http_method.upper(), path)
-        req_w, res_w = self.entity_wrappers(http_method, path)
+        req_w, res_w = self.entity_wrappers(HTTP_METHOD, path)
         # Validate the abbreviated (or full) request payload, and automatically
         # wrap the request entity for the implementer if necessary:
         if (
             req_w is not None
-            and http_method in ("patch", "post", "put")
+            and HTTP_METHOD in ("patch", "post", "put")
             and "json" in pass_kw
             and req_w not in pass_kw["json"]
         ):
@@ -464,7 +462,7 @@ def wrapped_entities(method: callable) -> callable:
         # Unpack the response:
         return unwrap(r, res_w)
 
-    call.__doc__ = doc
+    call.__doc__ = DOC
     return call
 
 
