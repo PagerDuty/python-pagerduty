@@ -1,7 +1,7 @@
 %: build
 
 build: pagerduty/* pyproject.toml
-	rm -f dist/* && python3 -m build
+	rm -f dist/* && uv build
 
 docs/index.html: build pyproject.toml pagerduty/* CHANGELOG.rst sphinx/source/*
 	rm -fr ./docs && cd sphinx && make html && cd .. && mv sphinx/build/html ./docs && touch ./docs/.nojekyll

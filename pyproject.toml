@@ -23,12 +23,12 @@ Repository =  "https://github.com/PagerDuty/python-pagerduty"
 PyPI = "https://pypi.org/project/pagerduty"
 
 [build-system]
-requires = ["setuptools"]
-build-backend = "setuptools.build_meta"
+requires = ["uv_build"]
+build-backend = "uv_build"
 
 [dependency-groups]
 dev = [
-    "ruff>=0.0.17",
+    "ruff",
     "sphinx",
     "sphinxcontrib-websupport",
     "sphinx-rtd-theme",
@@ -41,5 +41,9 @@ line-length = 79
 
 [tool.ruff.lint]
 ignore = [
-  "E731" # In the author's opinion it is clearer to assign lambdas to variables than define functions within functions
+  "E731" # In the author's opinion it is sometimes clearer to assign lambdas to variables than define nested functions
 ]
+
+[tool.uv.build-backend]
+module-name="pagerduty"
+module-root=""
