@@ -1,7 +1,7 @@
 #!/bin/bash
 
 if [ "${NO_UV:-0}" == 1 ]; then
-  # UV unavailable; install dependencies first
+  # uv_build unavailable; install dependencies first
   virtualenv .python
   . .python/bin/activate
   which python
@@ -9,18 +9,8 @@ if [ "${NO_UV:-0}" == 1 ]; then
   which pip
   pip -V
 
-  py_minor_ver=`python -c 'import sys; print(sys.version_info.minor)'`
-  py_major_ver=`python -c 'import sys; print(sys.version_info.major)'`
-
-  if [[ $py_major_ver -le 3 ]]; then
-    if [[ $py_minor_ver -le 6 ]]; then
-      echo "Using backwards compatibility hack for Python 3.6"
-      pip install -r requirements.txt
-    else
-      echo "pip install ."
-      pip install .
-    fi
-  fi
+  echo "Using backwards compatibility hack for Python < 3.8 (no uv_build)"
+  pip install -r requirements.txt
   EXE=""
 else
   EXE="uv run"
