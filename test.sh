@@ -1,7 +1,7 @@
 #!/bin/bash
 
 if [ "${NO_UV:-0}" == 1 ]; then
-  # uv_build unavailable; install dependencies first
+  echo "Using backwards compatibility hack for Python < 3.8 (using pip/virtualenv; uv_build unavailable)"
   virtualenv .python
   . .python/bin/activate
   which python
@@ -9,7 +9,6 @@ if [ "${NO_UV:-0}" == 1 ]; then
   which pip
   pip -V
 
-  echo "Using backwards compatibility hack for Python < 3.8 (no uv_build)"
   pip install -r requirements.txt
   EXE=""
 else
