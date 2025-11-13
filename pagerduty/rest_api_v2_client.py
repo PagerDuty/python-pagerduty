@@ -23,8 +23,7 @@ from .rest_api_v2_base_client import (
 
 RECURSION_LIMIT = getrecursionlimit() // 2
 
-ITER_HIST_RECURSION_WARNING_TEMPLATE = \
-"""
+ITER_HIST_RECURSION_WARNING_TEMPLATE = """
 RestApiV2Client.iter_history cannot continue bisecting historical time
 intervals because {reason}, but the total number of results in the current
 requested time sub-interval ({since_until}) still exceeds the hard limit for
@@ -971,8 +970,7 @@ class RestApiV2Client(RestApiV2BaseClient):
         if attr not in values:
             raise ValueError(
                 "Argument `values` must contain a key equal to the `attr` "
-                "argument (expected idempotency key: '%s')."
-                % attr
+                "argument (expected idempotency key: '%s')." % attr
             )
         existing = self.find(resource, values[attr], attribute=attr)
         if existing:

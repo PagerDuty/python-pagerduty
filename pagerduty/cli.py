@@ -62,8 +62,8 @@ def run(argv):
 
             dedup_key = client.acknowledge(args.dedup_key)
             print(
-                "Alert acknowledged successfully. Deduplication key: " +
-                dedup_key
+                "Alert acknowledged successfully. Deduplication key: "
+                + dedup_key
             )
 
         elif args.action == "resolve":
