@@ -26,3 +26,8 @@ PyPI = "https://pypi.org/project/pagerduty"
 requires = ["setuptools"]
 build-backend = "setuptools.build_meta"
 
+[dependency-groups]
+dev = [
+    "ruff>=0.0.17",
+]
+
