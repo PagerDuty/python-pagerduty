@@ -3,7 +3,7 @@ version: 2.1
 test: &test
   name: Run tests
   command: |
-    uv run ./test.sh
+    ./test.sh
 
 uv: &uv
   name: Install uv

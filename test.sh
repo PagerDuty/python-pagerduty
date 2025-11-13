@@ -21,6 +21,9 @@ if [ "${NO_UV:-0}" == 1 ]; then
       pip install .
     fi
   fi
+  EXE=""
+else
+  EXE="uv run"
 fi
 
-/usr/bin/env python3 -m unittest discover -p '*_test.py' -s tests
+$EXE /usr/bin/env python3 -m unittest discover -p '*_test.py' -s tests
