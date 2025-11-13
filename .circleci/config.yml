@@ -1,21 +1,18 @@
 version: 2.1
 
 test: &test
-  name: Setup Virtualenv, install dependencies and test
+  name: Run tests
   command: |
-    virtualenv .python
-    . .python/bin/activate
-    which python
-    python -V
-    which pip
-    pip -V
-    export INSTALL_DEPS=1
-    ./test.sh
+    uv run ./test.sh
+
+uv: &uv
+  name: Install uv
+  command: |
+    curl -LsSf https://astral.sh/uv/install.sh | sh
 
 ruff: &ruff
   name: Install ruff for linting and formatting
   command: |
-    curl -LsSf https://astral.sh/uv/install.sh | sh
     uv tool install ruff@latest
 
 jobs:
@@ -25,6 +22,8 @@ jobs:
       - image: cimg/python:3.13
     steps:
       - checkout
+      - run:
+          <<: *uv
       - run:
           <<: *ruff
       - run:
@@ -37,6 +36,8 @@ jobs:
     steps:
       - checkout
       - run:
+          <<: *uv
+      - run:
           <<: *ruff
       - run:
           command: |
@@ -48,6 +49,8 @@ jobs:
     steps:
       - checkout
       - run:
+          <<: *uv
+      - run:
           <<: *test
 
   py3_7:
@@ -55,6 +58,8 @@ jobs:
       - image: cimg/python:3.7
     steps:
       - checkout
+      - run:
+          <<: *uv
       - run:
           <<: *test
 
@@ -64,6 +69,8 @@ jobs:
     steps:
       - checkout
       - run:
+          <<: *uv
+      - run:
           <<: *test
 
   py3_9:
@@ -71,6 +78,8 @@ jobs:
       - image: cimg/python:3.9
     steps:
       - checkout
+      - run:
+          <<: *uv
       - run:
           <<: *test
 
@@ -80,6 +89,8 @@ jobs:
     steps:
       - checkout
       - run:
+          <<: *uv
+      - run:
           <<: *test
 
   py3_11:
@@ -87,6 +98,8 @@ jobs:
       - image: cimg/python:3.11
     steps:
       - checkout
+      - run:
+          <<: *uv
       - run:
           <<: *test
 
@@ -96,6 +109,8 @@ jobs:
     steps:
       - checkout
       - run:
+          <<: *uv
+      - run:
           <<: *test
 
   py3_13:
@@ -103,6 +118,8 @@ jobs:
       - image: cimg/python:3.13
     steps:
       - checkout
+      - run:
+          <<: *uv
       - run:
           <<: *test
 
