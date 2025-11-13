@@ -8,16 +8,17 @@ from copy import deepcopy
 
 from httpx import Response
 
-from . api_client import ApiClient
-from . auth_method import BodyParameterAuthMethod
-from . common import (
+from .api_client import ApiClient
+from .auth_method import BodyParameterAuthMethod
+from .common import (
     datetime_to_relative_seconds,
     relative_seconds_to_datetime,
     successful_response,
-    try_decoding
+    try_decoding,
 )
-from . errors import ServerHttpError
-from . rest_api_v2_client import RestApiV2Client
+from .errors import ServerHttpError
+from .rest_api_v2_client import RestApiV2Client
+
 
 class ClientCredentialsAuthMethod(BodyParameterAuthMethod):
     """
@@ -34,14 +35,12 @@ class ClientCredentialsAuthMethod(BodyParameterAuthMethod):
 
     def __init__(self, client_secret, client_id):
         self.secret = client_secret
-        self.client_id = client_id # Additional required parameter
+        self.client_id = client_id  # Additional required parameter
 
     @property
     def auth_param(self) -> dict:
-        return {
-            "client_id": self.client_id,
-            "client_secret": self.secret
-        }
+        return {"client_id": self.client_id, "client_secret": self.secret}
+
 
 class OAuthTokenClient(ApiClient):
     """
@@ -75,9 +74,9 @@ class OAuthTokenClient(ApiClient):
         :class:`ApiClient`
     """
 
-    permitted_methods = ('POST',)
+    permitted_methods = ("POST",)
 
-    url = 'https://identity.pagerduty.com'
+    url = "https://identity.pagerduty.com"
 
     early_refresh_buffer = 86400
     """
@@ -114,14 +113,18 @@ class OAuthTokenClient(ApiClient):
             ISO8601 format. This value can then be used in :attr:`refresh_client`.
         """
         response_json = try_decoding(successful_response(response))
-        if 'expires_in' not in response_json:
+        if "expires_in" not in response_json:
             raise ServerHttpError(
-                "Auth response did not include expected key \"expires_in\".",
-                response
+                'Auth response did not include expected key "expires_in".',
+                response,
             )
-        response_json.update({
-            'expiration_date': relative_seconds_to_datetime(response_json['expires_in'])
-        })
+        response_json.update(
+            {
+                "expiration_date": relative_seconds_to_datetime(
+                    response_json["expires_in"]
+                )
+            }
+        )
         return response_json
 
     def authorize_url(self, scope: str, redirect_uri: str) -> str:
@@ -137,13 +140,13 @@ class OAuthTokenClient(ApiClient):
             The formatted authorize URL.
         """
         return self.get_authorize_url(
-            self.auth_method.client_id,
-            scope,
-            redirect_uri
+            self.auth_method.client_id, scope, redirect_uri
         )
 
     @classmethod
-    def get_authorize_url(cls, client_id: str, scope: str, redirect_uri: str) -> str:
+    def get_authorize_url(
+        cls, client_id: str, scope: str, redirect_uri: str
+    ) -> str:
         """
         Generate an authorize URL.
 
@@ -164,12 +167,18 @@ class OAuthTokenClient(ApiClient):
         :returns:
             The formatted authorize URL.
         """
-        return cls.url + '/oauth/authorize?'+ urllib.parse.urlencode([
-            ('client_id', client_id),
-            ('redirect_uri', redirect_uri),
-            ('response_type', 'code'),
-            ('scope', scope)
-        ])
+        return (
+            cls.url
+            + "/oauth/authorize?"
+            + urllib.parse.urlencode(
+                [
+                    ("client_id", client_id),
+                    ("redirect_uri", redirect_uri),
+                    ("response_type", "code"),
+                    ("scope", scope),
+                ]
+            )
+        )
 
     def get_new_token(self, **kw) -> dict:
         """
@@ -192,16 +201,19 @@ class OAuthTokenClient(ApiClient):
             ``access_token`` with the new token and ``expiration_date`` containing the
             date and time when the token will expire in ISO8601 format.
         """
-        return self.amended_auth_response(self.post(
-            '/oauth/token',
-            data = deepcopy(kw),
-            headers = { # Overrides the default which would be `application/json`:
-                "Content-Type": "application/x-www-form-urlencoded"
-            }
-        ))
+        return self.amended_auth_response(
+            self.post(
+                "/oauth/token",
+                data=deepcopy(kw),
+                headers={  # Overrides the default which would be `application/json`:
+                    "Content-Type": "application/x-www-form-urlencoded"
+                },
+            )
+        )
 
-    def get_new_token_from_code(self, auth_code: str, scope: str, redirect_uri: str) \
-            -> dict:
+    def get_new_token_from_code(
+        self, auth_code: str, scope: str, redirect_uri: str
+    ) -> dict:
         """
         Exchange an authorization code granted by the user for an access token.
 
@@ -217,10 +229,10 @@ class OAuthTokenClient(ApiClient):
             ``access_token`` with the new token, as a dict
         """
         return self.get_new_token(
-            grant_type = 'authorization_code',
-            code = auth_code,
-            scope = scope,
-            redirect_uri = redirect_uri
+            grant_type="authorization_code",
+            code=auth_code,
+            scope=scope,
+            redirect_uri=redirect_uri,
         )
 
     def get_refreshed_token(self, refresh_token: str) -> dict:
@@ -235,8 +247,7 @@ class OAuthTokenClient(ApiClient):
             ``access_token`` with the new token, as a dict
         """
         return self.get_new_token(
-            grant_type = 'refresh_token',
-            refresh_token = refresh_token
+            grant_type="refresh_token", refresh_token=refresh_token
         )
 
     def get_scoped_app_token(self, scope: str):
@@ -251,10 +262,7 @@ class OAuthTokenClient(ApiClient):
             The JSON response from ``identity.pagerduty.com``, containing a key
             ``access_token`` with the new token, as a dict
         """
-        return self.get_new_token(
-            grant_type = 'client_credentials',
-            scope = scope
-        )
+        return self.get_new_token(grant_type="client_credentials", scope=scope)
 
     def generate_s256_pkce_params(self) -> Tuple[str, str]:
         """
@@ -272,16 +280,23 @@ class OAuthTokenClient(ApiClient):
             ``code_challenge`` argument to :attr:`get_pkce_authorize_url` to generate
             the URL.
         """
-        code_verifier = base64.urlsafe_b64encode(
-            secrets.token_bytes(32)
-        ).decode('utf-8').rstrip('=')
-        code_challenge = base64.urlsafe_b64encode(
-            hashlib.sha256(code_verifier.encode('utf-8')).digest()
-        ).decode('utf-8').rstrip('=')
+        code_verifier = (
+            base64.urlsafe_b64encode(secrets.token_bytes(32))
+            .decode("utf-8")
+            .rstrip("=")
+        )
+        code_challenge = (
+            base64.urlsafe_b64encode(
+                hashlib.sha256(code_verifier.encode("utf-8")).digest()
+            )
+            .decode("utf-8")
+            .rstrip("=")
+        )
         return code_verifier, code_challenge
 
-    def get_pkce_authorize_url(self, scope: str, redirect_uri: str,
-                code_challenge: str) -> str:
+    def get_pkce_authorize_url(
+        self, scope: str, redirect_uri: str, code_challenge: str
+    ) -> str:
         """
         Generate an OAuth authorization URL with PKCE parameters ("Leg 1 of 3").
 
@@ -296,17 +311,18 @@ class OAuthTokenClient(ApiClient):
             The formatted PKCE authorize URL
         """
         params = [
-            ('client_id', self.client_id),
-            ('redirect_uri', redirect_uri),
-            ('response_type', 'code'),
-            ('scope', scope),
-            ('code_challenge', code_challenge),
-            ('code_challenge_method', 'S256')
+            ("client_id", self.client_id),
+            ("redirect_uri", redirect_uri),
+            ("response_type", "code"),
+            ("scope", scope),
+            ("code_challenge", code_challenge),
+            ("code_challenge_method", "S256"),
         ]
-        return self.url + '/oauth/authorize?' + urllib.parse.urlencode(params)
+        return self.url + "/oauth/authorize?" + urllib.parse.urlencode(params)
 
-    def get_new_token_from_code_with_pkce(self, auth_code: str, scope: str,
-                redirect_uri: str, code_verifier: str) -> dict:
+    def get_new_token_from_code_with_pkce(
+        self, auth_code: str, scope: str, redirect_uri: str, code_verifier: str
+    ) -> dict:
         """
         Exchange an authorization code for an access token using PKCE (Leg 3 of 3).
 
@@ -324,16 +340,21 @@ class OAuthTokenClient(ApiClient):
             ``access_token`` with the new token, as a dict.
         """
         return self.get_new_token(
-            grant_type='authorization_code',
+            grant_type="authorization_code",
             code=auth_code,
             scope=scope,
             redirect_uri=redirect_uri,
-            code_verifier=code_verifier
+            code_verifier=code_verifier,
         )
 
-    def refresh_client(self, access_token: str, refresh_token: str,
-                expiration_date: str, base_url: str = 'https://api.pagerduty.com', **kw
-            ) -> Tuple[RestApiV2Client, Optional[dict]]:
+    def refresh_client(
+        self,
+        access_token: str,
+        refresh_token: str,
+        expiration_date: str,
+        base_url: str = "https://api.pagerduty.com",
+        **kw,
+    ) -> Tuple[RestApiV2Client, Optional[dict]]:
         """
         Instantiate and return a :class:`pagerduty.RestApiV2Client` client object
 
@@ -360,11 +381,14 @@ class OAuthTokenClient(ApiClient):
         """
         auth = None
         current_access_token = access_token
-        if datetime_to_relative_seconds(expiration_date) < self.early_refresh_buffer:
+        if (
+            datetime_to_relative_seconds(expiration_date)
+            < self.early_refresh_buffer
+        ):
             auth = self.get_refreshed_token(refresh_token)
-            current_access_token = auth['access_token']
+            current_access_token = auth["access_token"]
         client_kw = deepcopy(kw)
-        client_kw.update({'auth_type': 'bearer'})
+        client_kw.update({"auth_type": "bearer"})
         client = RestApiV2Client(current_access_token, **client_kw)
         client.url = base_url
         return client, auth

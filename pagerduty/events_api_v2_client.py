@@ -1,33 +1,28 @@
 # Core
 from copy import deepcopy
 from datetime import datetime
-from typing import (
-    List,
-    Optional
-)
+from typing import List, Optional
 
 # PyPI
 
 # Local
-from . api_client import ApiClient
-from . auth_method import BodyParameterAuthMethod
-from . common import (
-    successful_response,
-    try_decoding,
-    truncate_text
-)
+from .api_client import ApiClient
+from .auth_method import BodyParameterAuthMethod
+from .common import successful_response, try_decoding, truncate_text
+
 
 class RoutingKeyAuthMethod(BodyParameterAuthMethod):
     """
     AuthMethod for Events API V2, which requires a ``routing_key`` parameter be set in
     the request body.
     """
+
     @property
     def auth_param(self) -> dict:
         return {"routing_key": self.secret}
 
-class EventsApiV2Client(ApiClient):
 
+class EventsApiV2Client(ApiClient):
     """
     Client class for submitting events to the PagerDuty v2 Events API.
 
@@ -47,16 +42,16 @@ class EventsApiV2Client(ApiClient):
 
     _url = "https://events.pagerduty.com"
 
-    permitted_methods = ('POST',)
+    permitted_methods = ("POST",)
 
     def __init__(self, routing_key: str, debug: bool = False, **kw):
         auth_method = RoutingKeyAuthMethod(routing_key)
         super(EventsApiV2Client, self).__init__(auth_method, debug=debug, **kw)
         # See: https://developer.pagerduty.com/docs/3d063fd4814a6-events-api-v2-overview#response-codes--retry-logic
-        self.retry[500] = 2 # internal server error
-        self.retry[502] = 4 # bad gateway
-        self.retry[503] = 6 # service unavailable
-        self.retry[504] = 6 # gateway timeout
+        self.retry[500] = 2  # internal server error
+        self.retry[502] = 4  # bad gateway
+        self.retry[503] = 6  # service unavailable
+        self.retry[504] = 6  # gateway timeout
 
     def acknowledge(self, dedup_key: str) -> str:
         """
@@ -67,11 +62,11 @@ class EventsApiV2Client(ApiClient):
         :returns:
             The deduplication key
         """
-        return self.send_event('acknowledge', dedup_key=dedup_key)
+        return self.send_event("acknowledge", dedup_key=dedup_key)
 
     @property
     def event_timestamp(self) -> str:
-        return datetime.utcnow().isoformat()+'Z'
+        return datetime.utcnow().isoformat() + "Z"
 
     def resolve(self, dedup_key: str) -> str:
         """
@@ -80,11 +75,14 @@ class EventsApiV2Client(ApiClient):
         :param dedup_key:
             The deduplication key of the alert to resolve.
         """
-        return self.send_event('resolve', dedup_key=dedup_key)
+        return self.send_event("resolve", dedup_key=dedup_key)
 
-    def send_change_event(self, payload: Optional[dict] = None,
-                links: Optional[List[dict]] = None,
-                images: Optional[List[dict]] = None):
+    def send_change_event(
+        self,
+        payload: Optional[dict] = None,
+        links: Optional[List[dict]] = None,
+        images: Optional[List[dict]] = None,
+    ):
         """
         Send a change event to the v2 Change Events API.
 
@@ -105,18 +103,19 @@ class EventsApiV2Client(ApiClient):
             links = []
         if images is None:
             images = []
-        event = {'payload': deepcopy(payload)}
+        event = {"payload": deepcopy(payload)}
         if links:
-            event['links'] = deepcopy(links)
+            event["links"] = deepcopy(links)
         if images:
-            event['images'] = deepcopy(images)
+            event["images"] = deepcopy(images)
         successful_response(
-            self.post('/v2/change/enqueue', json=event),
+            self.post("/v2/change/enqueue", json=event),
             context="submitting change event",
         )
 
-    def send_event(self, action: str, dedup_key: Optional[str] = None, **properties) \
-            -> str:
+    def send_event(
+        self, action: str, dedup_key: Optional[str] = None, **properties
+    ) -> str:
         """
         Send an event to the v2 Events API.
 
@@ -137,34 +136,44 @@ class EventsApiV2Client(ApiClient):
             The deduplication key of the incident
         """
 
-        actions = ('trigger', 'acknowledge', 'resolve')
+        actions = ("trigger", "acknowledge", "resolve")
         if action not in actions:
-            raise ValueError("Event action must be one of: "+', '.join(actions))
+            raise ValueError(
+                "Event action must be one of: " + ", ".join(actions)
+            )
 
-        event = {'event_action':action}
+        event = {"event_action": action}
 
         event.update(properties)
         if isinstance(dedup_key, str):
-            event['dedup_key'] = dedup_key
-        elif not action == 'trigger':
-            raise ValueError("The dedup_key property is required for"
-                "event_action=%s events, and it must be a string."%action)
+            event["dedup_key"] = dedup_key
+        elif not action == "trigger":
+            raise ValueError(
+                "The dedup_key property is required for"
+                "event_action=%s events, and it must be a string." % action
+            )
         response = successful_response(
-            self.post('/v2/enqueue', json=event),
-            context='submitting an event to the events API',
+            self.post("/v2/enqueue", json=event),
+            context="submitting an event to the events API",
         )
         response_body = try_decoding(response)
-        if type(response_body) is not dict or 'dedup_key' not in response_body:
-            err_msg = 'Malformed response body from the events API; it is ' \
-                'not a dict that has a key named "dedup_key" after ' \
-                'decoding. Body = '+truncate_text(response.text)
+        if type(response_body) is not dict or "dedup_key" not in response_body:
+            err_msg = (
+                "Malformed response body from the events API; it is "
+                'not a dict that has a key named "dedup_key" after '
+                "decoding. Body = " + truncate_text(response.text)
+            )
             raise ServerHttpError(err_msg, response)
-        return response_body['dedup_key']
+        return response_body["dedup_key"]
 
-    def submit(self, summary: str, source: Optional[str] = None,
-                custom_details: Optional[dict] = None,
-                links: Optional[List[dict]] = None,
-                timestamp: Optional[str] = None):
+    def submit(
+        self,
+        summary: str,
+        source: Optional[str] = None,
+        custom_details: Optional[dict] = None,
+        links: Optional[List[dict]] = None,
+        timestamp: Optional[str] = None,
+    ):
         """
         Submit a change event.
 
@@ -191,30 +200,36 @@ class EventsApiV2Client(ApiClient):
         :type links: list
         :type timestamp: str
         """
-        local_var = locals()['custom_details']
+        local_var = locals()["custom_details"]
         if not (local_var is None or isinstance(local_var, dict)):
             raise ValueError("custom_details must be a dict")
         if timestamp is None:
             timestamp = self.event_timestamp
         event = {
-                'payload': {
-                    'summary': summary,
-                    'timestamp': timestamp,
-                    }
-                }
+            "payload": {
+                "summary": summary,
+                "timestamp": timestamp,
+            }
+        }
         if isinstance(source, str):
-            event['payload']['source'] = source
+            event["payload"]["source"] = source
         if isinstance(custom_details, dict):
-            event['payload']['custom_details'] = custom_details
+            event["payload"]["custom_details"] = custom_details
         if links:
-            event['links'] = links
+            event["links"] = links
         self.send_change_event(**event)
 
-    def trigger(self, summary: str, source: str, dedup_key: Optional[str] = None, \
-                severity: str = 'critical', payload: Optional[str] = None, \
-                custom_details: Optional[dict] = None,
-                images: Optional[List[dict]] = None,
-                links: Optional[List[dict]] = None) -> str:
+    def trigger(
+        self,
+        summary: str,
+        source: str,
+        dedup_key: Optional[str] = None,
+        severity: str = "critical",
+        payload: Optional[str] = None,
+        custom_details: Optional[dict] = None,
+        images: Optional[List[dict]] = None,
+        links: Optional[List[dict]] = None,
+    ) -> str:
         """
         Send an alert-triggering event
 
@@ -252,21 +267,25 @@ class EventsApiV2Client(ApiClient):
         :returns:
             The deduplication key of the incident, if any.
         """
-        for local in ('payload', 'custom_details'):
+        for local in ("payload", "custom_details"):
             local_var = locals()[local]
             if not (local_var is None or type(local_var) is dict):
-                raise ValueError(local+" must be a dict")
-        event = {'payload': {'summary':summary, 'source':source,
-            'severity':severity}}
+                raise ValueError(local + " must be a dict")
+        event = {
+            "payload": {
+                "summary": summary,
+                "source": source,
+                "severity": severity,
+            }
+        }
         if type(payload) is dict:
-            event['payload'].update(payload)
+            event["payload"].update(payload)
         if type(custom_details) is dict:
-            details = event.setdefault('payload', {}).get('custom_details', {})
+            details = event.setdefault("payload", {}).get("custom_details", {})
             details.update(custom_details)
-            event['payload']['custom_details'] = details
+            event["payload"]["custom_details"] = details
         if images:
-            event['images'] = images
+            event["images"] = images
         if links:
-            event['links'] = links
-        return self.send_event('trigger', dedup_key=dedup_key, **event)
-
+            event["links"] = links
+        return self.send_event("trigger", dedup_key=dedup_key, **event)

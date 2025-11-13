@@ -1,13 +1,8 @@
 from typing import List
 
-from . rest_api_v2_base_client import (
-    CanonicalPath,
-    RestApiV2BaseClient
-)
+from .rest_api_v2_base_client import CanonicalPath, RestApiV2BaseClient
 
-CANONICAL_PATHS = [
-    '/incidents/{incident_id}/meeting'
-]
+CANONICAL_PATHS = ["/incidents/{incident_id}/meeting"]
 
 ENTITY_WRAPPER_CONFIG = {
     # The "create a meeting" endpoint follows classic conventions.
@@ -15,6 +10,7 @@ ENTITY_WRAPPER_CONFIG = {
     # This dictionary was intentionally created and left empty so that it is fewer steps
     # to support antipatterns if they get added to this API in the future.
 }
+
 
 class MsTeamsIntegrationApiClient(RestApiV2BaseClient):
     """
@@ -34,20 +30,19 @@ class MsTeamsIntegrationApiClient(RestApiV2BaseClient):
     For constructor arguments, see :class:`pagerduty.ApiClient`.
     """
 
-    permitted_methods = ('POST', )
+    permitted_methods = ("POST",)
 
     url = "https://api.pagerduty.com/integration-ms-teams"
 
     def __init__(self, api_key: str, debug: bool = False, **kw):
         super(MsTeamsIntegrationApiClient, self).__init__(
-            api_key,
-            auth_type='token',
-            debug=debug,
-            **kw
+            api_key, auth_type="token", debug=debug, **kw
         )
-        self.headers.update({
-            'Accept': 'application/json',
-        })
+        self.headers.update(
+            {
+                "Accept": "application/json",
+            }
+        )
 
     @property
     def canonical_paths(self) -> List[CanonicalPath]:

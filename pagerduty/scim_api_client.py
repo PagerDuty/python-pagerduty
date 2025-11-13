@@ -1,7 +1,8 @@
 from typing import List, Optional
 
-from . api_client import ApiClient
-from . common import successful_response, try_decoding
+from .api_client import ApiClient
+from .common import successful_response, try_decoding
+
 
 class ScimApiClient(ApiClient):
     """
@@ -42,12 +43,16 @@ class ScimApiClient(ApiClient):
 
     """
 
-    _url = 'https://api.pagerduty.com/scim/v2'
+    _url = "https://api.pagerduty.com/scim/v2"
 
-    permitted_methods = ('DELETE', 'GET', 'PATCH', 'POST', 'PUT')
+    permitted_methods = ("DELETE", "GET", "PATCH", "POST", "PUT")
 
-    def list_users(self, fltr: Optional[str] = None, start_index: int = 1,
-            page_size: int = 100) -> List[dict]:
+    def list_users(
+        self,
+        fltr: Optional[str] = None,
+        start_index: int = 1,
+        page_size: int = 100,
+    ) -> List[dict]:
         """
         List all users using SCIM API with automatic pagination.
 
@@ -64,28 +69,25 @@ class ScimApiClient(ApiClient):
         current_start_index = start_index
 
         while True:
-            params = {
-                'startIndex': current_start_index,
-                'count': page_size
-            }
+            params = {"startIndex": current_start_index, "count": page_size}
 
             if fltr:
-                params['filter'] = fltr
+                params["filter"] = fltr
 
             response = successful_response(
-                self.get('/Users', params=params),
-                context='SCIM list users pagination'
+                self.get("/Users", params=params),
+                context="SCIM list users pagination",
             )
 
             body = try_decoding(response)
 
             # Extract users from the SCIM response
-            users = body.get('Resources', [])
+            users = body.get("Resources", [])
             all_users.extend(users)
 
             # Check if there are more results
-            total_results = body.get('totalResults', 0)
-            items_per_page = body.get('itemsPerPage', len(users))
+            total_results = body.get("totalResults", 0)
+            items_per_page = body.get("itemsPerPage", len(users))
 
             # If no results are left, break:
             next_start_index = current_start_index + items_per_page - 1
@@ -96,5 +98,3 @@ class ScimApiClient(ApiClient):
             current_start_index += items_per_page
 
         return all_users
-
-

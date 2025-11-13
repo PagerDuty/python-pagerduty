@@ -3,8 +3,8 @@ import unittest
 
 import pagerduty
 
-class VersionTest(unittest.TestCase):
 
+class VersionTest(unittest.TestCase):
     def test_major_version(self):
         """
         Validate that the major component of "unknown version" matches the actual
@@ -23,5 +23,9 @@ class VersionTest(unittest.TestCase):
             ver_in_toml = pagerduty.version.get_version_via_tomllib()
             ver_unknown = pagerduty.version.UNKNOWN_VERSION
             ver_from_fn = pagerduty.version.get_version()
-            self.assertEqual(*[v.split('.')[0] for v in (ver_in_toml, ver_unknown)])
-            self.assertEqual(*[v.split('.')[0] for v in (ver_unknown, ver_from_fn)])
+            self.assertEqual(
+                *[v.split(".")[0] for v in (ver_in_toml, ver_unknown)]
+            )
+            self.assertEqual(
+                *[v.split(".")[0] for v in (ver_unknown, ver_from_fn)]
+            )

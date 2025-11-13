@@ -7,27 +7,17 @@ from warnings import warn
 from httpx import Response
 
 # Local
-from . api_client import (
-    ApiClient,
-    normalize_url
-)
-from . auth_method import (
-    AuthMethod,
-    HeaderAuthMethod,
-    PassThruHeaderAuthMethod
-)
+from .api_client import ApiClient, normalize_url
+from .auth_method import AuthMethod, HeaderAuthMethod, PassThruHeaderAuthMethod
 
-from . common import (
+from .common import (
     requires_success,
     singular_name,
     successful_response,
     truncate_text,
-    try_decoding
+    try_decoding,
 )
-from . errors import (
-    ServerHttpError,
-    UrlError
-)
+from .errors import ServerHttpError, UrlError
 
 #######################
 ### CLIENT DEFAULTS ###
@@ -60,8 +50,10 @@ determined by :attr:`pagerduty.rest_api_v2_base_client.is_path_param`) is interp
 a variable parameter versus a literal substring of the path.
 """
 
-def canonical_path(paths: List[CanonicalPath], base_url: str, url: str) \
-        -> CanonicalPath:
+
+def canonical_path(
+    paths: List[CanonicalPath], base_url: str, url: str
+) -> CanonicalPath:
     """
     The canonical path from the API documentation corresponding to a URL.
 
@@ -86,40 +78,48 @@ def canonical_path(paths: List[CanonicalPath], base_url: str, url: str) \
     """
     full_url = normalize_url(base_url, url)
     # Starting with / after hostname before the query string:
-    url_path = full_url.replace(base_url.rstrip('/'), '').split('?')[0]
+    url_path = full_url.replace(base_url.rstrip("/"), "").split("?")[0]
     # Root node (blank) counts so we include it:
-    n_nodes = url_path.count('/')
+    n_nodes = url_path.count("/")
     # First winnow the list down to paths with the same number of nodes:
-    patterns = list(filter(
-        lambda p: p.count('/') == n_nodes,
-        paths
-    ))
+    patterns = list(filter(lambda p: p.count("/") == n_nodes, paths))
     # Match against each node, skipping index zero because the root node always
     # matches, and using the adjusted index "j":
-    for i, node in enumerate(url_path.split('/')[1:]):
-        j = i+1
-        patterns = list(filter(
-            lambda p: p.split('/')[j] == node or is_path_param(p.split('/')[j]),
-            patterns
-        ))
+    for i, node in enumerate(url_path.split("/")[1:]):
+        j = i + 1
+        patterns = list(
+            filter(
+                lambda p: p.split("/")[j] == node
+                or is_path_param(p.split("/")[j]),
+                patterns,
+            )
+        )
         # Don't break early if len(patterns) == 1, but require an exact match...
 
     if len(patterns) == 0:
-        raise UrlError(f"URL {url} does not match any canonical API path " \
-            'supported by this client.')
+        raise UrlError(
+            f"URL {url} does not match any canonical API path supported by this client."
+        )
     elif len(patterns) > 1:
         # If there's multiple matches but one matches exactly, return that.
         if url_path in patterns:
             return url_path
 
         # ...otherwise this is ambiguous.
-        raise Exception(f"Ambiguous URL {url} matches more than one " \
-            "canonical path pattern: "+', '.join(patterns)+'; this is likely ' \
-            'a bug.')
+        raise Exception(
+            f"Ambiguous URL {url} matches more than one "
+            "canonical path pattern: "
+            + ", ".join(patterns)
+            + "; this is likely "
+            "a bug."
+        )
     else:
         return patterns[0]
 
-def endpoint_matches(endpoint_pattern: str, method: str, path: CanonicalPath) -> bool:
+
+def endpoint_matches(
+    endpoint_pattern: str, method: str, path: CanonicalPath
+) -> bool:
     """
     Whether an endpoint (method and canonical path) matches a given pattern.
 
@@ -139,9 +139,10 @@ def endpoint_matches(endpoint_pattern: str, method: str, path: CanonicalPath) ->
         True or False based on whether the pattern matches the endpoint
     """
     return (
-        endpoint_pattern.startswith(method.upper()) \
-            or endpoint_pattern.startswith('*')
+        endpoint_pattern.startswith(method.upper())
+        or endpoint_pattern.startswith("*")
     ) and endpoint_pattern.endswith(f" {path}")
+
 
 def is_path_param(path_node: str) -> bool:
     """
@@ -152,7 +153,8 @@ def is_path_param(path_node: str) -> bool:
     :returns:
         True if the node represents a variable parameter, False if it is a fixed value
     """
-    return path_node.startswith('{') and path_node.endswith('}')
+    return path_node.startswith("{") and path_node.endswith("}")
+
 
 ###############################
 ### ENTITY WRAPPING HELPERS ###
@@ -177,8 +179,10 @@ The first member indicates the entity wrapping of the request body. The second i
 the entity wrapping of the response body. The two may differ.
 """
 
-def entity_wrappers(wrapper_config: dict, method: str, path: CanonicalPath) \
-        -> EntityWrappingSpec:
+
+def entity_wrappers(
+    wrapper_config: dict, method: str, path: CanonicalPath
+) -> EntityWrappingSpec:
     """
     Obtains entity wrapping information for a given endpoint (canonical path and method)
 
@@ -221,17 +225,18 @@ def entity_wrappers(wrapper_config: dict, method: str, path: CanonicalPath) \
         The entity wrapping specification.
     """
     m = method.upper()
-    endpoint = "%s %s"%(m, path)
-    match = list(filter(
-        lambda k: endpoint_matches(k, m, path),
-        wrapper_config.keys()
-    ))
+    endpoint = "%s %s" % (m, path)
+    match = list(
+        filter(lambda k: endpoint_matches(k, m, path), wrapper_config.keys())
+    )
 
     if len(match) == 1:
         # Look up entity wrapping info from the global dictionary and validate:
         wrapper = wrapper_config[match[0]]
-        invalid_config_error = 'Invalid entity wrapping configuration for ' \
-                    f"{endpoint}: {wrapper}; this is most likely a bug."
+        invalid_config_error = (
+            "Invalid entity wrapping configuration for "
+            f"{endpoint}: {wrapper}; this is most likely a bug."
+        )
         if wrapper is not None and type(wrapper) not in (tuple, str):
             # Catch-all for invalid types.
             raise Exception(invalid_config_error)
@@ -241,10 +246,10 @@ def entity_wrappers(wrapper_config: dict, method: str, path: CanonicalPath) \
         elif type(wrapper) is tuple and len(wrapper) == 2:
             # Endpoint may use different wrapping for request and response bodies.
             #
-            # Each element must be either str or None. The first element is the request
-            # body wrapper and the second is the response body wrapper. If a value is
-            # None, that indicates that the request or response value should be encoded
-            # and decoded as-is without modifications.
+            # Each element must be either str or None. The first element is the
+            # request body wrapper and the second is the response body wrapper.
+            # If a value is None, that indicates that the request or response
+            # value should be encoded and decoded as-is without modifications.
             if False in [w is None or type(w) is str for w in wrapper]:
                 # One or both is neither a string nor None, which is invalid:
                 raise Exception(invalid_config_error)
@@ -259,9 +264,12 @@ def entity_wrappers(wrapper_config: dict, method: str, path: CanonicalPath) \
         wrapper = infer_entity_wrapper(method, path)
         return (wrapper, wrapper)
     else:
-        matches_str = ', '.join(match)
-        raise Exception(f"{endpoint} matches more than one pattern:" + \
-            f"{matches_str}; this is most likely a bug.")
+        matches_str = ", ".join(match)
+        raise Exception(
+            f"{endpoint} matches more than one pattern: "
+            + f"{matches_str}; this is most likely a bug."
+        )
+
 
 def infer_entity_wrapper(method: str, path: CanonicalPath) -> EntityWrapper:
     """
@@ -281,19 +289,20 @@ def infer_entity_wrapper(method: str, path: CanonicalPath) -> EntityWrapper:
         :attr:`pagerduty.rest_api_v2_client.CANONICAL_PATHS`
     """
     m = method.upper()
-    path_nodes = path.split('/')
+    path_nodes = path.split("/")
     if is_path_param(path_nodes[-1]):
         # Singular if it's an individual resource's URL for read/update/delete
         # (named similarly to the second to last node, as the last is its ID and
         # the second to last denotes the API resource collection it is part of):
         return singular_name(path_nodes[-2])
-    elif m == 'POST':
+    elif m == "POST":
         # Singular if creating a new resource by POSTing to the index containing
         # similar resources (named simiarly to the last path node):
         return singular_name(path_nodes[-1])
     else:
         # Plural if listing via GET to the index endpoint, or doing a multi-put:
         return path_nodes[-1]
+
 
 def unwrap(response: Response, wrapper: EntityWrapping) -> Union[dict, list]:
     """
@@ -308,33 +317,38 @@ def unwrap(response: Response, wrapper: EntityWrapping) -> Union[dict, list]:
         the response, which is expected to be a dictionary (map).
     """
     body = try_decoding(response)
-    endpoint = "%s %s"%(response.request.method.upper(), response.request.url)
+    endpoint = "%s %s" % (
+        response.request.method.upper(),
+        response.request.url,
+    )
     if wrapper is not None:
         # There is a wrapped entity to unpack:
         bod_type = type(body)
-        error_msg = f"Expected response body from {endpoint} after JSON-" \
-            f"decoding to be a dictionary with a key \"{wrapper}\", but "
+        error_msg = (
+            f"Expected response body from {endpoint} after JSON-"
+            f'decoding to be a dictionary with a key "{wrapper}", but '
+        )
         if bod_type is dict:
             if wrapper in body:
                 return body[wrapper]
             else:
-                keys = truncate_text(', '.join(body.keys()))
+                keys = truncate_text(", ".join(body.keys()))
                 raise ServerHttpError(
-                    error_msg + f"its keys are: {keys}",
-                    response
+                    error_msg + f"its keys are: {keys}", response
                 )
         else:
             raise ServerHttpError(
-                error_msg + f"its type is {bod_type}.",
-                response
+                error_msg + f"its type is {bod_type}.", response
             )
     else:
         # Wrapping is disabled for responses:
         return body
 
+
 ###########################
 ### FUNCTION DECORATORS ###
 ###########################
+
 
 def auto_json(method: callable) -> callable:
     """
@@ -346,10 +360,13 @@ def auto_json(method: callable) -> callable:
     The new return value is the JSON-decoded response body (``dict`` or ``list``).
     """
     doc = method.__doc__
+
     def call(self, url, **kw):
         return try_decoding(successful_response(method(self, url, **kw)))
+
     call.__doc__ = doc
     return call
+
 
 def resource_url(method: callable) -> callable:
     """
@@ -364,23 +381,29 @@ def resource_url(method: callable) -> callable:
     """
     doc = method.__doc__
     name = method.__name__
+
     def call(self, resource, **kw):
         url = resource
         if type(resource) is dict:
-            if 'self' in resource: # passing an object
-                url = resource['self']
+            if "self" in resource:  # passing an object
+                url = resource["self"]
             else:
                 # Unsupported APIs for this feature:
-                raise UrlError(f"The dict object passed to {name} in place of a URL "
+                raise UrlError(
+                    f"The dict object passed to {name} in place of a URL "
                     "has no 'self' key and cannot be used in place of an API resource "
-                    "path/URL.")
+                    "path/URL."
+                )
         elif type(resource) is not str:
             name = method.__name__
-            raise UrlError(f"Value passed to {name} is not a str or dict with "
-                "key 'self'")
+            raise UrlError(
+                f"Value passed to {name} is not a str or dict with key 'self'"
+            )
         return method(self, url, **kw)
+
     call.__doc__ = doc
     return call
+
 
 def wrapped_entities(method: callable) -> callable:
     """
@@ -408,30 +431,38 @@ def wrapped_entities(method: callable) -> callable:
     :returns:
         A callable object; the reformed method
     """
-    http_method = method.__name__.lstrip('r')
+    http_method = method.__name__.lstrip("r")
     doc = method.__doc__
+
     def call(self, url, **kw):
-        pass_kw = deepcopy(kw) # Make a copy for modification
+        pass_kw = deepcopy(kw)  # Make a copy for modification
         path = self.canonical_path(url)
-        endpoint = "%s %s"%(http_method.upper(), path)
+        endpoint = "%s %s" % (http_method.upper(), path)
         req_w, res_w = self.entity_wrappers(http_method, path)
         # Validate the abbreviated (or full) request payload, and automatically
         # wrap the request entity for the implementer if necessary:
-        if req_w is not None and http_method in ('post', 'put') \
-                and 'json' in pass_kw and req_w not in pass_kw['json']:
-            pass_kw['json'] = {req_w: pass_kw['json']}
+        if (
+            req_w is not None
+            and http_method in ("patch", "post", "put")
+            and "json" in pass_kw
+            and req_w not in pass_kw["json"]
+        ):
+            pass_kw["json"] = {req_w: pass_kw["json"]}
 
         # Make the request:
         r = successful_response(method(self, url, **pass_kw))
 
         # Unpack the response:
         return unwrap(r, res_w)
+
     call.__doc__ = doc
     return call
+
 
 ####################
 ### AUTH METHODS ###
 ####################
+
 
 class TokenAuthMethod(HeaderAuthMethod):
     """
@@ -440,21 +471,26 @@ class TokenAuthMethod(HeaderAuthMethod):
     This AuthMethod is used primarily in REST API v2 but also is used in some similar
     integration APIs.
     """
+
     @property
     def auth_header(self) -> dict:
         return {"Authorization": f"Token token={self.secret}"}
+
 
 class OAuthTokenAuthMethod(HeaderAuthMethod):
     """
     AuthMethod class for OAuth-created authentication tokens ("Bearer")
     """
+
     @property
     def auth_header(self) -> dict:
         return {"Authorization": f"Bearer {self.secret}"}
 
+
 ####################
 ### CLIENT CLASS ###
 ####################
+
 
 class RestApiV2BaseClient(ApiClient):
     """
@@ -489,13 +525,16 @@ class RestApiV2BaseClient(ApiClient):
     iterating/querying an index (the ``limit`` parameter).
     """
 
-    def __init__(self, api_key: str, auth_type: str = 'token', debug: bool = False,
-            **kw):
+    def __init__(
+        self, api_key: str, auth_type: str = "token", debug: bool = False, **kw
+    ):
         self.api_call_counts = {}
         self.api_time = {}
         self.auth_type = auth_type
         auth_method = self._build_auth_method(api_key)
-        super(RestApiV2BaseClient, self).__init__(auth_method, debug=debug, **kw)
+        super(RestApiV2BaseClient, self).__init__(
+            auth_method, debug=debug, **kw
+        )
 
     def _build_auth_method(self, api_key: str) -> AuthMethod:
         """
@@ -526,7 +565,9 @@ class RestApiV2BaseClient(ApiClient):
     def auth_type(self, auth_type: str):
         valid_auth_types = list(self.auth_type_mapping.keys())
         if auth_type not in valid_auth_types:
-            raise AttributeError(f"auth_type value must be one of: {valid_auth_types}")
+            raise AttributeError(
+                f"auth_type value must be one of: {valid_auth_types}"
+            )
         self._auth_type = auth_type
 
     @property
@@ -535,10 +576,10 @@ class RestApiV2BaseClient(ApiClient):
         Defines a mapping of valid :attr:`auth_type` values to AuthMethod classes.
         """
         return {
-            'token':  TokenAuthMethod,
-            'bearer': OAuthTokenAuthMethod,
-            'oauth2': OAuthTokenAuthMethod,
-            "header_passthru": PassThruHeaderAuthMethod
+            "token": TokenAuthMethod,
+            "bearer": OAuthTokenAuthMethod,
+            "oauth2": OAuthTokenAuthMethod,
+            "header_passthru": PassThruHeaderAuthMethod,
         }
 
     def canonical_path(self, url: str) -> CanonicalPath:
@@ -575,7 +616,7 @@ class RestApiV2BaseClient(ApiClient):
         """
         return []
 
-    def dict_all(self, path: str, by: str = 'id', **kw) -> dict:
+    def dict_all(self, path: str, by: str = "id", **kw) -> dict:
         """
         Dictionary representation of all results from an index endpoint.
 
@@ -599,7 +640,7 @@ class RestApiV2BaseClient(ApiClient):
             the ``by`` parameter.
         """
         iterator = self.iter_all(path, **kw)
-        return {obj[by]:obj for obj in iterator}
+        return {obj[by]: obj for obj in iterator}
 
     @property
     def entity_wrapper_config(self) -> dict:
@@ -619,8 +660,9 @@ class RestApiV2BaseClient(ApiClient):
         """
         return {}
 
-    def entity_wrappers(self, http_method: str, path: CanonicalPath) \
-            -> EntityWrappingSpec:
+    def entity_wrappers(
+        self, http_method: str, path: CanonicalPath
+    ) -> EntityWrappingSpec:
         """
         Get the entity-wrapper specification for any given API / API endpoint.
 
@@ -652,26 +694,27 @@ class RestApiV2BaseClient(ApiClient):
         query_params = deepcopy(params)
         if query_params is None:
             query_params = {}
-        query_params.update({
-            'total': True,
-            'limit': 1,
-            'offset': 0
-        })
+        query_params.update({"total": True, "limit": 1, "offset": 0})
         response = successful_response(self.get(url, params=query_params))
         response_json = try_decoding(response)
-        if 'total' not in response_json:
+        if "total" not in response_json:
             path = self.canonical_path(url)
             raise ServerHttpError(
-                f"Response from endpoint GET {path} lacks a \"total\" property. This " \
-                "may be because the endpoint does not support classic pagination, or " \
+                f'Response from endpoint GET {path} lacks a "total" property. This '
+                "may be because the endpoint does not support classic pagination, or "
                 "implements it incompletely or incorrectly.",
-                response
+                response,
             )
-        return int(response_json['total'])
+        return int(response_json["total"])
 
-    def iter_all(self, url, params: Optional[dict] = None,
-                page_size: Optional[int] = None, item_hook: Optional[callable] = None,
-                total: Optional[bool] = False) -> Iterator[dict]:
+    def iter_all(
+        self,
+        url,
+        params: Optional[dict] = None,
+        page_size: Optional[int] = None,
+        item_hook: Optional[callable] = None,
+        total: Optional[bool] = False,
+    ) -> Iterator[dict]:
         """
         Iterator for the contents of an index endpoint or query.
 
@@ -722,33 +765,36 @@ class RestApiV2BaseClient(ApiClient):
 
         # Short-circuit to cursor-based pagination if appropriate:
         if path in self.cursor_based_pagination_paths:
-            return self.iter_cursor(url, params=params, page_size=page_size,
-                item_hook=item_hook)
+            return self.iter_cursor(
+                url, params=params, page_size=page_size, item_hook=item_hook
+            )
 
-        nodes = path.split('/')
+        nodes = path.split("/")
         if is_path_param(nodes[-1]):
             # NOTE: If this happens for a newer endpoint in REST API v2, and the final
             # path parameter is one of a fixed list of literal strings, the path might
             # need to be added to the EXPAND_PATHS dictionary in
             # scripts/get_path_list/get_path_list.py, after which CANONICAL_PATHS will
             # then need to be updated accordingly based on the new output of the script.
-            raise UrlError(f"Path {path} (URL={url}) is formatted like an " \
-                "individual resource versus a resource collection. It is " \
-                "therefore assumed to not support pagination.")
-        _, wrapper = self.entity_wrappers('GET', path)
+            raise UrlError(
+                f"Path {path} (URL={url}) is formatted like an "
+                "individual resource versus a resource collection. It is "
+                "therefore assumed to not support pagination."
+            )
+        _, wrapper = self.entity_wrappers("GET", path)
 
         if wrapper is None:
             raise UrlError(f"Pagination is not supported for {endpoint}.")
 
         # Parameters to send:
         data = {
-            'limit': (self.default_page_size, page_size)[int(bool(page_size))],
+            "limit": (self.default_page_size, page_size)[int(bool(page_size))],
         }
         if total is not None:
             # This is to ensure that the correct literal string is passed through as the
             # final parameter value rather than letting the middleware serialize it as
             # it sees fit. The PagerDuty API requires lower case "true/false".
-            data['total'] = str(total).lower()
+            data["total"] = str(total).lower()
         if isinstance(params, (dict, list)):
             # Override defaults with values given:
             data.update(dict(params))
@@ -756,26 +802,25 @@ class RestApiV2BaseClient(ApiClient):
         more = True
         offset = 0
         if params is not None:
-            offset = int(params.get('offset', 0))
+            offset = int(params.get("offset", 0))
         n = 0
         while more:
             # Check the offset and limit:
-            data['offset'] = offset
-            highest_record_index = int(data['offset']) + int(data['limit'])
+            data["offset"] = offset
+            highest_record_index = int(data["offset"]) + int(data["limit"])
             if highest_record_index > ITERATION_LIMIT:
-                iter_limit = '%d'%ITERATION_LIMIT
+                iter_limit = "%d" % ITERATION_LIMIT
                 warn(
-                    f"Stopping iter_all on {endpoint} at " \
-                    f"limit+offset={highest_record_index} " \
-                    'as this exceeds the maximum permitted by the API ' \
+                    f"Stopping iter_all on {endpoint} at "
+                    f"limit+offset={highest_record_index} "
+                    "as this exceeds the maximum permitted by the API "
                     f"({iter_limit}). The set of results may be incomplete."
                 )
                 return
 
             # Make the request and validate/unpack the response:
             r = successful_response(
-                self.get(url, params=data.copy()),
-                context='classic pagination'
+                self.get(url, params=data.copy()), context="classic pagination"
             )
             body = try_decoding(r)
             results = unwrap(r, wrapper)
@@ -793,20 +838,20 @@ class RestApiV2BaseClient(ApiClient):
             # it is that it could potentially result in skipping results or
             # yielding duplicates if there's a mismatch, or potentially issues
             # like PagerDuty/pdpyras#61
-            data['limit'] = len(results)
-            offset += data['limit']
+            data["limit"] = len(results)
+            offset += data["limit"]
             more = False
-            if 'total' in body:
-                total_count = body['total']
+            if "total" in body:
+                total_count = body["total"]
             else:
-                total_count = '?'
-            if 'more' in body:
-                more = body['more']
+                total_count = "?"
+            if "more" in body:
+                more = body["more"]
             else:
                 warn(
-                    f"Response from endpoint GET {path} lacks a \"more\" property and "
+                    f'Response from endpoint GET {path} lacks a "more" property and '
                     "therefore does not support pagination. Only results from the "
-                    "first request will be yielded. You can use \"rget\" with this "
+                    'first request will be yielded. You can use "rget" with this '
                     "endpoint instead to avoid this warning."
                 )
 
@@ -814,13 +859,17 @@ class RestApiV2BaseClient(ApiClient):
             for result in results:
                 n += 1
                 # Call a callable object for each item, i.e. to print progress:
-                if hasattr(item_hook, '__call__'):
+                if hasattr(item_hook, "__call__"):
                     item_hook(result, n, total_count)
                 yield result
 
-    def iter_cursor(self, url: str, params: Optional[dict] = None,
-                item_hook: Optional[callable] = None,
-                page_size: Optional[int] = None) -> Iterator[dict]:
+    def iter_cursor(
+        self,
+        url: str,
+        params: Optional[dict] = None,
+        item_hook: Optional[callable] = None,
+        page_size: Optional[int] = None,
+    ) -> Iterator[dict]:
         """
         Iterator for results from an endpoint using cursor-based pagination.
 
@@ -840,9 +889,9 @@ class RestApiV2BaseClient(ApiClient):
         path = self.canonical_path(url)
         if path not in self.cursor_based_pagination_paths:
             raise UrlError(f"{path} does not support cursor-based pagination.")
-        _, wrapper = self.entity_wrappers('GET', path)
+        _, wrapper = self.entity_wrappers("GET", path)
         user_params = {
-            'limit': (self.default_page_size, page_size)[int(bool(page_size))]
+            "limit": (self.default_page_size, page_size)[int(bool(page_size))]
         }
         if isinstance(params, (dict, list)):
             # Override defaults with values given:
@@ -855,10 +904,10 @@ class RestApiV2BaseClient(ApiClient):
         while more:
             # Update parameters and request a new page:
             if next_cursor:
-                user_params.update({'cursor': next_cursor})
+                user_params.update({"cursor": next_cursor})
             r = successful_response(
                 self.get(url, params=user_params),
-                context='cursor-based pagination',
+                context="cursor-based pagination",
             )
 
             # Unpack and yield results
@@ -866,12 +915,12 @@ class RestApiV2BaseClient(ApiClient):
             results = unwrap(r, wrapper)
             for result in results:
                 total += 1
-                if hasattr(item_hook, '__call__'):
-                    item_hook(result, total, '?')
+                if hasattr(item_hook, "__call__"):
+                    item_hook(result, total, "?")
                 yield result
 
             # Advance to the next page
-            next_cursor = body.get('next_cursor', None)
+            next_cursor = body.get("next_cursor", None)
             more = bool(next_cursor)
 
     @resource_url
@@ -925,31 +974,42 @@ class RestApiV2BaseClient(ApiClient):
         method = response.request.method.upper()
         url = str(response.request.url)
         status = response.status_code
-        request_date = response.headers.get('date', '(missing header)')
-        request_id = response.headers.get('x-request-id', '(missing header)')
+        request_date = response.headers.get("date", "(missing header)")
+        request_id = response.headers.get("x-request-id", "(missing header)")
         request_time = response.elapsed.total_seconds()
 
         try:
-            endpoint = "%s %s"%(method, self.canonical_path(url))
+            endpoint = "%s %s" % (method, self.canonical_path(url))
         except UrlError:
             # This is necessary so that profiling can also support using the
             # basic get / post / put / delete methods with APIs that are not yet
             # explicitly supported by inclusion in CANONICAL_PATHS.
-            endpoint = "%s %s"%(method, url)
+            endpoint = "%s %s" % (method, url)
         self.api_call_counts.setdefault(endpoint, 0)
         self.api_time.setdefault(endpoint, 0.0)
         self.api_call_counts[endpoint] += 1
         self.api_time[endpoint] += request_time
 
         # Request ID / timestamp logging
-        self.log.debug("Request completed: #method=%s|#url=%s|#status=%d|"
-            "#x_request_id=%s|#date=%s|#wall_time_s=%g", method, url, status,
-            request_id, request_date, request_time)
-        if int(status/100) == 5:
-            self.log.error("PagerDuty API server error (%d)! "
+        self.log.debug(
+            "Request completed: #method=%s|#url=%s|#status=%d|"
+            "#x_request_id=%s|#date=%s|#wall_time_s=%g",
+            method,
+            url,
+            status,
+            request_id,
+            request_date,
+            request_time,
+        )
+        if int(status // 100) == 5:
+            self.log.error(
+                "PagerDuty API server error (%d)! "
                 "For additional diagnostics, contact PagerDuty support "
                 "and reference x_request_id=%s / date=%s",
-                status, request_id, request_date)
+                status,
+                request_id,
+                request_date,
+            )
 
     @resource_url
     @requires_success
@@ -1003,10 +1063,11 @@ class RestApiV2BaseClient(ApiClient):
         """
         return self.post(path, **kw)
 
-
     @resource_url
     @wrapped_entities
-    def rput(self, resource: Union[str, dict], **kw) -> Optional[Union[dict, list]]:
+    def rput(
+        self, resource: Union[str, dict], **kw
+    ) -> Optional[Union[dict, list]]:
         """
         Wrapped-entity-aware PUT function.
 
@@ -1034,5 +1095,3 @@ class RestApiV2BaseClient(ApiClient):
     def total_call_time(self) -> float:
         """The total time spent making API calls."""
         return sum(self.api_time.values())
-
-

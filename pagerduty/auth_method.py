@@ -1,7 +1,8 @@
 # Local
-from . common import last_4
+from .common import last_4
 
-class AuthMethod():
+
+class AuthMethod:
     """
     An abstract class for authentication methods.
 
@@ -57,6 +58,7 @@ class AuthMethod():
         """
         return last_4(self.secret)
 
+
 class HeaderAuthMethod(AuthMethod):
     """
     Abstract base class for auth methods that authenticate using request headers.
@@ -68,6 +70,7 @@ class HeaderAuthMethod(AuthMethod):
     @property
     def auth_param(self) -> dict:
         return {}
+
 
 class BodyParameterAuthMethod(AuthMethod):
     """
@@ -81,6 +84,7 @@ class BodyParameterAuthMethod(AuthMethod):
     def auth_header(self) -> dict:
         return {}
 
+
 class PassThruHeaderAuthMethod(HeaderAuthMethod):
     """
     Auth method that sets the ``Authorization`` header equal to ``secret``, verbatim.
@@ -88,8 +92,7 @@ class PassThruHeaderAuthMethod(HeaderAuthMethod):
     This is for use cases where an ``Authorization`` header must be passed through for
     authentication, i.e. in an API proxy or MCP server.
     """
+
     @property
     def auth_header(self) -> dict:
         return {"Authorization": self.secret}
-
-

@@ -6,22 +6,15 @@ from typing import Iterator, List, Optional
 from warnings import warn
 
 # Local
-from . common import (
-    datetime_intervals,
-    strftime
-)
-from . errors import (
-    Error,
-    HttpError,
-    UrlError
-)
-from . rest_api_v2_base_client import (
+from .common import datetime_intervals, strftime
+from .errors import Error, HttpError, UrlError
+from .rest_api_v2_base_client import (
     ITERATION_LIMIT,
     CanonicalPath,
     RestApiV2BaseClient,
     canonical_path as canonical_path_common,
     entity_wrappers as entity_wrappers_common,
-    wrapped_entities
+    wrapped_entities,
 )
 
 ########################
@@ -49,412 +42,409 @@ classic pagination, {iteration_limit}. Results will be incomplete.{suggestion}
 # BEGIN auto-generated content
 
 CANONICAL_PATHS = [
-    '/{entity_type}/{id}/change_tags',
-    '/{entity_type}/{id}/tags',
-    '/abilities',
-    '/abilities/{id}',
-    '/addons',
-    '/addons/{id}',
-    '/alert_grouping_settings',
-    '/alert_grouping_settings/{id}',
-    '/analytics/metrics/incidents/all',
-    '/analytics/metrics/incidents/escalation_policies',
-    '/analytics/metrics/incidents/escalation_policies/all',
-    '/analytics/metrics/incidents/services',
-    '/analytics/metrics/incidents/services/all',
-    '/analytics/metrics/incidents/teams',
-    '/analytics/metrics/incidents/teams/all',
-    '/analytics/metrics/pd_advance_usage/features',
-    '/analytics/metrics/responders/all',
-    '/analytics/metrics/responders/teams',
-    '/analytics/raw/incidents',
-    '/analytics/raw/incidents/{id}',
-    '/analytics/raw/incidents/{id}/responses',
-    '/analytics/raw/responders/{responder_id}/incidents',
-    '/audit/records',
-    '/automation_actions/actions',
-    '/automation_actions/actions/{id}',
-    '/automation_actions/actions/{id}/invocations',
-    '/automation_actions/actions/{id}/services',
-    '/automation_actions/actions/{id}/services/{service_id}',
-    '/automation_actions/actions/{id}/teams',
-    '/automation_actions/actions/{id}/teams/{team_id}',
-    '/automation_actions/invocations',
-    '/automation_actions/invocations/{id}',
-    '/automation_actions/runners',
-    '/automation_actions/runners/{id}',
-    '/automation_actions/runners/{id}/teams',
-    '/automation_actions/runners/{id}/teams/{team_id}',
-    '/business_services',
-    '/business_services/{id}',
-    '/business_services/{id}/account_subscription',
-    '/business_services/{id}/subscribers',
-    '/business_services/{id}/supporting_services/impacts',
-    '/business_services/{id}/unsubscribe',
-    '/business_services/impactors',
-    '/business_services/impacts',
-    '/business_services/priority_thresholds',
-    '/change_events',
-    '/change_events/{id}',
-    '/escalation_policies',
-    '/escalation_policies/{id}',
-    '/escalation_policies/{id}/audit/records',
-    '/event_orchestrations',
-    '/event_orchestrations/{id}',
-    '/event_orchestrations/{id}/integrations',
-    '/event_orchestrations/{id}/integrations/{integration_id}',
-    '/event_orchestrations/{id}/integrations/migration',
-    '/event_orchestrations/{id}/global',
-    '/event_orchestrations/{id}/router',
-    '/event_orchestrations/{id}/unrouted',
-    '/event_orchestrations/services/{service_id}',
-    '/event_orchestrations/services/{service_id}/active',
-    '/event_orchestrations/{id}/cache_variables',
-    '/event_orchestrations/{id}/cache_variables/{cache_variable_id}',
-    '/event_orchestrations/{id}/cache_variables/{cache_variable_id}/data',
-    '/event_orchestrations/services/{service_id}/cache_variables',
-    '/event_orchestrations/services/{service_id}/cache_variables/{cache_variable_id}',
-    '/event_orchestrations/services/{service_id}/cache_variables/{cache_variable_id}/data',
-    '/extension_schemas',
-    '/extension_schemas/{id}',
-    '/extensions',
-    '/extensions/{id}',
-    '/extensions/{id}/enable',
-    '/incident_workflows',
-    '/incident_workflows/{id}',
-    '/incident_workflows/{id}/instances',
-    '/incident_workflows/actions',
-    '/incident_workflows/actions/{id}',
-    '/incident_workflows/triggers',
-    '/incident_workflows/triggers/{id}',
-    '/incident_workflows/triggers/{id}/services',
-    '/incident_workflows/triggers/{trigger_id}/services/{service_id}',
-    '/incidents',
-    '/incidents/{id}',
-    '/incidents/{id}/alerts',
-    '/incidents/{id}/alerts/{alert_id}',
-    '/incidents/{id}/business_services/{business_service_id}/impacts',
-    '/incidents/{id}/business_services/impacts',
-    '/incidents/{id}/custom_fields/values',
-    '/incidents/{id}/log_entries',
-    '/incidents/{id}/merge',
-    '/incidents/{id}/notes',
-    '/incidents/{id}/outlier_incident',
-    '/incidents/{id}/past_incidents',
-    '/incidents/{id}/related_change_events',
-    '/incidents/{id}/related_incidents',
-    '/incidents/{id}/responder_requests',
-    '/incidents/{id}/snooze',
-    '/incidents/{id}/status_updates',
-    '/incidents/{id}/status_updates/subscribers',
-    '/incidents/{id}/status_updates/unsubscribe',
-    '/incidents/count',
-    '/incidents/types',
-    '/incidents/types/{type_id_or_name}',
-    '/incidents/types/{type_id_or_name}/custom_fields',
-    '/incidents/types/{type_id_or_name}/custom_fields/{field_id}',
-    '/incidents/types/{type_id_or_name}/custom_fields/{field_id}/field_options',
-    '/incidents/types/{type_id_or_name}/custom_fields/{field_id}/field_options/{field_option_id}',
-    '/incidents/custom_fields',
-    '/incidents/custom_fields/{field_id}',
-    '/incidents/custom_fields/{field_id}/field_options',
-    '/incidents/custom_fields/{field_id}/field_options/{field_option_id}',
-    '/license_allocations',
-    '/licenses',
-    '/log_entries',
-    '/log_entries/{id}',
-    '/log_entries/{id}/channel',
-    '/maintenance_windows',
-    '/maintenance_windows/{id}',
-    '/notifications',
-    '/oauth_delegations',
-    '/oauth_delegations/revocation_requests/status',
-    '/oncalls',
-    '/paused_incident_reports/alerts',
-    '/paused_incident_reports/counts',
-    '/priorities',
-    '/rulesets',
-    '/rulesets/{id}',
-    '/rulesets/{id}/rules',
-    '/rulesets/{id}/rules/{rule_id}',
-    '/schedules',
-    '/schedules/{id}',
-    '/schedules/{id}/audit/records',
-    '/schedules/{id}/overrides',
-    '/schedules/{id}/overrides/{override_id}',
-    '/schedules/{id}/users',
-    '/schedules/preview',
-    '/service_dependencies/associate',
-    '/service_dependencies/business_services/{id}',
-    '/service_dependencies/disassociate',
-    '/service_dependencies/technical_services/{id}',
-    '/services',
-    '/services/{id}',
-    '/services/{id}/audit/records',
-    '/services/{id}/change_events',
-    '/services/{id}/integrations',
-    '/services/{id}/integrations/{integration_id}',
-    '/services/{id}/rules',
-    '/services/{id}/rules/convert',
-    '/services/{id}/rules/{rule_id}',
-    '/services/custom_fields',
-    '/services/custom_fields/{field_id}',
-    '/services/custom_fields/{field_id}/field_options',
-    '/services/custom_fields/{field_id}/field_options/{field_option_id}',
-    '/services/{id}/custom_fields/values',
-    '/standards',
-    '/standards/{id}',
-    '/standards/scores/{resource_type}',
-    '/standards/scores/{resource_type}/{id}',
-    '/status_dashboards',
-    '/status_dashboards/{id}',
-    '/status_dashboards/{id}/service_impacts',
-    '/status_dashboards/url_slugs/{url_slug}',
-    '/status_dashboards/url_slugs/{url_slug}/service_impacts',
-    '/status_pages',
-    '/status_pages/{id}/impacts',
-    '/status_pages/{id}/impacts/{impact_id}',
-    '/status_pages/{id}/services',
-    '/status_pages/{id}/services/{service_id}',
-    '/status_pages/{id}/severities',
-    '/status_pages/{id}/severities/{severity_id}',
-    '/status_pages/{id}/statuses',
-    '/status_pages/{id}/statuses/{status_id}',
-    '/status_pages/{id}/posts',
-    '/status_pages/{id}/posts/{post_id}',
-    '/status_pages/{id}/posts/{post_id}/post_updates',
-    '/status_pages/{id}/posts/{post_id}/post_updates/{post_update_id}',
-    '/status_pages/{id}/posts/{post_id}/postmortem',
-    '/status_pages/{id}/subscriptions',
-    '/status_pages/{id}/subscriptions/{subscription_id}',
-    '/tags',
-    '/tags/{id}',
-    '/tags/{id}/users',
-    '/tags/{id}/teams',
-    '/tags/{id}/escalation_policies',
-    '/teams',
-    '/teams/{id}',
-    '/teams/{id}/audit/records',
-    '/teams/{id}/escalation_policies/{escalation_policy_id}',
-    '/teams/{id}/members',
-    '/teams/{id}/notification_subscriptions',
-    '/teams/{id}/notification_subscriptions/unsubscribe',
-    '/teams/{id}/users/{user_id}',
-    '/templates',
-    '/templates/{id}',
-    '/templates/{id}/render',
-    '/templates/fields',
-    '/users',
-    '/users/{id}',
-    '/users/{id}/audit/records',
-    '/users/{id}/contact_methods',
-    '/users/{id}/contact_methods/{contact_method_id}',
-    '/users/{id}/license',
-    '/users/{id}/notification_rules',
-    '/users/{id}/notification_rules/{notification_rule_id}',
-    '/users/{id}/notification_subscriptions',
-    '/users/{id}/notification_subscriptions/unsubscribe',
-    '/users/{id}/oncall_handoff_notification_rules',
-    '/users/{id}/oncall_handoff_notification_rules/{oncall_handoff_notification_rule_id}',
-    '/users/{id}/sessions',
-    '/users/{id}/sessions/{type}/{session_id}',
-    '/users/{id}/status_update_notification_rules',
-    '/users/{id}/status_update_notification_rules/{status_update_notification_rule_id}',
-    '/users/me',
-    '/vendors',
-    '/vendors/{id}',
-    '/webhook_subscriptions',
-    '/webhook_subscriptions/{id}',
-    '/webhook_subscriptions/{id}/enable',
-    '/webhook_subscriptions/{id}/ping',
-    '/webhook_subscriptions/oauth_clients',
-    '/webhook_subscriptions/oauth_clients/{id}',
-    '/workflows/integrations',
-    '/workflows/integrations/{id}',
-    '/workflows/integrations/connections',
-    '/workflows/integrations/{integration_id}/connections',
-    '/workflows/integrations/{integration_id}/connections/{id}',
+    "/{entity_type}/{id}/change_tags",
+    "/{entity_type}/{id}/tags",
+    "/abilities",
+    "/abilities/{id}",
+    "/addons",
+    "/addons/{id}",
+    "/alert_grouping_settings",
+    "/alert_grouping_settings/{id}",
+    "/analytics/metrics/incidents/all",
+    "/analytics/metrics/incidents/escalation_policies",
+    "/analytics/metrics/incidents/escalation_policies/all",
+    "/analytics/metrics/incidents/services",
+    "/analytics/metrics/incidents/services/all",
+    "/analytics/metrics/incidents/teams",
+    "/analytics/metrics/incidents/teams/all",
+    "/analytics/metrics/pd_advance_usage/features",
+    "/analytics/metrics/responders/all",
+    "/analytics/metrics/responders/teams",
+    "/analytics/raw/incidents",
+    "/analytics/raw/incidents/{id}",
+    "/analytics/raw/incidents/{id}/responses",
+    "/analytics/raw/responders/{responder_id}/incidents",
+    "/audit/records",
+    "/automation_actions/actions",
+    "/automation_actions/actions/{id}",
+    "/automation_actions/actions/{id}/invocations",
+    "/automation_actions/actions/{id}/services",
+    "/automation_actions/actions/{id}/services/{service_id}",
+    "/automation_actions/actions/{id}/teams",
+    "/automation_actions/actions/{id}/teams/{team_id}",
+    "/automation_actions/invocations",
+    "/automation_actions/invocations/{id}",
+    "/automation_actions/runners",
+    "/automation_actions/runners/{id}",
+    "/automation_actions/runners/{id}/teams",
+    "/automation_actions/runners/{id}/teams/{team_id}",
+    "/business_services",
+    "/business_services/{id}",
+    "/business_services/{id}/account_subscription",
+    "/business_services/{id}/subscribers",
+    "/business_services/{id}/supporting_services/impacts",
+    "/business_services/{id}/unsubscribe",
+    "/business_services/impactors",
+    "/business_services/impacts",
+    "/business_services/priority_thresholds",
+    "/change_events",
+    "/change_events/{id}",
+    "/escalation_policies",
+    "/escalation_policies/{id}",
+    "/escalation_policies/{id}/audit/records",
+    "/event_orchestrations",
+    "/event_orchestrations/{id}",
+    "/event_orchestrations/{id}/integrations",
+    "/event_orchestrations/{id}/integrations/{integration_id}",
+    "/event_orchestrations/{id}/integrations/migration",
+    "/event_orchestrations/{id}/global",
+    "/event_orchestrations/{id}/router",
+    "/event_orchestrations/{id}/unrouted",
+    "/event_orchestrations/services/{service_id}",
+    "/event_orchestrations/services/{service_id}/active",
+    "/event_orchestrations/{id}/cache_variables",
+    "/event_orchestrations/{id}/cache_variables/{cache_variable_id}",
+    "/event_orchestrations/{id}/cache_variables/{cache_variable_id}/data",
+    "/event_orchestrations/services/{service_id}/cache_variables",
+    "/event_orchestrations/services/{service_id}/cache_variables/{cache_variable_id}",
+    "/event_orchestrations/services/{service_id}/cache_variables/{cache_variable_id}/data",
+    "/extension_schemas",
+    "/extension_schemas/{id}",
+    "/extensions",
+    "/extensions/{id}",
+    "/extensions/{id}/enable",
+    "/incident_workflows",
+    "/incident_workflows/{id}",
+    "/incident_workflows/{id}/instances",
+    "/incident_workflows/actions",
+    "/incident_workflows/actions/{id}",
+    "/incident_workflows/triggers",
+    "/incident_workflows/triggers/{id}",
+    "/incident_workflows/triggers/{id}/services",
+    "/incident_workflows/triggers/{trigger_id}/services/{service_id}",
+    "/incidents",
+    "/incidents/{id}",
+    "/incidents/{id}/alerts",
+    "/incidents/{id}/alerts/{alert_id}",
+    "/incidents/{id}/business_services/{business_service_id}/impacts",
+    "/incidents/{id}/business_services/impacts",
+    "/incidents/{id}/custom_fields/values",
+    "/incidents/{id}/log_entries",
+    "/incidents/{id}/merge",
+    "/incidents/{id}/notes",
+    "/incidents/{id}/outlier_incident",
+    "/incidents/{id}/past_incidents",
+    "/incidents/{id}/related_change_events",
+    "/incidents/{id}/related_incidents",
+    "/incidents/{id}/responder_requests",
+    "/incidents/{id}/snooze",
+    "/incidents/{id}/status_updates",
+    "/incidents/{id}/status_updates/subscribers",
+    "/incidents/{id}/status_updates/unsubscribe",
+    "/incidents/count",
+    "/incidents/types",
+    "/incidents/types/{type_id_or_name}",
+    "/incidents/types/{type_id_or_name}/custom_fields",
+    "/incidents/types/{type_id_or_name}/custom_fields/{field_id}",
+    "/incidents/types/{type_id_or_name}/custom_fields/{field_id}/field_options",
+    "/incidents/types/{type_id_or_name}/custom_fields/{field_id}/field_options/{field_option_id}",
+    "/incidents/custom_fields",
+    "/incidents/custom_fields/{field_id}",
+    "/incidents/custom_fields/{field_id}/field_options",
+    "/incidents/custom_fields/{field_id}/field_options/{field_option_id}",
+    "/license_allocations",
+    "/licenses",
+    "/log_entries",
+    "/log_entries/{id}",
+    "/log_entries/{id}/channel",
+    "/maintenance_windows",
+    "/maintenance_windows/{id}",
+    "/notifications",
+    "/oauth_delegations",
+    "/oauth_delegations/revocation_requests/status",
+    "/oncalls",
+    "/paused_incident_reports/alerts",
+    "/paused_incident_reports/counts",
+    "/priorities",
+    "/rulesets",
+    "/rulesets/{id}",
+    "/rulesets/{id}/rules",
+    "/rulesets/{id}/rules/{rule_id}",
+    "/schedules",
+    "/schedules/{id}",
+    "/schedules/{id}/audit/records",
+    "/schedules/{id}/overrides",
+    "/schedules/{id}/overrides/{override_id}",
+    "/schedules/{id}/users",
+    "/schedules/preview",
+    "/service_dependencies/associate",
+    "/service_dependencies/business_services/{id}",
+    "/service_dependencies/disassociate",
+    "/service_dependencies/technical_services/{id}",
+    "/services",
+    "/services/{id}",
+    "/services/{id}/audit/records",
+    "/services/{id}/change_events",
+    "/services/{id}/integrations",
+    "/services/{id}/integrations/{integration_id}",
+    "/services/{id}/rules",
+    "/services/{id}/rules/convert",
+    "/services/{id}/rules/{rule_id}",
+    "/services/custom_fields",
+    "/services/custom_fields/{field_id}",
+    "/services/custom_fields/{field_id}/field_options",
+    "/services/custom_fields/{field_id}/field_options/{field_option_id}",
+    "/services/{id}/custom_fields/values",
+    "/standards",
+    "/standards/{id}",
+    "/standards/scores/{resource_type}",
+    "/standards/scores/{resource_type}/{id}",
+    "/status_dashboards",
+    "/status_dashboards/{id}",
+    "/status_dashboards/{id}/service_impacts",
+    "/status_dashboards/url_slugs/{url_slug}",
+    "/status_dashboards/url_slugs/{url_slug}/service_impacts",
+    "/status_pages",
+    "/status_pages/{id}/impacts",
+    "/status_pages/{id}/impacts/{impact_id}",
+    "/status_pages/{id}/services",
+    "/status_pages/{id}/services/{service_id}",
+    "/status_pages/{id}/severities",
+    "/status_pages/{id}/severities/{severity_id}",
+    "/status_pages/{id}/statuses",
+    "/status_pages/{id}/statuses/{status_id}",
+    "/status_pages/{id}/posts",
+    "/status_pages/{id}/posts/{post_id}",
+    "/status_pages/{id}/posts/{post_id}/post_updates",
+    "/status_pages/{id}/posts/{post_id}/post_updates/{post_update_id}",
+    "/status_pages/{id}/posts/{post_id}/postmortem",
+    "/status_pages/{id}/subscriptions",
+    "/status_pages/{id}/subscriptions/{subscription_id}",
+    "/tags",
+    "/tags/{id}",
+    "/tags/{id}/users",
+    "/tags/{id}/teams",
+    "/tags/{id}/escalation_policies",
+    "/teams",
+    "/teams/{id}",
+    "/teams/{id}/audit/records",
+    "/teams/{id}/escalation_policies/{escalation_policy_id}",
+    "/teams/{id}/members",
+    "/teams/{id}/notification_subscriptions",
+    "/teams/{id}/notification_subscriptions/unsubscribe",
+    "/teams/{id}/users/{user_id}",
+    "/templates",
+    "/templates/{id}",
+    "/templates/{id}/render",
+    "/templates/fields",
+    "/users",
+    "/users/{id}",
+    "/users/{id}/audit/records",
+    "/users/{id}/contact_methods",
+    "/users/{id}/contact_methods/{contact_method_id}",
+    "/users/{id}/license",
+    "/users/{id}/notification_rules",
+    "/users/{id}/notification_rules/{notification_rule_id}",
+    "/users/{id}/notification_subscriptions",
+    "/users/{id}/notification_subscriptions/unsubscribe",
+    "/users/{id}/oncall_handoff_notification_rules",
+    "/users/{id}/oncall_handoff_notification_rules/{oncall_handoff_notification_rule_id}",
+    "/users/{id}/sessions",
+    "/users/{id}/sessions/{type}/{session_id}",
+    "/users/{id}/status_update_notification_rules",
+    "/users/{id}/status_update_notification_rules/{status_update_notification_rule_id}",
+    "/users/me",
+    "/vendors",
+    "/vendors/{id}",
+    "/webhook_subscriptions",
+    "/webhook_subscriptions/{id}",
+    "/webhook_subscriptions/{id}/enable",
+    "/webhook_subscriptions/{id}/ping",
+    "/webhook_subscriptions/oauth_clients",
+    "/webhook_subscriptions/oauth_clients/{id}",
+    "/workflows/integrations",
+    "/workflows/integrations/{id}",
+    "/workflows/integrations/connections",
+    "/workflows/integrations/{integration_id}/connections",
+    "/workflows/integrations/{integration_id}/connections/{id}",
 ]
 
 CURSOR_BASED_PAGINATION_PATHS = [
-    '/audit/records',
-    '/automation_actions/actions',
-    '/automation_actions/runners',
-    '/escalation_policies/{id}/audit/records',
-    '/incident_workflows/actions',
-    '/incident_workflows/triggers',
-    '/schedules/{id}/audit/records',
-    '/services/{id}/audit/records',
-    '/teams/{id}/audit/records',
-    '/users/{id}/audit/records',
-    '/workflows/integrations',
-    '/workflows/integrations/connections',
-    '/workflows/integrations/{integration_id}/connections',
+    "/audit/records",
+    "/automation_actions/actions",
+    "/automation_actions/runners",
+    "/escalation_policies/{id}/audit/records",
+    "/incident_workflows/actions",
+    "/incident_workflows/triggers",
+    "/schedules/{id}/audit/records",
+    "/services/{id}/audit/records",
+    "/teams/{id}/audit/records",
+    "/users/{id}/audit/records",
+    "/workflows/integrations",
+    "/workflows/integrations/connections",
+    "/workflows/integrations/{integration_id}/connections",
 ]
 
 # END auto-generated content
 
 HISTORICAL_RECORD_PATHS = [
-    '/audit/records',
-    '/change_events',
-    '/escalation_policies/{id}/audit/records',
-    '/incidents',
-    '/log_entries',
-    '/oncalls',
-    '/schedules/{id}/audit/records',
-    '/services/{id}/audit/records',
-    '/teams/{id}/audit/records',
-    '/users/{id}/audit/records'
+    "/audit/records",
+    "/change_events",
+    "/escalation_policies/{id}/audit/records",
+    "/incidents",
+    "/log_entries",
+    "/oncalls",
+    "/schedules/{id}/audit/records",
+    "/services/{id}/audit/records",
+    "/teams/{id}/audit/records",
+    "/users/{id}/audit/records",
 ]
 
 ENTITY_WRAPPER_CONFIG = {
     # Abilities
-    'GET /abilities/{id}': None,
+    "GET /abilities/{id}": None,
     # Add-ons follows orthodox schema patterns
     # Alert grouping settings follows orthodox schema patterns
     # Analytics
-    '* /analytics/metrics/incidents/all': None,
-    '* /analytics/metrics/incidents/escalation_policies': None,
-    '* /analytics/metrics/incidents/escalation_policies/all': None,
-    '* /analytics/metrics/incidents/services': None,
-    '* /analytics/metrics/incidents/services/all': None,
-    '* /analytics/metrics/incidents/teams': None,
-    '* /analytics/metrics/incidents/teams/all': None,
-    '* /analytics/metrics/pd_advance_usage/features': None,
-    '* /analytics/metrics/responders/all': None,
-    '* /analytics/metrics/responders/teams': None,
-    '* /analytics/raw/incidents': None,
-    '* /analytics/raw/incidents/{id}': None,
-    '* /analytics/raw/incidents/{id}/responses': None,
-
+    "* /analytics/metrics/incidents/all": None,
+    "* /analytics/metrics/incidents/escalation_policies": None,
+    "* /analytics/metrics/incidents/escalation_policies/all": None,
+    "* /analytics/metrics/incidents/services": None,
+    "* /analytics/metrics/incidents/services/all": None,
+    "* /analytics/metrics/incidents/teams": None,
+    "* /analytics/metrics/incidents/teams/all": None,
+    "* /analytics/metrics/pd_advance_usage/features": None,
+    "* /analytics/metrics/responders/all": None,
+    "* /analytics/metrics/responders/teams": None,
+    "* /analytics/raw/incidents": None,
+    "* /analytics/raw/incidents/{id}": None,
+    "* /analytics/raw/incidents/{id}/responses": None,
     # Automation Actions
-    'POST /automation_actions/actions/{id}/invocations': (None,'invocation'),
-
+    "POST /automation_actions/actions/{id}/invocations": (None, "invocation"),
     # Paused Incident Reports
-    'GET /paused_incident_reports/alerts': 'paused_incident_reporting_counts',
-    'GET /paused_incident_reports/counts': 'paused_incident_reporting_counts',
-
+    "GET /paused_incident_reports/alerts": "paused_incident_reporting_counts",
+    "GET /paused_incident_reports/counts": "paused_incident_reporting_counts",
     # Business Services
-    '* /business_services/{id}/account_subscription': None,
-    'POST /business_services/{id}/subscribers': ('subscribers', 'subscriptions'),
-    'POST /business_services/{id}/unsubscribe': ('subscribers', None),
-    '* /business_services/priority_thresholds': None,
-    'GET /business_services/impacts': 'services',
-    'GET /business_services/{id}/supporting_services/impacts': 'services',
-
+    "* /business_services/{id}/account_subscription": None,
+    "POST /business_services/{id}/subscribers": (
+        "subscribers",
+        "subscriptions",
+    ),
+    "POST /business_services/{id}/unsubscribe": ("subscribers", None),
+    "* /business_services/priority_thresholds": None,
+    "GET /business_services/impacts": "services",
+    "GET /business_services/{id}/supporting_services/impacts": "services",
     # Change Events
-    'POST /change_events': None, # why not just use EventsApiV2Client?
-    'GET /incidents/{id}/related_change_events': 'change_events',
-
+    "POST /change_events": None,  # why not just use EventsApiV2Client?
+    "GET /incidents/{id}/related_change_events": "change_events",
     # Event Orchestrations
-    '* /event_orchestrations': 'orchestrations',
-    '* /event_orchestrations/services/{id}': 'orchestration_path',
-    '* /event_orchestrations/services/{id}/active': None,
-    '* /event_orchestrations/{id}': 'orchestration',
-    '* /event_orchestrations/{id}/global': 'orchestration_path',
-    '* /event_orchestrations/{id}/integrations/migration': None,
-    '* /event_orchestrations/{id}/router': 'orchestration_path',
-    '* /event_orchestrations/{id}/unrouted': 'orchestration_path',
+    "* /event_orchestrations": "orchestrations",
+    "* /event_orchestrations/services/{id}": "orchestration_path",
+    "* /event_orchestrations/services/{id}/active": None,
+    "* /event_orchestrations/{id}": "orchestration",
+    "* /event_orchestrations/{id}/global": "orchestration_path",
+    "* /event_orchestrations/{id}/integrations/migration": None,
+    "* /event_orchestrations/{id}/router": "orchestration_path",
+    "* /event_orchestrations/{id}/unrouted": "orchestration_path",
     # follows orthodox schema patterns:
     # /event_orchestrations/{id}/cache_variables/{cache_variable_id}
-    '* /event_orchestrations/services/{service_id}/cache_variables/{cache_variable_id}/data': None,
-
+    "* /event_orchestrations/services/{service_id}/cache_variables/{cache_variable_id}/data": None,
     # Extensions
-    'POST /extensions/{id}/enable': (None, 'extension'),
-
+    "POST /extensions/{id}/enable": (None, "extension"),
     # Incidents
-    'PUT /incidents/{id}/merge': ('source_incidents', 'incident'),
-    'POST /incidents/{id}/responder_requests': (None, 'responder_request'),
-    'POST /incidents/{id}/snooze': (None, 'incident'),
-    'POST /incidents/{id}/status_updates': (None, 'status_update'),
-    'POST /incidents/{id}/status_updates/subscribers': ('subscribers', 'subscriptions'),
-    'POST /incidents/{id}/status_updates/unsubscribe': ('subscribers', None),
-    'GET /incidents/{id}/business_services/impacts': 'services',
-    'PUT /incidents/{id}/business_services/{business_service_id}/impacts': None,
-    '* /incidents/{id}/custom_fields/values': 'custom_fields',
-    'POST /incidents/{id}/responder_requests': None,
-
+    "PUT /incidents/{id}/merge": ("source_incidents", "incident"),
+    "POST /incidents/{id}/responder_requests": (None, "responder_request"),
+    "POST /incidents/{id}/snooze": (None, "incident"),
+    "POST /incidents/{id}/status_updates": (None, "status_update"),
+    "POST /incidents/{id}/status_updates/subscribers": (
+        "subscribers",
+        "subscriptions",
+    ),
+    "POST /incidents/{id}/status_updates/unsubscribe": ("subscribers", None),
+    "GET /incidents/{id}/business_services/impacts": "services",
+    "PUT /incidents/{id}/business_services/{business_service_id}/impacts": None,
+    "* /incidents/{id}/custom_fields/values": "custom_fields",
+    "POST /incidents/{id}/responder_requests": None,
     # Incident Custom Fields
-    '* /incidents/custom_fields': ('field', 'fields'),
-    '* /incidents/custom_fields/{field_id}': 'field',
-
+    "* /incidents/custom_fields": ("field", "fields"),
+    "* /incidents/custom_fields/{field_id}": "field",
     # Incident Types
-    'GET /incidents/types': 'incident_types',
-    'POST /incidents/types': 'incident_type',
-    '* /incidents/types/{type_id_or_name}': 'incident_type',
-    'GET /incidents/types/{type_id_or_name}/custom_fields': 'fields',
-    'POST /incidents/types/{type_id_or_name}/custom_fields': 'field',
-    '* /incidents/types/{type_id_or_name}/custom_fields/{field_id}': 'field',
+    "GET /incidents/types": "incident_types",
+    "POST /incidents/types": "incident_type",
+    "* /incidents/types/{type_id_or_name}": "incident_type",
+    "GET /incidents/types/{type_id_or_name}/custom_fields": "fields",
+    "POST /incidents/types/{type_id_or_name}/custom_fields": "field",
+    "* /incidents/types/{type_id_or_name}/custom_fields/{field_id}": "field",
     # follows orthodox schema patterns:
     # /incidents/types/{type_id_or_name}/custom_fields/{field_id}/field_options
     # /incidents/types/{type_id_or_name}/custom_fields/{field_id}/field_options/{field_option_id}
-
     # Incident Workflows
-    'POST /incident_workflows/{id}/instances': 'incident_workflow_instance',
-    'POST /incident_workflows/triggers/{id}/services': ('service', 'trigger'),
-
+    "POST /incident_workflows/{id}/instances": "incident_workflow_instance",
+    "POST /incident_workflows/triggers/{id}/services": ("service", "trigger"),
     # Schedules
-    'POST /schedules/{id}/overrides': ('overrides', None),
-
+    "POST /schedules/{id}/overrides": ("overrides", None),
     # Service Dependencies
-    'POST /service_dependencies/associate': 'relationships',
-
+    "POST /service_dependencies/associate": "relationships",
     # Service Custom Fields
-    'POST /services/custom_fields': 'field',
-    'GET /services/custom_fields': 'fields',
-    '* /services/custom_fields/{field_id}': 'field',
-    '* /services/{id}/custom_fields/values': 'custom_fields',
+    "POST /services/custom_fields": "field",
+    "GET /services/custom_fields": "fields",
+    "* /services/custom_fields/{field_id}": "field",
+    "* /services/{id}/custom_fields/values": "custom_fields",
     # follows orthodox schema patterns:
     # /services/{id}/custom_fields/{field_id}/field_options
     # /services/custom_fields/{field_id}/field_options/{field_option_id}
-
     # Webhooks
-    'POST /webhook_subscriptions/{id}/enable': (None, 'webhook_subscription'),
-    'POST /webhook_subscriptions/{id}/ping': None,
+    "POST /webhook_subscriptions/{id}/enable": (None, "webhook_subscription"),
+    "POST /webhook_subscriptions/{id}/ping": None,
     # follows orthodox schema patterns:
     # /webhook_subscriptions
     # /webhook_subscriptions/{id}
     # /webhook_subscriptions/oauth_clients
     # /webhook_subscriptions/oauth_clients/{id}
-
     # Status Dashboards
-    'GET /status_dashboards/{id}/service_impacts': 'services',
-    'GET /status_dashboards/url_slugs/{url_slug}': 'status_dashboard',
-    'GET /status_dashboards/url_slugs/{url_slug}/service_impacts': 'services',
-
+    "GET /status_dashboards/{id}/service_impacts": "services",
+    "GET /status_dashboards/url_slugs/{url_slug}": "status_dashboard",
+    "GET /status_dashboards/url_slugs/{url_slug}/service_impacts": "services",
     # Status Pages
     # Adheres to orthodox API conventions / fully supported via inference from path
-
     # Tags
-    'POST /{entity_type}/{id}/change_tags': None,
-
+    "POST /{entity_type}/{id}/change_tags": None,
     # Teams
-    'PUT /teams/{id}/escalation_policies/{escalation_policy_id}': None,
-    'POST /teams/{id}/notification_subscriptions': ('subscribables', 'subscriptions'),
-    'POST /teams/{id}/notification_subscriptions/unsubscribe': ('subscribables', None),
-    'PUT /teams/{id}/users/{user_id}': None,
-    'GET /teams/{id}/notification_subscriptions': 'subscriptions',
-
+    "PUT /teams/{id}/escalation_policies/{escalation_policy_id}": None,
+    "POST /teams/{id}/notification_subscriptions": (
+        "subscribables",
+        "subscriptions",
+    ),
+    "POST /teams/{id}/notification_subscriptions/unsubscribe": (
+        "subscribables",
+        None,
+    ),
+    "PUT /teams/{id}/users/{user_id}": None,
+    "GET /teams/{id}/notification_subscriptions": "subscriptions",
     # Templates
-    'POST /templates/{id}/render': None,
-
+    "POST /templates/{id}/render": None,
     # Users
-    '* /users/{id}/notification_subscriptions': ('subscribables', 'subscriptions'),
-    'POST /users/{id}/notification_subscriptions/unsubscribe': ('subscribables', None),
-    'GET /users/{id}/sessions': 'user_sessions',
-    'GET /users/{id}/sessions/{type}/{session_id}': 'user_session',
-    'GET /users/me': 'user',
-
+    "* /users/{id}/notification_subscriptions": (
+        "subscribables",
+        "subscriptions",
+    ),
+    "POST /users/{id}/notification_subscriptions/unsubscribe": (
+        "subscribables",
+        None,
+    ),
+    "GET /users/{id}/sessions": "user_sessions",
+    "GET /users/{id}/sessions/{type}/{session_id}": "user_session",
+    "GET /users/me": "user",
     # Workflow Integrations
     # Adheres to orthodox API conventions / fully supported via inference from path
-
     # OAuth Delegations
-    'GET /oauth_delegations/revocation_requests/status': None
+    "GET /oauth_delegations/revocation_requests/status": None,
 }
 
 ################################
 ### REST API V2 URL HANDLING ###
 ################################
+
 
 def canonical_path(base_url: str, url: str) -> str:
     """
@@ -466,9 +456,11 @@ def canonical_path(base_url: str, url: str) -> str:
     """
     return canonical_path_common(CANONICAL_PATHS, base_url, url)
 
+
 ###############################
 ### ENTITY WRAPPING HELPERS ###
 ###############################
+
 
 def entity_wrappers(method: str, path: str) -> tuple:
     """
@@ -480,9 +472,11 @@ def entity_wrappers(method: str, path: str) -> tuple:
     """
     return entity_wrappers_common(ENTITY_WRAPPER_CONFIG, method, path)
 
+
 ################
 # CLIENT CLASS #
 ################
+
 
 class RestApiV2Client(RestApiV2BaseClient):
     """
@@ -505,27 +499,34 @@ class RestApiV2Client(RestApiV2BaseClient):
         command line output.
     """
 
-    _url = 'https://api.pagerduty.com'
+    _url = "https://api.pagerduty.com"
 
     default_from = None
     """The default value to use as the ``From`` request header"""
 
-    permitted_methods = ('GET', 'PATCH', 'POST', 'PUT', 'DELETE')
+    permitted_methods = ("GET", "PATCH", "POST", "PUT", "DELETE")
 
-    def __init__(self, api_key: str, default_from: Optional[str] = None,
-                 auth_type: str = "token", debug: bool = False, **kw):
-
-        super(RestApiV2Client, self).__init__(api_key, auth_type, debug=debug, **kw)
+    def __init__(
+        self,
+        api_key: str,
+        default_from: Optional[str] = None,
+        auth_type: str = "token",
+        debug: bool = False,
+        **kw,
+    ):
+        super(RestApiV2Client, self).__init__(
+            api_key, auth_type, debug=debug, **kw
+        )
 
         self.default_from = default_from
         if default_from is not None:
-            self.headers.update({
-                'From': default_from
-            })
+            self.headers.update({"From": default_from})
 
-        self.headers.update({
-            'Accept': 'application/vnd.pagerduty+json;version=2',
-        })
+        self.headers.update(
+            {
+                "Accept": "application/vnd.pagerduty+json;version=2",
+            }
+        )
 
     def account_has_ability(self, ability: str) -> bool:
         """
@@ -548,11 +549,15 @@ class RestApiV2Client(RestApiV2BaseClient):
             raise HttpError(
                 "Received 403 Forbidden response from the API. The identity "
                 "associated with the credentials does not have permission to "
-                "perform the requested action.", r)
+                "perform the requested action.",
+                r,
+            )
         elif r.status_code == 404:
             raise HttpError(
-                f"Invalid or unknown ability \"{ability}\"; API responded with status "
-                "404 Not Found.", r)
+                f'Invalid or unknown ability "{ability}"; API responded with status '
+                "404 Not Found.",
+                r,
+            )
         return False
 
     def after_set_auth_method(self):
@@ -571,19 +576,24 @@ class RestApiV2Client(RestApiV2BaseClient):
         If the API key in use is an account-level API token (as only a global
         administrator user can create), this property will be "account".
         """
-        if not hasattr(self, '_api_key_access') or self._api_key_access is None:
-            response = self.get('/users/me')
+        if (
+            not hasattr(self, "_api_key_access")
+            or self._api_key_access is None
+        ):
+            response = self.get("/users/me")
             if response.status_code == 400:
-                message = try_decoding(response).get('error', '')
-                if 'account-level access token' in message:
-                    self._api_key_access = 'account'
+                message = try_decoding(response).get("error", "")
+                if "account-level access token" in message:
+                    self._api_key_access = "account"
                 else:
                     self._api_key_access = None
-                    self.log.error("Failed to obtain API key access level; "
-                        "the API did not respond as expected.")
+                    self.log.error(
+                        "Failed to obtain API key access level; "
+                        "the API did not respond as expected."
+                    )
                     self.log.debug("Body = %s", truncate_text(response.text))
             else:
-                self._api_key_access = 'user'
+                self._api_key_access = "user"
         return self._api_key_access
 
     @property
@@ -598,8 +608,13 @@ class RestApiV2Client(RestApiV2BaseClient):
     def entity_wrapper_config(self) -> dict:
         return ENTITY_WRAPPER_CONFIG
 
-    def find(self, resource: str, query: str, attribute: str = 'name',
-            params: Optional[dict] = None) -> Optional[dict]:
+    def find(
+        self,
+        resource: str,
+        query: str,
+        attribute: str = "name",
+        params: Optional[dict] = None,
+    ) -> Optional[dict]:
         """
         Finds an object of a given resource type exactly matching a query.
 
@@ -640,15 +655,16 @@ class RestApiV2Client(RestApiV2BaseClient):
         query_params = {}
         if params is not None:
             query_params.update(params)
-        query_params.update({'query': query})
+        query_params.update({"query": query})
         simplify = lambda s: str(s).lower()
         search_term = simplify(query)
         equiv = lambda s: simplify(s[attribute]) == search_term
         obj_iter = self.iter_all(resource, params=query_params)
         return next(iter(filter(equiv, obj_iter)), None)
 
-    def iter_alert_grouping_settings(self, service_ids: Optional[list] = None,
-                limit: Optional[int] = None) -> Iterator[dict]:
+    def iter_alert_grouping_settings(
+        self, service_ids: Optional[list] = None, limit: Optional[int] = None
+    ) -> Iterator[dict]:
         """
         Iterator for the contents of the "List alert grouping settings" endpoint.
 
@@ -673,20 +689,25 @@ class RestApiV2Client(RestApiV2BaseClient):
         if limit is not None:
             page_size = limit
         while more:
-            params = {'limit': page_size}
+            params = {"limit": page_size}
             if service_ids is not None:
-                params['service_ids[]'] = service_ids
+                params["service_ids[]"] = service_ids
             if after is not None:
-                params['after'] = after
-            page = self.jget('/alert_grouping_settings', params=params)
-            for result in page['alert_grouping_settings']:
+                params["after"] = after
+            page = self.jget("/alert_grouping_settings", params=params)
+            for result in page["alert_grouping_settings"]:
                 yield result
-            after = page.get('after', None)
+            after = page.get("after", None)
             more = after is not None
 
-    def iter_analytics_raw_incidents(self, filters: dict, order: str = 'desc',
-                order_by: str = 'created_at', limit: Optional[int] = None,
-                time_zone: Optional[str] = None) -> Iterator[dict]:
+    def iter_analytics_raw_incidents(
+        self,
+        filters: dict,
+        order: str = "desc",
+        order_by: str = "created_at",
+        limit: Optional[int] = None,
+        time_zone: Optional[str] = None,
+    ) -> Iterator[dict]:
         """
         Iterator for raw analytics data on multiple incidents.
 
@@ -718,23 +739,29 @@ class RestApiV2Client(RestApiV2BaseClient):
         last = None
         while more:
             body = {
-                'filters': filters,
-                'order': order,
-                'order_by': order_by,
-                'limit': page_size
+                "filters": filters,
+                "order": order,
+                "order_by": order_by,
+                "limit": page_size,
             }
             if time_zone is not None:
-                body['time_zone'] = time_zone
+                body["time_zone"] = time_zone
             if last is not None:
-                body['starting_after'] = last
-            page = self.jpost('/analytics/raw/incidents', json=body)
-            for result in page['data']:
+                body["starting_after"] = last
+            page = self.jpost("/analytics/raw/incidents", json=body)
+            for result in page["data"]:
                 yield result
-            last = page.get('last', None)
-            more = page.get('more', False) and last is not None
+            last = page.get("last", None)
+            more = page.get("more", False) and last is not None
 
-    def iter_history(self, url: str, since: datetime, until: datetime,
-            recursion_depth: int = 0, **kw) -> Iterator[dict]:
+    def iter_history(
+        self,
+        url: str,
+        since: datetime,
+        until: datetime,
+        recursion_depth: int = 0,
+        **kw,
+    ) -> Iterator[dict]:
         """
         Yield all historical records from an endpoint in a given time interval.
 
@@ -766,24 +793,23 @@ class RestApiV2Client(RestApiV2BaseClient):
             by ``since`` and ``until``.
         """
         path = self.canonical_path(url)
-        since_until = {
-            'since': strftime(since),
-            'until': strftime(until)
-        }
+        since_until = {"since": strftime(since), "until": strftime(until)}
         iter_kw = deepcopy(kw)
         if path not in HISTORICAL_RECORD_PATHS:
             # Cannot continue; incompatible endpoint that doesn't accept since/until:
             raise UrlError(f"Method iter_history does not support {path}")
-        elif path == '/oncalls':
+        elif path == "/oncalls":
             # Warn for this specific endpoint but continue:
-            warn('iter_history may yield duplicate results when used with /oncalls')
+            warn(
+                "iter_history may yield duplicate results when used with /oncalls"
+            )
         elif path in self.cursor_based_pagination_paths:
             # Short-circuit to iter_cursor:
-            iter_kw.setdefault('params', {})
-            iter_kw['params'].update(since_until)
+            iter_kw.setdefault("params", {})
+            iter_kw["params"].update(since_until)
             return self.iter_cursor(url, **iter_kw)
         # Obtain the total number of records for the interval:
-        query_params = kw.get('params', {})
+        query_params = kw.get("params", {})
         query_params.update(since_until)
         total = self.get_total(url, params=query_params)
 
@@ -799,35 +825,44 @@ class RestApiV2Client(RestApiV2BaseClient):
             if not can_fully_paginate:
                 # Issue a warning log message
                 if stop_recursion:
-                    reason = 'the recursion depth limit has been reached'
-                    suggestion = ' To avoid this issue, try requesting a smaller ' \
-                        'initial time interval.'
+                    reason = "the recursion depth limit has been reached"
+                    suggestion = (
+                        " To avoid this issue, try requesting a smaller "
+                        "initial time interval."
+                    )
                 elif min_interval_len:
-                    reason = 'the time interval is already the minimum length (1s)'
+                    reason = (
+                        "the time interval is already the minimum length (1s)"
+                    )
                     # In practice, this scenario can only happen when PagerDuty ingests
                     # and processes, for a single account, >10k alert history events per
                     # second (to use `/log_entries` as an example). There is
                     # unfortunately nothing more that can be done in this case.
-                    suggestion = ''
-                self.log.warning(ITER_HIST_RECURSION_WARNING_TEMPLATE.format(
-                    reason = reason,
-                    since_until = str(since_until),
-                    iteration_limit = ITERATION_LIMIT,
-                    suggestion = suggestion
-                ))
-            iter_kw.setdefault('params', {})
-            iter_kw['params'].update(since_until)
+                    suggestion = ""
+                self.log.warning(
+                    ITER_HIST_RECURSION_WARNING_TEMPLATE.format(
+                        reason=reason,
+                        since_until=str(since_until),
+                        iteration_limit=ITERATION_LIMIT,
+                        suggestion=suggestion,
+                    )
+                )
+            iter_kw.setdefault("params", {})
+            iter_kw["params"].update(since_until)
             for item in self.iter_all(url, **iter_kw):
                 yield item
         else:
             # If total exceeds maximum, bisect the time window and recurse:
-            iter_kw['recursion_depth'] = recursion_depth + 1
-            for (sub_since, sub_until) in datetime_intervals(since, until, n=2):
-                for item in self.iter_history(url, sub_since, sub_until, **iter_kw):
+            iter_kw["recursion_depth"] = recursion_depth + 1
+            for sub_since, sub_until in datetime_intervals(since, until, n=2):
+                for item in self.iter_history(
+                    url, sub_since, sub_until, **iter_kw
+                ):
                     yield item
 
-    def iter_incident_notes(self, incident_id: Optional[str] = None, **kw) \
-            -> Iterator[dict]:
+    def iter_incident_notes(
+        self, incident_id: Optional[str] = None, **kw
+    ) -> Iterator[dict]:
         """
         Iterator for incident notes.
 
@@ -842,23 +877,25 @@ class RestApiV2Client(RestApiV2BaseClient):
             Incident note log entries as dictionary objects
         """
         my_kw = deepcopy(kw)
-        my_kw.setdefault('params', {})
-        url = '/log_entries'
+        my_kw.setdefault("params", {})
+        url = "/log_entries"
         if incident_id is not None:
             url = f"/incidents/{incident_id}/log_entries"
             # The teams filter is irrelevant for a specific incident's log entries, so
             # it must be removed if present:
-            for key in ('team_ids', 'team_ids[]'):
-                if 'params' in my_kw and key in my_kw['params']:
+            for key in ("team_ids", "team_ids[]"):
+                if "params" in my_kw and key in my_kw["params"]:
                     self.log.warn(
-                        f"iter_incident_notes: query parameter \"{key}\" will be "
+                        f'iter_incident_notes: query parameter "{key}" will be '
                         "ignored because argument incident_id was specified"
                     )
-                    del(my_kw['params'][key])
-        return iter(filter(
-            lambda ile: ile['type'] == 'annotate_log_entry',
-            self.iter_all(url, **my_kw)
-        ))
+                    del my_kw["params"][key]
+        return iter(
+            filter(
+                lambda ile: ile["type"] == "annotate_log_entry",
+                self.iter_all(url, **my_kw),
+            )
+        )
 
     def normalize_params(self, params: dict) -> dict:
         """
@@ -876,14 +913,15 @@ class RestApiV2Client(RestApiV2BaseClient):
         """
         updated_params = {}
         for param, value in params.items():
-            if type(value) is list and not param.endswith('[]'):
-                updated_params[param+'[]'] = value
+            if type(value) is list and not param.endswith("[]"):
+                updated_params[param + "[]"] = value
             else:
                 updated_params[param] = value
         return updated_params
 
-    def persist(self, resource: str, attr: str, values: dict, update: bool = False) \
-            -> dict:
+    def persist(
+        self, resource: str, attr: str, values: dict, update: bool = False
+    ) -> dict:
         """
         Finds or creates and returns a resource with a matching attribute
 
@@ -909,8 +947,11 @@ class RestApiV2Client(RestApiV2BaseClient):
             with the values supplied.
         """
         if attr not in values:
-            raise ValueError("Argument `values` must contain a key equal "
-                "to the `attr` argument (expected idempotency key: '%s')."%attr)
+            raise ValueError(
+                "Argument `values` must contain a key equal "
+                "to the `attr` argument (expected idempotency key: '%s')."
+                % attr
+            )
         existing = self.find(resource, values[attr], attribute=attr)
         if existing:
             if update:
@@ -949,12 +990,14 @@ class RestApiV2Client(RestApiV2BaseClient):
         """
         Subdomain of the PagerDuty account of the API access token.
         """
-        if not hasattr(self, '_subdomain') or self._subdomain is None:
+        if not hasattr(self, "_subdomain") or self._subdomain is None:
             try:
-                url = self.rget('users', params={'limit':1})[0]['html_url']
-                self._subdomain = url.split('/')[2].split('.')[0]
+                url = self.rget("users", params={"limit": 1})[0]["html_url"]
+                self._subdomain = url.split("/")[2].split(".")[0]
             except Error as e:
-                self.log.error("Failed to obtain subdomain; encountered error.")
+                self.log.error(
+                    "Failed to obtain subdomain; encountered error."
+                )
                 self._subdomain = None
                 raise e
         return self._subdomain

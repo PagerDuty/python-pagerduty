@@ -1,13 +1,10 @@
 from typing import List
 
-from . rest_api_v2_base_client import (
-    CanonicalPath,
-    RestApiV2BaseClient
-)
+from .rest_api_v2_base_client import CanonicalPath, RestApiV2BaseClient
 
 CANONICAL_PATHS = [
     "/workspaces/{slack_team_id}/connections",
-    "/workspaces/{slack_team_id}/connections/{connection_id}"
+    "/workspaces/{slack_team_id}/connections/{connection_id}",
 ]
 
 ENTITY_WRAPPER_CONFIG = {
@@ -16,6 +13,7 @@ ENTITY_WRAPPER_CONFIG = {
     "POST /workspaces/{slack_team_id}/connections": "slack_connection",
     "PUT /workspaces/{slack_team_id}/connections/{connection_id}": "slack_connection",
 }
+
 
 class SlackIntegrationConnectionsApiClient(RestApiV2BaseClient):
     """
@@ -32,16 +30,21 @@ class SlackIntegrationConnectionsApiClient(RestApiV2BaseClient):
     For constructor arguments, see :class:`pagerduty.RestApiV2BaseClient`.
     """
 
-    permitted_methods = ('GET', 'POST', 'PUT', 'DELETE')
+    permitted_methods = ("GET", "POST", "PUT", "DELETE")
 
     url = "https://app.pagerduty.com/integration-slack"
 
-    def __init__(self, api_key: str, auth_type: str = 'token', debug: bool = False):
-        super(SlackIntegrationConnectionsApiClient, self).__init__(api_key,
-            auth_type=auth_type, debug=debug)
-        self.headers.update({
-            'Accept': 'application/json',
-        })
+    def __init__(
+        self, api_key: str, auth_type: str = "token", debug: bool = False
+    ):
+        super(SlackIntegrationConnectionsApiClient, self).__init__(
+            api_key, auth_type=auth_type, debug=debug
+        )
+        self.headers.update(
+            {
+                "Accept": "application/json",
+            }
+        )
 
     @property
     def canonical_paths(self) -> List[CanonicalPath]:
