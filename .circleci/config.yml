@@ -49,8 +49,8 @@ jobs:
     steps:
       - checkout
       - run:
-          <<: *uv
-      - run:
+          environment:
+            NO_UV: 1
           <<: *test
 
   py3_7:
@@ -59,8 +59,8 @@ jobs:
     steps:
       - checkout
       - run:
-          <<: *uv
-      - run:
+          environment:
+            NO_UV: 1
           <<: *test
 
   py3_8:
