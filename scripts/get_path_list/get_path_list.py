@@ -7,6 +7,7 @@ Usage: get_path_list.py PATH
 
   See source comments for additional usage details.
 """
+
 import sys
 from yaml import load
 
@@ -14,7 +15,6 @@ try:
     from yaml import CLoader as Loader
 except ImportError:
     from yaml import Loader
-
 
 
 # This script is not part of the python-pagerduty library. Rather, it can be used for
@@ -41,6 +41,7 @@ EXPAND_PATHS = {
         "/tags/{id}/" + et for et in ("users", "teams", "escalation_policies")
     ]
 }
+
 
 def main():
     if len(sys.argv) < 2:
