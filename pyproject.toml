@@ -29,6 +29,10 @@ build-backend = "setuptools.build_meta"
 [dependency-groups]
 dev = [
     "ruff>=0.0.17",
+    "sphinx",
+    "sphinxcontrib-websupport",
+    "sphinx-rtd-theme",
+    "twine",
 ]
 
 [tool.ruff]
