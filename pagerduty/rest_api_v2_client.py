@@ -10,6 +10,11 @@ from . common import (
     datetime_intervals,
     strftime
 )
+from . errors import (
+    Error,
+    HttpError,
+    UrlError
+)
 from . rest_api_v2_base_client import (
     ITERATION_LIMIT,
     CanonicalPath,
