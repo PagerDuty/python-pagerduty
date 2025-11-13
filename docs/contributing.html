@@ -47,7 +47,7 @@
 <li class="toctree-l1"><a class="reference internal" href="pdpyras_migration_guide.html">PDPYRAS Migration Guide</a></li>
 <li class="toctree-l1"><a class="reference internal" href="module_reference.html">Module Reference</a></li>
 <li class="toctree-l1 current"><a class="current reference internal" href="#">Contribution Guide</a><ul>
-<li class="toctree-l2"><a class="reference internal" href="#initial-setup">Initial Setup</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#initial-setup-and-unit-tests">Initial Setup and Unit Tests</a></li>
 <li class="toctree-l2"><a class="reference internal" href="#maintaining-entity-wrapper-configuration">Maintaining Entity Wrapper Configuration</a><ul>
 <li class="toctree-l3"><a class="reference internal" href="#introduction">Introduction</a></li>
 <li class="toctree-l3"><a class="reference internal" href="#limitations">Limitations</a></li>
@@ -100,28 +100,14 @@ and assertions to the appropriate test case class in <code class="docutils liter
 ensure code coverage. If the change(s) fix a bug, please add assertions that
 reproduce the bug along with code changes themselves, and include the GitHub
 issue number in the commit message.</p>
-<section id="initial-setup">
-<h2>Initial Setup<a class="headerlink" href="#initial-setup" title="Link to this heading"></a></h2>
-<p>To be able to rebuild the documentation and release a new version, first make
-sure you have <a class="reference external" href="https://www.gnu.org/software/make/">make</a> and <a class="reference external" href="https://pip.pypa.io/en/stable/installation/">pip</a> installed in your shell
-environment, as well as Python version 3.11 or later.</p>
-<p>The recommended way of setting up the Python environment is using <a class="reference external" href="https://asdf-vm.com/">asdf-vm</a>, i.e. run <code class="docutils literal notranslate"><span class="pre">asdf</span> <span class="pre">install</span></code> in your clone of the
-repository.</p>
-<p>Next, install Python dependencies for building and publishing as well as
-testing locally:</p>
-<div class="highlight-shell notranslate"><div class="highlight"><pre><span></span>pip<span class="w"> </span>install<span class="w"> </span>.
-pip<span class="w"> </span>install<span class="w"> </span>-r<span class="w"> </span>requirements-publish.txt
-</pre></div>
-</div>
-<p>If asdf-vm was used to install Python locally, run the following after the above:</p>
-<div class="highlight-shell notranslate"><div class="highlight"><pre><span></span>asdf<span class="w"> </span>reshim<span class="w"> </span>python
-</pre></div>
-</div>
-<p>Finally, run <code class="docutils literal notranslate"><span class="pre">test.sh</span></code> in the root path of the repository to run the unit
-test suite locally, or run this command by itself:</p>
-<div class="highlight-shell notranslate"><div class="highlight"><pre><span></span>python<span class="w"> </span>-m<span class="w"> </span>unittest<span class="w"> </span>discover<span class="w"> </span>-p<span class="w"> </span><span class="s1">&#39;*_test.py&#39;</span><span class="w"> </span>-s<span class="w"> </span>tests
-</pre></div>
-</div>
+<section id="initial-setup-and-unit-tests">
+<h2>Initial Setup and Unit Tests<a class="headerlink" href="#initial-setup-and-unit-tests" title="Link to this heading"></a></h2>
+<p>To be able to rebuild the documentation, apply formatting and release new
+versions, first make sure you have <a class="reference external" href="https://www.gnu.org/software/make/">make</a>
+installed in your local development environment, as well as
+[uv](<a class="reference external" href="https://docs.astral.sh/uv/">https://docs.astral.sh/uv/</a>) for dependency management.</p>
+<p>Run <code class="docutils literal notranslate"><span class="pre">uv</span> <span class="pre">run</span> <span class="pre">test.sh</span></code> in the root path of the repository to validate that unit
+tests can be run locally.</p>
 </section>
 <section id="maintaining-entity-wrapper-configuration">
 <h2>Maintaining Entity Wrapper Configuration<a class="headerlink" href="#maintaining-entity-wrapper-configuration" title="Link to this heading"></a></h2>
@@ -202,10 +188,12 @@ request method is not POST), the request and response wrapper names are both
 the same as the last node of the path. Examples: <code class="docutils literal notranslate"><span class="pre">GET</span> <span class="pre">/services</span></code> (wrapper =
 <code class="docutils literal notranslate"><span class="pre">services</span></code>), <code class="docutils literal notranslate"><span class="pre">PUT</span> <span class="pre">/incidents</span></code> (wrapper = <code class="docutils literal notranslate"><span class="pre">incidents</span></code>)</p>
 <p>If all of the above apply to new endpoints for all request methods, then no new
-entries need to be added to <code class="xref py py-attr docutils literal notranslate"><span class="pre">pagerduty.rest_api_v2_client.ENTITY_WRAPPER_CONFIG</span></code> to support
-them; they are supported automatically by virtue of following preexisting
-already-supported API patterns and having corresponding entries in
-<code class="xref py py-attr docutils literal notranslate"><span class="pre">pagerduty.rest_api_v2_client.CANONICAL_PATHS</span></code>.</p>
+entries need to be added to
+<code class="xref py py-attr docutils literal notranslate"><span class="pre">pagerduty.rest_api_v2_client.ENTITY_WRAPPER_CONFIG</span></code> to support them;
+they are supported automatically by virtue of following preexisting
+already-supported API patterns. Their corresponding entries in
+<code class="xref py py-attr docutils literal notranslate"><span class="pre">pagerduty.rest_api_v2_client.CANONICAL_PATHS</span></code> officiates their support
+for entity-wrapping-aware functions.</p>
 </section>
 <section id="adding-support-for-non-conforming-endpoints">
 <h3>Adding Support for Non-Conforming Endpoints<a class="headerlink" href="#adding-support-for-non-conforming-endpoints" title="Link to this heading"></a></h3>
@@ -234,13 +222,13 @@ Subscribers” looks like this:</p>
 <h2>Updating Documentation<a class="headerlink" href="#updating-documentation" title="Link to this heading"></a></h2>
 <p>The <code class="docutils literal notranslate"><span class="pre">.rst</span></code> files in <code class="docutils literal notranslate"><span class="pre">sphinx/source</span></code> are where most of the documentation
 lives. To rebuild the HTML documentation from the source, run:</p>
-<div class="highlight-shell notranslate"><div class="highlight"><pre><span></span>make<span class="w"> </span>docs
+<div class="highlight-shell notranslate"><div class="highlight"><pre><span></span>uv<span class="w"> </span>run<span class="w"> </span>make<span class="w"> </span>docs
 </pre></div>
 </div>
 <p>To force a rebuild, run <code class="docutils literal notranslate"><span class="pre">touch</span> <span class="pre">CHANGELOG.rst</span></code> first.</p>
 <p><strong>NOTE:</strong> Python version 3.13 or later must be used when rebuilding
 documentation, or the version number in the documentation will be
-<code class="docutils literal notranslate"><span class="pre">2.?.?-metadata-unavailable</span></code>.</p>
+<code class="docutils literal notranslate"><span class="pre">[V].?.?-metadata-unavailable</span></code>, where <code class="docutils literal notranslate"><span class="pre">[V]</span></code> is the current major version.</p>
 </section>
 <section id="releasing-a-new-version">
 <h2>Releasing a New Version<a class="headerlink" href="#releasing-a-new-version" title="Link to this heading"></a></h2>
@@ -260,7 +248,7 @@ it is a good idea to first add a suffix, i.e. <code class="docutils literal notr
 <code class="docutils literal notranslate"><span class="pre">pyproject.toml</span></code> while testing.</p>
 <p>To perform end-to-end tests, run the following, entering credentials for
 <code class="docutils literal notranslate"><span class="pre">test.pypi.org</span></code> when prompted:</p>
-<div class="highlight-shell notranslate"><div class="highlight"><pre><span></span>make<span class="w"> </span>testpublish
+<div class="highlight-shell notranslate"><div class="highlight"><pre><span></span>uv<span class="w"> </span>run<span class="w"> </span>make<span class="w"> </span>testpublish
 </pre></div>
 </div>
 <p>The make target <code class="docutils literal notranslate"><span class="pre">testpublish</span></code> performs the following:</p>
@@ -290,7 +278,7 @@ version that follows <a class="reference external" href="https://semver.org/">Se
 <li><p>Rebuilt HTML documentation</p></li>
 </ul>
 <p>The HTML documentation can be rebuilt with the <code class="docutils literal notranslate"><span class="pre">docs</span></code> make target:</p>
-<div class="highlight-shell notranslate"><div class="highlight"><pre><span></span>make<span class="w"> </span>docs
+<div class="highlight-shell notranslate"><div class="highlight"><pre><span></span>uv<span class="w"> </span>run<span class="w"> </span>make<span class="w"> </span>docs
 </pre></div>
 </div>
 <p>After rebuilding the documentation, it can then be viewed by opening the file
@@ -310,7 +298,7 @@ installed.</p>
 <p>Once the changes are merged and tagged, make sure your local repository clone
 has the <code class="docutils literal notranslate"><span class="pre">main</span></code> branch checked out at the latest available commit, and the
 local file tree is clean (has no uncommitted changes). Then run:</p>
-<div class="highlight-shell notranslate"><div class="highlight"><pre><span></span>make<span class="w"> </span>publish
+<div class="highlight-shell notranslate"><div class="highlight"><pre><span></span>uv<span class="w"> </span>run<span class="w"> </span>make<span class="w"> </span>publish
 </pre></div>
 </div>
 <p>When prompted, enter <code class="docutils literal notranslate"><span class="pre">__token__</span></code> as your username and your API token as the password.</p>

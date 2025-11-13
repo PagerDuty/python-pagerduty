@@ -207,7 +207,7 @@
 <li class="toctree-l3"><a class="reference internal" href="#pagerduty.rest_api_v2_base_client.EntityWrappingSpec"><code class="docutils literal notranslate"><span class="pre">EntityWrappingSpec</span></code></a></li>
 <li class="toctree-l3"><a class="reference internal" href="#pagerduty.rest_api_v2_base_client.ITERATION_LIMIT"><code class="docutils literal notranslate"><span class="pre">ITERATION_LIMIT</span></code></a></li>
 <li class="toctree-l3"><a class="reference internal" href="#id0"><code class="docutils literal notranslate"><span class="pre">OAuthTokenAuthMethod</span></code></a></li>
-<li class="toctree-l3"><a class="reference internal" href="#id15"><code class="docutils literal notranslate"><span class="pre">TokenAuthMethod</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#id16"><code class="docutils literal notranslate"><span class="pre">TokenAuthMethod</span></code></a></li>
 <li class="toctree-l3"><a class="reference internal" href="#pagerduty.rest_api_v2_base_client.auto_json"><code class="docutils literal notranslate"><span class="pre">auto_json()</span></code></a></li>
 <li class="toctree-l3"><a class="reference internal" href="#pagerduty.rest_api_v2_base_client.canonical_path"><code class="docutils literal notranslate"><span class="pre">canonical_path()</span></code></a></li>
 <li class="toctree-l3"><a class="reference internal" href="#pagerduty.rest_api_v2_base_client.endpoint_matches"><code class="docutils literal notranslate"><span class="pre">endpoint_matches()</span></code></a></li>
@@ -284,10 +284,10 @@ any other HTTP methods.</p></li>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
-<li><p><strong>auth_method</strong> – The authentication method to use for API requests, should be an instance
-of the AuthMethod class.</p></li>
-<li><p><strong>debug</strong> – Sets <a class="reference internal" href="#pagerduty.ApiClient.print_debug" title="pagerduty.ApiClient.print_debug"><code class="xref py py-attr docutils literal notranslate"><span class="pre">print_debug</span></code></a>. Set to <code class="docutils literal notranslate"><span class="pre">True</span></code> to enable verbose command line
-output.</p></li>
+<li><p><strong>auth_method</strong> – The authentication method to use for API requests, should be an
+instance of the AuthMethod class.</p></li>
+<li><p><strong>debug</strong> – Sets <a class="reference internal" href="#pagerduty.ApiClient.print_debug" title="pagerduty.ApiClient.print_debug"><code class="xref py py-attr docutils literal notranslate"><span class="pre">print_debug</span></code></a>. Set to <code class="docutils literal notranslate"><span class="pre">True</span></code> to enable verbose command
+line output.</p></li>
 </ul>
 </dd>
 </dl>
@@ -315,8 +315,8 @@ configured without any handlers and so no messages will be emitted. See:
 <dl class="py attribute">
 <dt class="sig sig-object py" id="pagerduty.ApiClient.max_http_attempts">
 <span class="sig-name descname"><span class="pre">max_http_attempts</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">10</span></em><a class="headerlink" href="#pagerduty.ApiClient.max_http_attempts" title="Link to this definition"></a></dt>
-<dd><p>The number of times that the client will retry after error statuses, for any
-that are defined greater than zero in <a class="reference internal" href="#pagerduty.ApiClient.retry" title="pagerduty.ApiClient.retry"><code class="xref py py-attr docutils literal notranslate"><span class="pre">retry</span></code></a>.</p>
+<dd><p>The number of times that the client will retry after error statuses, for
+any that are defined greater than zero in <a class="reference internal" href="#pagerduty.ApiClient.retry" title="pagerduty.ApiClient.retry"><code class="xref py py-attr docutils literal notranslate"><span class="pre">retry</span></code></a>.</p>
 </dd></dl>
 
 <dl class="py attribute">
@@ -373,14 +373,15 @@ extended in child classes.</p>
 <dt class="sig sig-object py" id="pagerduty.ApiClient.prepare_headers">
 <span class="sig-name descname"><span class="pre">prepare_headers</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">method</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">user_headers</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">dict</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">dict</span></span></span><a class="headerlink" href="#pagerduty.ApiClient.prepare_headers" title="Link to this definition"></a></dt>
 <dd><p>Append all necessary headers per-request.</p>
-<p>The upstream client class <a class="reference external" href="https://www.python-httpx.org/api/#client">httpx.Client</a> will merge headers into the default
-instance headers, so any defaults set by the end user in the mutable <code class="docutils literal notranslate"><span class="pre">headers</span></code>
-property will already be merged in, and the headers specified at request time
-will take precendence.</p>
-<p>This method just merges in the PagerDuty API client’s defaults on a per-request
-basis to avoid storing per-API header settings like API keys in drift-able
-mutable stateful instance attributes, and to enforce the correct headers on each
-request, especially where they might differ per-API / per request.</p>
+<p>The upstream client class <a class="reference external" href="https://www.python-httpx.org/api/#client">httpx.Client</a> will merge headers into the
+default instance headers, so any defaults set by the end user in the
+mutable <code class="docutils literal notranslate"><span class="pre">headers</span></code> property will already be merged in, and the headers
+specified at request time will take precendence.</p>
+<p>This method just merges in the PagerDuty API client’s defaults on a
+per-request basis to avoid storing per-API header settings like API
+keys in drift-able mutable stateful instance attributes, and to enforce
+the correct headers on each request, especially where they might differ
+per-API / per request.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
@@ -401,9 +402,9 @@ request, especially where they might differ per-API / per request.</p>
 <p>If set to True, the logging level of <a class="reference internal" href="#pagerduty.ApiClient.log" title="pagerduty.ApiClient.log"><code class="xref py py-attr docutils literal notranslate"><span class="pre">log</span></code></a> is set to
 <code class="docutils literal notranslate"><span class="pre">logging.DEBUG</span></code> and all log messages are emitted to <code class="docutils literal notranslate"><span class="pre">sys.stderr</span></code>.
 If set to False, the logging level of <a class="reference internal" href="#pagerduty.ApiClient.log" title="pagerduty.ApiClient.log"><code class="xref py py-attr docutils literal notranslate"><span class="pre">log</span></code></a> is set to
-<code class="docutils literal notranslate"><span class="pre">logging.NOTSET</span></code> and the debugging log handler that prints messages to
-<code class="docutils literal notranslate"><span class="pre">sys.stderr</span></code> is removed. This value thus can be toggled to enable and
-disable verbose command line output.</p>
+<code class="docutils literal notranslate"><span class="pre">logging.NOTSET</span></code> and the debugging log handler that prints messages
+to <code class="docutils literal notranslate"><span class="pre">sys.stderr</span></code> is removed. This value thus can be toggled to enable
+and disable verbose command line output.</p>
 <p>It is <code class="docutils literal notranslate"><span class="pre">False</span></code> by default and it is recommended to keep it that way in
 production settings.</p>
 </dd></dl>
@@ -417,8 +418,8 @@ production settings.</p>
 <dd class="field-odd"><ul class="simple">
 <li><p><strong>method</strong> (<em>str</em>) – The request method to use. Case-insensitive. May be one of get, put,
 post or delete.</p></li>
-<li><p><strong>url</strong> (<em>str</em>) – The path/URL to request. If it does not start with the base URL, the
-base URL will be prepended.</p></li>
+<li><p><strong>url</strong> (<em>str</em>) – The path/URL to request. If it does not start with the base URL,
+the base URL will be prepended.</p></li>
 <li><p><strong>**kwargs</strong> – <p>Custom keyword arguments to pass to <code class="docutils literal notranslate"><span class="pre">httpx.Client.request</span></code>.</p>
 </p></li>
 </ul>
@@ -433,8 +434,8 @@ base URL will be prepended.</p></li>
 <dt class="sig sig-object py" id="pagerduty.ApiClient.retry">
 <span class="sig-name descname"><span class="pre">retry</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">{}</span></em><a class="headerlink" href="#pagerduty.ApiClient.retry" title="Link to this definition"></a></dt>
 <dd><p>A dict defining the retry behavior for each HTTP response status code.</p>
-<p>Each key in this dictionary is an int representing a HTTP response code. The
-behavior is specified by the int value at each key as follows:</p>
+<p>Each key in this dictionary is an int representing a HTTP response code.
+The behavior is specified by the int value at each key as follows:</p>
 <ul class="simple">
 <li><p><code class="docutils literal notranslate"><span class="pre">-1</span></code> to retry without limit.</p></li>
 <li><p><code class="docutils literal notranslate"><span class="pre">0</span></code> has no effect; the default behavior will take effect.</p></li>
@@ -443,8 +444,8 @@ to <a class="reference internal" href="#pagerduty.ApiClient.max_http_attempts" t
 encountered first), and then return the final response.</p></li>
 </ul>
 <p>The default behavior is to retry without limit on status 429, raise an
-exception on a 401, and return the <a class="reference external" href="https://www.python-httpx.org/api/#response">httpx.Response</a> object in any other case
-(assuming a HTTP response was received from the server).</p>
+exception on a 401, and return the <a class="reference external" href="https://www.python-httpx.org/api/#response">httpx.Response</a> object in any other
+case (assuming a HTTP response was received from the server).</p>
 </dd></dl>
 
 <dl class="py attribute">
@@ -510,8 +511,8 @@ determines the TCP read timeout.</p>
 <dd><p>The base URL for the API being called.</p>
 <p>Must be a HTTPS URL. For REST API v2 in the US service region, this is
 <code class="docutils literal notranslate"><span class="pre">https://api.pagerduty.com</span></code>; for Events API v2 it is
-<code class="docutils literal notranslate"><span class="pre">https://events.pagerduty.com</span></code>.  This property must be set when using a
-service region other than US Production.</p>
+<code class="docutils literal notranslate"><span class="pre">https://events.pagerduty.com</span></code>.  This property must be set when using
+a service region other than US Production.</p>
 </dd></dl>
 
 </dd></dl>
@@ -519,16 +520,23 @@ service region other than US Production.</p>
 <dl class="py class">
 <dt class="sig sig-object py" id="pagerduty.OAuthTokenClient">
 <em class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">pagerduty.</span></span><span class="sig-name descname"><span class="pre">OAuthTokenClient</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">client_secret</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">client_id</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">debug</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kw</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#pagerduty.OAuthTokenClient" title="Link to this definition"></a></dt>
-<dd><p>Client with helpers for performing an OAuth exchange to obtain an access token.</p>
-<p>Tokens obtained using the client can then be used to authenticate REST API clients,
-e.g.</p>
-<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">oauth_exchange_client</span> <span class="o">=</span> <span class="n">pagerduty</span><span class="o">.</span><span class="n">OAuthTokenClient</span><span class="p">(</span><span class="n">client_secret</span><span class="p">,</span> <span class="n">client_id</span><span class="p">)</span>
+<dd><p>Client with helpers for performing an OAuth exchange for an access token.</p>
+<p>Tokens obtained using the client can then be used to authenticate REST API
+clients, e.g.</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">oauth_exchange_client</span> <span class="o">=</span> <span class="n">pagerduty</span><span class="o">.</span><span class="n">OAuthTokenClient</span><span class="p">(</span>
+    <span class="n">client_secret</span><span class="p">,</span>
+    <span class="n">client_id</span>
+<span class="p">)</span>
 <span class="n">oauth_response</span> <span class="o">=</span> <span class="n">oauth_exchange_client</span><span class="o">.</span><span class="n">get_scoped_app_token</span><span class="p">(</span><span class="s1">&#39;read&#39;</span><span class="p">)</span>
-<span class="n">client</span> <span class="o">=</span> <span class="n">pagerduty</span><span class="o">.</span><span class="n">RestApiV2Client</span><span class="p">(</span><span class="n">oauth_response</span><span class="p">[</span><span class="s1">&#39;access_token&#39;</span><span class="p">],</span> <span class="n">auth_type</span><span class="o">=</span><span class="s1">&#39;bearer&#39;</span><span class="p">)</span>
+<span class="n">client</span> <span class="o">=</span> <span class="n">pagerduty</span><span class="o">.</span><span class="n">RestApiV2Client</span><span class="p">(</span>
+    <span class="n">oauth_response</span><span class="p">[</span><span class="s1">&#39;access_token&#39;</span><span class="p">],</span>
+    <span class="n">auth_type</span><span class="o">=</span><span class="s1">&#39;bearer&#39;</span>
+<span class="p">)</span>
 </pre></div>
 </div>
-<p>Requires <a class="reference external" href="https://developer.pagerduty.com/docs/register-an-app">registering a PagerDuty App</a> to obtain the necessary
-credentials, and must be used in the context of an OAuth2 authorization flow.</p>
+<p>Requires <a class="reference external" href="https://developer.pagerduty.com/docs/register-an-app">registering a PagerDuty App</a> to obtain the
+necessary credentials, and must be used in the context of an OAuth2
+authorization flow.</p>
 <p>For further details, refer to:</p>
 <ul class="simple">
 <li><p><a class="reference external" href="https://developer.pagerduty.com/docs/oauth-functionality">OAuth Functionality</a></p></li>
@@ -554,9 +562,10 @@ credentials, and must be used in the context of an OAuth2 authorization flow.</p
 <dd class="field-odd"><p><strong>auth_response</strong> – A response from the /oauth/token endpoint as a dictionary.</p>
 </dd>
 <dt class="field-even">Returns<span class="colon">:</span></dt>
-<dd class="field-even"><p>The same response from the API in dictionary form with an additional key
-<code class="docutils literal notranslate"><span class="pre">expiration_date</span></code> containing the expiration date/time of the token in
-ISO8601 format. This value can then be used in <a class="reference internal" href="#pagerduty.OAuthTokenClient.refresh_client" title="pagerduty.OAuthTokenClient.refresh_client"><code class="xref py py-attr docutils literal notranslate"><span class="pre">refresh_client</span></code></a>.</p>
+<dd class="field-even"><p>The same response from the API in dictionary form with an
+additional key <code class="docutils literal notranslate"><span class="pre">expiration_date</span></code> containing the expiration
+date/time of the token in ISO8601 format. This value can then be
+used in <a class="reference internal" href="#pagerduty.OAuthTokenClient.refresh_client" title="pagerduty.OAuthTokenClient.refresh_client"><code class="xref py py-attr docutils literal notranslate"><span class="pre">refresh_client</span></code></a>.</p>
 </dd>
 </dl>
 </dd></dl>
@@ -564,13 +573,13 @@ ISO8601 format. This value can then be used in <a class="reference internal" hre
 <dl class="py method">
 <dt class="sig sig-object py" id="pagerduty.OAuthTokenClient.authorize_url">
 <span class="sig-name descname"><span class="pre">authorize_url</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">scope</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">redirect_uri</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">str</span></span></span><a class="headerlink" href="#pagerduty.OAuthTokenClient.authorize_url" title="Link to this definition"></a></dt>
-<dd><p>The authorize URL in PagerDuty that the end user will visit to authorize the app</p>
+<dd><p>The URL in PagerDuty that a user will visit to authorize an app.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
 <li><p><strong>scope</strong> – Scope of the OAuth grant requested</p></li>
-<li><p><strong>redirect_uri</strong> – The redirect URI in the application that receives the authorization code
-through client redirect from PagerDuty</p></li>
+<li><p><strong>redirect_uri</strong> – The redirect URI in the application that receives the authorization
+code through client redirect from PagerDuty</p></li>
 </ul>
 </dd>
 <dt class="field-even">Returns<span class="colon">:</span></dt>
@@ -583,30 +592,30 @@ through client redirect from PagerDuty</p></li>
 <dt class="sig sig-object py" id="pagerduty.OAuthTokenClient.early_refresh_buffer">
 <span class="sig-name descname"><span class="pre">early_refresh_buffer</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">86400</span></em><a class="headerlink" href="#pagerduty.OAuthTokenClient.early_refresh_buffer" title="Link to this definition"></a></dt>
 <dd><p>Number of seconds before the expiration date to perform a token refresh.</p>
-<p>Used when constructing a <a class="reference internal" href="#pagerduty.RestApiV2Client" title="pagerduty.RestApiV2Client"><code class="xref py py-class docutils literal notranslate"><span class="pre">RestApiV2Client</span></code></a>; if the current date/time is
-after the expiration date, or less than this number of seconds before it, a token
-refresh is first performed.</p>
-<p>If the application is expected to use the resulting client object for more than this
-amount of time between each new call to <a class="reference internal" href="#pagerduty.OAuthTokenClient.refresh_client" title="pagerduty.OAuthTokenClient.refresh_client"><code class="xref py py-attr docutils literal notranslate"><span class="pre">refresh_client</span></code></a>, this value can be
-set higher.</p>
+<p>Used when constructing a <a class="reference internal" href="#pagerduty.RestApiV2Client" title="pagerduty.RestApiV2Client"><code class="xref py py-class docutils literal notranslate"><span class="pre">RestApiV2Client</span></code></a>; if the current date/time
+is after the expiration date, or less than this number of seconds before
+it, a token refresh is first performed.</p>
+<p>If the application is expected to use the resulting client object for more
+than this amount of time between each new call to <a class="reference internal" href="#pagerduty.OAuthTokenClient.refresh_client" title="pagerduty.OAuthTokenClient.refresh_client"><code class="xref py py-attr docutils literal notranslate"><span class="pre">refresh_client</span></code></a>,
+this value can be set higher.</p>
 <p>By default, this is 24 hours.</p>
 </dd></dl>
 
 <dl class="py method">
 <dt class="sig sig-object py" id="pagerduty.OAuthTokenClient.generate_s256_pkce_params">
 <span class="sig-name descname"><span class="pre">generate_s256_pkce_params</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">Tuple</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">str</span><span class="p"><span class="pre">]</span></span></span></span><a class="headerlink" href="#pagerduty.OAuthTokenClient.generate_s256_pkce_params" title="Link to this definition"></a></dt>
-<dd><p>Generate PKCE parameters for OAuth authorization with S256 code challenge method</p>
-<p>Creates a code verifier and corresponding SHA256-hashed code challenge parameter
-for OAuth login with PKCE.</p>
+<dd><p>Generate PKCE parameters for OAuth authorization.</p>
+<p>Creates a code verifier and corresponding SHA256-hashed code challenge
+parameter for OAuth login with PKCE.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Returns<span class="colon">:</span></dt>
-<dd class="field-odd"><p>A tuple containing <code class="docutils literal notranslate"><span class="pre">(code_verifier,</span> <span class="pre">code_challenge)</span></code>. The code verifier
-must be temporarily stored so that it can be used in the final step of
-authorization, i.e. as the <code class="docutils literal notranslate"><span class="pre">code_verifier</span></code> argument to
-<code class="docutils literal notranslate"><span class="pre">get_new_token_from_code_with_pkce</span></code>. The code challenge must be included
-in the query parameters of the initial authorize URL, i.e. set it as the the
-<code class="docutils literal notranslate"><span class="pre">code_challenge</span></code> argument to <a class="reference internal" href="#pagerduty.OAuthTokenClient.get_pkce_authorize_url" title="pagerduty.OAuthTokenClient.get_pkce_authorize_url"><code class="xref py py-attr docutils literal notranslate"><span class="pre">get_pkce_authorize_url</span></code></a> to generate
-the URL.</p>
+<dd class="field-odd"><p>A tuple containing <code class="docutils literal notranslate"><span class="pre">(code_verifier,</span> <span class="pre">code_challenge)</span></code>. The code
+verifier must be temporarily stored so that it can be used in the
+final step of authorization, i.e. as the <code class="docutils literal notranslate"><span class="pre">code_verifier</span></code> argument
+to <code class="docutils literal notranslate"><span class="pre">get_new_token_from_code_with_pkce</span></code>. The code challenge must
+be included in the query parameters of the initial authorize URL,
+i.e. set it as the the <code class="docutils literal notranslate"><span class="pre">code_challenge</span></code> argument to
+<a class="reference internal" href="#pagerduty.OAuthTokenClient.get_pkce_authorize_url" title="pagerduty.OAuthTokenClient.get_pkce_authorize_url"><code class="xref py py-attr docutils literal notranslate"><span class="pre">get_pkce_authorize_url</span></code></a> to generate the URL.</p>
 </dd>
 </dl>
 </dd></dl>
@@ -615,18 +624,18 @@ the URL.</p>
 <dt class="sig sig-object py" id="pagerduty.OAuthTokenClient.get_authorize_url">
 <em class="property"><span class="k"><span class="pre">classmethod</span></span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">get_authorize_url</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">client_id</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">scope</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">redirect_uri</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">str</span></span></span><a class="headerlink" href="#pagerduty.OAuthTokenClient.get_authorize_url" title="Link to this definition"></a></dt>
 <dd><p>Generate an authorize URL.</p>
-<p>This method can be called directly to circumvent the need to produce a client
-secret that is otherwise required to instantiate an object.</p>
-<p>This is the URL that the user initially visits in the application to authorize
-the application, which will ultimately redirect the user to <code class="docutils literal notranslate"><span class="pre">redirect_uri</span></code> but
-with the authorization code.</p>
+<p>This method can be called directly to circumvent the need to produce a
+client secret that is otherwise required to instantiate an object.</p>
+<p>This is the URL that the user initially visits in the application to
+authorize the application, which will ultimately redirect the user to
+<code class="docutils literal notranslate"><span class="pre">redirect_uri</span></code> but with the authorization code.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
 <li><p><strong>client_id</strong> – Client ID of the application</p></li>
 <li><p><strong>scope</strong> – Scope of the OAuth grant requested</p></li>
-<li><p><strong>redirect_uri</strong> – The redirect URI in the application that receives the authorization code
-through client redirect from PagerDuty</p></li>
+<li><p><strong>redirect_uri</strong> – The redirect URI in the application that receives the authorization
+code through client redirect from PagerDuty</p></li>
 </ul>
 </dd>
 <dt class="field-even">Returns<span class="colon">:</span></dt>
@@ -639,8 +648,9 @@ through client redirect from PagerDuty</p></li>
 <dt class="sig sig-object py" id="pagerduty.OAuthTokenClient.get_new_token">
 <span class="sig-name descname"><span class="pre">get_new_token</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kw</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">dict</span></span></span><a class="headerlink" href="#pagerduty.OAuthTokenClient.get_new_token" title="Link to this definition"></a></dt>
 <dd><p>Make a token request.</p>
-<p>There should not be any need to call this method directly. Each of the supported
-types of token exchange requests are implemented in other methods:</p>
+<p>There should not be any need to call this method directly. Each of the
+supported types of token exchange requests are implemented in other
+methods:</p>
 <ul class="simple">
 <li><p><a class="reference internal" href="#pagerduty.OAuthTokenClient.get_new_token_from_code" title="pagerduty.OAuthTokenClient.get_new_token_from_code"><code class="xref py py-attr docutils literal notranslate"><span class="pre">get_new_token_from_code</span></code></a></p></li>
 <li><p><a class="reference internal" href="#pagerduty.OAuthTokenClient.get_refreshed_token" title="pagerduty.OAuthTokenClient.get_refreshed_token"><code class="xref py py-attr docutils literal notranslate"><span class="pre">get_refreshed_token</span></code></a></p></li>
@@ -649,14 +659,15 @@ types of token exchange requests are implemented in other methods:</p>
 </ul>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
-<dd class="field-odd"><p><strong>kw</strong> – Keyword parameters passed to this method are interpreted as parameters to
-set in the body of the request.</p>
+<dd class="field-odd"><p><strong>kw</strong> – Keyword parameters passed to this method are interpreted as
+parameters to set in the body of the request.</p>
 </dd>
 <dt class="field-even">Returns<span class="colon">:</span></dt>
-<dd class="field-even"><p>The JSON response from <code class="docutils literal notranslate"><span class="pre">identity.pagerduty.com</span></code> as a dictionary after
-amending via <a class="reference internal" href="#pagerduty.OAuthTokenClient.amended_auth_response" title="pagerduty.OAuthTokenClient.amended_auth_response"><code class="xref py py-attr docutils literal notranslate"><span class="pre">amended_auth_response</span></code></a>. It should contain a key
-<code class="docutils literal notranslate"><span class="pre">access_token</span></code> with the new token and <code class="docutils literal notranslate"><span class="pre">expiration_date</span></code> containing the
-date and time when the token will expire in ISO8601 format.</p>
+<dd class="field-even"><p>The JSON response from <code class="docutils literal notranslate"><span class="pre">identity.pagerduty.com</span></code> as a dictionary
+after amending via <a class="reference internal" href="#pagerduty.OAuthTokenClient.amended_auth_response" title="pagerduty.OAuthTokenClient.amended_auth_response"><code class="xref py py-attr docutils literal notranslate"><span class="pre">amended_auth_response</span></code></a>. It should contain
+a key <code class="docutils literal notranslate"><span class="pre">access_token</span></code> with the new token and <code class="docutils literal notranslate"><span class="pre">expiration_date</span></code>
+containing the date and time when the token will expire in ISO8601
+format.</p>
 </dd>
 </dl>
 </dd></dl>
@@ -668,8 +679,8 @@ date and time when the token will expire in ISO8601 format.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
-<li><p><strong>auth_code</strong> – The authorization code received by the application at the redirect URI
-provided.</p></li>
+<li><p><strong>auth_code</strong> – The authorization code received by the application at the redirect
+URI provided.</p></li>
 <li><p><strong>scope</strong> – The scope of the authorization request.</p></li>
 </ul>
 </dd>
@@ -686,15 +697,17 @@ provided.</p></li>
 <dl class="py method">
 <dt class="sig sig-object py" id="pagerduty.OAuthTokenClient.get_new_token_from_code_with_pkce">
 <span class="sig-name descname"><span class="pre">get_new_token_from_code_with_pkce</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">auth_code</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">scope</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">redirect_uri</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">code_verifier</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">dict</span></span></span><a class="headerlink" href="#pagerduty.OAuthTokenClient.get_new_token_from_code_with_pkce" title="Link to this definition"></a></dt>
-<dd><p>Exchange an authorization code for an access token using PKCE (Leg 3 of 3).</p>
+<dd><p>Exchange an authorization code for an access token using PKCE</p>
+<p>This is “Leg 3 of 3” in the PKCE authentication flow process.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
-<li><p><strong>auth_code</strong> – The authorization code received by the application at the redirect URI</p></li>
+<li><p><strong>auth_code</strong> – The authorization code received by the application code via its
+inclusion in the redirect URI</p></li>
 <li><p><strong>scope</strong> – The scope of the authorization request</p></li>
 <li><p><strong>redirect_uri</strong> – The redirect URI that was used in the authorization request</p></li>
-<li><p><strong>code_verifier</strong> – The code verifier used to generate the code challenge in Leg 1, i.e. as
-returned by <a class="reference internal" href="#pagerduty.OAuthTokenClient.generate_s256_pkce_params" title="pagerduty.OAuthTokenClient.generate_s256_pkce_params"><code class="xref py py-attr docutils literal notranslate"><span class="pre">generate_s256_pkce_params</span></code></a>.</p></li>
+<li><p><strong>code_verifier</strong> – The code verifier used to generate the code challenge in Leg 1,
+i.e. as returned by <a class="reference internal" href="#pagerduty.OAuthTokenClient.generate_s256_pkce_params" title="pagerduty.OAuthTokenClient.generate_s256_pkce_params"><code class="xref py py-attr docutils literal notranslate"><span class="pre">generate_s256_pkce_params</span></code></a>.</p></li>
 </ul>
 </dd>
 <dt class="field-even">Returns<span class="colon">:</span></dt>
@@ -712,9 +725,9 @@ returned by <a class="reference internal" href="#pagerduty.OAuthTokenClient.gene
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
 <li><p><strong>scope</strong> – Scope of the OAuth grant requested</p></li>
-<li><p><strong>redirect_uri</strong> – The redirect URI in the application that receives the authorization code</p></li>
-<li><p><strong>code_challenge</strong> – The code challenge generated from the code verifier, i.e. as returned by
-<a class="reference internal" href="#pagerduty.OAuthTokenClient.generate_s256_pkce_params" title="pagerduty.OAuthTokenClient.generate_s256_pkce_params"><code class="xref py py-attr docutils literal notranslate"><span class="pre">generate_s256_pkce_params</span></code></a>.</p></li>
+<li><p><strong>redirect_uri</strong> – The redirect URI in the application to receive the code</p></li>
+<li><p><strong>code_challenge</strong> – The code challenge generated from the code verifier, i.e. as
+returned by <a class="reference internal" href="#pagerduty.OAuthTokenClient.generate_s256_pkce_params" title="pagerduty.OAuthTokenClient.generate_s256_pkce_params"><code class="xref py py-attr docutils literal notranslate"><span class="pre">generate_s256_pkce_params</span></code></a>.</p></li>
 </ul>
 </dd>
 <dt class="field-even">Returns<span class="colon">:</span></dt>
@@ -729,8 +742,8 @@ returned by <a class="reference internal" href="#pagerduty.OAuthTokenClient.gene
 <dd><p>Obtain a new access token using a refresh token.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
-<dd class="field-odd"><p><strong>refresh_token</strong> – The refresh token provided in the response of the original access token,
-i.e. in the dict returned by <a class="reference internal" href="#pagerduty.OAuthTokenClient.get_new_token" title="pagerduty.OAuthTokenClient.get_new_token"><code class="xref py py-attr docutils literal notranslate"><span class="pre">get_new_token</span></code></a></p>
+<dd class="field-odd"><p><strong>refresh_token</strong> – The refresh token provided in the response of the original access
+token, i.e. in the dict returned by <a class="reference internal" href="#pagerduty.OAuthTokenClient.get_new_token" title="pagerduty.OAuthTokenClient.get_new_token"><code class="xref py py-attr docutils literal notranslate"><span class="pre">get_new_token</span></code></a></p>
 </dd>
 <dt class="field-even">Returns<span class="colon">:</span></dt>
 <dd class="field-even"><p>The JSON response from <code class="docutils literal notranslate"><span class="pre">identity.pagerduty.com</span></code>, containing a key
@@ -743,7 +756,8 @@ i.e. in the dict returned by <a class="reference internal" href="#pagerduty.OAut
 <dt class="sig sig-object py" id="pagerduty.OAuthTokenClient.get_scoped_app_token">
 <span class="sig-name descname"><span class="pre">get_scoped_app_token</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">scope</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#pagerduty.OAuthTokenClient.get_scoped_app_token" title="Link to this definition"></a></dt>
 <dd><p>Obtain a scoped app token.</p>
-<p>This can be used to grant a server-side app a scoped non-user application token.</p>
+<p>This can be used to grant a server-side app a scoped non-user
+application token.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><p><strong>scope</strong> – The scope of the authorization request.</p>
@@ -758,7 +772,7 @@ i.e. in the dict returned by <a class="reference internal" href="#pagerduty.OAut
 <dl class="py method">
 <dt class="sig sig-object py" id="pagerduty.OAuthTokenClient.refresh_client">
 <span class="sig-name descname"><span class="pre">refresh_client</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">access_token</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">refresh_token</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">expiration_date</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">base_url</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">'https://api.pagerduty.com'</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kw</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">Tuple</span><span class="p"><span class="pre">[</span></span><a class="reference internal" href="#pagerduty.RestApiV2Client" title="pagerduty.rest_api_v2_client.RestApiV2Client"><span class="pre">RestApiV2Client</span></a><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">dict</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span><span class="p"><span class="pre">]</span></span></span></span><a class="headerlink" href="#pagerduty.OAuthTokenClient.refresh_client" title="Link to this definition"></a></dt>
-<dd><p>Instantiate and return a <a class="reference internal" href="#pagerduty.RestApiV2Client" title="pagerduty.RestApiV2Client"><code class="xref py py-class docutils literal notranslate"><span class="pre">pagerduty.RestApiV2Client</span></code></a> client object</p>
+<dd><p>Instantiate and return a <a class="reference internal" href="#pagerduty.RestApiV2Client" title="pagerduty.RestApiV2Client"><code class="xref py py-class docutils literal notranslate"><span class="pre">pagerduty.RestApiV2Client</span></code></a> object</p>
 <p>Performs a token refresh if the current time is later than
 <a class="reference internal" href="#pagerduty.OAuthTokenClient.early_refresh_buffer" title="pagerduty.OAuthTokenClient.early_refresh_buffer"><code class="xref py py-attr docutils literal notranslate"><span class="pre">early_refresh_buffer</span></code></a> seconds before the expiration date.</p>
 <dl class="field-list simple">
@@ -766,18 +780,19 @@ i.e. in the dict returned by <a class="reference internal" href="#pagerduty.OAut
 <dd class="field-odd"><ul class="simple">
 <li><p><strong>access_token</strong> – The current REST API access token.</p></li>
 <li><p><strong>refresh_token</strong> – The refresh token required to refresh the access token.</p></li>
-<li><p><strong>expiration_date</strong> – The expiration date of the access token, formatted as an ISO8601 datetime
-string, including the timezone suffix as a UTC offset. The value contained
-in the <code class="docutils literal notranslate"><span class="pre">expiration_date</span></code> key of the amended response dictionary returned
-by any of the “get token” methods should be usable as this parameter.</p></li>
-<li><p><strong>base_url</strong> – The value to use for the <code class="docutils literal notranslate"><span class="pre">url</span></code> attribute of the API client object.</p></li>
-<li><p><strong>kw</strong> – Keyword arguments to pass to the constructor of the API client object.</p></li>
+<li><p><strong>expiration_date</strong> – The expiration date of the access token, formatted as an ISO8601
+datetime string, including the timezone suffix as a UTC offset. The
+value contained in the <code class="docutils literal notranslate"><span class="pre">expiration_date</span></code> key of the amended
+response dictionary returned by any of the “get token” methods
+should be usable as this parameter.</p></li>
+<li><p><strong>base_url</strong> – The value to use for the <code class="docutils literal notranslate"><span class="pre">url</span></code> attribute of the client object.</p></li>
+<li><p><strong>kw</strong> – Keyword arguments to pass to the constructor of the API client.</p></li>
 </ul>
 </dd>
 <dt class="field-even">Returns<span class="colon">:</span></dt>
-<dd class="field-even"><p>A tuple containing a <a class="reference internal" href="#pagerduty.RestApiV2Client" title="pagerduty.RestApiV2Client"><code class="xref py py-class docutils literal notranslate"><span class="pre">pagerduty.RestApiV2Client</span></code></a> object as its first
-element and the the amended OAuth response if a refresh was performed (and
-<code class="docutils literal notranslate"><span class="pre">None</span></code> otherwise) as its second element.</p>
+<dd class="field-even"><p>A tuple containing a <a class="reference internal" href="#pagerduty.RestApiV2Client" title="pagerduty.RestApiV2Client"><code class="xref py py-class docutils literal notranslate"><span class="pre">pagerduty.RestApiV2Client</span></code></a> object as
+its first element and the the amended OAuth response if a refresh
+was performed (and <code class="docutils literal notranslate"><span class="pre">None</span></code> otherwise) as its second element.</p>
 </dd>
 </dl>
 </dd></dl>
@@ -787,9 +802,9 @@ element and the the amended OAuth response if a refresh was performed (and
 <dl class="py class">
 <dt class="sig sig-object py" id="pagerduty.RestApiV2BaseClient">
 <em class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">pagerduty.</span></span><span class="sig-name descname"><span class="pre">RestApiV2BaseClient</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">api_key</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">auth_type</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">'token'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">debug</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">bool</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kw</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#pagerduty.RestApiV2BaseClient" title="Link to this definition"></a></dt>
-<dd><p>Abstract base class for all API clients that support APIs similar to REST API v2.</p>
-<p>This class implements some common features like numeric pagination that also appear
-and are supported to varying degrees outside of REST API v2.</p>
+<dd><p>Abstract base class of API clients supporting APIs similar to REST API v2.</p>
+<p>This class implements some common features like numeric pagination that
+also appear and are supported to varying degrees outside of REST API v2.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
@@ -799,14 +814,14 @@ and are supported to varying degrees outside of REST API v2.</p>
 <blockquote>
 <div><ul>
 <li><p>For OAuth access tokens, set this to <code class="docutils literal notranslate"><span class="pre">oauth2</span></code> or <code class="docutils literal notranslate"><span class="pre">bearer</span></code>.</p></li>
-<li><p>To send the credential string exactly as provided (without any prefix
-formatting), set this to <code class="docutils literal notranslate"><span class="pre">header_passthru</span></code>.</p></li>
+<li><p>To send the credential string exactly as provided (without any
+prefix formatting), set this to <code class="docutils literal notranslate"><span class="pre">header_passthru</span></code>.</p></li>
 <li><p>For classic API tokens, the default value <code class="docutils literal notranslate"><span class="pre">token</span></code> should be used.</p></li>
 </ul>
 </div></blockquote>
 </p></li>
-<li><p><strong>debug</strong> – Sets <a class="reference internal" href="#pagerduty.ApiClient.print_debug" title="pagerduty.ApiClient.print_debug"><code class="xref py py-attr docutils literal notranslate"><span class="pre">pagerduty.ApiClient.print_debug</span></code></a>. Set to <code class="docutils literal notranslate"><span class="pre">True</span></code> to enable verbose
-command-line output.</p></li>
+<li><p><strong>debug</strong> – Sets <a class="reference internal" href="#pagerduty.ApiClient.print_debug" title="pagerduty.ApiClient.print_debug"><code class="xref py py-attr docutils literal notranslate"><span class="pre">pagerduty.ApiClient.print_debug</span></code></a>. Set to <code class="docutils literal notranslate"><span class="pre">True</span></code> to enable
+verbose command-line output.</p></li>
 </ul>
 </dd>
 </dl>
@@ -826,18 +841,19 @@ command-line output.</p></li>
 <dt class="sig sig-object py" id="pagerduty.RestApiV2BaseClient.auth_type">
 <em class="property"><span class="k"><span class="pre">property</span></span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">auth_type</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">str</span></em><a class="headerlink" href="#pagerduty.RestApiV2BaseClient.auth_type" title="Link to this definition"></a></dt>
 <dd><p>Defines the method of API authentication.</p>
-<p>This value determines how the Authorization header will be set. By default this
-is “token”, which will result in the format <code class="docutils literal notranslate"><span class="pre">Token</span> <span class="pre">token=&lt;api_key&gt;</span></code>.</p>
+<p>This value determines how the Authorization header will be set. By
+default this is “token”, which will result in the format <code class="docutils literal notranslate"><span class="pre">Token</span>
+<span class="pre">token=&lt;api_key&gt;</span></code>.</p>
 <p>This property was meant to support the backwards-compatible constructor
-interface where the <code class="docutils literal notranslate"><span class="pre">auth_type</span></code> keyword argument selects the appropriate
-<code class="docutils literal notranslate"><span class="pre">Authorization</span></code> header format (which internally is done through selecting an
-<code class="docutils literal notranslate"><span class="pre">AuthMethod</span></code>).</p>
+interface where the <code class="docutils literal notranslate"><span class="pre">auth_type</span></code> keyword argument selects the
+appropriate <code class="docutils literal notranslate"><span class="pre">Authorization</span></code> header format (which internally is done
+through selecting an <code class="docutils literal notranslate"><span class="pre">AuthMethod</span></code>).</p>
 </dd></dl>
 
 <dl class="py property">
 <dt class="sig sig-object py" id="pagerduty.RestApiV2BaseClient.auth_type_mapping">
 <em class="property"><span class="k"><span class="pre">property</span></span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">auth_type_mapping</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">dict</span></em><a class="headerlink" href="#pagerduty.RestApiV2BaseClient.auth_type_mapping" title="Link to this definition"></a></dt>
-<dd><p>Defines a mapping of valid <a class="reference internal" href="#pagerduty.RestApiV2BaseClient.auth_type" title="pagerduty.RestApiV2BaseClient.auth_type"><code class="xref py py-attr docutils literal notranslate"><span class="pre">auth_type</span></code></a> values to AuthMethod classes.</p>
+<dd><p>Defines a mapping of valid <a class="reference internal" href="#pagerduty.RestApiV2BaseClient.auth_type" title="pagerduty.RestApiV2BaseClient.auth_type"><code class="xref py py-attr docutils literal notranslate"><span class="pre">auth_type</span></code></a> values to AuthMethods.</p>
 </dd></dl>
 
 <dl class="py method">
@@ -859,8 +875,9 @@ interface where the <code class="docutils literal notranslate"><span class="pre"
 <dt class="sig sig-object py" id="pagerduty.RestApiV2BaseClient.canonical_paths">
 <em class="property"><span class="k"><span class="pre">property</span></span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">canonical_paths</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">List</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">]</span></span></em><a class="headerlink" href="#pagerduty.RestApiV2BaseClient.canonical_paths" title="Link to this definition"></a></dt>
 <dd><p>List of canonical paths supported by the particular API client.</p>
-<p>Child classes that do not implement this method do not a-priori support any API
-endpoints for features that require entity wrapping, e.g. pagination.</p>
+<p>Child classes that do not implement this method do not a-priori support
+any API endpoints for features that require entity wrapping, e.g.
+pagination.</p>
 <p>This value is used as the first argument to
 <a class="reference internal" href="#pagerduty.rest_api_v2_base_client.canonical_path" title="pagerduty.rest_api_v2_base_client.canonical_path"><code class="xref py py-attr docutils literal notranslate"><span class="pre">pagerduty.rest_api_v2_base_client.canonical_path</span></code></a> from
 <a class="reference internal" href="#pagerduty.RestApiV2BaseClient.canonical_path" title="pagerduty.RestApiV2BaseClient.canonical_path"><code class="xref py py-attr docutils literal notranslate"><span class="pre">pagerduty.RestApiV2BaseClient.canonical_path</span></code></a>.</p>
@@ -869,7 +886,7 @@ endpoints for features that require entity wrapping, e.g. pagination.</p>
 <dl class="py property">
 <dt class="sig sig-object py" id="pagerduty.RestApiV2BaseClient.cursor_based_pagination_paths">
 <em class="property"><span class="k"><span class="pre">property</span></span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">cursor_based_pagination_paths</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">List</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">]</span></span></em><a class="headerlink" href="#pagerduty.RestApiV2BaseClient.cursor_based_pagination_paths" title="Link to this definition"></a></dt>
-<dd><p>List of paths known by the client to support standard cursor-based pagination.</p>
+<dd><p>List of paths known by the client to support cursor-based pagination.</p>
 </dd></dl>
 
 <dl class="py attribute">
@@ -883,25 +900,25 @@ iterating/querying an index (the <code class="docutils literal notranslate"><spa
 <dt class="sig sig-object py" id="pagerduty.RestApiV2BaseClient.dict_all">
 <span class="sig-name descname"><span class="pre">dict_all</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">path</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">by</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">'id'</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kw</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">dict</span></span></span><a class="headerlink" href="#pagerduty.RestApiV2BaseClient.dict_all" title="Link to this definition"></a></dt>
 <dd><p>Dictionary representation of all results from an index endpoint.</p>
-<p>With the exception of <code class="docutils literal notranslate"><span class="pre">by</span></code>, all keyword arguments passed to this method are
-also passed to <a class="reference internal" href="#pagerduty.RestApiV2BaseClient.iter_all" title="pagerduty.RestApiV2BaseClient.iter_all"><code class="xref py py-attr docutils literal notranslate"><span class="pre">iter_all</span></code></a>; see the documentation on that method for
-further details.</p>
+<p>With the exception of <code class="docutils literal notranslate"><span class="pre">by</span></code>, all keyword arguments passed to this
+method are also passed to <a class="reference internal" href="#pagerduty.RestApiV2BaseClient.iter_all" title="pagerduty.RestApiV2BaseClient.iter_all"><code class="xref py py-attr docutils literal notranslate"><span class="pre">iter_all</span></code></a>; see the documentation on
+that method for further details.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
 <li><p><strong>path</strong> – The index endpoint URL to use.</p></li>
-<li><p><strong>by</strong> – The attribute of each object to use for the key values of the dictionary.
-This is <code class="docutils literal notranslate"><span class="pre">id</span></code> by default. Please note, there is no uniqueness validation,
-so if you use an attribute that is not distinct for the data set, this
-function will omit some data in the results. If a property is named that
-the schema of the API requested does not have, this method will raise
-<code class="docutils literal notranslate"><span class="pre">KeyError</span></code>.</p></li>
+<li><p><strong>by</strong> – The attribute of each object to use for the key values of the
+dictionary.  This is <code class="docutils literal notranslate"><span class="pre">id</span></code> by default. Please note, there is no
+uniqueness validation, so if you use an attribute that is not
+distinct for the data set, this function will omit some data in the
+results. If a property is named that the schema of the API
+requested does not have, this method will raise <code class="docutils literal notranslate"><span class="pre">KeyError</span></code>.</p></li>
 <li><p><strong>kw</strong> – Keyword arguments to pass to <a class="reference internal" href="#pagerduty.RestApiV2BaseClient.iter_all" title="pagerduty.RestApiV2BaseClient.iter_all"><code class="xref py py-attr docutils literal notranslate"><span class="pre">iter_all</span></code></a>.</p></li>
 </ul>
 </dd>
 <dt class="field-even">Returns<span class="colon">:</span></dt>
-<dd class="field-even"><p>A dictionary keyed by the values of the property of each result specified by
-the <code class="docutils literal notranslate"><span class="pre">by</span></code> parameter.</p>
+<dd class="field-even"><p>A dictionary keyed by the values of the property of each result
+specified by the <code class="docutils literal notranslate"><span class="pre">by</span></code> parameter.</p>
 </dd>
 </dl>
 </dd></dl>
@@ -911,14 +928,15 @@ the <code class="docutils literal notranslate"><span class="pre">by</span></code
 <em class="property"><span class="k"><span class="pre">property</span></span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">entity_wrapper_config</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">dict</span></em><a class="headerlink" href="#pagerduty.RestApiV2BaseClient.entity_wrapper_config" title="Link to this definition"></a></dt>
 <dd><p>Entity wrapping antipattern specification for the given client.</p>
 <p>This dictionary object is sent to
-<a class="reference internal" href="#pagerduty.rest_api_v2_base_client.entity_wrappers" title="pagerduty.rest_api_v2_base_client.entity_wrappers"><code class="xref py py-attr docutils literal notranslate"><span class="pre">pagerduty.rest_api_v2_base_client.entity_wrappers</span></code></a> when looking up how
-any given API endpoint wraps (or doesn’t wrap) response and request entities;
-refer to the documentation on that method for further details.</p>
-<p>Child classes should implement this method and return appropriate configuration
-to cover all schema antipatterns in the APIs that they support. It is otherwise
-assumed that all endpoints in its corresponding API follow orthodox entity
-wrapping conventions, in which case the wrapper information can be inferred from
-the path itself.</p>
+<a class="reference internal" href="#pagerduty.rest_api_v2_base_client.entity_wrappers" title="pagerduty.rest_api_v2_base_client.entity_wrappers"><code class="xref py py-attr docutils literal notranslate"><span class="pre">pagerduty.rest_api_v2_base_client.entity_wrappers</span></code></a> when looking
+up how any given API endpoint wraps (or doesn’t wrap) response and
+request entities; refer to the documentation on that method for further
+details.</p>
+<p>Child classes should implement this method and return appropriate
+configuration to cover all schema antipatterns in the APIs that they
+support. It is otherwise assumed that all endpoints in its
+corresponding API follow orthodox entity wrapping conventions, in which
+case the wrapper information can be inferred from the path itself.</p>
 </dd></dl>
 
 <dl class="py method">
@@ -947,14 +965,14 @@ the path itself.</p>
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
 <li><p><strong>url</strong> – The URL of the API endpoint to query</p></li>
-<li><p><strong>params</strong> – An optional dictionary indicating additional parameters to send to the
-endpoint, i.e. filters, time range (<code class="docutils literal notranslate"><span class="pre">since</span></code> and <code class="docutils literal notranslate"><span class="pre">until</span></code>), etc. This may
-influence the total, i.e. if specifying a filter that matches a subset of
-possible results.</p></li>
+<li><p><strong>params</strong> – An optional dictionary indicating additional parameters to send to
+the endpoint, i.e. filters, time range (<code class="docutils literal notranslate"><span class="pre">since</span></code> and <code class="docutils literal notranslate"><span class="pre">until</span></code>),
+etc. This may influence the total, i.e. if specifying a filter that
+matches a subset of possible results.</p></li>
 </ul>
 </dd>
 <dt class="field-even">Returns<span class="colon">:</span></dt>
-<dd class="field-even"><p>The total number of results from the endpoint with the parameters given.</p>
+<dd class="field-even"><p>The total number of results from the endpoint given the parameters.</p>
 </dd>
 </dl>
 </dd></dl>
@@ -964,7 +982,8 @@ possible results.</p></li>
 <span class="sig-name descname"><span class="pre">iter_all</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">url</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">params</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">dict</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">page_size</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">item_hook</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">callable</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">total</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">bool</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">Iterator</span><span class="p"><span class="pre">[</span></span><span class="pre">dict</span><span class="p"><span class="pre">]</span></span></span></span><a class="headerlink" href="#pagerduty.RestApiV2BaseClient.iter_all" title="Link to this definition"></a></dt>
 <dd><p>Iterator for the contents of an index endpoint or query.</p>
 <p>Automatically paginates and yields the results in each page, until all
-matching results have been yielded or a HTTP error response is received.</p>
+matching results have been yielded or a HTTP error response is
+received.</p>
 <p>If the URL to use supports cursor-based pagintation, then this will
 return <a class="reference internal" href="#pagerduty.RestApiV2BaseClient.iter_cursor" title="pagerduty.RestApiV2BaseClient.iter_cursor"><code class="xref py py-attr docutils literal notranslate"><span class="pre">iter_cursor</span></code></a> with the same keyword arguments. Otherwise,
 it implements classic pagination, a.k.a. numeric pagination.</p>
@@ -978,23 +997,25 @@ response.</p>
 <li><p><strong>url</strong> – The index endpoint URL to use.</p></li>
 <li><p><strong>params</strong> – Additional URL parameters to include.</p></li>
 <li><p><strong>page_size</strong> – If set, the <code class="docutils literal notranslate"><span class="pre">page_size</span></code> argument will override the
-<code class="docutils literal notranslate"><span class="pre">default_page_size</span></code> parameter on the session and set the <code class="docutils literal notranslate"><span class="pre">limit</span></code>
-parameter to a custom value (default is 100), altering the number of
-pagination results. The actual number of results in the response
-will still take precedence, if it differs; this parameter and
-<code class="docutils literal notranslate"><span class="pre">default_page_size</span></code> only dictate what is requested of the API.</p></li>
-<li><p><strong>item_hook</strong> – Callable object that will be invoked for each item yielded, i.e. for
-printing progress. It will be called with three parameters: a dict
-representing a given result in the iteration, an int representing the number
-of the item in the series, and a value representing the total number of
-items in the series. If the total isn’t knowable, i.e. the <code class="docutils literal notranslate"><span class="pre">total</span></code>
-parameter is <code class="docutils literal notranslate"><span class="pre">False</span></code> or omitted, the value passed in for the third
-argument will be the string value <code class="docutils literal notranslate"><span class="pre">&quot;?&quot;</span></code>.</p></li>
+<code class="docutils literal notranslate"><span class="pre">default_page_size</span></code> parameter on the session and set the
+<code class="docutils literal notranslate"><span class="pre">limit</span></code> parameter to a custom value (default is 100), altering
+the number of pagination results. The actual number of results in
+the response will still take precedence, if it differs; this
+parameter and <code class="docutils literal notranslate"><span class="pre">default_page_size</span></code> only dictate what is requested
+of the API.</p></li>
+<li><p><strong>item_hook</strong> – Callable object that will be invoked for each item yielded, i.e.
+for printing progress. It will be called with three parameters: a
+dict representing a given result in the iteration, an int
+representing the number of the item in the series, and a value
+representing the total number of items in the series. If the total
+isn’t knowable, i.e. the <code class="docutils literal notranslate"><span class="pre">total</span></code> parameter is <code class="docutils literal notranslate"><span class="pre">False</span></code> or
+omitted, the value passed in for the third argument will be the
+string value <code class="docutils literal notranslate"><span class="pre">&quot;?&quot;</span></code>.</p></li>
 <li><p><strong>total</strong> – If True, the <code class="docutils literal notranslate"><span class="pre">total</span></code> parameter will be included in API calls, and
-the value for the third parameter to the item hook will be the total
-count of records that match the query. Leaving this as False confers
-a small performance advantage, as the API in this case does not have
-to compute the total count of results in the query.</p></li>
+the value for the third parameter to the item hook will be the
+total count of records that match the query. Leaving this as False
+confers a small performance advantage, as the API in this case does
+not have to compute the total count of results in the query.</p></li>
 </ul>
 </dd>
 <dt class="field-even">Yields<span class="colon">:</span></dt>
@@ -1012,8 +1033,8 @@ to compute the total count of results in the query.</p></li>
 <dd class="field-odd"><ul class="simple">
 <li><p><strong>url</strong> – The index endpoint URL to use.</p></li>
 <li><p><strong>params</strong> – Query parameters to include in the request.</p></li>
-<li><p><strong>item_hook</strong> – A callable object that accepts 3 positional arguments; see <a class="reference internal" href="#pagerduty.RestApiV2BaseClient.iter_all" title="pagerduty.RestApiV2BaseClient.iter_all"><code class="xref py py-attr docutils literal notranslate"><span class="pre">iter_all</span></code></a>
-for details on how this argument is used.</p></li>
+<li><p><strong>item_hook</strong> – A callable object that accepts 3 positional arguments; see
+<a class="reference internal" href="#pagerduty.RestApiV2BaseClient.iter_all" title="pagerduty.RestApiV2BaseClient.iter_all"><code class="xref py py-attr docutils literal notranslate"><span class="pre">iter_all</span></code></a> for details on how this argument is used.</p></li>
 <li><p><strong>page_size</strong> – Number of results per page of results (the <code class="docutils literal notranslate"><span class="pre">limit</span></code> parameter). If
 unspecified, <a class="reference internal" href="#pagerduty.RestApiV2BaseClient.default_page_size" title="pagerduty.RestApiV2BaseClient.default_page_size"><code class="xref py py-attr docutils literal notranslate"><span class="pre">default_page_size</span></code></a> will be used.</p></li>
 </ul>
@@ -1033,13 +1054,13 @@ unspecified, <a class="reference internal" href="#pagerduty.RestApiV2BaseClient.
 <dl class="py method">
 <dt class="sig sig-object py" id="pagerduty.RestApiV2BaseClient.jpost">
 <span class="sig-name descname"><span class="pre">jpost</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">resource</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kw</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#pagerduty.RestApiV2BaseClient.jpost" title="Link to this definition"></a></dt>
-<dd><p>Performs a POST request, returning the JSON-decoded body as a dictionary</p>
+<dd><p>Performs a POST request, returning the JSON-decoded body</p>
 </dd></dl>
 
 <dl class="py method">
 <dt class="sig sig-object py" id="pagerduty.RestApiV2BaseClient.jput">
 <span class="sig-name descname"><span class="pre">jput</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">resource</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kw</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#pagerduty.RestApiV2BaseClient.jput" title="Link to this definition"></a></dt>
-<dd><p>Performs a PUT request, returning the JSON-decoded body as a dictionary</p>
+<dd><p>Performs a PUT request, returning the JSON-decoded body</p>
 </dd></dl>
 
 <dl class="py method">
@@ -1077,8 +1098,8 @@ to <a class="reference internal" href="#pagerduty.RestApiV2BaseClient.iter_all" 
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
 <li><p><strong>resource</strong> – The path/URL to which to send the request, or a dict object
-representing an API resource that contains an item with key <code class="docutils literal notranslate"><span class="pre">self</span></code>
-whose value is the URL of the resource.</p></li>
+representing an API resource that contains an item with key
+<code class="docutils literal notranslate"><span class="pre">self</span></code> whose value is the URL of the resource.</p></li>
 <li><p><strong>**kw</strong> – <p>Custom keyword arguments to pass to <code class="docutils literal notranslate"><span class="pre">httpx.Client.delete</span></code></p>
 </p></li>
 </ul>
@@ -1096,8 +1117,8 @@ response.</p>
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
 <li><p><strong>resource</strong> – The path/URL to which to send the request, or a dict object
-representing an API resource that contains an item with key <code class="docutils literal notranslate"><span class="pre">self</span></code>
-whose value is the URL of the resource.</p></li>
+representing an API resource that contains an item with key
+<code class="docutils literal notranslate"><span class="pre">self</span></code> whose value is the URL of the resource.</p></li>
 <li><p><strong>**kw</strong> – <p>Custom keyword arguments to pass to <code class="docutils literal notranslate"><span class="pre">httpx.Client.get</span></code></p>
 </p></li>
 </ul>
@@ -1137,16 +1158,17 @@ index endpoint.</p></li>
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
 <li><p><strong>resource</strong> – The path/URL to which to send the request, or a dict object
-representing an API resource that contains an item with key <code class="docutils literal notranslate"><span class="pre">self</span></code>
-whose value is the URL of the resource.</p></li>
+representing an API resource that contains an item with key
+<code class="docutils literal notranslate"><span class="pre">self</span></code> whose value is the URL of the resource.</p></li>
 <li><p><strong>**kw</strong> – <p>Custom keyword arguments to pass to <code class="docutils literal notranslate"><span class="pre">httpx.Client.put</span></code></p>
 </p></li>
 </ul>
 </dd>
 <dt class="field-even">Returns<span class="colon">:</span></dt>
-<dd class="field-even"><p>The API response after JSON-decoding and unwrapping. In the case of at least
-one Teams endpoint (within REST API v2) and any other future API endpoint
-that responds with 204 No Content, the return value will be None.</p>
+<dd class="field-even"><p>The API response after JSON-decoding and unwrapping. In the case of
+at least one Teams endpoint (within REST API v2) and any other
+future API endpoint that responds with 204 No Content, the return
+value will be None.</p>
 </dd>
 </dl>
 </dd></dl>
@@ -1169,8 +1191,8 @@ that responds with 204 No Content, the return value will be None.</p>
 <dt class="sig sig-object py" id="pagerduty.RestApiV2Client">
 <em class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">pagerduty.</span></span><span class="sig-name descname"><span class="pre">RestApiV2Client</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">api_key</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">default_from</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">auth_type</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">'token'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">debug</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">bool</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kw</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#pagerduty.RestApiV2Client" title="Link to this definition"></a></dt>
 <dd><p>PagerDuty REST API v2 client class.</p>
-<p>Implements abstractions for the particular features of PagerDuty’s REST API v2.
-Inherits from <a class="reference internal" href="#pagerduty.RestApiV2BaseClient" title="pagerduty.RestApiV2BaseClient"><code class="xref py py-class docutils literal notranslate"><span class="pre">pagerduty.RestApiV2BaseClient</span></code></a>.</p>
+<p>Implements abstractions for the particular features of PagerDuty’s REST API
+v2.  Inherits from <a class="reference internal" href="#pagerduty.RestApiV2BaseClient" title="pagerduty.RestApiV2BaseClient"><code class="xref py py-class docutils literal notranslate"><span class="pre">pagerduty.RestApiV2BaseClient</span></code></a>.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
@@ -1178,10 +1200,11 @@ Inherits from <a class="reference internal" href="#pagerduty.RestApiV2BaseClient
 <li><p><strong>default_from</strong> – The default email address to use in the <code class="docutils literal notranslate"><span class="pre">From</span></code> header when making
 API calls using an account-level API access key.</p></li>
 <li><p><strong>auth_type</strong> – The type of credential in use. If authenticating with an OAuth access
-token, this must be set to <code class="docutils literal notranslate"><span class="pre">oauth2</span></code> or <code class="docutils literal notranslate"><span class="pre">bearer</span></code>. This will determine the
-format of the <code class="docutils literal notranslate"><span class="pre">Authorization</span></code> header that is sent to the API in each request.</p></li>
-<li><p><strong>debug</strong> – Sets <a class="reference internal" href="#pagerduty.ApiClient.print_debug" title="pagerduty.ApiClient.print_debug"><code class="xref py py-attr docutils literal notranslate"><span class="pre">pagerduty.ApiClient.print_debug</span></code></a>. Set to <code class="docutils literal notranslate"><span class="pre">True</span></code> to enable verbose
-command line output.</p></li>
+token, this must be set to <code class="docutils literal notranslate"><span class="pre">oauth2</span></code> or <code class="docutils literal notranslate"><span class="pre">bearer</span></code>. This will
+determine the format of the <code class="docutils literal notranslate"><span class="pre">Authorization</span></code> header that is sent to
+the API in each request.</p></li>
+<li><p><strong>debug</strong> – Sets <a class="reference internal" href="#pagerduty.ApiClient.print_debug" title="pagerduty.ApiClient.print_debug"><code class="xref py py-attr docutils literal notranslate"><span class="pre">pagerduty.ApiClient.print_debug</span></code></a>. Set to <code class="docutils literal notranslate"><span class="pre">True</span></code> to enable
+verbose command line output.</p></li>
 </ul>
 </dd>
 </dl>
@@ -1220,22 +1243,25 @@ administrator user can create), this property will be “account”.</p>
 <dt class="sig sig-object py" id="pagerduty.RestApiV2Client.find">
 <span class="sig-name descname"><span class="pre">find</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">resource</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">query</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">attribute</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">'name'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">params</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">dict</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">dict</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span></span><a class="headerlink" href="#pagerduty.RestApiV2Client.find" title="Link to this definition"></a></dt>
 <dd><p>Finds an object of a given resource type exactly matching a query.</p>
-<p>Works by querying a given resource index endpoint using the <code class="docutils literal notranslate"><span class="pre">query</span></code> parameter.
-To use this function on any given resource, the resource’s index must support
-the <code class="docutils literal notranslate"><span class="pre">query</span></code> parameter; otherwise, the function may not work as expected. If
-the index ignores the parameter, for instance, this function will take much
-longer to return; results will not be constrained to those matching the query,
-and so every result in the index will be downloaded and compared against the
-query up until a matching result is found or all results have been checked.</p>
-<p>The comparison between the query and matching results is case-insenitive. When
-determining uniqueness, APIs are mostly case-insensitive, and therefore objects
-with similar characters but differing case can’t even exist. All results (and
-the search query) are for this reason reduced pre-comparison to a common form
-(all-lowercase strings) so that case doesn’t need to match in the query argument
+<p>Works by querying a given resource index endpoint using the <code class="docutils literal notranslate"><span class="pre">query</span></code>
+parameter.  To use this function on any given resource, the resource’s
+index must support the <code class="docutils literal notranslate"><span class="pre">query</span></code> parameter; otherwise, the function may
+not work as expected. If the index ignores the parameter, for instance,
+this function will take much longer to return; results will not be
+constrained to those matching the query, and so every result in the
+index will be downloaded and compared against the query up until a
+matching result is found or all results have been checked.</p>
+<p>The comparison between the query and matching results is
+case-insenitive. When determining uniqueness, APIs are mostly
+case-insensitive, and therefore objects with similar characters but
+differing case can’t even exist. All results (and the search query) are
+for this reason reduced pre-comparison to a common form (all-lowercase
+strings) so that case doesn’t need to match in the query argument
 (which is also interpreted by the API as case-insensitive).</p>
-<p>If said behavior differs for a given API, i.e. the uniqueness constraint on a
-field is case-sensitive, it should still return the correct results because the
-search term sent to the index in the querystring is not lower-cased.</p>
+<p>If said behavior differs for a given API, i.e. the uniqueness
+constraint on a field is case-sensitive, it should still return the
+correct results because the search term sent to the index in the
+querystring is not lower-cased.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
@@ -1244,13 +1270,14 @@ search term sent to the index in the querystring is not lower-cased.</p>
 <li><p><strong>query</strong> – The string to query for in the the index.</p></li>
 <li><p><strong>attribute</strong> – The property of each result to compare against the query value when
 searching for an exact match. By default it is <code class="docutils literal notranslate"><span class="pre">name</span></code>, but when
-searching for user by email (for example) it can be set to <code class="docutils literal notranslate"><span class="pre">email</span></code></p></li>
+searching for user by email (for example) it can be set to
+<code class="docutils literal notranslate"><span class="pre">email</span></code></p></li>
 <li><p><strong>params</strong> – Optional additional parameters to use when querying.</p></li>
 </ul>
 </dd>
 <dt class="field-even">Returns<span class="colon">:</span></dt>
-<dd class="field-even"><p>The dictionary representation of the result, if found; <code class="docutils literal notranslate"><span class="pre">None</span></code> will
-be returned if there is no exact match result.</p>
+<dd class="field-even"><p>The dictionary representation of the result, if found; <code class="docutils literal notranslate"><span class="pre">None</span></code>
+will be returned if there is no exact match result.</p>
 </dd>
 </dl>
 </dd></dl>
@@ -1258,10 +1285,11 @@ be returned if there is no exact match result.</p>
 <dl class="py method">
 <dt class="sig sig-object py" id="pagerduty.RestApiV2Client.iter_alert_grouping_settings">
 <span class="sig-name descname"><span class="pre">iter_alert_grouping_settings</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">service_ids</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">list</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">limit</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">Iterator</span><span class="p"><span class="pre">[</span></span><span class="pre">dict</span><span class="p"><span class="pre">]</span></span></span></span><a class="headerlink" href="#pagerduty.RestApiV2Client.iter_alert_grouping_settings" title="Link to this definition"></a></dt>
-<dd><p>Iterator for the contents of the “List alert grouping settings” endpoint.</p>
-<p>The API endpoint “GET /alert_grouping_settings” has its own unique method of
-pagination. This method provides an abstraction for it similar to what
-<code class="xref py py-attr docutils literal notranslate"><span class="pre">iter_all</span></code> provides for endpoints that implement classic pagination.</p>
+<dd><p>Iterator for the contents of “List alert grouping settings”</p>
+<p>The API endpoint “GET /alert_grouping_settings” has its own unique
+method of pagination. This method provides an abstraction for it
+similar to what <code class="xref py py-attr docutils literal notranslate"><span class="pre">iter_all</span></code> provides for endpoints that implement
+classic pagination.</p>
 <p>See:
 <a class="reference external" href="https://developer.pagerduty.com/api-reference/b9fe211cc2748-list-alert-grouping-settings">List alert grouping settings</a></p>
 <dl class="field-list simple">
@@ -1273,7 +1301,8 @@ pagination. This method provides an abstraction for it similar to what
 </ul>
 </dd>
 <dt class="field-even">Yields<span class="colon">:</span></dt>
-<dd class="field-even"><p>Results from each page in the <code class="docutils literal notranslate"><span class="pre">alert_grouping_settings</span></code> response property.</p>
+<dd class="field-even"><p>Results from each page in the <code class="docutils literal notranslate"><span class="pre">alert_grouping_settings</span></code> response
+property.</p>
 </dd>
 </dl>
 </dd></dl>
@@ -1282,9 +1311,9 @@ pagination. This method provides an abstraction for it similar to what
 <dt class="sig sig-object py" id="pagerduty.RestApiV2Client.iter_analytics_raw_incidents">
 <span class="sig-name descname"><span class="pre">iter_analytics_raw_incidents</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">filters</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">dict</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">order</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">'desc'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">order_by</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">'created_at'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">limit</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">time_zone</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">Iterator</span><span class="p"><span class="pre">[</span></span><span class="pre">dict</span><span class="p"><span class="pre">]</span></span></span></span><a class="headerlink" href="#pagerduty.RestApiV2Client.iter_analytics_raw_incidents" title="Link to this definition"></a></dt>
 <dd><p>Iterator for raw analytics data on multiple incidents.</p>
-<p>The API endpoint <code class="docutils literal notranslate"><span class="pre">POST</span> <span class="pre">/analytics/raw/incidents</span></code> has its own unique method of
-pagination. This method provides an abstraction for it similar to
-<code class="xref py py-attr docutils literal notranslate"><span class="pre">iter_all</span></code>.</p>
+<p>The API endpoint <code class="docutils literal notranslate"><span class="pre">POST</span> <span class="pre">/analytics/raw/incidents</span></code> has its own unique
+method of pagination. This method provides an abstraction for it
+similar to <code class="xref py py-attr docutils literal notranslate"><span class="pre">iter_all</span></code>.</p>
 <p>See:
 <a class="reference external" href="https://developer.pagerduty.com/api-reference/c2d493e995071-get-raw-data-multiple-incidents">Get raw data - multiple incidents</a></p>
 <dl class="field-list simple">
@@ -1292,15 +1321,16 @@ pagination. This method provides an abstraction for it similar to
 <dd class="field-odd"><ul class="simple">
 <li><p><strong>filters</strong> – Dictionary representation of the required <code class="docutils literal notranslate"><span class="pre">filters</span></code> parameters.</p></li>
 <li><p><strong>order</strong> – The order in which to sort results. Must be <code class="docutils literal notranslate"><span class="pre">asc</span></code> or <code class="docutils literal notranslate"><span class="pre">desc</span></code>.</p></li>
-<li><p><strong>order_by</strong> – The attribute of results by which to order results. Must be <code class="docutils literal notranslate"><span class="pre">created_at</span></code>
-or <code class="docutils literal notranslate"><span class="pre">seconds_to_resolve</span></code>.</p></li>
-<li><p><strong>limit</strong> – The number of results to yield per page before requesting the next page. If
-unspecified, <code class="xref py py-attr docutils literal notranslate"><span class="pre">default_page_size</span></code> will be used. The particular API
-endpoint permits values up to 1000.</p></li>
+<li><p><strong>order_by</strong> – The attribute of results by which to order results. Must be
+<code class="docutils literal notranslate"><span class="pre">created_at</span></code> or <code class="docutils literal notranslate"><span class="pre">seconds_to_resolve</span></code>.</p></li>
+<li><p><strong>limit</strong> – The number of results to yield per page before requesting the next
+page. If unspecified, <code class="xref py py-attr docutils literal notranslate"><span class="pre">default_page_size</span></code> will be used. The
+particular API endpoint permits values up to 1000.</p></li>
 </ul>
 </dd>
 <dt class="field-even">Yields<span class="colon">:</span></dt>
-<dd class="field-even"><p>Entries of the <code class="docutils literal notranslate"><span class="pre">data</span></code> property in the response body from each page</p>
+<dd class="field-even"><p>Entries of the <code class="docutils literal notranslate"><span class="pre">data</span></code> property in the response body from each
+page of results</p>
 </dd>
 </dl>
 </dd></dl>
@@ -1309,31 +1339,33 @@ endpoint permits values up to 1000.</p></li>
 <dt class="sig sig-object py" id="pagerduty.RestApiV2Client.iter_history">
 <span class="sig-name descname"><span class="pre">iter_history</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">url</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">since</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">datetime</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">until</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">datetime</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">recursion_depth</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">0</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kw</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">Iterator</span><span class="p"><span class="pre">[</span></span><span class="pre">dict</span><span class="p"><span class="pre">]</span></span></span></span><a class="headerlink" href="#pagerduty.RestApiV2Client.iter_history" title="Link to this definition"></a></dt>
 <dd><p>Yield all historical records from an endpoint in a given time interval.</p>
-<p>This method works around the limitation of classic pagination (see
-<a class="reference internal" href="#pagerduty.rest_api_v2_base_client.ITERATION_LIMIT" title="pagerduty.rest_api_v2_base_client.ITERATION_LIMIT"><code class="xref py py-attr docutils literal notranslate"><span class="pre">pagerduty.rest_api_v2_base_client.ITERATION_LIMIT</span></code></a>) by recursively
-bisecting the initially-provided time interval until the total number of results
-in each sub-interval is less than the hard pagination limit.</p>
+<p>This method works around the hard maximum result limit in classic
+pagination (see: <a class="reference external" href="https://developer.pagerduty.com/docs/pagination">Pagination</a>) by recursively
+bisecting the initially-provided time interval until the total number
+of results in each sub-interval is less than the hard pagination limit.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
-<li><p><strong>url</strong> – Index endpoint (API URL) from which to yield results. In the event that a
-cursor-based pagination endpoint is given, this method calls
-<code class="xref py py-attr docutils literal notranslate"><span class="pre">iter_cursor</span></code> directly, as cursor-based pagination has no such
-limitation.</p></li>
-<li><p><strong>since</strong> – The beginning of the time interval. This must be a non-naïve datetime object
-(i.e. it must be timezone-aware), in order to format the <code class="docutils literal notranslate"><span class="pre">since</span></code> parameter
-when transmitting it to the API such that it unambiguously takes the time
-zone into account. See: <a class="reference external" href="https://docs.python.org/3/library/datetime.html">datetime (Python documentation)</a></p></li>
-<li><p><strong>until</strong> – The end of the time interval. A timezone-aware datetime object must be
-supplied for the same reason as for the <code class="docutils literal notranslate"><span class="pre">since</span></code> parameter.</p></li>
-<li><p><strong>kw</strong> – Custom keyword arguments to pass to the iteration method. Note, if providing
-<code class="docutils literal notranslate"><span class="pre">params</span></code> in order to add query string parameters for filtering, the
-<code class="docutils literal notranslate"><span class="pre">since</span></code> and <code class="docutils literal notranslate"><span class="pre">until</span></code> keys (if present) will be ignored.</p></li>
+<li><p><strong>url</strong> – Index endpoint (API URL) from which to yield results. In the event
+that a cursor-based pagination endpoint is given, this method calls
+<code class="xref py py-attr docutils literal notranslate"><span class="pre">iter_cursor</span></code> directly, as cursor-based pagination has no
+such limitation.</p></li>
+<li><p><strong>since</strong> – The beginning of the time interval. This must be a non-naïve
+datetime object (i.e. it must be timezone-aware), in order to
+format the <code class="docutils literal notranslate"><span class="pre">since</span></code> parameter when transmitting it to the API such
+that it unambiguously takes the time zone into account. See:
+<a class="reference external" href="https://docs.python.org/3/library/datetime.html">datetime (Python documentation)</a></p></li>
+<li><p><strong>until</strong> – The end of the time interval. A timezone-aware datetime object must
+be supplied for the same reason as for the <code class="docutils literal notranslate"><span class="pre">since</span></code> parameter.</p></li>
+<li><p><strong>kw</strong> – Custom keyword arguments to pass to the iteration method. Note, if
+providing <code class="docutils literal notranslate"><span class="pre">params</span></code> in order to add query string parameters for
+filtering, the <code class="docutils literal notranslate"><span class="pre">since</span></code> and <code class="docutils literal notranslate"><span class="pre">until</span></code> keys (if present) will be
+ignored.</p></li>
 </ul>
 </dd>
 <dt class="field-even">Yields<span class="colon">:</span></dt>
-<dd class="field-even"><p>All results from the resource collection API within the time range specified
-by <code class="docutils literal notranslate"><span class="pre">since</span></code> and <code class="docutils literal notranslate"><span class="pre">until</span></code>.</p>
+<dd class="field-even"><p>All results from the resource collection API within the time range
+specified by <code class="docutils literal notranslate"><span class="pre">since</span></code> and <code class="docutils literal notranslate"><span class="pre">until</span></code>.</p>
 </dd>
 </dl>
 </dd></dl>
@@ -1342,12 +1374,14 @@ by <code class="docutils literal notranslate"><span class="pre">since</span></co
 <dt class="sig sig-object py" id="pagerduty.RestApiV2Client.iter_incident_notes">
 <span class="sig-name descname"><span class="pre">iter_incident_notes</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">incident_id</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kw</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">Iterator</span><span class="p"><span class="pre">[</span></span><span class="pre">dict</span><span class="p"><span class="pre">]</span></span></span></span><a class="headerlink" href="#pagerduty.RestApiV2Client.iter_incident_notes" title="Link to this definition"></a></dt>
 <dd><p>Iterator for incident notes.</p>
-<p>This is a filtered iterator for log entries of type <code class="docutils literal notranslate"><span class="pre">annotate_log_entry</span></code>.</p>
+<p>This is a filtered iterator for log entry records of the
+<code class="docutils literal notranslate"><span class="pre">annotate_log_entry</span></code> type.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
-<li><p><strong>incident_id</strong> – Optionally, request log entries for a specific incident. If included, the
-<code class="docutils literal notranslate"><span class="pre">team_ids[]</span></code> query parameter will be removed and ignored.</p></li>
+<li><p><strong>incident_id</strong> – Optionally, request log entries for a specific incident. If
+included, the <code class="docutils literal notranslate"><span class="pre">team_ids[]</span></code> query parameter will be removed and
+ignored.</p></li>
 <li><p><strong>kw</strong> – Custom keyword arguments to send to <code class="xref py py-attr docutils literal notranslate"><span class="pre">iter_all</span></code>.</p></li>
 </ul>
 </dd>
@@ -1360,13 +1394,13 @@ by <code class="docutils literal notranslate"><span class="pre">since</span></co
 <dl class="py method">
 <dt class="sig sig-object py" id="pagerduty.RestApiV2Client.normalize_params">
 <span class="sig-name descname"><span class="pre">normalize_params</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">params</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">dict</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">dict</span></span></span><a class="headerlink" href="#pagerduty.RestApiV2Client.normalize_params" title="Link to this definition"></a></dt>
-<dd><p>Modify the user-supplied parameters to ease implementation</p>
+<dd><p>Modify the user-supplied parameters to ease implementation.</p>
 <p>Current behavior:</p>
 <ul class="simple">
 <li><p>If a parameter’s value is of type list, and the parameter name does
-not already end in “[]”, then the square brackets are appended to keep
-in line with the requirement that all set filters’ parameter names end
-in “[]”.</p></li>
+not already end in “[]”, then the square brackets are appended to
+keep in line with the requirement that all set filters’ parameter
+names end in “[]”.</p></li>
 </ul>
 <dl class="field-list simple">
 <dt class="field-odd">Returns<span class="colon">:</span></dt>
@@ -1381,8 +1415,8 @@ in “[]”.</p></li>
 <dd><p>Finds or creates and returns a resource with a matching attribute</p>
 <p>Given a resource name, an attribute to use as an idempotency key and a
 set of attribute:value pairs as a dict, create a resource with the
-specified attributes if it doesn’t exist already and return the resource
-persisted via the API (whether or not it already existed).</p>
+specified attributes if it doesn’t exist already and return the
+resource persisted via the API (whether or not it already existed).</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
@@ -1395,8 +1429,8 @@ user with the email address given in <code class="docutils literal notranslate">
 <li><p><strong>values</strong> – The content of the resource to be created, if it does not already
 exist. This must contain an item with a key that is the same as the
 <code class="docutils literal notranslate"><span class="pre">attr</span></code> argument.</p></li>
-<li><p><strong>update</strong> – (New in 4.4.0) If set to True, any existing resource will be updated
-with the values supplied.</p></li>
+<li><p><strong>update</strong> – (New in 4.4.0) If set to True, any existing resource will be
+updated with the values supplied.</p></li>
 </ul>
 </dd>
 </dl>
@@ -1406,11 +1440,12 @@ with the values supplied.</p></li>
 <dt class="sig sig-object py" id="pagerduty.RestApiV2Client.rpatch">
 <span class="sig-name descname"><span class="pre">rpatch</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">url</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kw</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#pagerduty.RestApiV2Client.rpatch" title="Link to this definition"></a></dt>
 <dd><p>Wrapped-entity-aware PATCH function.</p>
-<p>Currently the only API endpoint that uses or supports this method is “Update
-Workflow Integration Connection”: <code class="docutils literal notranslate"><span class="pre">PATCH</span>
+<p>Currently the only API endpoint that uses or supports this method is
+“Update Workflow Integration Connection”: <code class="docutils literal notranslate"><span class="pre">PATCH</span>
 <span class="pre">/workflows/integrations/{integration_id}/connections/{id}</span></code></p>
-<p>It cannot use the <code class="xref py py-attr docutils literal notranslate"><span class="pre">resource_url</span></code> decorator because the schema in that case
-has no <code class="docutils literal notranslate"><span class="pre">self</span></code> property, and so the URL or path must be supplied.</p>
+<p>It cannot use the <code class="docutils literal notranslate"><span class="pre">&#64;resource_url</span></code> decorator because the schema in
+that case has no <code class="docutils literal notranslate"><span class="pre">self</span></code> property, and so the URL or path must be
+supplied.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
@@ -1436,16 +1471,18 @@ has no <code class="docutils literal notranslate"><span class="pre">self</span><
 <dt class="sig sig-object py" id="pagerduty.EventsApiV2Client">
 <em class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">pagerduty.</span></span><span class="sig-name descname"><span class="pre">EventsApiV2Client</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">routing_key</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">debug</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">bool</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kw</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#pagerduty.EventsApiV2Client" title="Link to this definition"></a></dt>
 <dd><p>Client class for submitting events to the PagerDuty v2 Events API.</p>
-<p>Implements methods for submitting events to PagerDuty through the Events API,
-including change events, and inherits from <a class="reference internal" href="#pagerduty.ApiClient" title="pagerduty.ApiClient"><code class="xref py py-class docutils literal notranslate"><span class="pre">pagerduty.ApiClient</span></code></a>.  For more
-details on usage of this API, refer to the <a class="reference external" href="https://developer.pagerduty.com/docs/events-api-v2/overview/">Events API v2 documentation</a></p>
+<p>Implements methods for submitting events to PagerDuty through the Events
+API, including change events, and inherits from
+<a class="reference internal" href="#pagerduty.ApiClient" title="pagerduty.ApiClient"><code class="xref py py-class docutils literal notranslate"><span class="pre">pagerduty.ApiClient</span></code></a>.  For more details on usage of this API, refer
+to the <a class="reference external" href="https://developer.pagerduty.com/docs/events-api-v2/overview/">Events API v2 documentation</a></p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
-<li><p><strong>routing_key</strong> – The routing key to use for authentication with the Events API. Sometimes called
-an <code class="docutils literal notranslate"><span class="pre">integration_key</span></code> or <code class="docutils literal notranslate"><span class="pre">service_key</span></code> in legacy integrations.</p></li>
-<li><p><strong>debug</strong> – Sets <a class="reference internal" href="#pagerduty.ApiClient.print_debug" title="pagerduty.ApiClient.print_debug"><code class="xref py py-attr docutils literal notranslate"><span class="pre">pagerduty.ApiClient.print_debug</span></code></a>. Set to <code class="docutils literal notranslate"><span class="pre">True</span></code> to enable verbose
-command line output.</p></li>
+<li><p><strong>routing_key</strong> – The routing key to use for authentication with the Events API.
+Sometimes called an <code class="docutils literal notranslate"><span class="pre">integration_key</span></code> or <code class="docutils literal notranslate"><span class="pre">service_key</span></code> in legacy
+integrations.</p></li>
+<li><p><strong>debug</strong> – Sets <a class="reference internal" href="#pagerduty.ApiClient.print_debug" title="pagerduty.ApiClient.print_debug"><code class="xref py py-attr docutils literal notranslate"><span class="pre">pagerduty.ApiClient.print_debug</span></code></a>. Set to <code class="docutils literal notranslate"><span class="pre">True</span></code> to enable
+verbose command line output.</p></li>
 </ul>
 </dd>
 </dl>
@@ -1455,7 +1492,7 @@ command line output.</p></li>
 <dd><p>Acknowledge an alert via Events API.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
-<dd class="field-odd"><p><strong>dedup_key</strong> – The deduplication key of the alert to set to the acknowledged state.</p>
+<dd class="field-odd"><p><strong>dedup_key</strong> – The deduplication key of the alert to set as acknowledged.</p>
 </dd>
 <dt class="field-even">Returns<span class="colon">:</span></dt>
 <dd class="field-even"><p>The deduplication key</p>
@@ -1482,8 +1519,9 @@ command line output.</p></li>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
-<li><p><strong>payload</strong> – A dictionary object with keys <code class="docutils literal notranslate"><span class="pre">summary</span></code>, <code class="docutils literal notranslate"><span class="pre">source</span></code>, <code class="docutils literal notranslate"><span class="pre">timestamp</span></code> and
-<code class="docutils literal notranslate"><span class="pre">custom_details</span></code> as described in the above documentation.</p></li>
+<li><p><strong>payload</strong> – A dictionary object with keys <code class="docutils literal notranslate"><span class="pre">summary</span></code>, <code class="docutils literal notranslate"><span class="pre">source</span></code>,
+<code class="docutils literal notranslate"><span class="pre">timestamp</span></code> and <code class="docutils literal notranslate"><span class="pre">custom_details</span></code> as described in the above
+documentation.</p></li>
 <li><p><strong>links</strong> – A list of dictionary objects each with keys <code class="docutils literal notranslate"><span class="pre">href</span></code> and <code class="docutils literal notranslate"><span class="pre">text</span></code>
 representing the target and display text of each link</p></li>
 <li><p><strong>images</strong> – Optional list of images to attach to the change event.</p></li>
@@ -1520,17 +1558,18 @@ this would include <code class="docutils literal notranslate"><span class="pre">
 <span class="sig-name descname"><span class="pre">submit</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">summary</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">source</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">custom_details</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">dict</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">links</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">List</span><span class="p"><span class="pre">[</span></span><span class="pre">dict</span><span class="p"><span class="pre">]</span></span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">timestamp</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#pagerduty.EventsApiV2Client.submit" title="Link to this definition"></a></dt>
 <dd><p>Submit a change event.</p>
 <p>See: <a class="reference external" href="https://developer.pagerduty.com/docs/send-change-event">https://developer.pagerduty.com/docs/send-change-event</a></p>
-<p>This is a wrapper method for <a class="reference internal" href="#pagerduty.EventsApiV2Client.send_change_event" title="pagerduty.EventsApiV2Client.send_change_event"><code class="xref py py-attr docutils literal notranslate"><span class="pre">send_change_event</span></code></a> that composes an event
-payload from keyword arguments and an auto-generated event timestamp. To send an
-event with a wholly custom payload, use <a class="reference internal" href="#pagerduty.EventsApiV2Client.send_change_event" title="pagerduty.EventsApiV2Client.send_change_event"><code class="xref py py-attr docutils literal notranslate"><span class="pre">send_change_event</span></code></a> instead.</p>
+<p>This is a wrapper method for <a class="reference internal" href="#pagerduty.EventsApiV2Client.send_change_event" title="pagerduty.EventsApiV2Client.send_change_event"><code class="xref py py-attr docutils literal notranslate"><span class="pre">send_change_event</span></code></a> that composes an
+event payload from keyword arguments and an auto-generated event
+timestamp. To send an event with a wholly custom payload, use
+<a class="reference internal" href="#pagerduty.EventsApiV2Client.send_change_event" title="pagerduty.EventsApiV2Client.send_change_event"><code class="xref py py-attr docutils literal notranslate"><span class="pre">send_change_event</span></code></a> instead.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
 <li><p><strong>summary</strong> (<em>str</em>) – Summary / brief description of the change, for <code class="docutils literal notranslate"><span class="pre">payload.summary</span></code>.</p></li>
 <li><p><strong>source</strong> (<em>str</em>) – A human-readable name identifying the source of the change, for the
 <code class="docutils literal notranslate"><span class="pre">payload.source</span></code> event property.</p></li>
-<li><p><strong>custom_details</strong> (<em>dict</em>) – A dictionary object to use as the <code class="docutils literal notranslate"><span class="pre">payload.custom_details</span></code> property.</p></li>
-<li><p><strong>links</strong> (<em>list</em>) – A list of dict objects to use as the <code class="docutils literal notranslate"><span class="pre">links</span></code> property of the event.</p></li>
+<li><p><strong>custom_details</strong> (<em>dict</em>) – A dictionary object to use as property <code class="docutils literal notranslate"><span class="pre">payload.custom_details</span></code></p></li>
+<li><p><strong>links</strong> (<em>list</em>) – A list of dict objects to use as property <code class="docutils literal notranslate"><span class="pre">links</span></code> in the event.</p></li>
 <li><p><strong>timestamp</strong> (<em>str</em>) – Specifies an event timestamp. Must be an ISO8601-format date/time.</p></li>
 </ul>
 </dd>
@@ -1573,7 +1612,8 @@ override the property set in the <code class="docutils literal notranslate"><spa
 <em class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">pagerduty.</span></span><span class="sig-name descname"><span class="pre">JiraCloudIntegrationApiClient</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">api_key</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">auth_type</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">'token'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">debug</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">bool</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kw</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#pagerduty.JiraCloudIntegrationApiClient" title="Link to this definition"></a></dt>
 <dd><p>Client for the PagerDuty Jira Server Integration API.</p>
 <p>Inherits from <a class="reference internal" href="#pagerduty.RestApiV2BaseClient" title="pagerduty.RestApiV2BaseClient"><code class="xref py py-class docutils literal notranslate"><span class="pre">pagerduty.RestApiV2BaseClient</span></code></a>.</p>
-<p>This client provides an abstraction layer for the <a class="reference external" href="https://developer.pagerduty.com/api-reference/70ea43d07719f-pager-duty-jira-cloud-integration-api">PagerDuty Jira Cloud Integration API</a>.</p>
+<p>This client provides an abstraction layer for the <a class="reference external" href="https://developer.pagerduty.com/api-reference/70ea43d07719f-pager-duty-jira-cloud-integration-api">PagerDuty Jira Cloud
+Integration API</a>.</p>
 <p>For constructor arguments, see <a class="reference internal" href="#pagerduty.RestApiV2BaseClient" title="pagerduty.RestApiV2BaseClient"><code class="xref py py-class docutils literal notranslate"><span class="pre">pagerduty.RestApiV2BaseClient</span></code></a>.</p>
 </dd></dl>
 
@@ -1582,20 +1622,21 @@ override the property set in the <code class="docutils literal notranslate"><spa
 <em class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">pagerduty.</span></span><span class="sig-name descname"><span class="pre">JiraServerIntegrationApiClient</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">access_token</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">jira_signature_token</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">debug</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">bool</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kw</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#pagerduty.JiraServerIntegrationApiClient" title="Link to this definition"></a></dt>
 <dd><p>Client for the PagerDuty Jira Server Integration API.</p>
 <p>Inherits from <a class="reference internal" href="#pagerduty.RestApiV2BaseClient" title="pagerduty.RestApiV2BaseClient"><code class="xref py py-class docutils literal notranslate"><span class="pre">pagerduty.RestApiV2BaseClient</span></code></a>.</p>
-<p>This client provides an abstraction layer for the <a class="reference external" href="https://developer.pagerduty.com/api-reference/47fca619cb161-pager-duty-jira-server-integration-api">PagerDuty Jira Server Integration
-API</a>.</p>
+<p>This client provides an abstraction layer for the <a class="reference external" href="https://developer.pagerduty.com/api-reference/47fca619cb161-pager-duty-jira-server-integration-api">PagerDuty Jira Server
+Integration API</a>.</p>
 <p>Its documentation indicates that it only supports “Bearer” (OAuth-based)
-authentication and does not support the original token-style API authentication. For
-that reason, its constructor does not accept an “auth_type” argument, and it is
-assumed that the provided OAuth token was generated using an OAuth flow.</p>
+authentication and does not support the original token-style API
+authentication. For that reason, its constructor does not accept an
+“auth_type” argument, and it is assumed that the provided OAuth token was
+generated using an OAuth flow.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
 <li><p><strong>access_token</strong> – OAuth access token (Bearer token) obtained via an OAuth flow</p></li>
-<li><p><strong>jira_signature_token</strong> – Connected Jira instance signature token. This validates the connection between
-PagerDuty and a specific Jira instance.</p></li>
-<li><p><strong>debug</strong> – Sets <a class="reference internal" href="#pagerduty.ApiClient.print_debug" title="pagerduty.ApiClient.print_debug"><code class="xref py py-attr docutils literal notranslate"><span class="pre">pagerduty.ApiClient.print_debug</span></code></a>. Set to <code class="docutils literal notranslate"><span class="pre">True</span></code> to enable verbose
-command line output.</p></li>
+<li><p><strong>jira_signature_token</strong> – Connected Jira instance signature token. This validates the connection
+between PagerDuty and a specific Jira instance.</p></li>
+<li><p><strong>debug</strong> – Sets <a class="reference internal" href="#pagerduty.ApiClient.print_debug" title="pagerduty.ApiClient.print_debug"><code class="xref py py-attr docutils literal notranslate"><span class="pre">pagerduty.ApiClient.print_debug</span></code></a>. Set to <code class="docutils literal notranslate"><span class="pre">True</span></code> to enable
+verbose command line output.</p></li>
 </ul>
 </dd>
 </dl>
@@ -1606,12 +1647,13 @@ command line output.</p></li>
 <em class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">pagerduty.</span></span><span class="sig-name descname"><span class="pre">MsTeamsIntegrationApiClient</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">api_key</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">debug</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">bool</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kw</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#pagerduty.MsTeamsIntegrationApiClient" title="Link to this definition"></a></dt>
 <dd><p>Client for the PagerDuty Microsoft Teams Integration API.</p>
 <p>Inherits from <a class="reference internal" href="#pagerduty.RestApiV2BaseClient" title="pagerduty.RestApiV2BaseClient"><code class="xref py py-class docutils literal notranslate"><span class="pre">pagerduty.RestApiV2BaseClient</span></code></a>.</p>
-<p>This client provides an abstraction layer for the <a class="reference external" href="https://developer.pagerduty.com/api-reference/2a7de89c77dc8-pager-duty-ms-teams-integration-api">PagerDuty MS Teams Integration
-API</a>.</p>
-<p>Its documentation indicates that it only supports the original “Token” style
-authentication and does not support OAuth token (“Bearer”) authentication. For that
-reason, its constructor does not accept an “auth_type” argument, and it is assumed
-that the provided API key was generated through the PagerDuty web UI.</p>
+<p>This client provides an abstraction layer for the <a class="reference external" href="https://developer.pagerduty.com/api-reference/2a7de89c77dc8-pager-duty-ms-teams-integration-api">PagerDuty MS Teams
+Integration API</a>.</p>
+<p>Its documentation indicates that it only supports the original “Token”
+style authentication and does not support OAuth token (“Bearer”)
+authentication. For that reason, its constructor does not accept an
+“auth_type” argument, and it is assumed that the provided API key was
+generated through the PagerDuty web UI.</p>
 <p>For constructor arguments, see <a class="reference internal" href="#pagerduty.ApiClient" title="pagerduty.ApiClient"><code class="xref py py-class docutils literal notranslate"><span class="pre">pagerduty.ApiClient</span></code></a>.</p>
 </dd></dl>
 
@@ -1632,10 +1674,11 @@ except for the “Slack Connections” features, which are supported by
 <em class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">pagerduty.</span></span><span class="sig-name descname"><span class="pre">SlackIntegrationConnectionsApiClient</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">api_key</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">auth_type</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">'token'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">debug</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">bool</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#pagerduty.SlackIntegrationConnectionsApiClient" title="Link to this definition"></a></dt>
 <dd><p>Client for the PagerDuty Slack Integration API’s “Connections” endpoints.</p>
 <p>Inherits from <a class="reference internal" href="#pagerduty.RestApiV2BaseClient" title="pagerduty.RestApiV2BaseClient"><code class="xref py py-class docutils literal notranslate"><span class="pre">pagerduty.RestApiV2BaseClient</span></code></a>.</p>
-<p>This client provides an abstraction layer for the
-<a class="reference external" href="https://developer.pagerduty.com/api-reference/56fee4184eabc-pager-duty-slack-integration-api">PagerDuty Slack Integration API</a>,
-specifically the “Connections” API endpoints, which use a different hostname in
-the base URL, <code class="docutils literal notranslate"><span class="pre">app.pagerduty.com</span></code>, as opposed to <code class="docutils literal notranslate"><span class="pre">api.pagerduty.com</span></code>.</p>
+<p>This client provides an abstraction layer for the <a class="reference external" href="https://developer.pagerduty.com/api-reference/56fee4184eabc-pager-duty-slack-integration-api">PagerDuty Slack
+Integration API</a>,
+specifically the “Connections” API endpoints, which use a different
+hostname in the base URL, <code class="docutils literal notranslate"><span class="pre">app.pagerduty.com</span></code>, as opposed to
+<code class="docutils literal notranslate"><span class="pre">api.pagerduty.com</span></code>.</p>
 <p>For constructor arguments, see <a class="reference internal" href="#pagerduty.RestApiV2BaseClient" title="pagerduty.RestApiV2BaseClient"><code class="xref py py-class docutils literal notranslate"><span class="pre">pagerduty.RestApiV2BaseClient</span></code></a>.</p>
 </dd></dl>
 
@@ -1644,8 +1687,8 @@ the base URL, <code class="docutils literal notranslate"><span class="pre">app.p
 <em class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">pagerduty.</span></span><span class="sig-name descname"><span class="pre">McpApiClient</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">auth_method</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="#pagerduty.auth_method.AuthMethod" title="pagerduty.auth_method.AuthMethod"><span class="pre">AuthMethod</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">debug</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kw</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#pagerduty.McpApiClient" title="Link to this definition"></a></dt>
 <dd><p>Client class for the PagerDuty MCP API</p>
 <p>Usage example:</p>
-<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="c1"># Import and use OAuthTokenAuthMethod instead of TokenAuthMethod to use an</span>
-<span class="c1"># application OAuth token:</span>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="c1"># Import and use OAuthTokenAuthMethod instead of TokenAuthMethod to use</span>
+<span class="c1"># an application OAuth token:</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">pagerduty</span><span class="w"> </span><span class="kn">import</span> <span class="p">(</span>
     <span class="n">McpApiClient</span><span class="p">,</span>
     <span class="n">TokenAuthMethod</span>
@@ -1667,13 +1710,14 @@ the base URL, <code class="docutils literal notranslate"><span class="pre">app.p
 <dd class="field-odd"><ul class="simple">
 <li><p><strong>method</strong> – The JSON-RPC method to invoke.</p></li>
 <li><p><strong>params</strong> – The parameters to send to the RPC method.</p></li>
-<li><p><strong>req_id</strong> – A unique ID to send with the request. A random UUID will be used if this
-argument is unspecified; the ID will then be passed back in the response.</p></li>
+<li><p><strong>req_id</strong> – A unique ID to send with the request. A random UUID will be used if
+this argument is unspecified; the ID will then be passed back in
+the response.</p></li>
 </ul>
 </dd>
 <dt class="field-even">Returns<span class="colon">:</span></dt>
-<dd class="field-even"><p>The JSON-decoded response body; it will be a dictionary containing a
-“result” key with the response data.</p>
+<dd class="field-even"><p>The JSON-decoded response body; it will be a dictionary containing
+a “result” key with the response data.</p>
 </dd>
 </dl>
 </dd></dl>
@@ -1684,17 +1728,14 @@ argument is unspecified; the ID will then be passed back in the response.</p></l
 <dt class="sig sig-object py" id="pagerduty.ScimApiClient">
 <em class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">pagerduty.</span></span><span class="sig-name descname"><span class="pre">ScimApiClient</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">auth_method</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="#pagerduty.auth_method.AuthMethod" title="pagerduty.auth_method.AuthMethod"><span class="pre">AuthMethod</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">debug</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kw</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#pagerduty.ScimApiClient" title="Link to this definition"></a></dt>
 <dd><p>Client class for the PagerDuty SCIM API.</p>
-<p>This class features a method <a class="reference internal" href="#pagerduty.ScimApiClient.list_users" title="pagerduty.ScimApiClient.list_users"><code class="xref py py-attr docutils literal notranslate"><span class="pre">list_users</span></code></a> that provides an interface for
-retrieving all users that match a given filter.</p>
-<p>Other endpoints of the PagerDuty SCIM API can be accessed through the standard
-methods named after the HTTP methods.</p>
+<p>This class features a method <a class="reference internal" href="#pagerduty.ScimApiClient.list_users" title="pagerduty.ScimApiClient.list_users"><code class="xref py py-attr docutils literal notranslate"><span class="pre">list_users</span></code></a> that provides an interface
+for retrieving all users that match a given filter.</p>
+<p>Other endpoints of the PagerDuty SCIM API can be accessed through the
+standard methods named after the HTTP methods.</p>
 <p>Usage example:</p>
-<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="c1"># Import and use OAuthTokenAuthMethod instead of TokenAuthMethod to use an</span>
-<span class="c1"># application OAuth token:</span>
-<span class="kn">from</span><span class="w"> </span><span class="nn">pagerduty</span><span class="w"> </span><span class="kn">import</span> <span class="p">(</span>
-    <span class="n">ScimApiClient</span><span class="p">,</span>
-    <span class="n">TokenAuthMethod</span>
-<span class="p">)</span>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="c1"># Import and use OAuthTokenAuthMethod instead of TokenAuthMethod to use</span>
+<span class="c1"># an application OAuth token:</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">pagerduty</span><span class="w"> </span><span class="kn">import</span> <span class="n">ScimApiClient</span><span class="p">,</span> <span class="n">TokenAuthMethod</span>
 
 <span class="c1"># Instantiate:</span>
 <span class="n">client</span> <span class="o">=</span> <span class="n">ScimApiClient</span><span class="p">(</span><span class="n">TokenAuthMethod</span><span class="p">(</span><span class="n">API_KEY</span><span class="p">))</span>
@@ -1756,17 +1797,18 @@ may not authenticate properly with the API in question. Refer to its
 <dt class="sig sig-object py" id="pagerduty.auth_method.AuthMethod">
 <em class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">pagerduty.auth_method.</span></span><span class="sig-name descname"><span class="pre">AuthMethod</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">secret</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#pagerduty.auth_method.AuthMethod" title="Link to this definition"></a></dt>
 <dd><p>An abstract class for authentication methods.</p>
-<p><strong>Design note:</strong> we currently still implement our own interface for API authentication
-instead of making a custom <code class="docutils literal notranslate"><span class="pre">httpx.AuthType</span></code> (which would be more elegant and
-require less bespoke code) because some of our APIs’ authorization methods require
-adding parameters to the body. Once the <code class="docutils literal notranslate"><span class="pre">Request</span></code> object has been instantiated,
-its body is already encoded based on the <code class="docutils literal notranslate"><span class="pre">json</span></code> keyword argument to its
-constructor. Therefore, it has no concept of “body parameters” that can be trivially
-updated in the scope of <code class="docutils literal notranslate"><span class="pre">AuthType.auth_flow()</span></code>, unless we were to implement our
-own custom <code class="docutils literal notranslate"><span class="pre">Request</span></code> subclass that is aware of its body payload being a map-like
-object and rewrite the <a class="reference internal" href="#pagerduty.ApiClient.request" title="pagerduty.ApiClient.request"><code class="xref py py-attr docutils literal notranslate"><span class="pre">pagerduty.ApiClient.request</span></code></a> method to prepare and
-send requests. Such a deep level of customization may make the client more brittle
-to upstream changes.</p>
+<p><strong>Design note:</strong> we currently still implement our own interface for API
+authentication instead of making a custom <code class="docutils literal notranslate"><span class="pre">httpx.AuthType</span></code> (which would
+be more elegant and require less bespoke code) because some of our APIs’
+authorization methods require adding parameters to the body. Once the
+<code class="docutils literal notranslate"><span class="pre">Request</span></code> object has been instantiated, its body is already encoded based
+on the <code class="docutils literal notranslate"><span class="pre">json</span></code> keyword argument to its constructor. Therefore, it has no
+concept of “body parameters” that can be trivially updated in the scope of
+<code class="docutils literal notranslate"><span class="pre">AuthType.auth_flow()</span></code>, unless we were to implement our own custom
+<code class="docutils literal notranslate"><span class="pre">Request</span></code> subclass that is aware of its body payload being a map-like
+object and rewrite the <a class="reference internal" href="#pagerduty.ApiClient.request" title="pagerduty.ApiClient.request"><code class="xref py py-attr docutils literal notranslate"><span class="pre">pagerduty.ApiClient.request</span></code></a> method to
+prepare and send requests. Such a deep level of customization may make the
+client more brittle to upstream changes.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><p><strong>secret</strong> – The API credential to be used for authentication.</p>
@@ -1782,7 +1824,7 @@ the PagerDuty API</p>
 <dl class="py property">
 <dt class="sig sig-object py" id="pagerduty.auth_method.AuthMethod.auth_param">
 <em class="property"><span class="k"><span class="pre">property</span></span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">auth_param</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">dict</span></em><a class="headerlink" href="#pagerduty.auth_method.AuthMethod.auth_param" title="Link to this definition"></a></dt>
-<dd><p>Generates an authentication parameter to go into the body of the request.</p>
+<dd><p>Generates an authentication parameter for the body of the request.</p>
 </dd></dl>
 
 <dl class="py property">
@@ -1803,24 +1845,26 @@ the PagerDuty API</p>
 <dt class="sig sig-object py" id="pagerduty.auth_method.HeaderAuthMethod">
 <em class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">pagerduty.auth_method.</span></span><span class="sig-name descname"><span class="pre">HeaderAuthMethod</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">secret</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#pagerduty.auth_method.HeaderAuthMethod" title="Link to this definition"></a></dt>
 <dd><p>Abstract base class for auth methods that authenticate using request headers.</p>
-<p>In this class, <code class="docutils literal notranslate"><span class="pre">auth_param</span></code> is defined such that it injects no parameters into the
-body of the request by default, leaving <code class="docutils literal notranslate"><span class="pre">auth_header</span></code> un-implemented.</p>
+<p>In this class, <code class="docutils literal notranslate"><span class="pre">auth_param</span></code> is defined such that it injects no parameters
+into the body of the request by default, leaving <code class="docutils literal notranslate"><span class="pre">auth_header</span></code>
+un-implemented.</p>
 </dd></dl>
 
 <dl class="py class">
 <dt class="sig sig-object py" id="pagerduty.auth_method.BodyParameterAuthMethod">
 <em class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">pagerduty.auth_method.</span></span><span class="sig-name descname"><span class="pre">BodyParameterAuthMethod</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">secret</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#pagerduty.auth_method.BodyParameterAuthMethod" title="Link to this definition"></a></dt>
-<dd><p>Abstract base class for auth methods that authenticate using a body parameter.</p>
-<p>In this class, <code class="docutils literal notranslate"><span class="pre">auth_header</span></code> is defined such that it adds no headers to the
-request, but it leaves <code class="docutils literal notranslate"><span class="pre">auth_param</span></code> un-implemented to require its implementation.</p>
+<dd><p>Abstract base class for APIs that authenticate using a body parameter.</p>
+<p>In this class, <code class="docutils literal notranslate"><span class="pre">auth_header</span></code> is defined such that it adds no headers to
+the request, but it leaves <code class="docutils literal notranslate"><span class="pre">auth_param</span></code> un-implemented to require its
+implementation.</p>
 </dd></dl>
 
 <dl class="py class">
 <dt class="sig sig-object py" id="pagerduty.rest_api_v2_base_client.TokenAuthMethod">
 <em class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">pagerduty.rest_api_v2_base_client.</span></span><span class="sig-name descname"><span class="pre">TokenAuthMethod</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">secret</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#pagerduty.rest_api_v2_base_client.TokenAuthMethod" title="Link to this definition"></a></dt>
 <dd><p>AuthMethod class for the “token” header authentication style.</p>
-<p>This AuthMethod is used primarily in REST API v2 but also is used in some similar
-integration APIs.</p>
+<p>This AuthMethod is used primarily in REST API v2 but also is used in some
+similar integration APIs.</p>
 </dd></dl>
 
 <dl class="py class">
@@ -1832,24 +1876,25 @@ integration APIs.</p>
 <dl class="py class">
 <dt class="sig sig-object py" id="pagerduty.auth_method.PassThruHeaderAuthMethod">
 <em class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">pagerduty.auth_method.</span></span><span class="sig-name descname"><span class="pre">PassThruHeaderAuthMethod</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">secret</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#pagerduty.auth_method.PassThruHeaderAuthMethod" title="Link to this definition"></a></dt>
-<dd><p>Auth method that sets the <code class="docutils literal notranslate"><span class="pre">Authorization</span></code> header equal to <code class="docutils literal notranslate"><span class="pre">secret</span></code>, verbatim.</p>
-<p>This is for use cases where an <code class="docutils literal notranslate"><span class="pre">Authorization</span></code> header must be passed through for
-authentication, i.e. in an API proxy or MCP server.</p>
+<dd><p>Auth method that sets the <code class="docutils literal notranslate"><span class="pre">Authorization</span></code> header verbatim.</p>
+<p>This is for use cases where an <code class="docutils literal notranslate"><span class="pre">Authorization</span></code> header must be passed
+through for authentication, i.e. in an API proxy or MCP server.</p>
 </dd></dl>
 
 <dl class="py class">
 <dt class="sig sig-object py" id="pagerduty.events_api_v2_client.RoutingKeyAuthMethod">
 <em class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">pagerduty.events_api_v2_client.</span></span><span class="sig-name descname"><span class="pre">RoutingKeyAuthMethod</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">secret</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#pagerduty.events_api_v2_client.RoutingKeyAuthMethod" title="Link to this definition"></a></dt>
-<dd><p>AuthMethod for Events API V2, which requires a <code class="docutils literal notranslate"><span class="pre">routing_key</span></code> parameter be set in
-the request body.</p>
+<dd><p>AuthMethod for Events API V2.</p>
+<p>Requires a <code class="docutils literal notranslate"><span class="pre">routing_key</span></code> parameter be set in the request body.</p>
 </dd></dl>
 
 <dl class="py class">
 <dt class="sig sig-object py" id="pagerduty.oauth_token_client.ClientCredentialsAuthMethod">
 <em class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">pagerduty.oauth_token_client.</span></span><span class="sig-name descname"><span class="pre">ClientCredentialsAuthMethod</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">client_secret</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">client_id</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#pagerduty.oauth_token_client.ClientCredentialsAuthMethod" title="Link to this definition"></a></dt>
 <dd><p>AuthMethod used in OAuth token exchange requests.</p>
-<p>This AuthMethod requires the client secret and client ID, which are then transmitted
-to identity.pagerduty.com as parameters in the HTML form-encoded body.</p>
+<p>This AuthMethod requires the client secret and client ID, which are then
+transmitted to identity.pagerduty.com as parameters in the HTML
+form-encoded body.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
@@ -1914,9 +1959,10 @@ For instance, instead of this:</p>
 <dt class="sig sig-object py" id="pagerduty.ServerHttpError">
 <em class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">pagerduty.</span></span><span class="sig-name descname"><span class="pre">ServerHttpError</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">message</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">response</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Response</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#pagerduty.ServerHttpError" title="Link to this definition"></a></dt>
 <dd><p>Error class representing failed expectations made of the server.</p>
-<p>This is raised in cases where the response schema differs from the expected schema
-because of an API bug, or because it’s an early access endpoint and changes before
-GA, or in cases of HTTP status 5xx where a successful response is required.</p>
+<p>This is raised in cases where the response schema differs from the expected
+schema because of an API bug, or because it’s an early access endpoint and
+changes before GA, or in cases of HTTP status 5xx where a successful
+response is required.</p>
 </dd></dl>
 
 <dl class="py class">
@@ -1951,13 +1997,14 @@ compatibility, but new features will not, going forward.</p>
 <dd><p>The default timeout in seconds for any given HTTP request.</p>
 <p>Modifying this value will not affect any preexisting API session instances.
 Rather, it will only affect new instances. It is recommended to use
-<a class="reference internal" href="#pagerduty.ApiClient.timeout" title="pagerduty.ApiClient.timeout"><code class="xref py py-attr docutils literal notranslate"><span class="pre">pagerduty.ApiClient.timeout</span></code></a> to configure the timeout for a given session.</p>
+<a class="reference internal" href="#pagerduty.ApiClient.timeout" title="pagerduty.ApiClient.timeout"><code class="xref py py-attr docutils literal notranslate"><span class="pre">pagerduty.ApiClient.timeout</span></code></a> to configure the timeout for a given
+session.</p>
 </dd></dl>
 
 <dl class="py function">
 <dt class="sig sig-object py" id="pagerduty.common.datetime_intervals">
 <span class="sig-prename descclassname"><span class="pre">pagerduty.common.</span></span><span class="sig-name descname"><span class="pre">datetime_intervals</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">since</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">datetime</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">until</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">datetime</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">n</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">10</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">List</span><span class="p"><span class="pre">[</span></span><span class="pre">Tuple</span><span class="p"><span class="pre">[</span></span><span class="pre">datetime</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">datetime</span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">]</span></span></span></span><a class="headerlink" href="#pagerduty.common.datetime_intervals" title="Link to this definition"></a></dt>
-<dd><p>Break up a given time interval into a series of smaller consecutive time intervals.</p>
+<dd><p>Subdivide a given time interval into smaller consecutive intervals.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
@@ -1967,9 +2014,9 @@ Rather, it will only affect new instances. It is recommended to use
 </ul>
 </dd>
 <dt class="field-even">Returns<span class="colon">:</span></dt>
-<dd class="field-even"><p>A list of tuples representing beginnings and ends of sub-intervals within the
-time interval. If the resulting intervals would be less than one second, they
-will be one second.</p>
+<dd class="field-even"><p>A list of tuples representing beginnings and ends of sub-intervals
+within the time interval. If the resulting intervals would be less than
+one second, they will be one second.</p>
 </dd>
 </dl>
 </dd></dl>
@@ -1977,7 +2024,7 @@ will be one second.</p>
 <dl class="py function">
 <dt class="sig sig-object py" id="pagerduty.common.datetime_to_relative_seconds">
 <span class="sig-prename descclassname"><span class="pre">pagerduty.common.</span></span><span class="sig-name descname"><span class="pre">datetime_to_relative_seconds</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">datestr</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#pagerduty.common.datetime_to_relative_seconds" title="Link to this definition"></a></dt>
-<dd><p>Convert an ISO8601 string to a relative number of seconds from the current time.</p>
+<dd><p>Convert an ISO8601 string to a relative number of seconds from now.</p>
 </dd></dl>
 
 <dl class="py function">
@@ -2063,7 +2110,7 @@ resource’s index URL</p>
 <dl class="py function">
 <dt class="sig sig-object py" id="pagerduty.common.relative_seconds_to_datetime">
 <span class="sig-prename descclassname"><span class="pre">pagerduty.common.</span></span><span class="sig-name descname"><span class="pre">relative_seconds_to_datetime</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">seconds_remaining</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">str</span></span></span><a class="headerlink" href="#pagerduty.common.relative_seconds_to_datetime" title="Link to this definition"></a></dt>
-<dd><p>Convert a number of seconds in the future to an absolute UTC ISO8601 time string.</p>
+<dd><p>Convert a number of seconds in the future to a UTC ISO8601 time string.</p>
 </dd></dl>
 
 <dl class="py function">
@@ -2110,7 +2157,7 @@ entity naming patterns.</p>
 <dd><p>Parse a string in full ISO8601 format into a <code class="docutils literal notranslate"><span class="pre">datetime.datetime</span></code> object.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
-<dd class="field-odd"><p><strong>datestr</strong> – Full ISO8601 string representation of the date and time, including time zone</p>
+<dd class="field-odd"><p><strong>datestr</strong> – Full ISO8601 representation of the date and time, including time zone</p>
 </dd>
 <dt class="field-even">Returns<span class="colon">:</span></dt>
 <dd class="field-even"><p>The datetime object representing the string</p>
@@ -2128,7 +2175,7 @@ entity naming patterns.</p>
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
 <li><p><strong>r</strong> – Response object corresponding to the response received.</p></li>
-<li><p><strong>context</strong> – A description of when the HTTP request is happening, for error reporting</p></li>
+<li><p><strong>context</strong> – A description of when the HTTP request is happening</p></li>
 </ul>
 </dd>
 <dt class="field-even">Returns<span class="colon">:</span></dt>
@@ -2152,8 +2199,8 @@ entity naming patterns.</p>
 <dt class="sig sig-object py" id="pagerduty.common.try_decoding">
 <span class="sig-prename descclassname"><span class="pre">pagerduty.common.</span></span><span class="sig-name descname"><span class="pre">try_decoding</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">r</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Response</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">dict</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">list</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">str</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span></span><a class="headerlink" href="#pagerduty.common.try_decoding" title="Link to this definition"></a></dt>
 <dd><p>JSON-decode a response body</p>
-<p>Returns the decoded body if successful; raises <a class="reference internal" href="#pagerduty.ServerHttpError" title="pagerduty.ServerHttpError"><code class="xref py py-class docutils literal notranslate"><span class="pre">pagerduty.ServerHttpError</span></code></a>
-otherwise.</p>
+<p>Returns the decoded body if successful; raises
+<a class="reference internal" href="#pagerduty.ServerHttpError" title="pagerduty.ServerHttpError"><code class="xref py py-class docutils literal notranslate"><span class="pre">pagerduty.ServerHttpError</span></code></a> otherwise.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><p><strong>r</strong> – The response object</p>
@@ -2171,30 +2218,31 @@ able to repurpose them in APIs that follow similar conventions.</p>
 <dt class="sig sig-object py" id="pagerduty.rest_api_v2_base_client.CanonicalPath">
 <span class="sig-prename descclassname"><span class="pre">pagerduty.rest_api_v2_base_client.</span></span><span class="sig-name descname"><span class="pre">CanonicalPath</span></span><a class="headerlink" href="#pagerduty.rest_api_v2_base_client.CanonicalPath" title="Link to this definition"></a></dt>
 <dd><p>Canonical path type (alias of <code class="docutils literal notranslate"><span class="pre">str</span></code>).</p>
-<p>Canonical paths are the bold-typed portion of the path of the URL displayed in the API
-reference at the top of each reference page for the given API endpoint. They are
-interpreted as patterns, i.e. any part of the path enclosed in curly braces (as
-determined by <a class="reference internal" href="#pagerduty.rest_api_v2_base_client.is_path_param" title="pagerduty.rest_api_v2_base_client.is_path_param"><code class="xref py py-attr docutils literal notranslate"><span class="pre">pagerduty.rest_api_v2_base_client.is_path_param</span></code></a>) is interpreted as
-a variable parameter versus a literal substring of the path.</p>
+<p>Canonical paths are the bold-typed portion of the path of the URL displayed in
+the API reference at the top of each reference page for the given API endpoint.
+They are interpreted as patterns, i.e. any part of the path enclosed in curly
+braces (as determined by
+<a class="reference internal" href="#pagerduty.rest_api_v2_base_client.is_path_param" title="pagerduty.rest_api_v2_base_client.is_path_param"><code class="xref py py-attr docutils literal notranslate"><span class="pre">pagerduty.rest_api_v2_base_client.is_path_param</span></code></a>) is interpreted as a
+variable parameter versus a literal substring of the path.</p>
 </dd></dl>
 
 <dl class="py data">
 <dt class="sig sig-object py" id="pagerduty.rest_api_v2_base_client.EntityWrapping">
-<span class="sig-prename descclassname"><span class="pre">pagerduty.rest_api_v2_base_client.</span></span><span class="sig-name descname"><span class="pre">EntityWrapping</span></span><a class="headerlink" href="#pagerduty.rest_api_v2_base_client.EntityWrapping" title="Link to this definition"></a></dt>
+<span class="sig-prename descclassname"><span class="pre">pagerduty.rest_api_v2_base_client.</span></span><span class="sig-name descname"><span class="pre">EntityWrapping</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">str</span> <span class="pre">|</span> <span class="pre">None</span></em><a class="headerlink" href="#pagerduty.rest_api_v2_base_client.EntityWrapping" title="Link to this definition"></a></dt>
 <dd><p>Descriptive entity wrapping type.</p>
-<p>If a string, it indicates that the entity is wrapped in a single property of the body of
-the request or response named after the value of that string. If <code class="docutils literal notranslate"><span class="pre">None</span></code>, it indicates
-that entity wrapping is not enabled or should be ignored, i.e. send the user-supplied
-request body in the API request or return the response body without any modification.</p>
-<p>alias of <code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code> | <code class="xref py py-obj docutils literal notranslate"><span class="pre">None</span></code></p>
+<p>If a string, it indicates that the entity is wrapped in a single property of
+the body of the request or response named after the value of that string. If
+<code class="docutils literal notranslate"><span class="pre">None</span></code>, it indicates that entity wrapping is not enabled or should be
+ignored, i.e. send the user-supplied request body in the API request or return
+the response body without any modification.</p>
 </dd></dl>
 
 <dl class="py data">
 <dt class="sig sig-object py" id="pagerduty.rest_api_v2_base_client.EntityWrappingSpec">
 <span class="sig-prename descclassname"><span class="pre">pagerduty.rest_api_v2_base_client.</span></span><span class="sig-name descname"><span class="pre">EntityWrappingSpec</span></span><a class="headerlink" href="#pagerduty.rest_api_v2_base_client.EntityWrappingSpec" title="Link to this definition"></a></dt>
-<dd><p>Descriptive type that specifies how entity wrapping is configured for an API endoint.</p>
-<p>The first member indicates the entity wrapping of the request body. The second indicates
-the entity wrapping of the response body. The two may differ.</p>
+<dd><p>Descriptive type for how entity wrapping is configured for an API endoint.</p>
+<p>The first member indicates the entity wrapping of the request body. The second
+indicates the entity wrapping of the response body. The two may differ.</p>
 <p>alias of <code class="xref py py-class docutils literal notranslate"><span class="pre">Tuple</span></code>[<code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code> | <code class="xref py py-obj docutils literal notranslate"><span class="pre">None</span></code>, <code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code> | <code class="xref py py-obj docutils literal notranslate"><span class="pre">None</span></code>]</p>
 </dd></dl>
 
@@ -2202,10 +2250,11 @@ the entity wrapping of the response body. The two may differ.</p>
 <dt class="sig sig-object py" id="pagerduty.rest_api_v2_base_client.ITERATION_LIMIT">
 <span class="sig-prename descclassname"><span class="pre">pagerduty.rest_api_v2_base_client.</span></span><span class="sig-name descname"><span class="pre">ITERATION_LIMIT</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">10000</span></em><a class="headerlink" href="#pagerduty.rest_api_v2_base_client.ITERATION_LIMIT" title="Link to this definition"></a></dt>
 <dd><p>The maximum position of a result in classic pagination.</p>
-<p>The offset plus limit parameter may not exceed this number. This is enforced server-side
-and is not something the client may override. Rather, this value is reproduced in the
-client to enable short-circuiting pagination, so that the client can avoid the HTTP 400
-error that will result if the sum of the limit and offset parameters exceeds it.</p>
+<p>The offset plus limit parameter may not exceed this number. This is enforced
+server-side and is not something the client may override. Rather, this value is
+reproduced in the client to enable short-circuiting pagination, so that the
+client can avoid the HTTP 400 error that will result if the sum of the limit
+and offset parameters exceeds it.</p>
 <p>See: <a class="reference external" href="https://developer.pagerduty.com/docs/ZG9jOjExMDI5NTU4-pagination">Pagination</a>.</p>
 </dd></dl>
 
@@ -2216,11 +2265,11 @@ error that will result if the sum of the limit and offset parameters exceeds it.
 </dd></dl>
 
 <dl class="py class">
-<dt class="sig sig-object py" id="id15">
-<em class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">pagerduty.rest_api_v2_base_client.</span></span><span class="sig-name descname"><span class="pre">TokenAuthMethod</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">secret</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#id15" title="Link to this definition"></a></dt>
+<dt class="sig sig-object py" id="id16">
+<em class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">pagerduty.rest_api_v2_base_client.</span></span><span class="sig-name descname"><span class="pre">TokenAuthMethod</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">secret</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#id16" title="Link to this definition"></a></dt>
 <dd><p>AuthMethod class for the “token” header authentication style.</p>
-<p>This AuthMethod is used primarily in REST API v2 but also is used in some similar
-integration APIs.</p>
+<p>This AuthMethod is used primarily in REST API v2 but also is used in some
+similar integration APIs.</p>
 </dd></dl>
 
 <dl class="py function">
@@ -2229,16 +2278,16 @@ integration APIs.</p>
 <dd><p>Decorator to return the full response body object after decoding from JSON.</p>
 <p>Intended for use on functions that take a URL positional argument followed
 by keyword arguments and return a <a class="reference external" href="https://www.python-httpx.org/api/#response">httpx.Response</a> object.</p>
-<p>The new return value is the JSON-decoded response body (<code class="docutils literal notranslate"><span class="pre">dict</span></code> or <code class="docutils literal notranslate"><span class="pre">list</span></code>).</p>
+<p>The new return value is the JSON-decoded response body.</p>
 </dd></dl>
 
 <dl class="py function">
 <dt class="sig sig-object py" id="pagerduty.rest_api_v2_base_client.canonical_path">
 <span class="sig-prename descclassname"><span class="pre">pagerduty.rest_api_v2_base_client.</span></span><span class="sig-name descname"><span class="pre">canonical_path</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">paths</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">List</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">]</span></span></span></em>, <em class="sig-param"><span class="n"><span class="pre">base_url</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">url</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">str</span></span></span><a class="headerlink" href="#pagerduty.rest_api_v2_base_client.canonical_path" title="Link to this definition"></a></dt>
 <dd><p>The canonical path from the API documentation corresponding to a URL.</p>
-<p>This method is used to identify and classify URLs according to which particular API
-endpoint within the client’s corresponding API it belongs to, in order to account
-for any antipatterns that the endpoint might have.</p>
+<p>This method is used to identify and classify URLs according to which
+particular API endpoint within the client’s corresponding API it belongs
+to, in order to account for any antipatterns that the endpoint might have.</p>
 <p>For example, in
 <a class="reference external" href="https://developer.pagerduty.com/api-reference/50d46c0eb020d-list-a-user-s-contact-methods">List a user’s contact methods</a>,
 the canonical path is <code class="docutils literal notranslate"><span class="pre">/users/{id}/contact_methods</span></code>.</p>
@@ -2261,15 +2310,15 @@ the canonical path is <code class="docutils literal notranslate"><span class="pr
 <dt class="sig sig-object py" id="pagerduty.rest_api_v2_base_client.endpoint_matches">
 <span class="sig-prename descclassname"><span class="pre">pagerduty.rest_api_v2_base_client.</span></span><span class="sig-name descname"><span class="pre">endpoint_matches</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">endpoint_pattern</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">method</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">path</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">bool</span></span></span><a class="headerlink" href="#pagerduty.rest_api_v2_base_client.endpoint_matches" title="Link to this definition"></a></dt>
 <dd><p>Whether an endpoint (method and canonical path) matches a given pattern.</p>
-<p>This is used by <a class="reference internal" href="#pagerduty.rest_api_v2_base_client.entity_wrappers" title="pagerduty.rest_api_v2_base_client.entity_wrappers"><code class="xref py py-attr docutils literal notranslate"><span class="pre">pagerduty.rest_api_v2_base_client.entity_wrappers</span></code></a> for
-finding the appropriate entity wrapper configuration entry to use for a given HTTP
-method and API path.</p>
+<p>This is used by <a class="reference internal" href="#pagerduty.rest_api_v2_base_client.entity_wrappers" title="pagerduty.rest_api_v2_base_client.entity_wrappers"><code class="xref py py-attr docutils literal notranslate"><span class="pre">pagerduty.rest_api_v2_base_client.entity_wrappers</span></code></a>
+for finding the appropriate entity wrapper configuration entry to use for a
+given HTTP method and API path.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
-<li><p><strong>endpoint_pattern</strong> – The endpoint pattern in the form <code class="docutils literal notranslate"><span class="pre">METHOD</span> <span class="pre">PATH</span></code> where <code class="docutils literal notranslate"><span class="pre">METHOD</span></code> is the
-HTTP method in uppercase or <code class="docutils literal notranslate"><span class="pre">*</span></code> to match all methods, and <code class="docutils literal notranslate"><span class="pre">PATH</span></code> is
-a canonical API path.</p></li>
+<li><p><strong>endpoint_pattern</strong> – The endpoint pattern in the form <code class="docutils literal notranslate"><span class="pre">METHOD</span> <span class="pre">PATH</span></code> where <code class="docutils literal notranslate"><span class="pre">METHOD</span></code> is
+the HTTP method in uppercase or <code class="docutils literal notranslate"><span class="pre">*</span></code> to match all methods, and
+<code class="docutils literal notranslate"><span class="pre">PATH</span></code> is a canonical API path.</p></li>
 <li><p><strong>method</strong> – The HTTP method.</p></li>
 <li><p><strong>path</strong> – The canonical API path</p></li>
 </ul>
@@ -2283,36 +2332,38 @@ a canonical API path.</p></li>
 <dl class="py function">
 <dt class="sig sig-object py" id="pagerduty.rest_api_v2_base_client.entity_wrappers">
 <span class="sig-prename descclassname"><span class="pre">pagerduty.rest_api_v2_base_client.</span></span><span class="sig-name descname"><span class="pre">entity_wrappers</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">wrapper_config</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">dict</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">method</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">path</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">Tuple</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">str</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span><span class="p"><span class="pre">]</span></span></span></span><a class="headerlink" href="#pagerduty.rest_api_v2_base_client.entity_wrappers" title="Link to this definition"></a></dt>
-<dd><p>Obtains entity wrapping information for a given endpoint (canonical path and method)</p>
-<p>The information about the API is dependency-injected as the <code class="docutils literal notranslate"><span class="pre">wrapper_config</span></code>
-parameter. An example of such a dictionary object is
+<dd><p>Obtains entity wrapping information for a given canonical path and method.</p>
+<p>The information about the API is dependency-injected as the
+<code class="docutils literal notranslate"><span class="pre">wrapper_config</span></code> parameter. An example of such a dictionary object is
 <code class="docutils literal notranslate"><span class="pre">pagerduty.rest_api_v2_client.ENTITY_WRAPPER_CONFIG</span></code>.</p>
-<p>When trying to determine the entity wrapper name for a given API endpoint, the
-dictionary <code class="docutils literal notranslate"><span class="pre">wrapper_config</span></code> is first checked for keys that apply to a given
-request method and canonical API path based on a matching logic. If no keys are
-found that match, it is assumed that the API endpoint follows classic entity
-wrapping conventions, and the wrapper name can be inferred based on those
-conventions (see <a class="reference internal" href="#pagerduty.rest_api_v2_base_client.infer_entity_wrapper" title="pagerduty.rest_api_v2_base_client.infer_entity_wrapper"><code class="xref py py-attr docutils literal notranslate"><span class="pre">pagerduty.rest_api_v2_base_client.infer_entity_wrapper</span></code></a>).
-Any new API that does not follow these conventions should therefore be given an
-entry in the <code class="docutils literal notranslate"><span class="pre">wrapper_config</span></code> dictionary in order to properly support it for
-entity wrapping.</p>
-<p>Each of the keys of should be a capitalized HTTP method (or <code class="docutils literal notranslate"><span class="pre">*</span></code> to match any
-method), followed by a space, followed by a canonical path. Each value is either a
-tuple with request and response body wrappers (if they differ), a string (if they
-are the same for both cases) or <code class="docutils literal notranslate"><span class="pre">None</span></code> (if wrapping is disabled and the data is to
-be marshaled or unmarshaled as-is). Values in tuples can also be None to denote that
-either the request or response is unwrapped.</p>
-<p>An endpoint, under the design logic of this client, is said to have entity wrapping
-if the body (request or response) has only one property containing the content
-requested or transmitted, apart from properties used for pagination. If there
-are any secondary content-bearing properties (other than those used for
-pagination), entity wrapping should be disabled to avoid discarding those
-properties from responses or preventing the use of those properties in request
-bodies.</p>
+<p>When trying to determine the entity wrapper name for a given API endpoint,
+the dictionary <code class="docutils literal notranslate"><span class="pre">wrapper_config</span></code> is first checked for keys that apply to a
+given request method and canonical API path based on a matching logic. If
+no keys are found that match, it is assumed that the API endpoint follows
+classic entity wrapping conventions, and the wrapper name can be inferred
+based on those conventions (see
+<a class="reference internal" href="#pagerduty.rest_api_v2_base_client.infer_entity_wrapper" title="pagerduty.rest_api_v2_base_client.infer_entity_wrapper"><code class="xref py py-attr docutils literal notranslate"><span class="pre">pagerduty.rest_api_v2_base_client.infer_entity_wrapper</span></code></a>).  Any new
+API that does not follow these conventions should therefore be given an
+entry in the <code class="docutils literal notranslate"><span class="pre">wrapper_config</span></code> dictionary in order to properly support it
+for entity wrapping.</p>
+<p>Each of the keys of should be a capitalized HTTP method (or <code class="docutils literal notranslate"><span class="pre">*</span></code> to match
+any method), followed by a space, followed by a canonical path. Each value
+is either a tuple with request and response body wrappers (if they differ),
+a string (if they are the same for both cases) or <code class="docutils literal notranslate"><span class="pre">None</span></code> (if wrapping is
+disabled and the data is to be marshaled or unmarshaled as-is). Values in
+tuples can also be None to denote that either the request or response is
+unwrapped.</p>
+<p>An endpoint, under the design logic of this client, is said to have entity
+wrapping if the body (request or response) has only one property containing
+the content requested or transmitted, apart from properties used for
+pagination. If there are any secondary content-bearing properties (other
+than those used for pagination), entity wrapping should be disabled to
+avoid discarding those properties from responses or preventing the use of
+those properties in request bodies.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
-<li><p><strong>wrapper_config</strong> – A dictionary in which the entity wrapper antipattern configuration is specified.</p></li>
+<li><p><strong>wrapper_config</strong> – A dictionary containing entity wrapper antipattern configuration</p></li>
 <li><p><strong>method</strong> – A HTTP method.</p></li>
 <li><p><strong>path</strong> – A canonical API path.</p></li>
 </ul>
@@ -2331,7 +2382,8 @@ bodies.</p>
 the v2 REST API, where the wrapper name is predictable from the path and
 method. This is the default logic applied to determine the wrapper name
 based on the path if there is no explicit entity wrapping defined for the
-given path i.e. in <code class="xref py py-attr docutils literal notranslate"><span class="pre">pagerduty.rest_api_v2_client.ENTITY_WRAPPER_CONFIG</span></code> for
+given path i.e. in
+<code class="xref py py-attr docutils literal notranslate"><span class="pre">pagerduty.rest_api_v2_client.ENTITY_WRAPPER_CONFIG</span></code> for
 <a class="reference internal" href="#pagerduty.RestApiV2Client" title="pagerduty.RestApiV2Client"><code class="xref py py-class docutils literal notranslate"><span class="pre">pagerduty.RestApiV2Client</span></code></a>.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
@@ -2362,8 +2414,8 @@ given path i.e. in <code class="xref py py-attr docutils literal notranslate"><s
 <dt class="sig sig-object py" id="pagerduty.rest_api_v2_base_client.resource_url">
 <span class="sig-prename descclassname"><span class="pre">pagerduty.rest_api_v2_base_client.</span></span><span class="sig-name descname"><span class="pre">resource_url</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">method</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">callable</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">callable</span></span></span><a class="headerlink" href="#pagerduty.rest_api_v2_base_client.resource_url" title="Link to this definition"></a></dt>
 <dd><p>API call decorator that allows passing a resource dict as the path/URL</p>
-<p>Most resources returned by the API will contain a <code class="docutils literal notranslate"><span class="pre">self</span></code> attribute that is
-the URL of the resource itself.</p>
+<p>Most resources returned by the API will contain a <code class="docutils literal notranslate"><span class="pre">self</span></code> attribute that
+is the URL of the resource itself.</p>
 <p>Using this decorator allows the implementer to pass either a URL/path or
 such a resource dictionary as the <code class="docutils literal notranslate"><span class="pre">path</span></code> argument, thus eliminating the
 need to re-construct the resource URL or hold it in a temporary variable.</p>
@@ -2390,25 +2442,28 @@ the response, which is expected to be a dictionary (map).</p>
 <dl class="py function">
 <dt class="sig sig-object py" id="pagerduty.rest_api_v2_base_client.wrapped_entities">
 <span class="sig-prename descclassname"><span class="pre">pagerduty.rest_api_v2_base_client.</span></span><span class="sig-name descname"><span class="pre">wrapped_entities</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">method</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">callable</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">callable</span></span></span><a class="headerlink" href="#pagerduty.rest_api_v2_base_client.wrapped_entities" title="Link to this definition"></a></dt>
-<dd><p>Decorator to automatically wrap request entities and unwrap response entities.</p>
+<dd><p>Decorator to automatically wrap/unwrap request and response entities</p>
 <p>Used for defining the <code class="docutils literal notranslate"><span class="pre">r{method}</span></code> functions, i.e.
-<a class="reference internal" href="#pagerduty.RestApiV2BaseClient.rpost" title="pagerduty.RestApiV2BaseClient.rpost"><code class="xref py py-attr docutils literal notranslate"><span class="pre">pagerduty.RestApiV2BaseClient.rpost</span></code></a>. It makes the methods always return an
-object representing the resource entity in the response (whether wrapped in a
-root-level property or not) rather than the full response body, after JSON-decoding.
-When making a post / put request, and passing the <code class="docutils literal notranslate"><span class="pre">json</span></code> keyword argument to
-specify the content to be JSON-encoded as the body, that keyword argument can be
-either the to-be-wrapped content or the full body including the entity wrapper, and
-the <code class="docutils literal notranslate"><span class="pre">json</span></code> keyword argument will be normalized to include the wrapper.</p>
-<p>Methods using this decorator will raise a <a class="reference internal" href="#pagerduty.HttpError" title="pagerduty.HttpError"><code class="xref py py-class docutils literal notranslate"><span class="pre">pagerduty.HttpError</span></code></a> with its
-<code class="docutils literal notranslate"><span class="pre">response</span></code> property being being the <a class="reference external" href="https://www.python-httpx.org/api/#response">httpx.Response</a> object in the case of any
-error, so that the implementer can access it by catching the exception, and thus
-design their own custom logic around different types of error responses.</p>
+<a class="reference internal" href="#pagerduty.RestApiV2BaseClient.rpost" title="pagerduty.RestApiV2BaseClient.rpost"><code class="xref py py-attr docutils literal notranslate"><span class="pre">pagerduty.RestApiV2BaseClient.rpost</span></code></a>. It makes the methods always
+return an object representing the resource entity in the response (whether
+wrapped in a root-level property or not) rather than the full response
+body, after JSON-decoding.  When making a post / put request, and passing
+the <code class="docutils literal notranslate"><span class="pre">json</span></code> keyword argument to specify the content to be JSON-encoded as
+the body, that keyword argument can be either the to-be-wrapped content or
+the full body including the entity wrapper, and the <code class="docutils literal notranslate"><span class="pre">json</span></code> keyword
+argument will be normalized to include the wrapper.</p>
+<p>Methods using this decorator will raise a <a class="reference internal" href="#pagerduty.HttpError" title="pagerduty.HttpError"><code class="xref py py-class docutils literal notranslate"><span class="pre">pagerduty.HttpError</span></code></a> with
+its <code class="docutils literal notranslate"><span class="pre">response</span></code> property being being the <a class="reference external" href="https://www.python-httpx.org/api/#response">httpx.Response</a> object in the
+case of any error, so that the implementer can access it by catching the
+exception, and thus design their own custom logic around different types of
+error responses.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
-<dd class="field-odd"><p><strong>method</strong> – Method being decorated. Must take one positional argument after <code class="docutils literal notranslate"><span class="pre">self</span></code> that is
-the URL/path to the resource, followed by keyword any number of keyword
-arguments, and must return an object of class <a class="reference external" href="https://www.python-httpx.org/api/#response">httpx.Response</a>, and be named
-after the HTTP method but with “r” prepended.</p>
+<dd class="field-odd"><p><strong>method</strong> – Method being decorated. Must take one positional argument after
+<code class="docutils literal notranslate"><span class="pre">self</span></code> that is the URL/path to the resource, followed by keyword any
+number of keyword arguments, and must return an object of class
+<a class="reference external" href="https://www.python-httpx.org/api/#response">httpx.Response</a>, and be named after the HTTP method but with “r”
+prepended.</p>
 </dd>
 <dt class="field-even">Returns<span class="colon">:</span></dt>
 <dd class="field-even"><p>A callable object; the reformed method</p>
