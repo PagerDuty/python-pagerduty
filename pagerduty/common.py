@@ -64,7 +64,7 @@ def datetime_intervals(
         interval_len = 1
         n_intervals = total_s
     else:
-        interval_len = max(int(total_s / n), 1)
+        interval_len = max(total_s // n, 1)
         n_intervals = n
     interval_start = since
     intervals = []
