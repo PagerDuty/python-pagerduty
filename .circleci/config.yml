@@ -11,7 +11,35 @@ test: &test
     pip -V
     ./test.sh
 
+ruff: &ruff
+  name: Install ruff for linting and formatting
+  command: |
+    curl -LsSf https://astral.sh/uv/install.sh | sh
+    uv tool install ruff@latest
+
 jobs:
+
+  lint:
+    docker:
+      - image: cimg/python:3.13
+    steps:
+      - checkout
+      - run:
+          <<: *ruff
+      - run:
+          command: |
+            uvx ruff check
+
+  format:
+    docker:
+      - image: cimg/python:3.13
+    steps:
+      - checkout
+      - run:
+          <<: *ruff
+      - run:
+          command: |
+            uvx ruff format --check
 
   py3_6:
     docker:
@@ -89,4 +117,6 @@ workflows:
       - py3_11
       - py3_12
       - py3_13
+      - lint
+      - format
 
