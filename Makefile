@@ -1,6 +1,6 @@
 %: build
 
-build: pagerduty/* pyproject.toml
+build: uv.lock pagerduty/* pyproject.toml
 	rm -f dist/* && uv build
 
 docs/index.html: build pyproject.toml pagerduty/* CHANGELOG.rst sphinx/source/*
@@ -9,7 +9,10 @@ docs/index.html: build pyproject.toml pagerduty/* CHANGELOG.rst sphinx/source/*
 docs: docs/index.html build
 
 testpublish: build
-	./publish-test.sh
+	./test/publish-test.sh
 
 publish: build
-	uv run twine upload dist/*.tar.gz dist/*.whl
+	uv publish --username __token__
+
+uv.lock: pyproject.toml
+	uv sync
