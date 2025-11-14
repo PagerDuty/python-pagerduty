@@ -159,48 +159,58 @@ documentation, or the version number in the documentation will be
 Releasing a New Version
 -----------------------
 
-You will need valid user accounts on both ``pypi.org`` and ``test.pypi.org``
-that have the "Maintainer" role on the project, as well as the requirements
-installed (see above).
+For this process, you will need, at minimum:
 
-It is strongly recommended that you `use an API token
-<https://pypi.org/help/#apitoken>`_ to upload new releases to PyPI. The token
-must have write access to the project.
+* to run ``make build`` and commit changes to ``uv.lock`` before merging, to validate that building succeeds,
+* the ability to create tags on the repository
+* valid user accounts on both ``pypi.org`` and ``test.pypi.org`` that have the "Maintainer" role on the project, as well as the requirements installed (see above) and:
+* `an API token <https://pypi.org/help/#apitoken>`_ to upload new releases to PyPI, with write access to the project.
+
+To use a token for ``uv publish`` (which will be invoked in this process), set the
+environment variable ``UV_PUBLISH_PASSWORD`` when running publish or
+test-publish commands, i.e.
+
+1. Run ``read -s UV_PUBLISH_PASSWORD`` to set the variable without echoing the token
+2. Paste in the token and hit enter
+3. Immediately afterwards, run ``export !$``
 
 Perform end-to-end publish and installation testing
 ***************************************************
 
+This series of tests may not always be necessary, but it is a good idea to
+perform them when making significant or breaking changes. This testing step
+will to ensure that installation and upgrading isn't broken, and thus help
+avert a scenario where we have to yank a version because it breaks projects.
+
 To test publishing and installing from the package index, first make sure you
 have a valid user account on ``test.pypi.org`` that has publisher access to the
-project as on ``pypi.org``.
+project as on ``pypi.org``. When ready to begin, set the environemnt variable
+token for the test index as instructed above (it will differ from the live
+``pypi.org`` index).
 
 Note, once a release is uploaded, it is no longer possible to upload a release
 with the same version number, even if that release is deleted. For that reason,
-it is a good idea to first add a suffix, i.e. ``-dev001``, to the version in
-``pyproject.toml`` while testing.
+it is a good idea to first add a suffix that can be arbitrarily updated to
+iterate, i.e.  ``-rc1``, to the version in ``pyproject.toml`` while testing,
+and then revert the changes (including changes to ``uv.lock``) when done.
 
-To perform end-to-end tests, run the following, entering credentials for
-``test.pypi.org`` when prompted:
+Once the above is done, to perform end-to-end tests, run ``make testpublish``,
+which will perform the following:
 
-.. code-block:: shell
-
-    uv run make testpublish
-
-The make target ``testpublish`` performs the following:
-
-* Build the Python package
-* Upload the new library to ``test.pypi.org``
+* Build the Python package at the test version
+* Upload the new arbitrary version to ``test.pypi.org``
 * Test-install the library from ``test.pypi.org`` into a temporary Python
   virtualenv that does not already have the library installed, to test
   installing for the first time
-* Tests-install the library from ``test.pypi.org`` into a temporary Python
-  virtualenv where the library is already installed, to test upgrading
+* Test-install the library from ``test.pypi.org`` into a temporary Python
+  virtualenv where the mainline library version is already installed, to test
+  upgrading an existing install.
 
-If any errors are encountered, the script should immediately exit. Errors
+The script should print out the test version and success messages. Errors
 should be investigated and mitigated before publishing. To test again,
 temporarily change the version in ``pyproject.toml`` so that it counts as a new
-release and gets uploaded, and set it to the desired version before the actual
-release.
+release and gets uploaded. Be sure to remember to set it back to the desired
+final version before the actual release, and revert any changes to ``uv.lock``.
 
 Merge changes and tag
 *********************
@@ -211,50 +221,36 @@ the functional changes should also include at least:
 * An update to ``CHANGELOG.rst`` describing the changes in the new release
 * A change in the version number in ``pyproject.toml`` to a new
   version that follows `Semantic Versioning <https://semver.org/>`_.
-* Rebuilt HTML documentation
-
-The HTML documentation can be rebuilt with the ``docs`` make target:
-
-.. code-block:: shell
-
-    uv run make docs
+* Rebuilt HTML documentation via ``make docs``.
 
 After rebuilding the documentation, it can then be viewed by opening the file
-``docs/index.html`` in a web browser. Including rebuilt documentation helps
-reviewers by not requiring them to have the documentation-building tools
-installed.
+``docs/index.html`` in a web browser. Including rebuilt documentation avoids
+the need for a follow-up pull request with a doc rebuild, but also helps
+reviewers by not requiring them to have the documentation-building tools.
 
-Once the pull request is approved, merge. Then (locally) checkout main and tag:
+Remember to commit any changes to ``docs/`` and ``uv.lock`` before merging.
 
-.. code-block:: shell
-
-    git checkout main && \
-      git pull origin main && \
-      git tag "v$(python -c 'from pagerduty import __version__; print(__version__)')" && \
-      git push --tags origin main
+Once the pull request is approved, merge. Then (locally) checkout main and tag,
+with the format ``v{version}``, i.e. ``v6.1.0``, and push the tag i.e. with
+``git push --tags``.
 
 Publishing
 **********
 
 Once the changes are merged and tagged, make sure your local repository clone
 has the ``main`` branch checked out at the latest available commit, and the
-local file tree is clean (has no uncommitted changes). Then run:
+local file tree is clean (has no uncommitted changes). Then, set the publish
+token environment variable as described above and run:
 
 .. code-block:: shell
 
     make publish
 
-When prompted, enter ``__token__`` as your username and your API token as the password.
-
 Finally, `create a new release
-<https://github.com/PagerDuty/pagerduty/releases/new>`_, and fill in some
+<https://github.com/PagerDuty/pagerduty/releases/new>`_, and select the latest tag.
 details:
 
 * Select "Choose a tag" and select the new latest tag.
 * If a new patch version is being released, update the existing release for
   that major and minor version.
-* Name the release after the major and minor version, i.e. 5.1, and very brief
-  summary of changes.
-* Compose a description from the pull requests whose changes are included.
-
 .. _`pdpyras`: https://github.com/PagerDuty/pdpyras
