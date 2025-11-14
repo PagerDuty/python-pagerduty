@@ -378,9 +378,12 @@ class ApiClient(Client):
                 # Stop. Authentication failed. We shouldn't try doing any more,
                 # because we'll run into the same problem later anyway.
                 raise HttpError(
-                    "Received 401 Unauthorized response from the API. The key "
-                    "(...%s) may be invalid or deactivated." % self.trunc_key,
-                    response,
+                    "Received 401 Unauthorized response from the API. The API "
+                    f"credential ({self.trunc_key}) may be invalid or "
+                    "deactivated, or the client is configured for the wrong "
+                    "service region (in which case updating the url property "
+                    "accordingly may resolve the issue).",
+                    response
                 )
             else:
                 # All went according to plan.
