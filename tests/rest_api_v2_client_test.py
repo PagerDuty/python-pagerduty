@@ -340,6 +340,54 @@ class FunctionDecoratorsTest(unittest.TestCase):
 
 
 class RestApiV2ClientTest(ClientTest):
+
+    @patch.object(pagerduty.RestApiV2Client, 'get')
+    def test_api_key_access(self, get):
+        token = 'i am a potato'
+        # Account-type token
+        client = pagerduty.RestApiV2Client(token)
+        get.side_effect = [
+            Response(
+                400,
+                # The expected format of the error response for account-type
+                # tokens, valid/current as of 2025-11-14
+                '{"error": "Because this request was made using an '
+                'account-level access token, we were unable to determine the '
+                'user\'s identity. Please use a user-level token."}'
+            )
+        ]
+        self.assertEqual("account", client.api_key_access)
+        get.reset_mock()
+
+        # Invalid response: set to None and log error
+        client = pagerduty.RestApiV2Client(token)
+        get.side_effect = [
+            Response(
+                400,
+                '{"error": "YOU LOSE, GOOD DAY SIR"}'
+            )
+        ]
+        self.assertEqual(None, client.api_key_access)
+        get.reset_mock()
+
+        # User token: success response / a user JSON
+        client = pagerduty.RestApiV2Client(token)
+        get.side_effect = [
+            Response(
+                200,
+                json.dumps(
+                    {
+                        "user": {
+                            "name": "User McUserson",
+                            "email": "demitri@pagerduty.com",
+                            "id": "POOPBUG",
+                        }
+                    }
+                )
+            )
+        ]
+        self.assertEqual("user", client.api_key_access)
+
     @patch.object(httpx.Client, "request")
     def test_oauth_headers(self, request):
         access_token = "randomly generated lol"
