@@ -33,6 +33,7 @@ dev = [
     "sphinxcontrib-websupport",
     "sphinx-rtd-theme",
     "twine",
+    "virtualenv",
 ]
 
 [tool.ruff]
