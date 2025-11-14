@@ -543,11 +543,17 @@ class RestApiV2Client(RestApiV2BaseClient):
             return True
         elif r.status_code == 402:
             return False
+        elif r.status_code == 401:
+            # Stop. Authentication failed.
+            raise HttpError(
+                "Received 401 Unauthorized response from the API. The API "
+                "credential may be invalid, or the client is configured for "
+                "the wrong service region (updating the url property would "
+                "resolve the issue if that were the case)",
+                r,
+            )
         elif r.status_code == 403:
-            # Stop. Authorization failed. This is expected to be non-transient.
-            # This may be added at a later time to ApiClient, i.e. to add a new
-            # default action similar to HTTP 401. It would be a be a breaking
-            # change...
+            # Stop. Authorization failed.
             raise HttpError(
                 "Received 403 Forbidden response from the API. The identity "
                 "associated with the credentials does not have permission to "

@@ -340,10 +340,9 @@ class FunctionDecoratorsTest(unittest.TestCase):
 
 
 class RestApiV2ClientTest(ClientTest):
-
-    @patch.object(pagerduty.RestApiV2Client, 'get')
+    @patch.object(pagerduty.RestApiV2Client, "get")
     def test_api_key_access(self, get):
-        token = 'i am a potato'
+        token = "i am a potato"
         # Account-type token
         client = pagerduty.RestApiV2Client(token)
         get.side_effect = [
@@ -352,8 +351,8 @@ class RestApiV2ClientTest(ClientTest):
                 # The expected format of the error response for account-type
                 # tokens, valid/current as of 2025-11-14
                 '{"error": "Because this request was made using an '
-                'account-level access token, we were unable to determine the '
-                'user\'s identity. Please use a user-level token."}'
+                "account-level access token, we were unable to determine the "
+                "user's identity. Please use a user-level token.\"}",
             )
         ]
         self.assertEqual("account", client.api_key_access)
@@ -362,10 +361,7 @@ class RestApiV2ClientTest(ClientTest):
         # Invalid response: set to None and log error
         client = pagerduty.RestApiV2Client(token)
         get.side_effect = [
-            Response(
-                400,
-                '{"error": "YOU LOSE, GOOD DAY SIR"}'
-            )
+            Response(400, '{"error": "YOU LOSE, GOOD DAY SIR"}')
         ]
         self.assertEqual(None, client.api_key_access)
         get.reset_mock()
@@ -383,10 +379,31 @@ class RestApiV2ClientTest(ClientTest):
                             "id": "POOPBUG",
                         }
                     }
-                )
+                ),
             )
         ]
         self.assertEqual("user", client.api_key_access)
+
+    @patch.object(pagerduty.RestApiV2Client, "get")
+    def test_account_has_ability(self, get):
+        access_token = "tokenmctokenface"
+        client = pagerduty.RestApiV2Client(access_token)
+        cases = {
+            204: True,
+            402: False,
+            403: pagerduty.HttpError,
+            404: pagerduty.HttpError,
+        }
+        for status_code, expected in cases.items():
+            get.side_effect = [Response(status_code, "")]
+            if type(expected) is bool:
+                self.assertEqual(
+                    expected, client.account_has_ability("whatever")
+                )
+            elif issubclass(expected, Exception):
+                with self.assertRaises(expected):
+                    client.account_has_ability("whatever")
+            get.reset_mock()
 
     @patch.object(httpx.Client, "request")
     def test_oauth_headers(self, request):
@@ -825,6 +842,20 @@ class RestApiV2ClientTest(ClientTest):
             ["delete"], iter_cursor.mock_calls[0][2]["params"]["actions"]
         )
 
+    def test_iter_history_invalid_url(self):
+        client = pagerduty.RestApiV2Client("token")
+        now = datetime.datetime.now(timezone.utc)
+        future6 = now + datetime.timedelta(seconds=6)
+        # Ooops, wrong URL
+        with self.assertRaises(pagerduty.UrlError):
+            list(
+                client.iter_history(
+                    "/services",  # Oops
+                    now,
+                    future6,
+                )
+            )
+
     @patch.object(pagerduty.RestApiV2Client, "iter_all")
     def test_iter_incident_notes_single_incident(self, iter_all):
         """
@@ -1138,7 +1169,7 @@ class RestApiV2ClientTest(ClientTest):
                 ),
             )
             self.assertRaises(
-                pagerduty.Error, client.request, "get", "/services"
+                pagerduty.HttpError, client.request, "get", "/services"
             )
             request.reset_mock()
 

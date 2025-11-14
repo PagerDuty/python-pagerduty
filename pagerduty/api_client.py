@@ -383,7 +383,7 @@ class ApiClient(Client):
                     "deactivated, or the client is configured for the wrong "
                     "service region (in which case updating the url property "
                     "accordingly may resolve the issue).",
-                    response
+                    response,
                 )
             else:
                 # All went according to plan.
