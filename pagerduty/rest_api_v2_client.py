@@ -543,17 +543,10 @@ class RestApiV2Client(RestApiV2BaseClient):
             return True
         elif r.status_code == 402:
             return False
-        elif r.status_code == 401:
-            # Stop. Authentication failed.
-            raise HttpError(
-                "Received 401 Unauthorized response from the API. The API "
-                "credential may be invalid, or the client is configured for "
-                "the wrong service region (updating the url property would "
-                "resolve the issue if that were the case)",
-                r,
-            )
         elif r.status_code == 403:
             # Stop. Authorization failed.
+            # (Note: we don't need a case for 401 Unauthorized because that is
+            # already handled by pagerduty.ApiClient.request)
             raise HttpError(
                 "Received 403 Forbidden response from the API. The identity "
                 "associated with the credentials does not have permission to "
