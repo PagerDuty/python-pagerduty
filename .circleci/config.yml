@@ -1,17 +1,47 @@
 version: 2.1
 
 test: &test
-  name: Setup Virtualenv, install dependencies and test
+  name: Run tests
   command: |
-    virtualenv .python
-    . .python/bin/activate
-    which python
-    python -V
-    which pip
-    pip -V
     ./test.sh
 
+uv: &uv
+  name: Install uv
+  command: |
+    curl -LsSf https://astral.sh/uv/install.sh | sh
+
+ruff: &ruff
+  name: Install ruff for linting and formatting
+  command: |
+    uv tool install ruff@latest
+
 jobs:
+
+  lint:
+    docker:
+      - image: cimg/python:3.13
+    steps:
+      - checkout
+      - run:
+          <<: *uv
+      - run:
+          <<: *ruff
+      - run:
+          command: |
+            uvx ruff check
+
+  format:
+    docker:
+      - image: cimg/python:3.13
+    steps:
+      - checkout
+      - run:
+          <<: *uv
+      - run:
+          <<: *ruff
+      - run:
+          command: |
+            uvx ruff format --check
 
   py3_6:
     docker:
@@ -19,6 +49,8 @@ jobs:
     steps:
       - checkout
       - run:
+          environment:
+            NO_UV: 1
           <<: *test
 
   py3_7:
@@ -27,6 +59,8 @@ jobs:
     steps:
       - checkout
       - run:
+          environment:
+            NO_UV: 1
           <<: *test
 
   py3_8:
@@ -34,6 +68,8 @@ jobs:
       - image: cimg/python:3.8
     steps:
       - checkout
+      - run:
+          <<: *uv
       - run:
           <<: *test
 
@@ -43,6 +79,8 @@ jobs:
     steps:
       - checkout
       - run:
+          <<: *uv
+      - run:
           <<: *test
 
   py3_10:
@@ -50,6 +88,8 @@ jobs:
       - image: cimg/python:3.10
     steps:
       - checkout
+      - run:
+          <<: *uv
       - run:
           <<: *test
 
@@ -59,6 +99,8 @@ jobs:
     steps:
       - checkout
       - run:
+          <<: *uv
+      - run:
           <<: *test
 
   py3_12:
@@ -67,6 +109,8 @@ jobs:
     steps:
       - checkout
       - run:
+          <<: *uv
+      - run:
           <<: *test
 
   py3_13:
@@ -74,6 +118,8 @@ jobs:
       - image: cimg/python:3.13
     steps:
       - checkout
+      - run:
+          <<: *uv
       - run:
           <<: *test
 
@@ -89,4 +135,6 @@ workflows:
       - py3_11
       - py3_12
       - py3_13
+      - lint
+      - format
 

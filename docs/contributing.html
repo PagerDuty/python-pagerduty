@@ -47,7 +47,7 @@
 <li class="toctree-l1"><a class="reference internal" href="pdpyras_migration_guide.html">PDPYRAS Migration Guide</a></li>
 <li class="toctree-l1"><a class="reference internal" href="module_reference.html">Module Reference</a></li>
 <li class="toctree-l1 current"><a class="current reference internal" href="#">Contribution Guide</a><ul>
-<li class="toctree-l2"><a class="reference internal" href="#initial-setup">Initial Setup</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#initial-setup-and-unit-tests">Initial Setup and Unit Tests</a></li>
 <li class="toctree-l2"><a class="reference internal" href="#maintaining-entity-wrapper-configuration">Maintaining Entity Wrapper Configuration</a><ul>
 <li class="toctree-l3"><a class="reference internal" href="#introduction">Introduction</a></li>
 <li class="toctree-l3"><a class="reference internal" href="#limitations">Limitations</a></li>
@@ -100,28 +100,14 @@ and assertions to the appropriate test case class in <code class="docutils liter
 ensure code coverage. If the change(s) fix a bug, please add assertions that
 reproduce the bug along with code changes themselves, and include the GitHub
 issue number in the commit message.</p>
-<section id="initial-setup">
-<h2>Initial Setup<a class="headerlink" href="#initial-setup" title="Link to this heading"></a></h2>
-<p>To be able to rebuild the documentation and release a new version, first make
-sure you have <a class="reference external" href="https://www.gnu.org/software/make/">make</a> and <a class="reference external" href="https://pip.pypa.io/en/stable/installation/">pip</a> installed in your shell
-environment, as well as Python version 3.11 or later.</p>
-<p>The recommended way of setting up the Python environment is using <a class="reference external" href="https://asdf-vm.com/">asdf-vm</a>, i.e. run <code class="docutils literal notranslate"><span class="pre">asdf</span> <span class="pre">install</span></code> in your clone of the
-repository.</p>
-<p>Next, install Python dependencies for building and publishing as well as
-testing locally:</p>
-<div class="highlight-shell notranslate"><div class="highlight"><pre><span></span>pip<span class="w"> </span>install<span class="w"> </span>.
-pip<span class="w"> </span>install<span class="w"> </span>-r<span class="w"> </span>requirements-publish.txt
-</pre></div>
-</div>
-<p>If asdf-vm was used to install Python locally, run the following after the above:</p>
-<div class="highlight-shell notranslate"><div class="highlight"><pre><span></span>asdf<span class="w"> </span>reshim<span class="w"> </span>python
-</pre></div>
-</div>
-<p>Finally, run <code class="docutils literal notranslate"><span class="pre">test.sh</span></code> in the root path of the repository to run the unit
-test suite locally, or run this command by itself:</p>
-<div class="highlight-shell notranslate"><div class="highlight"><pre><span></span>python<span class="w"> </span>-m<span class="w"> </span>unittest<span class="w"> </span>discover<span class="w"> </span>-p<span class="w"> </span><span class="s1">&#39;*_test.py&#39;</span><span class="w"> </span>-s<span class="w"> </span>tests
-</pre></div>
-</div>
+<section id="initial-setup-and-unit-tests">
+<h2>Initial Setup and Unit Tests<a class="headerlink" href="#initial-setup-and-unit-tests" title="Link to this heading"></a></h2>
+<p>To be able to rebuild the documentation, apply formatting and release new
+versions, first make sure you have <a class="reference external" href="https://www.gnu.org/software/make/">make</a>
+installed in your local development environment, as well as
+[uv](<a class="reference external" href="https://docs.astral.sh/uv/">https://docs.astral.sh/uv/</a>) for dependency management.</p>
+<p>Next, run <code class="docutils literal notranslate"><span class="pre">test.sh</span></code> in the root path of the repository to validate that unit
+tests can be run locally.</p>
 </section>
 <section id="maintaining-entity-wrapper-configuration">
 <h2>Maintaining Entity Wrapper Configuration<a class="headerlink" href="#maintaining-entity-wrapper-configuration" title="Link to this heading"></a></h2>
@@ -202,10 +188,12 @@ request method is not POST), the request and response wrapper names are both
 the same as the last node of the path. Examples: <code class="docutils literal notranslate"><span class="pre">GET</span> <span class="pre">/services</span></code> (wrapper =
 <code class="docutils literal notranslate"><span class="pre">services</span></code>), <code class="docutils literal notranslate"><span class="pre">PUT</span> <span class="pre">/incidents</span></code> (wrapper = <code class="docutils literal notranslate"><span class="pre">incidents</span></code>)</p>
 <p>If all of the above apply to new endpoints for all request methods, then no new
-entries need to be added to <code class="xref py py-attr docutils literal notranslate"><span class="pre">pagerduty.rest_api_v2_client.ENTITY_WRAPPER_CONFIG</span></code> to support
-them; they are supported automatically by virtue of following preexisting
-already-supported API patterns and having corresponding entries in
-<code class="xref py py-attr docutils literal notranslate"><span class="pre">pagerduty.rest_api_v2_client.CANONICAL_PATHS</span></code>.</p>
+entries need to be added to
+<code class="xref py py-attr docutils literal notranslate"><span class="pre">pagerduty.rest_api_v2_client.ENTITY_WRAPPER_CONFIG</span></code> to support them;
+they are supported automatically by virtue of following preexisting
+already-supported API patterns. Their corresponding entries in
+<code class="xref py py-attr docutils literal notranslate"><span class="pre">pagerduty.rest_api_v2_client.CANONICAL_PATHS</span></code> officiates their support
+for entity-wrapping-aware functions.</p>
 </section>
 <section id="adding-support-for-non-conforming-endpoints">
 <h3>Adding Support for Non-Conforming Endpoints<a class="headerlink" href="#adding-support-for-non-conforming-endpoints" title="Link to this heading"></a></h3>
@@ -240,44 +228,58 @@ lives. To rebuild the HTML documentation from the source, run:</p>
 <p>To force a rebuild, run <code class="docutils literal notranslate"><span class="pre">touch</span> <span class="pre">CHANGELOG.rst</span></code> first.</p>
 <p><strong>NOTE:</strong> Python version 3.13 or later must be used when rebuilding
 documentation, or the version number in the documentation will be
-<code class="docutils literal notranslate"><span class="pre">2.?.?-metadata-unavailable</span></code>.</p>
+<code class="docutils literal notranslate"><span class="pre">[V].?.?-metadata-unavailable</span></code>, where <code class="docutils literal notranslate"><span class="pre">[V]</span></code> is the current major version.</p>
 </section>
 <section id="releasing-a-new-version">
 <h2>Releasing a New Version<a class="headerlink" href="#releasing-a-new-version" title="Link to this heading"></a></h2>
-<p>You will need valid user accounts on both <code class="docutils literal notranslate"><span class="pre">pypi.org</span></code> and <code class="docutils literal notranslate"><span class="pre">test.pypi.org</span></code>
-that have the “Maintainer” role on the project, as well as the requirements
-installed (see above).</p>
-<p>It is strongly recommended that you <a class="reference external" href="https://pypi.org/help/#apitoken">use an API token</a> to upload new releases to PyPI. The token
-must have write access to the project.</p>
+<p>For this process, you will need, at minimum:</p>
+<ul class="simple">
+<li><p>to run <code class="docutils literal notranslate"><span class="pre">make</span> <span class="pre">build</span></code> and commit changes to <code class="docutils literal notranslate"><span class="pre">uv.lock</span></code> before merging, to validate that building succeeds,</p></li>
+<li><p>the ability to create tags on the repository</p></li>
+<li><p>valid user accounts on both <code class="docutils literal notranslate"><span class="pre">pypi.org</span></code> and <code class="docutils literal notranslate"><span class="pre">test.pypi.org</span></code> that have the “Maintainer” role on the project, as well as the requirements installed (see above) and:</p></li>
+<li><p><a class="reference external" href="https://pypi.org/help/#apitoken">an API token</a> to upload new releases to PyPI, with write access to the project.</p></li>
+</ul>
+<p>To use a token for <code class="docutils literal notranslate"><span class="pre">uv</span> <span class="pre">publish</span></code> (which will be invoked in this process), set the
+environment variable <code class="docutils literal notranslate"><span class="pre">UV_PUBLISH_PASSWORD</span></code> when running publish or
+test-publish commands, i.e.</p>
+<ol class="arabic simple">
+<li><p>Run <code class="docutils literal notranslate"><span class="pre">read</span> <span class="pre">-s</span> <span class="pre">UV_PUBLISH_PASSWORD</span></code> to set the variable without echoing the token</p></li>
+<li><p>Paste in the token and hit enter</p></li>
+<li><p>Immediately afterwards, run <code class="docutils literal notranslate"><span class="pre">export</span> <span class="pre">!$</span></code></p></li>
+</ol>
 <section id="perform-end-to-end-publish-and-installation-testing">
 <h3>Perform end-to-end publish and installation testing<a class="headerlink" href="#perform-end-to-end-publish-and-installation-testing" title="Link to this heading"></a></h3>
+<p>This series of tests may not always be necessary, but it is a good idea to
+perform them when making significant or breaking changes. This testing step
+will to ensure that installation and upgrading isn’t broken, and thus help
+avert a scenario where we have to yank a version because it breaks projects.</p>
 <p>To test publishing and installing from the package index, first make sure you
 have a valid user account on <code class="docutils literal notranslate"><span class="pre">test.pypi.org</span></code> that has publisher access to the
-project as on <code class="docutils literal notranslate"><span class="pre">pypi.org</span></code>.</p>
+project as on <code class="docutils literal notranslate"><span class="pre">pypi.org</span></code>. When ready to begin, set the environemnt variable
+token for the test index as instructed above (it will differ from the live
+<code class="docutils literal notranslate"><span class="pre">pypi.org</span></code> index).</p>
 <p>Note, once a release is uploaded, it is no longer possible to upload a release
 with the same version number, even if that release is deleted. For that reason,
-it is a good idea to first add a suffix, i.e. <code class="docutils literal notranslate"><span class="pre">-dev001</span></code>, to the version in
-<code class="docutils literal notranslate"><span class="pre">pyproject.toml</span></code> while testing.</p>
-<p>To perform end-to-end tests, run the following, entering credentials for
-<code class="docutils literal notranslate"><span class="pre">test.pypi.org</span></code> when prompted:</p>
-<div class="highlight-shell notranslate"><div class="highlight"><pre><span></span>make<span class="w"> </span>testpublish
-</pre></div>
-</div>
-<p>The make target <code class="docutils literal notranslate"><span class="pre">testpublish</span></code> performs the following:</p>
+it is a good idea to first add a suffix that can be arbitrarily updated to
+iterate, i.e.  <code class="docutils literal notranslate"><span class="pre">-rc1</span></code>, to the version in <code class="docutils literal notranslate"><span class="pre">pyproject.toml</span></code> while testing,
+and then revert the changes (including changes to <code class="docutils literal notranslate"><span class="pre">uv.lock</span></code>) when done.</p>
+<p>Once the above is done, to perform end-to-end tests, run <code class="docutils literal notranslate"><span class="pre">make</span> <span class="pre">testpublish</span></code>,
+which will perform the following:</p>
 <ul class="simple">
-<li><p>Build the Python package</p></li>
-<li><p>Upload the new library to <code class="docutils literal notranslate"><span class="pre">test.pypi.org</span></code></p></li>
+<li><p>Build the Python package at the test version</p></li>
+<li><p>Upload the new arbitrary version to <code class="docutils literal notranslate"><span class="pre">test.pypi.org</span></code></p></li>
 <li><p>Test-install the library from <code class="docutils literal notranslate"><span class="pre">test.pypi.org</span></code> into a temporary Python
 virtualenv that does not already have the library installed, to test
 installing for the first time</p></li>
-<li><p>Tests-install the library from <code class="docutils literal notranslate"><span class="pre">test.pypi.org</span></code> into a temporary Python
-virtualenv where the library is already installed, to test upgrading</p></li>
+<li><p>Test-install the library from <code class="docutils literal notranslate"><span class="pre">test.pypi.org</span></code> into a temporary Python
+virtualenv where the mainline library version is already installed, to test
+upgrading an existing install.</p></li>
 </ul>
-<p>If any errors are encountered, the script should immediately exit. Errors
+<p>The script should print out the test version and success messages. Errors
 should be investigated and mitigated before publishing. To test again,
 temporarily change the version in <code class="docutils literal notranslate"><span class="pre">pyproject.toml</span></code> so that it counts as a new
-release and gets uploaded, and set it to the desired version before the actual
-release.</p>
+release and gets uploaded. Be sure to remember to set it back to the desired
+final version before the actual release, and revert any changes to <code class="docutils literal notranslate"><span class="pre">uv.lock</span></code>.</p>
 </section>
 <section id="merge-changes-and-tag">
 <h3>Merge changes and tag<a class="headerlink" href="#merge-changes-and-tag" title="Link to this heading"></a></h3>
@@ -287,42 +289,32 @@ the functional changes should also include at least:</p>
 <li><p>An update to <code class="docutils literal notranslate"><span class="pre">CHANGELOG.rst</span></code> describing the changes in the new release</p></li>
 <li><p>A change in the version number in <code class="docutils literal notranslate"><span class="pre">pyproject.toml</span></code> to a new
 version that follows <a class="reference external" href="https://semver.org/">Semantic Versioning</a>.</p></li>
-<li><p>Rebuilt HTML documentation</p></li>
+<li><p>Rebuilt HTML documentation via <code class="docutils literal notranslate"><span class="pre">make</span> <span class="pre">docs</span></code>.</p></li>
 </ul>
-<p>The HTML documentation can be rebuilt with the <code class="docutils literal notranslate"><span class="pre">docs</span></code> make target:</p>
-<div class="highlight-shell notranslate"><div class="highlight"><pre><span></span>make<span class="w"> </span>docs
-</pre></div>
-</div>
 <p>After rebuilding the documentation, it can then be viewed by opening the file
-<code class="docutils literal notranslate"><span class="pre">docs/index.html</span></code> in a web browser. Including rebuilt documentation helps
-reviewers by not requiring them to have the documentation-building tools
-installed.</p>
-<p>Once the pull request is approved, merge. Then (locally) checkout main and tag:</p>
-<div class="highlight-shell notranslate"><div class="highlight"><pre><span></span>git<span class="w"> </span>checkout<span class="w"> </span>main<span class="w"> </span><span class="o">&amp;&amp;</span><span class="w"> </span><span class="se">\</span>
-<span class="w">  </span>git<span class="w"> </span>pull<span class="w"> </span>origin<span class="w"> </span>main<span class="w"> </span><span class="o">&amp;&amp;</span><span class="w"> </span><span class="se">\</span>
-<span class="w">  </span>git<span class="w"> </span>tag<span class="w"> </span><span class="s2">&quot;v</span><span class="k">$(</span>python<span class="w"> </span>-c<span class="w"> </span><span class="s1">&#39;from pagerduty import __version__; print(__version__)&#39;</span><span class="k">)</span><span class="s2">&quot;</span><span class="w"> </span><span class="o">&amp;&amp;</span><span class="w"> </span><span class="se">\</span>
-<span class="w">  </span>git<span class="w"> </span>push<span class="w"> </span>--tags<span class="w"> </span>origin<span class="w"> </span>main
-</pre></div>
-</div>
+<code class="docutils literal notranslate"><span class="pre">docs/index.html</span></code> in a web browser. Including rebuilt documentation avoids
+the need for a follow-up pull request with a doc rebuild, but also helps
+reviewers by not requiring them to have the documentation-building tools.</p>
+<p>Remember to commit any changes to <code class="docutils literal notranslate"><span class="pre">docs/</span></code> and <code class="docutils literal notranslate"><span class="pre">uv.lock</span></code> before merging.</p>
+<p>Once the pull request is approved, merge. Then (locally) checkout main and tag,
+with the format <code class="docutils literal notranslate"><span class="pre">v{version}</span></code>, i.e. <code class="docutils literal notranslate"><span class="pre">v6.1.0</span></code>, and push the tag i.e. with
+<code class="docutils literal notranslate"><span class="pre">git</span> <span class="pre">push</span> <span class="pre">--tags</span></code>.</p>
 </section>
 <section id="publishing">
 <h3>Publishing<a class="headerlink" href="#publishing" title="Link to this heading"></a></h3>
 <p>Once the changes are merged and tagged, make sure your local repository clone
 has the <code class="docutils literal notranslate"><span class="pre">main</span></code> branch checked out at the latest available commit, and the
-local file tree is clean (has no uncommitted changes). Then run:</p>
+local file tree is clean (has no uncommitted changes). Then, set the publish
+token environment variable as described above and run:</p>
 <div class="highlight-shell notranslate"><div class="highlight"><pre><span></span>make<span class="w"> </span>publish
 </pre></div>
 </div>
-<p>When prompted, enter <code class="docutils literal notranslate"><span class="pre">__token__</span></code> as your username and your API token as the password.</p>
-<p>Finally, <a class="reference external" href="https://github.com/PagerDuty/pagerduty/releases/new">create a new release</a>, and fill in some
+<p>Finally, <a class="reference external" href="https://github.com/PagerDuty/pagerduty/releases/new">create a new release</a>, and select the latest tag.
 details:</p>
 <ul class="simple">
 <li><p>Select “Choose a tag” and select the new latest tag.</p></li>
 <li><p>If a new patch version is being released, update the existing release for
 that major and minor version.</p></li>
-<li><p>Name the release after the major and minor version, i.e. 5.1, and very brief
-summary of changes.</p></li>
-<li><p>Compose a description from the pull requests whose changes are included.</p></li>
 </ul>
 </section>
 </section>

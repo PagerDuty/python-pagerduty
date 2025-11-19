@@ -1,19 +1,18 @@
 %: build
 
-build: pagerduty/* pyproject.toml
-	rm -f dist/* && python3 -m build
+build: uv.lock pagerduty/* pyproject.toml
+	rm -f dist/* && uv build
 
 docs/index.html: build pyproject.toml pagerduty/* CHANGELOG.rst sphinx/source/*
-	rm -fr ./docs && cd sphinx && make html && cd .. && mv sphinx/build/html ./docs && touch ./docs/.nojekyll
+	rm -fr ./docs && cd sphinx && uv run make html && cd .. && mv sphinx/build/html ./docs && touch ./docs/.nojekyll
 
-docs: docs/index.html pagerduty/__pycache__
-
-# Require the module be compiled first so metadata can be used:
-pagerduty/__pycache__:
-	pip install .
+docs: docs/index.html build
 
 testpublish: build
-	./publish-test.sh
+	./test/publish-test.sh
 
 publish: build
-	twine upload dist/*.tar.gz dist/*.whl
+	uv publish --username __token__
+
+uv.lock: pyproject.toml
+	uv sync

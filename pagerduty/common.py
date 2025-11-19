@@ -1,15 +1,6 @@
 # Core
-from datetime import (
-    datetime,
-    timedelta,
-    timezone
-)
-from typing import (
-    List,
-    Optional,
-    Tuple,
-    Union
-)
+from datetime import datetime, timedelta, timezone
+from typing import List, Optional, Tuple, Union
 from warnings import warn
 from json.decoder import JSONDecodeError
 
@@ -17,12 +8,7 @@ from json.decoder import JSONDecodeError
 from httpx import Response
 
 # Local
-from . errors import (
-    Error,
-    HttpError,
-    ServerHttpError,
-    UrlError
-)
+from .errors import Error, HttpError, ServerHttpError, UrlError
 
 ########################
 ### DEFAULT SETTINGS ###
@@ -44,7 +30,8 @@ The default timeout in seconds for any given HTTP request.
 
 Modifying this value will not affect any preexisting API session instances.
 Rather, it will only affect new instances. It is recommended to use
-:attr:`pagerduty.ApiClient.timeout` to configure the timeout for a given session.
+:attr:`pagerduty.ApiClient.timeout` to configure the timeout for a given
+session.
 """
 
 
@@ -52,10 +39,12 @@ Rather, it will only affect new instances. It is recommended to use
 ### HELPER FUNCTIONS ###
 ########################
 
-def datetime_intervals(since: datetime, until: datetime, n=10) \
-        -> List[Tuple[datetime, datetime]]:
+
+def datetime_intervals(
+    since: datetime, until: datetime, n=10
+) -> List[Tuple[datetime, datetime]]:
     """
-    Break up a given time interval into a series of smaller consecutive time intervals.
+    Subdivide a given time interval into smaller consecutive intervals.
 
     :param since:
         A datetime object repesenting the beginning of the time interval.
@@ -64,9 +53,9 @@ def datetime_intervals(since: datetime, until: datetime, n=10) \
     :param n:
         The target number of sub-intervals to generate.
     :returns:
-        A list of tuples representing beginnings and ends of sub-intervals within the
-        time interval. If the resulting intervals would be less than one second, they
-        will be one second.
+        A list of tuples representing beginnings and ends of sub-intervals
+        within the time interval. If the resulting intervals would be less than
+        one second, they will be one second.
     """
     total_s = int((until - since).total_seconds())
     if total_s <= 0:
@@ -76,43 +65,53 @@ def datetime_intervals(since: datetime, until: datetime, n=10) \
         interval_len = 1
         n_intervals = total_s
     else:
-        interval_len = max(int(total_s/n), 1)
+        interval_len = max(total_s // n, 1)
         n_intervals = n
     interval_start = since
     intervals = []
-    for i in range(n_intervals-1):
+    for i in range(n_intervals - 1):
         interval_end = interval_start + timedelta(seconds=interval_len)
         intervals.append((interval_start, interval_end))
         interval_start = interval_end
     intervals.append((interval_start, until))
     return intervals
 
+
 def datetime_to_relative_seconds(datestr: str):
     """
-    Convert an ISO8601 string to a relative number of seconds from the current time.
+    Convert an ISO8601 string to a relative number of seconds from now.
     """
     deadline = strptime(datestr)
     now = datetime.now(timezone.utc)
-    return (deadline-now).total_seconds()
+    return (deadline - now).total_seconds()
 
-def deprecated_kwarg(deprecated_name: str, details: Optional[str] = None,
-            method: Optional[str] = None):
+
+def deprecated_kwarg(
+    deprecated_name: str,
+    details: Optional[str] = None,
+    method: Optional[str] = None,
+):
     """
     Raises a warning if a deprecated keyword argument is used.
 
-    :param deprecated_name: The name of the deprecated function
-    :param details: An optional message to append to the deprecation message
-    :param method: An optional method name
+    :param deprecated_name:
+        The name of the deprecated function
+    :param details:
+        An optional message to append to the deprecation message
+    :param method:
+        An optional method name
     """
-    details_msg = ''
-    method_msg = ''
+    details_msg = ""
+    method_msg = ""
     if method is not None:
         method_msg = f" of {method}"
     if details is not None:
         details_msg = f" {details}"
     warn(
-        f"Keyword argument \"{deprecated_name}\"{method_msg} is deprecated."+details_msg
+        f'Keyword argument "{deprecated_name}"{method_msg} is deprecated.'
+        + details_msg
     )
+
 
 def http_error_message(r: Response, context: Optional[str] = None) -> str:
     """
@@ -126,24 +125,29 @@ def http_error_message(r: Response, context: Optional[str] = None) -> str:
         The message to include in the HTTP error
     """
     received_http_response = bool(r.status_code)
-    endpoint = "%s %s"%(r.request.method.upper(), r.request.url)
+    endpoint = "%s %s" % (r.request.method.upper(), r.request.url)
     context_msg = ""
     if type(context) is str:
-        context_msg=f" in {context}"
+        context_msg = f" in {context}"
     if received_http_response and not r.is_success:
-        err_type = 'unknown'
+        err_type = "unknown"
         if r.status_code / 100 == 4:
-            err_type = 'client'
+            err_type = "client"
         elif r.status_code / 100 == 5:
-            err_type = 'server'
+            err_type = "server"
         tr_bod = truncate_text(r.text)
-        return f"{endpoint}: API responded with {err_type} error (status " \
+        return (
+            f"{endpoint}: API responded with {err_type} error (status "
             f"{r.status_code}){context_msg}: {tr_bod}"
+        )
     elif not received_http_response:
         return f"{endpoint}: Network or other unknown error{context_msg}"
     else:
-        return f"{endpoint}: Success (status {r.status_code}) but an " \
+        return (
+            f"{endpoint}: Success (status {r.status_code}) but an "
             f"expectation still failed{context_msg}"
+        )
+
 
 def last_4(secret: str) -> str:
     """
@@ -153,7 +157,8 @@ def last_4(secret: str) -> str:
     :returns:
         The truncated text
     """
-    return '*'+str(secret)[-4:]
+    return "*" + str(secret)[-4:]
+
 
 def normalize_url(base_url: str, url: str) -> str:
     """
@@ -171,12 +176,13 @@ def normalize_url(base_url: str, url: str) -> str:
     """
     if url.startswith(base_url):
         return url
-    elif not (url.startswith('http://') or url.startswith('https://')):
-        return base_url.rstrip('/') + "/" + url.lstrip('/')
+    elif not (url.startswith("http://") or url.startswith("https://")):
+        return base_url.rstrip("/") + "/" + url.lstrip("/")
     else:
         raise UrlError(
             f"URL {url} does not start with the API base URL {base_url}."
         )
+
 
 def plural_name(obj_type: str) -> str:
     """
@@ -188,23 +194,24 @@ def plural_name(obj_type: str) -> str:
         The name of the resource, i.e. the last part of the URL for the
         resource's index URL
     """
-    if obj_type.endswith('_reference'):
+    if obj_type.endswith("_reference"):
         # Strip down to basic type if it's a reference
-        obj_type = obj_type[:obj_type.index('_reference')]
-    if obj_type.endswith('y'):
+        obj_type = obj_type[: obj_type.index("_reference")]
+    if obj_type.endswith("y"):
         # Because English
-        return obj_type[:-1]+'ies'
+        return obj_type[:-1] + "ies"
     else:
-        return obj_type+'s'
+        return obj_type + "s"
 
 
 def relative_seconds_to_datetime(seconds_remaining: int) -> str:
     """
-    Convert a number of seconds in the future to an absolute UTC ISO8601 time string.
+    Convert a number of seconds in the future to a UTC ISO8601 time string.
     """
     now = datetime.now(timezone.utc)
     target_time = now + timedelta(seconds=seconds_remaining)
     return strftime(target_time)
+
 
 def requires_success(method: callable) -> callable:
     """
@@ -213,10 +220,13 @@ def requires_success(method: callable) -> callable:
     Uses :attr:`pagerduty.common.successful_response` for said validation.
     """
     doc = method.__doc__
+
     def call(self, url, **kw):
         return successful_response(method(self, url, **kw))
+
     call.__doc__ = doc
     return call
+
 
 def singular_name(r_name: str) -> str:
     """
@@ -230,11 +240,12 @@ def singular_name(r_name: str) -> str:
     :returns:
         The singularized name
     """
-    if r_name.endswith('ies'):
+    if r_name.endswith("ies"):
         # Because English
-        return r_name[:-3]+'y'
+        return r_name[:-3] + "y"
     else:
-        return r_name.rstrip('s')
+        return r_name.rstrip("s")
+
 
 def strftime(time_obj: datetime) -> str:
     """
@@ -247,18 +258,22 @@ def strftime(time_obj: datetime) -> str:
     """
     return time_obj.strftime(DATETIME_FMT)
 
+
 def strptime(datestr: str) -> datetime:
     """
     Parse a string in full ISO8601 format into a ``datetime.datetime`` object.
 
     :param datestr:
-        Full ISO8601 string representation of the date and time, including time zone
+        Full ISO8601 representation of the date and time, including time zone
     :returns:
         The datetime object representing the string
     """
     return datetime.strptime(datestr, DATETIME_FMT)
 
-def successful_response(r: Response, context: Optional[str] = None) -> Response:
+
+def successful_response(
+    r: Response, context: Optional[str] = None
+) -> Response:
     """Validates the response as successful.
 
     Returns the response if it was successful; otherwise, raises
@@ -267,7 +282,7 @@ def successful_response(r: Response, context: Optional[str] = None) -> Response:
     :param r:
         Response object corresponding to the response received.
     :param context:
-        A description of when the HTTP request is happening, for error reporting
+        A description of when the HTTP request is happening
     :returns:
         The response object, if it was successful
     """
@@ -280,30 +295,32 @@ def successful_response(r: Response, context: Optional[str] = None) -> Response:
     else:
         raise Error(http_error_message(r, context=context))
 
+
 def truncate_text(text: str) -> str:
     """Truncates a string longer than :attr:`pagerduty.common.TEXT_LEN_LIMIT`
 
     :param text: The string to truncate if longer than the limit.
     """
     if len(text) > TEXT_LEN_LIMIT:
-        return text[:TEXT_LEN_LIMIT-1]+'...'
+        return text[: TEXT_LEN_LIMIT - 1] + "..."
     else:
         return text
+
 
 def try_decoding(r: Response) -> Optional[Union[dict, list, str]]:
     """
     JSON-decode a response body
 
-    Returns the decoded body if successful; raises :class:`pagerduty.ServerHttpError`
-    otherwise.
+    Returns the decoded body if successful; raises
+    :class:`pagerduty.ServerHttpError` otherwise.
 
     :param r:
         The response object
     """
     try:
         return r.json()
-    except (JSONDecodeError, ValueError) as e:
-        if r.text.strip() == '':
+    except (JSONDecodeError, ValueError):
+        if r.text.strip() == "":
             # Some endpoints return HTTP 204 for request types other than delete
             return None
         else:

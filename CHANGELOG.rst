@@ -1,3 +1,17 @@
+**2025-11-19: 6.1.0: Add uv and ruff and fix errors and formatting**
+
+This release adopts `uv <https://docs.astral.sh/uv/>`_ as the project's chosen package manager and build tool, and `ruff <https://docs.astral.sh/ruff/>`_ as its chosen linter and formatter.
+
+* **Fixes:**
+   * Resolve ``NameError`` in the following methods:
+      * ``RestApiV2Client.api_key_access``
+      * ``RestApiV2Client.iter_history``
+      * ``RestApiV2Client.account_has_ability``
+* **Features:**
+   * Revise the exception message for status 401 Unauthorized to include a suggestion that the service region / base URL are wrong; this is in some use cases the most common reason for the error.
+   * Rewrite the end-to-end package publish testing script to use uv, and perform deeper inspection of the resulting installed package.
+   * New-and-improved development workflow using ``uv`` and ``ruff``
+
 **2025-10-24: 6.0.0: Change base HTTP client to python-httpx**
 
 The underlying HTTP client on which this library is based has been changed to `python-httpx <https://www.python-httpx.org>`_. The primary motivation of this change is to provide thread safety with a very similar interface to ``requests``, and the possibility to add support for asynchronous usage in future releases.

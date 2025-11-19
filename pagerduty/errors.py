@@ -4,11 +4,14 @@ from httpx import Response
 ### EXCEPTIONS ###
 ##################
 
+
 class UrlError(Exception):
     """
     Exception class for unsupported URLs or malformed input.
     """
+
     pass
+
 
 class Error(Exception):
     """
@@ -30,6 +33,7 @@ class Error(Exception):
         self.msg = message
         self.response = response
         super(Error, self).__init__(message)
+
 
 class HttpError(Error):
     """
@@ -67,13 +71,15 @@ class HttpError(Error):
     def __init__(self, message, response: Response):
         super(HttpError, self).__init__(message, response=response)
 
+
 class ServerHttpError(HttpError):
     """
     Error class representing failed expectations made of the server.
 
-    This is raised in cases where the response schema differs from the expected schema
-    because of an API bug, or because it's an early access endpoint and changes before
-    GA, or in cases of HTTP status 5xx where a successful response is required.
+    This is raised in cases where the response schema differs from the expected
+    schema because of an API bug, or because it's an early access endpoint and
+    changes before GA, or in cases of HTTP status 5xx where a successful
+    response is required.
     """
-    pass
 
+    pass

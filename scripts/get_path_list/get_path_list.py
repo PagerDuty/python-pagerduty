@@ -8,6 +8,15 @@ Usage: get_path_list.py PATH
   See source comments for additional usage details.
 """
 
+import sys
+from yaml import load
+
+try:
+    from yaml import CLoader as Loader
+except ImportError:
+    from yaml import Loader
+
+
 # This script is not part of the python-pagerduty library. Rather, it can be used for
 # the by PagerDuty engineers to assist with its development and maintenance.  It
 # automatically generates the declaration of module variables "ENDPOINT_PATTERNS" and
@@ -28,50 +37,54 @@ Usage: get_path_list.py PATH
 # CANONICAL PATH WILL NEED TO BE ADDED TO THE FOLLOWING DICTIONARY, OR ENTITY
 # WRAPPING WILL END UP BROKEN FOR THAT ENDPOINT:
 EXPAND_PATHS = {
-    '/tags/{id}/{entity_type}': [
-        '/tags/{id}/'+et for et in ('users', 'teams', 'escalation_policies')
+    "/tags/{id}/{entity_type}": [
+        "/tags/{id}/" + et for et in ("users", "teams", "escalation_policies")
     ]
 }
 
-import sys
-from yaml import load, dump
-try:
-    from yaml import CLoader as Loader, CDumper as Dumper
-except ImportError:
-    from yaml import Loader, Dumper
 
 def main():
     if len(sys.argv) < 2:
         print(__doc__)
         return
     file = sys.argv[1]
-    api_ref = load(open(file, 'r'), Loader)
-    public_endpoints = list(map(lambda kv: kv[0], filter(
-        lambda kv: not kv[1].get('x-pd-private', False),
-        api_ref['paths'].items()
-    )))
-    public_endpoints_dict = dict(map(lambda kv: (kv[0], kv[1]), filter(
-        lambda kv: not kv[1].get('x-pd-private', False),
-        api_ref['paths'].items()
-    )))
+    api_ref = load(open(file, "r"), Loader)
+    public_endpoints = list(
+        map(
+            lambda kv: kv[0],
+            filter(
+                lambda kv: not kv[1].get("x-pd-private", False),
+                api_ref["paths"].items(),
+            ),
+        )
+    )
+    public_endpoints_dict = dict(
+        map(
+            lambda kv: (kv[0], kv[1]),
+            filter(
+                lambda kv: not kv[1].get("x-pd-private", False),
+                api_ref["paths"].items(),
+            ),
+        )
+    )
 
-    print('CANONICAL_PATHS = [')
+    print("CANONICAL_PATHS = [")
     for path in public_endpoints:
         print_paths = EXPAND_PATHS.get(path, [path])
         for path in print_paths:
             print(f"    '{path}',")
     print("]\n")
 
-    print('CURSOR_BASED_PAGINATION_PATHS = [')
-    cursor_param_ref = '../common/models/Parameters.yaml#/cursor_cursor'
-    for (path, spec) in public_endpoints_dict.items():
-        getspec = spec.get('get', {})
-        getparams = getspec.get('parameters', [])
+    print("CURSOR_BASED_PAGINATION_PATHS = [")
+    cursor_param_ref = "../common/models/Parameters.yaml#/cursor_cursor"
+    for path, spec in public_endpoints_dict.items():
+        getspec = spec.get("get", {})
+        getparams = getspec.get("parameters", [])
         for param in getparams:
             if cursor_param_ref in param.values():
                 print(f"    '{path}',")
     print("]\n")
 
 
-if __name__ == '__main__':
+if __name__ == "__main__":
     main()

@@ -76,6 +76,34 @@
              
   <section id="changelog">
 <h1>Changelog<a class="headerlink" href="#changelog" title="Link to this heading"></a></h1>
+<p><strong>2025-11-19: 6.1.0: Add uv and ruff and fix errors and formatting</strong></p>
+<p>This release adopts <a class="reference external" href="https://docs.astral.sh/uv/">uv</a> as the project’s chosen package manager and build tool, and <a class="reference external" href="https://docs.astral.sh/ruff/">ruff</a> as its chosen linter and formatter.</p>
+<ul class="simple">
+<li><dl class="simple">
+<dt><strong>Fixes:</strong></dt><dd><ul>
+<li><dl class="simple">
+<dt>Resolve <code class="docutils literal notranslate"><span class="pre">NameError</span></code> in the following methods:</dt><dd><ul>
+<li><p><code class="docutils literal notranslate"><span class="pre">RestApiV2Client.api_key_access</span></code></p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">RestApiV2Client.iter_history</span></code></p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">RestApiV2Client.account_has_ability</span></code></p></li>
+</ul>
+</dd>
+</dl>
+</li>
+</ul>
+</dd>
+</dl>
+</li>
+<li><dl class="simple">
+<dt><strong>Features:</strong></dt><dd><ul>
+<li><p>Revise the exception message for status 401 Unauthorized to include a suggestion that the service region / base URL are wrong; this is in some use cases the most common reason for the error.</p></li>
+<li><p>Rewrite the end-to-end package publish testing script to use uv, and perform deeper inspection of the resulting installed package.</p></li>
+<li><p>New-and-improved development workflow using <code class="docutils literal notranslate"><span class="pre">uv</span></code> and <code class="docutils literal notranslate"><span class="pre">ruff</span></code></p></li>
+</ul>
+</dd>
+</dl>
+</li>
+</ul>
 <p><strong>2025-10-24: 6.0.0: Change base HTTP client to python-httpx</strong></p>
 <p>The underlying HTTP client on which this library is based has been changed to <a class="reference external" href="https://www.python-httpx.org">python-httpx</a>. The primary motivation of this change is to provide thread safety with a very similar interface to <code class="docutils literal notranslate"><span class="pre">requests</span></code>, and the possibility to add support for asynchronous usage in future releases.</p>
 <ul class="simple">
