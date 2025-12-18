@@ -616,14 +616,14 @@ class RestApiV2BaseClient(ApiClient):
         :attr:`pagerduty.rest_api_v2_base_client.canonical_path` from
         :attr:`pagerduty.RestApiV2BaseClient.canonical_path`.
         """
-        return []
+        raise NotImplementedError
 
     @property
     def cursor_based_pagination_paths(self) -> List[CanonicalPath]:
         """
         List of paths known by the client to support cursor-based pagination.
         """
-        return []
+        raise NotImplementedError
 
     def dict_all(self, path: str, by: str = "id", **kw) -> dict:
         """
@@ -668,7 +668,7 @@ class RestApiV2BaseClient(ApiClient):
         corresponding API follow orthodox entity wrapping conventions, in which
         case the wrapper information can be inferred from the path itself.
         """
-        return {}
+        raise NotImplementedError
 
     def entity_wrappers(
         self, http_method: str, path: CanonicalPath

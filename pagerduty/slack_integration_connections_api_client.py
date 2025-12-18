@@ -7,6 +7,8 @@ CANONICAL_PATHS = [
     "/workspaces/{slack_team_id}/connections/{connection_id}",
 ]
 
+CURSOR_BASED_PAGINATION_PATHS = []
+
 ENTITY_WRAPPER_CONFIG = {
     # Slack Connections
     "GET /workspaces/{slack_team_id}/connections": "slack_connections",
@@ -50,6 +52,10 @@ class SlackIntegrationConnectionsApiClient(RestApiV2BaseClient):
     @property
     def canonical_paths(self) -> List[CanonicalPath]:
         return CANONICAL_PATHS
+
+    @property
+    def cursor_based_pagination_paths(self) -> List[CanonicalPath]:
+        return CURSOR_BASED_PAGINATION_PATHS
 
     @property
     def entity_wrapper_config(self) -> dict:
