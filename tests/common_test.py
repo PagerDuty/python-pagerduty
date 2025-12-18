@@ -1,14 +1,31 @@
+"""
+Tests for methods in the common module, and common utilities for other tests.
+
+Note, both of the imports of top-level pagerduty and the common module from
+pagerduty are needed; they validate that the top level module has the
+interfaces to the common methods. This is to remain until we can deprecate and
+finally remove these published interfaces (breaking changes) so that the core
+of the client isn't exposed and stops accumulating external dependency.
+"""
+
 import datetime
 import json
 import unittest
 from datetime import timezone
 
-from mocks import Response
+from mocks import Client, Response
+
 
 import pagerduty
+from pagerduty import common
 
 
 class ClientTest(unittest.TestCase):
+    """
+    A base class for testing client classes in the ``pagerduty`` library
+
+    It mainly serves as a collection of common methods.
+    """
     def assertDictContainsSubset(self, d0, d1):
         d0_keys = list(dict(d0).keys())
         d1_keys = list(dict(d1).keys())
@@ -26,46 +43,10 @@ class ClientTest(unittest.TestCase):
         )
 
 
-class UrlHandlingTest(unittest.TestCase):
-    def test_normalize_url(self):
-        urls_expected = [
-            (
-                ("https://api.pagerduty.com/", "users"),
-                "https://api.pagerduty.com/users",
-            ),
-            (
-                ("https://api.pagerduty.com", "/users"),
-                "https://api.pagerduty.com/users",
-            ),
-            (
-                (
-                    "https://api.pagerduty.com",
-                    "https://api.pagerduty.com/users",
-                ),
-                "https://api.pagerduty.com/users",
-            ),
-        ]
-        for base_url_url, expected_url in urls_expected:
-            self.assertEqual(
-                expected_url, pagerduty.normalize_url(*base_url_url)
-            )
-        invalid_input = [  # URL does not start with base_url
-            (
-                "https://api.pagerduty.com/incidents",
-                "https://events.pagerduty.com/api/v2/enqueue",
-            ),
-            (
-                "https://api.pagerduty.com/services",
-                "https://some.shady-site.com/read-auth-headers",
-            ),
-        ]
-        for args in invalid_input:
-            self.assertRaises(
-                pagerduty.UrlError, pagerduty.normalize_url, *args
-            )
-
-
-class HelperFunctionsTest(unittest.TestCase):
+class CommonTest(unittest.TestCase):
+    """
+    Tests for functions in the common module
+    """
     def test_datetime_intervals(self):
         # Fall back to 1s / no. of seconds for intervals if the interval is too short
         start = datetime.datetime(
@@ -115,18 +96,64 @@ class HelperFunctionsTest(unittest.TestCase):
         self.assertEqual(12, int(interval_len))
         self.assertEqual((end - start).total_seconds(), total_s)
 
-    def test_datetime_to_relative_seconds(self):
-        # This test might be flaky, if something causes a serious delay in the execution
-        # of any of the underlying Python methods. It is a test of two methods, which
-        # should be the inverse of each other, but since datetime.datetime.now is
-        # immutable, we can't use patch.object to mock it so the best I could come up
-        # with for now is to assert that the relative number of seconds in-between
-        # changing it to a timestamp in the future and turning that back into a number
-        # of seconds relative to the new time afterwards is very close to the original.
+    def test_datetime_conversion(self):
+        """
+        Tests relative_seconds_to_datetime and datetime_to_relative_seconds.
+
+        These two methods basically are inverse functions of each other.
+
+        Note: this test might be flaky, if something causes a serious delay in
+        the execution of any of the underlying Python methods. It is a test of
+        two methods, which should be the inverse of each other, but since
+        datetime.datetime.now is immutable, we can't use patch.object to mock
+        it so the best I could come up with for now is to assert that the
+        relative number of seconds in-between changing it to a timestamp in the
+        future and turning that back into a number of seconds relative to the
+        new time afterwards is very close to the original.
+
+        To fix this, we
+        """
         t0 = 86400
-        future_timestamp = pagerduty.common.relative_seconds_to_datetime(t0)
-        t1 = pagerduty.common.datetime_to_relative_seconds(future_timestamp)
+        future_timestamp = common.relative_seconds_to_datetime(t0)
+        t1 = common.datetime_to_relative_seconds(future_timestamp)
         self.assertTrue(abs(t1 - t0) / t0 < 0.0001)
+
+    def test_normalize_url(self):
+        urls_expected = [
+            (
+                ("https://api.pagerduty.com/", "users"),
+                "https://api.pagerduty.com/users",
+            ),
+            (
+                ("https://api.pagerduty.com", "/users"),
+                "https://api.pagerduty.com/users",
+            ),
+            (
+                (
+                    "https://api.pagerduty.com",
+                    "https://api.pagerduty.com/users",
+                ),
+                "https://api.pagerduty.com/users",
+            ),
+        ]
+        for base_url_url, expected_url in urls_expected:
+            self.assertEqual(
+                expected_url, pagerduty.normalize_url(*base_url_url)
+            )
+        invalid_input = [  # URL does not start with base_url
+            (
+                "https://api.pagerduty.com/incidents",
+                "https://events.pagerduty.com/api/v2/enqueue",
+            ),
+            (
+                "https://api.pagerduty.com/services",
+                "https://some.shady-site.com/read-auth-headers",
+            ),
+        ]
+        for args in invalid_input:
+            self.assertRaises(
+                pagerduty.UrlError, pagerduty.normalize_url, *args
+            )
 
     def test_plural_deplural(self):
         # forward

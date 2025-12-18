@@ -415,7 +415,7 @@ class ApiClient(Client):
         Setting this to a nonzero number helps avoid the "thundering herd"
         effect that can potentially be caused by many API clients making
         simultaneous concurrent API requests and consequently waiting for the
-        same amount of time before retrying.  It is currently zero by default
+        same amount of time before retrying. It is currently zero by default
         for consistent behavior with previous versions.
         """
         if hasattr(self, "_stagger_cooldown"):
