@@ -109,7 +109,6 @@ class RestApiV2ClientTest(ClientTest):
                     client.account_has_ability("whatever")
             get.reset_mock()
 
-
     @patch.object(pagerduty.RestApiV2Client, "iter_all")
     def test_find(self, iter_all):
         client = pagerduty.RestApiV2Client("token")
@@ -169,7 +168,6 @@ class RestApiV2ClientTest(ClientTest):
         # A page's "after" cursor is the value of "after" from the page before it:
         self.assertEqual(AFTER_1, get.call_args_list[1][1]["params"]["after"])
 
-
     @patch.object(pagerduty.RestApiV2Client, "post")
     def test_iter_analytics_raw_incidents(self, post):
         LIMIT = 10
@@ -205,7 +203,6 @@ class RestApiV2ClientTest(ClientTest):
             client.default_page_size,
             post.call_args_list[0][1]["json"]["limit"],
         )
-
 
     # iter_history tests
     #
@@ -414,7 +411,6 @@ class RestApiV2ClientTest(ClientTest):
         client.persist("users", "email", new_user, update=True)
         updater.assert_not_called()
 
-
     @patch.object(pagerduty.RestApiV2Client, "get")
     def test_rget(self, get):
         response200 = Response(
@@ -461,4 +457,3 @@ class RestApiV2ClientTest(ClientTest):
         # and we should get a new subdomain when next accessed
         rget.return_value = [{"html_url": "https://another-one.pagerduty.com"}]
         self.assertEqual("another-one", client.subdomain)
-

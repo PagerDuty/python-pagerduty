@@ -13,8 +13,8 @@ import pagerduty
 from pagerduty.auth_method import AuthMethod
 from common_test import ClientTest, Client, Response
 
-class DummyAuthMethod(AuthMethod):
 
+class DummyAuthMethod(AuthMethod):
     @property
     def auth_headers(self) -> dict:
         return {"Authorization": f"some format idk secret={self.secret}"}
@@ -22,6 +22,7 @@ class DummyAuthMethod(AuthMethod):
     @property
     def auth_param(self) -> dict:
         return {"secret": self.secret}
+
 
 class DummyApiClient(pagerduty.ApiClient):
     """
@@ -46,13 +47,13 @@ class DummyApiClient(pagerduty.ApiClient):
 
     sleep_timer_base = 0.5
 
-class ApiClientTest(ClientTest):
 
+class ApiClientTest(ClientTest):
     def test_auth_method(self):
         # TODO: ValueError raise
         pass
 
-    #def cooldown_factor(self) -> float:
+    # def cooldown_factor(self) -> float:
     # TODO: mock random(), self.stagger_cooldown and sleep_timer_base
 
     def test_normalize_params(self):
@@ -63,14 +64,13 @@ class ApiClientTest(ClientTest):
         # TODO: calls normalize_url correctly
         pass
 
-    #def prepare_headers(
+    # def prepare_headers(
     #    self, method: str, user_headers: Optional[dict] = None
-    #) -> dict:
+    # ) -> dict:
     # TODO: Define user agent
     # TODO: Set JSON content type when sending a payload-bearing request
     # TODO: apply user headers with the expected precedence of user headers
     # TODO: add auth_method's auth header, if any.
-
 
     def test_print_debug(self):
         client = DummyApiClient(DummyAuthMethod("token"))
@@ -111,7 +111,6 @@ class ApiClientTest(ClientTest):
         client.print_debug = True
         client.print_debug = True
         self.assertTrue(hasattr(client, "_debugHandler"))
-
 
     @patch.object(pagerduty.RestApiV2Client, "postprocess")
     def test_request(self, postprocess):
@@ -359,21 +358,18 @@ class ApiClientTest(ClientTest):
                 r = client.get("/users/P123456")
                 self.assertEqual(404, r.status_code)
 
-
-    #def stagger_cooldown(self, val: Union[float, int]):
+    # def stagger_cooldown(self, val: Union[float, int]):
     # TODO: ValueError
 
-    #def trunc_key(self) -> str:
+    # def trunc_key(self) -> str:
     # TODO: mock auth_method and test that trunc_secret is set.
 
-    #def url(self) -> str:
+    # def url(self) -> str:
     # TODO: UrlError
 
     def test_trunc_key(self):
         client = pagerduty.RestApiV2Client("abcd1234")
         self.assertEqual("*1234", client.trunc_key)
 
-    #def user_agent(self) -> str:
+    # def user_agent(self) -> str:
     # #TODO: Matches a "looks like this" regex
-
-

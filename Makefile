@@ -1,5 +1,7 @@
 %: build
 
+.PHONY: test lint lint-fix format format-fix
+
 build: uv.lock pagerduty/* pyproject.toml
 	rm -f dist/* && uv build
 
@@ -16,3 +18,15 @@ publish: build
 
 uv.lock: pyproject.toml
 	uv sync
+
+lint:
+	uvx ruff check
+
+format:
+	uvx ruff format --check
+
+format-fix:
+	uvx ruff format
+
+test: lint format
+	./test.sh

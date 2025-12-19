@@ -11,7 +11,6 @@ from unittest.mock import Mock, MagicMock, patch, call
 
 import pagerduty.auth_method
 
+
 class AuthMethodTest(unittest.TestCase):
-
     pass
-

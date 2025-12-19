@@ -26,6 +26,7 @@ class ClientTest(unittest.TestCase):
 
     It mainly serves as a collection of common methods.
     """
+
     def assertDictContainsSubset(self, d0, d1):
         d0_keys = list(dict(d0).keys())
         d1_keys = list(dict(d1).keys())
@@ -47,6 +48,7 @@ class CommonTest(unittest.TestCase):
     """
     Tests for functions in the common module
     """
+
     def test_datetime_intervals(self):
         # Fall back to 1s / no. of seconds for intervals if the interval is too short
         start = datetime.datetime(

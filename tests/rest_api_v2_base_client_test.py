@@ -14,6 +14,7 @@ import pagerduty.rest_api_v2_base_client
 from common_test import ClientTest, Client, Response
 from pagerduty.rest_api_v2_client import CANONICAL_PATHS
 
+
 def page(pagenum: int, total: int, limit: int, resource: str = "users"):
     """
     Generate a dummy page of result data for testing classic pagination.
@@ -38,6 +39,7 @@ def page(pagenum: int, total: int, limit: int, resource: str = "users"):
             "limit": limit,
         }
     )
+
 
 def page_cursor(wrapper, results, cursor):
     """
@@ -75,10 +77,8 @@ class RestApiV2UrlHandlingTest(ClientTest):
             self.assertEqual(
                 pattern,
                 pagerduty.rest_api_v2_base_client.canonical_path(
-                    CANONICAL_PATHS,
-                    base_url,
-                    url
-                )
+                    CANONICAL_PATHS, base_url, url
+                ),
             )
             # TODO (issue 73): remove this wrapper; for now we support with
             # testing both the wrapper and the generic method:
@@ -321,7 +321,6 @@ class FunctionDecoratorsTest(unittest.TestCase):
 
 
 class RestApiV2BaseClientTest(ClientTest):
-
     def test_auth_method(self):
         # TODO: test validation of the pick-one-by-keyword selection interface
         pass
@@ -364,7 +363,6 @@ class RestApiV2BaseClientTest(ClientTest):
             },
         )
 
-
     @patch.object(pagerduty.RestApiV2Client, "get")
     def test_get_total_invalid(self, get):
         """
@@ -382,7 +380,6 @@ class RestApiV2BaseClientTest(ClientTest):
             params={"since": pd_start, "until": now},
         )
 
-
     @patch.object(httpx.Client, "request")
     def test_oauth_headers(self, request):
         """
@@ -397,7 +394,7 @@ class RestApiV2BaseClientTest(ClientTest):
             self.assertTrue(
                 isinstance(
                     client.auth_method,
-                    pagerduty.rest_api_v2_base_client.OAuthTokenAuthMethod
+                    pagerduty.rest_api_v2_base_client.OAuthTokenAuthMethod,
                 )
             )
             # Make a request and validate the headers passed to it include the expected
@@ -411,7 +408,6 @@ class RestApiV2BaseClientTest(ClientTest):
                 "Bearer " + access_token,
                 request_call[2]["headers"]["Authorization"],
             )
-
 
     @patch.object(pagerduty.RestApiV2Client, "iter_cursor")
     @patch.object(pagerduty.RestApiV2Client, "get")
@@ -520,7 +516,6 @@ class RestApiV2BaseClientTest(ClientTest):
         )
         self.assertEqual(30, len(items))
 
-
     @patch.object(pagerduty.RestApiV2Client, "get")
     def test_iter_cursor(self, get):
         client = pagerduty.RestApiV2Client("token")
@@ -595,9 +590,8 @@ class RestApiV2BaseClientTest(ClientTest):
         logger.error.call_args[0][0] % logger.error.call_args[0][1:]
         logger.debug.call_args[0][0] % logger.debug.call_args[0][1:]
 
-
     def test_updating_auth_params_propagates_to_auth_method(self):
-        """Validate that the secret """
+        """Validate that the secret"""
         client = pagerduty.RestApiV2Client("hello-there")
         self.assertEqual("token", client.auth_type)
         self.assertEqual("hello-there", client.auth_method.secret)
