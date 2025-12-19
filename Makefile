@@ -31,5 +31,5 @@ format:
 format-fix:
 	uvx ruff format
 
-test: lint format
+test:
 	./test.sh

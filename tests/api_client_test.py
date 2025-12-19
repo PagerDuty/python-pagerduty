@@ -7,7 +7,8 @@ from unittest.mock import Mock, MagicMock, patch
 
 import pagerduty
 from pagerduty.auth_method import AuthMethod
-from common_test import ClientTest, Client, Response
+from common_test import ClientTest
+from mocks import Client, Response
 
 
 class DummyAuthMethod(AuthMethod):
