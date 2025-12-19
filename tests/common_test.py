@@ -13,7 +13,7 @@ import json
 import unittest
 from datetime import timezone
 
-from mocks import Client, Response
+from mocks import Response
 
 
 import pagerduty

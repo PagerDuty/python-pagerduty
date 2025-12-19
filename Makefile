@@ -22,6 +22,9 @@ uv.lock: pyproject.toml
 lint:
 	uvx ruff check
 
+lint-fix:
+	uvx ruff check --fix
+
 format:
 	uvx ruff format --check
 

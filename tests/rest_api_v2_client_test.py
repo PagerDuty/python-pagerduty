@@ -1,16 +1,11 @@
-import copy
 import datetime
 import json
-import logging
-import httpx
-import sys
-import unittest
 from datetime import timezone
 from typing import Optional
-from unittest.mock import Mock, MagicMock, patch, call
+from unittest.mock import patch
 
 from common_test import ClientTest
-from mocks import Client, Response
+from mocks import Response
 
 
 import pagerduty
