@@ -370,15 +370,11 @@ class RestApiV2ClientTest(ClientTest):
         self.assertTrue("team_ids[]" in params)
         self.assertEqual([TEAM_ID_1, TEAM_ID_2], params["team_ids[]"])
 
-
     def test_normalize_params(self):
         client = pagerduty.RestApiV2Client("apiKey")
-        arbitrary_params = {
-            "a_list_value": ["a", "b", "c"]
-        }
+        arbitrary_params = {"a_list_value": ["a", "b", "c"]}
         final_params = client.normalize_params(arbitrary_params)
         self.assertEqual(["a_list_value[]"], list(final_params.keys()))
-
 
     @patch.object(pagerduty.RestApiV2Client, "rput")
     @patch.object(pagerduty.RestApiV2Client, "rpost")

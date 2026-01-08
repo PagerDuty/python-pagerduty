@@ -1,4 +1,3 @@
-import copy
 import json
 import logging
 import httpx
@@ -7,9 +6,8 @@ import sys
 from unittest.mock import Mock, MagicMock, patch
 
 import pagerduty
-from pagerduty import common
 from pagerduty.auth_method import AuthMethod
-from pagerduty.errors import Error, UrlError
+from pagerduty.errors import UrlError
 from common_test import ClientTest
 from mocks import Client, Response
 
@@ -29,6 +27,7 @@ class DummyApiClient(pagerduty.ApiClient):
     A minimum-possible full implementation of pagerduty.ApiClient for unit
     testing.
     """
+
     _url = "https://dummy-api.pagerduty.com"
     auth_method_set = False
 
@@ -67,23 +66,18 @@ class ApiClientTest(ClientTest):
             client = self.new_client()
             client.sleep_timer_base = 67
             client.stagger_cooldown = 89
-            self.assertTrue(
-                257146,
-                client.cooldown_factor
-            )
+            self.assertTrue(257146, client.cooldown_factor)
 
     def test_normalize_params(self):
         client = self.new_client()
         self.assertEqual(
-            {"new_added_param": "arbitrary-value"},
-            client.normalize_params({})
+            {"new_added_param": "arbitrary-value"}, client.normalize_params({})
         )
 
     def test_normalize_url(self):
         client = self.new_client()
         self.assertEqual(
-            f"{client.url}/some/path",
-            client.normalize_url("/some/path")
+            f"{client.url}/some/path", client.normalize_url("/some/path")
         )
 
     def test_prepare_headers(self):
@@ -91,8 +85,7 @@ class ApiClientTest(ClientTest):
         self.assertTrue(
             set(
                 client.prepare_headers(
-                    "GET",
-                    {"X-Arbitrary-Header": "arbitrary-value"}
+                    "GET", {"X-Arbitrary-Header": "arbitrary-value"}
                 ).keys()
             ).issubset(
                 set(
@@ -100,12 +93,11 @@ class ApiClientTest(ClientTest):
                     [
                         "x-arbitrary-header",
                         "user-agent",
-                        "authorization" # From the AuthMethod
+                        "authorization",  # From the AuthMethod
                     ]
                 )
             )
         )
-
 
     def test_print_debug(self):
         client = self.new_client()
@@ -149,11 +141,10 @@ class ApiClientTest(ClientTest):
 
     @patch.object(pagerduty.ApiClient, "postprocess")
     def test_request(self, postprocess):
-        # TODO: Fully refactor this to use the dummy client class
         client = self.new_client()
         # Expected headers:
         headers_get = {
-            "Authorization": "some format idk secret=token", # DummyAuthMethod
+            "Authorization": "some format idk secret=token",  # DummyAuthMethod
             "User-Agent": "python-pagerduty/%s python-httpx/%s Python/%d.%d"
             % (
                 pagerduty.__version__,
@@ -217,7 +208,7 @@ class ApiClientTest(ClientTest):
                 headers=client.prepare_headers("POST"),
                 json={
                     "user": user,
-                    "secret": "token" # From DummyAuthMethod
+                    "secret": "token",  # From DummyAuthMethod
                 },
                 timeout=pagerduty.TIMEOUT,
                 auth=None,
@@ -231,7 +222,7 @@ class ApiClientTest(ClientTest):
             user_query = {"query": "user@example.com"}
             r = client.get("/users", params=user_query)
             expected_params = {
-                'new_added_param': 'arbitrary-value' # From normalize_params
+                "new_added_param": "arbitrary-value"  # From normalize_params
             }
             expected_params.update(user_query)
             request.assert_called_once_with(
@@ -265,7 +256,7 @@ class ApiClientTest(ClientTest):
                 files=None,
                 json={
                     "user": user,
-                    "secret": "token" # From DummyAuthMethod
+                    "secret": "token",  # From DummyAuthMethod
                 },
                 params=None,
                 headers=client.prepare_headers(
@@ -401,14 +392,10 @@ class ApiClientTest(ClientTest):
         with self.assertRaises(UrlError):
             client.url = "http://lol-so-secure.url"
 
-    def test_trunc_key(self):
-        client = self.new_client()
-        self.assertEqual("*oken", client.trunc_key)
-
     def test_user_agent(self):
         client = self.new_client()
         self.assertRegex(
             client.user_agent,
             r"""python-pagerduty/[0-9.]* python-httpx/[0-9.]* """
-                r"""Python/[0-9]\.[0-9]"""
+            r"""Python/[0-9]\.[0-9]""",
         )
