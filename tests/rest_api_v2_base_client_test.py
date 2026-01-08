@@ -20,7 +20,8 @@ from unittest.mock import MagicMock, patch, call
 import pagerduty
 import pagerduty.rest_api_v2_base_client
 from common_test import ClientTest, Response
-from pagerduty.rest_api_v2_client import CANONICAL_PATHS
+
+from pagerduty.rest_api_v2_client import CANONICAL_PATHS, ENTITY_WRAPPER_CONFIG
 
 
 def page(pagenum: int, total: int, limit: int, resource: str = "users"):
@@ -55,9 +56,21 @@ def page_cursor(wrapper, results, cursor):
     """
     return json.dumps({wrapper: results, "next_cursor": cursor})
 
+def new_rest_api_v2_client(secret="token", auth_type="token"):
+    """
+    Create a new client object for testing.
+
+    This is and will remain RestApiV2Client because that child class still
+    contains the most variety of living examples of patterns and use cases that
+    need to be supported by the base class.
+    """
+    return pagerduty.RestApiV2Client(secret, auth_type=auth_type)
 
 class RestApiV2UrlHandlingTest(ClientTest):
     def test_canonical_path(self):
+        """
+        Test URL path matching logic using examples from REST API V2
+        """
         identified_urls = [
             (
                 "/services/{id}",
@@ -80,17 +93,31 @@ class RestApiV2UrlHandlingTest(ClientTest):
                 "/users/me",
             ),
         ]
+        client = new_rest_api_v2_client()
         for pattern, url in identified_urls:
             base_url = "https://api.pagerduty.com"
+            # Test the client object method:
+            self.assertEqual(
+                pattern,
+                client.canonical_path(url),
+            )
+            # Test the generic top level method that requires passing in the
+            # canonical path list as as dependency:
             self.assertEqual(
                 pattern,
                 pagerduty.rest_api_v2_base_client.canonical_path(
-                    CANONICAL_PATHS, base_url, url
-                ),
+                    CANONICAL_PATHS,
+                    base_url,
+                    url
+                )
             )
-            # TODO (issue 73): remove this wrapper; for now we support with
-            # testing both the wrapper and the generic method:
-            self.assertEqual(pattern, pagerduty.canonical_path(base_url, url))
+            # Test the root namespace legacy wrapper method (REST API v2
+            # specific); remove when deprecated
+            self.assertEqual(
+                pattern,
+                pagerduty.canonical_path(base_url, url)
+            )
+
 
     def test_is_path_param(self):
         self.assertTrue(pagerduty.is_path_param("{id}"))
@@ -130,7 +157,14 @@ class EntityWrappingTest(unittest.TestCase):
             (("post", "/analytics/raw/incidents"), (None, None)),
         ]
         for (method, path), rval in io_expected:
-            self.assertEqual(rval, pagerduty.entity_wrappers(method, path))
+            self.assertEqual(
+                rval,
+                pagerduty.rest_api_v2_base_client.entity_wrappers(
+                    ENTITY_WRAPPER_CONFIG,
+                    method,
+                    path
+                )
+            )
 
     def test_infer_entity_wrapper(self):
         io_expected = [
@@ -167,7 +201,7 @@ class EntityWrappingTest(unittest.TestCase):
 class FunctionDecoratorsTest(unittest.TestCase):
     @patch.object(pagerduty.RestApiV2Client, "put")
     def test_resource_path(self, put_method):
-        client = pagerduty.RestApiV2Client("some-key")
+        client = new_rest_api_v2_client()
         resource_url = "https://api.pagerduty.com/users/PSOMEUSR"
         user = {
             "id": "PSOMEUSR",
@@ -183,11 +217,12 @@ class FunctionDecoratorsTest(unittest.TestCase):
         put_method.assert_called_with(resource_url, json={"user": user})
 
     def test_wrapped_entities(self):
+        """
+        """
         do_http_things = MagicMock()
         response = MagicMock()
         do_http_things.return_value = response
-        # TODO: make a dummy client class and use that instead
-        client = pagerduty.RestApiV2Client("some_key")
+        client = new_rest_api_v2_client()
         dummy_client = MagicMock()
 
         def reset_mocks():
@@ -355,7 +390,7 @@ class RestApiV2BaseClientTest(ClientTest):
                 }
             ),
         )
-        client = pagerduty.RestApiV2Client("token")
+        client = new_rest_api_v2_client()
         total = client.get_total(
             "/log_entries", params={"since": pd_start, "until": now}
         )
@@ -380,7 +415,7 @@ class RestApiV2BaseClientTest(ClientTest):
         pd_start = "2010-01-01T00:00:00Z"
         now = pagerduty.common.strftime(datetime.datetime.now(timezone.utc))
         get.return_value = Response(200, json.dumps({"widgets": {}}))
-        client = pagerduty.RestApiV2Client("token")
+        client = new_rest_api_v2_client()
         self.assertRaises(
             pagerduty.ServerHttpError,
             client.get_total,
@@ -420,8 +455,7 @@ class RestApiV2BaseClientTest(ClientTest):
     @patch.object(pagerduty.RestApiV2Client, "iter_cursor")
     @patch.object(pagerduty.RestApiV2Client, "get")
     def test_iter_all(self, get, iter_cursor):
-        # TODO: Use a dummy class for testing
-        client = pagerduty.RestApiV2Client("token")
+        client = new_rest_api_v2_client()
         client.log = MagicMock()
 
         # Test: user uses iter_all on an endpoint that supports cursor-based
@@ -526,7 +560,7 @@ class RestApiV2BaseClientTest(ClientTest):
 
     @patch.object(pagerduty.RestApiV2Client, "get")
     def test_iter_cursor(self, get):
-        client = pagerduty.RestApiV2Client("token")
+        client = new_rest_api_v2_client()
         client.log = MagicMock()
         # Test: user tries to use iter_cursor where it won't work, raise:
         self.assertRaises(
@@ -561,7 +595,7 @@ class RestApiV2BaseClientTest(ClientTest):
             method="POST",
             url="https://api.pagerduty.com/users/PCWKOPZ/contact_methods",
         )
-        client = pagerduty.RestApiV2Client("apikey")
+        client = new_rest_api_v2_client()
         client.postprocess(response)
 
         self.assertEqual(
@@ -587,7 +621,7 @@ class RestApiV2BaseClientTest(ClientTest):
             method="GET",
             url="https://api.pagerduty.com/users/PCWKOPZ/contact_methods",
         )
-        client = pagerduty.RestApiV2Client("apikey")
+        client = new_rest_api_v2_client()
         client.log = logger
         client.postprocess(response)
         if not (sys.version_info.major == 3 and sys.version_info.minor == 5):
@@ -600,7 +634,7 @@ class RestApiV2BaseClientTest(ClientTest):
 
     def test_updating_auth_params_propagates_to_auth_method(self):
         """Validate that the secret"""
-        client = pagerduty.RestApiV2Client("hello-there")
+        client = new_rest_api_v2_client(secret="hello-there")
         self.assertEqual("token", client.auth_type)
         self.assertEqual("hello-there", client.auth_method.secret)
         self.assertEqual(
