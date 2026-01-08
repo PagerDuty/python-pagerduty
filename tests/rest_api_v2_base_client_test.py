@@ -56,6 +56,7 @@ def page_cursor(wrapper, results, cursor):
     """
     return json.dumps({wrapper: results, "next_cursor": cursor})
 
+
 def new_rest_api_v2_client(secret="token", auth_type="token"):
     """
     Create a new client object for testing.
@@ -65,6 +66,7 @@ def new_rest_api_v2_client(secret="token", auth_type="token"):
     need to be supported by the base class.
     """
     return pagerduty.RestApiV2Client(secret, auth_type=auth_type)
+
 
 class RestApiV2UrlHandlingTest(ClientTest):
     def test_canonical_path(self):
@@ -106,18 +108,12 @@ class RestApiV2UrlHandlingTest(ClientTest):
             self.assertEqual(
                 pattern,
                 pagerduty.rest_api_v2_base_client.canonical_path(
-                    CANONICAL_PATHS,
-                    base_url,
-                    url
-                )
+                    CANONICAL_PATHS, base_url, url
+                ),
             )
             # Test the root namespace legacy wrapper method (REST API v2
             # specific); remove when deprecated
-            self.assertEqual(
-                pattern,
-                pagerduty.canonical_path(base_url, url)
-            )
-
+            self.assertEqual(pattern, pagerduty.canonical_path(base_url, url))
 
     def test_is_path_param(self):
         self.assertTrue(pagerduty.is_path_param("{id}"))
@@ -160,10 +156,8 @@ class EntityWrappingTest(unittest.TestCase):
             self.assertEqual(
                 rval,
                 pagerduty.rest_api_v2_base_client.entity_wrappers(
-                    ENTITY_WRAPPER_CONFIG,
-                    method,
-                    path
-                )
+                    ENTITY_WRAPPER_CONFIG, method, path
+                ),
             )
 
     def test_infer_entity_wrapper(self):
@@ -217,8 +211,6 @@ class FunctionDecoratorsTest(unittest.TestCase):
         put_method.assert_called_with(resource_url, json={"user": user})
 
     def test_wrapped_entities(self):
-        """
-        """
         do_http_things = MagicMock()
         response = MagicMock()
         do_http_things.return_value = response

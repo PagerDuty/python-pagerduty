@@ -2,8 +2,8 @@ import unittest
 
 from pagerduty import auth_method
 
-class AuthMethodBaseTest(unittest.TestCase):
 
+class AuthMethodBaseTest(unittest.TestCase):
     @property
     def auth_method_class(self):
         return auth_method.AuthMethod
@@ -13,19 +13,18 @@ class AuthMethodBaseTest(unittest.TestCase):
 
 
 def AuthMethodTest(AuthMethodBaseTest):
-
     def test_auth_header(self):
         am = self.new_auth_method()
         with self.assertRaises(NotImplementedError):
-            ah = am.auth_header
+            am.auth_header
 
     def test_auth_param(self):
         am = self.new_auth_method()
         with self.assertRaises(NotImplementedError):
-            ap = am.auth_param
+            am.auth_param
+
 
 class HeaderAuthMethodTest(AuthMethodBaseTest):
-
     @property
     def auth_method_class(self):
         return auth_method.HeaderAuthMethod
@@ -34,8 +33,8 @@ class HeaderAuthMethodTest(AuthMethodBaseTest):
         am = self.new_auth_method()
         self.assertEqual({}, am.auth_param)
 
-class BodyParameterAuthMethodTest(AuthMethodBaseTest):
 
+class BodyParameterAuthMethodTest(AuthMethodBaseTest):
     @property
     def auth_method_class(self):
         return auth_method.BodyParameterAuthMethod
@@ -44,8 +43,8 @@ class BodyParameterAuthMethodTest(AuthMethodBaseTest):
         am = self.new_auth_method()
         self.assertEqual({}, am.auth_header)
 
-class PassThruHeaderAuthMethodTest(AuthMethodBaseTest):
 
+class PassThruHeaderAuthMethodTest(AuthMethodBaseTest):
     @property
     def auth_method_class(self):
         return auth_method.PassThruHeaderAuthMethod
