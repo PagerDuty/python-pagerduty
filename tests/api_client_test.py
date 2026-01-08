@@ -394,8 +394,10 @@ class ApiClientTest(ClientTest):
 
     def test_user_agent(self):
         client = self.new_client()
+        # Because unit tests sometimes run into the package introspection
+        # stopgap, we need to use \S+ to match the version.
         self.assertRegex(
             client.user_agent,
-            r"""python-pagerduty/[0-9.]* python-httpx/[0-9.]* """
-            r"""Python/[0-9]\.[0-9]""",
+            r"""python-pagerduty/\S+ python-httpx/[0-9.]+ """
+            r"""Python/[0-9]+\.[0-9]+""",
         )
