@@ -452,7 +452,9 @@ def canonical_path(base_url: str, url: str) -> str:
 
     This method should eventually be deprecated. For now it is included so that
     the changes to unit testing and the base namespace of the module don't have
-    to change dramatically and can still use this wrapper.
+    to change dramatically and can still use this wrapper. There are no other
+    reasons it cannot be deprecated; as an internal helper method there is
+    little chance it has seen use outside of the library.
     """
     return canonical_path_common(CANONICAL_PATHS, base_url, url)
 

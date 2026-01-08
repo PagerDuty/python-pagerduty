@@ -299,14 +299,17 @@ def infer_entity_wrapper(method: str, path: CanonicalPath) -> EntityWrapper:
     if is_path_param(path_nodes[-1]):
         # Singular if it's an individual resource's URL for read/update/delete
         # (named similarly to the second to last node, as the last is its ID
-        # and the second to last denotes the API resource collection it is in):
+        # and the second to last denotes the API resource collection it is in)
+        # Examples: "user" in GET /users/{id}, "service" in PUT /services/{id}
         return singular_name(path_nodes[-2])
     elif m == "POST":
         # Singular if creating a new resource by POSTing to the index
-        # containing similar resources (named simiarly to the last path node):
+        # containing similar resources (named simiarly to the last path node)
+        # Example: "user" in POST /users
         return singular_name(path_nodes[-1])
     else:
-        # Plural if listing via GET to the index endpoint, or multi-put:
+        # Plural if listing via GET to the index endpoint, or multi-put
+        # Example: GET /users
         return path_nodes[-1]
 
 

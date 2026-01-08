@@ -1,3 +1,13 @@
+"""
+Test the REST API v2 base client.
+
+This test suite uses REST API v2's configuration, as it contains the widest
+variety of living and concrete examples that need to be supported, and it is
+useful / illustrative to include them here instead of coming up with arbitrary
+/ dummy values to cover all use cases. This will change if there are enough
+antipatterns in new APIs that need special-case support.
+"""
+
 import copy
 import datetime
 import json
