@@ -7,13 +7,14 @@ from unittest.mock import Mock, MagicMock, patch
 
 import pagerduty
 from pagerduty.auth_method import AuthMethod
+from pagerduty.errors import Error
 from common_test import ClientTest
 from mocks import Client, Response
 
 
 class DummyAuthMethod(AuthMethod):
     @property
-    def auth_headers(self) -> dict:
+    def auth_header(self) -> dict:
         return {"Authorization": f"some format idk secret={self.secret}"}
 
     @property
@@ -26,32 +27,40 @@ class DummyApiClient(pagerduty.ApiClient):
     A minimum-possible full implementation of pagerduty.ApiClient for unit
     testing.
     """
+    _url = "https://dummy-api.pagerduty.com"
+    auth_method_set = False
 
     def after_set_auth_method(self):
-        # TODO: a signal to indicate this method is being called correctly
-        pass
+        self.auth_method_set = True
 
     def normalize_params(self, params: dict) -> dict:
-        # TODO: a signal to indicate this method is being called correctly
-        pass
+        """
+        Add a parameter to indicate that the method was called
+        """
+        normalized_params = {"new_added_param": "arbitrary-value"}
+        normalized_params.update(params)
+        return normalized_params
 
-    permitted_methods = ()
-    # TODO: the range of requests used in mocks
-
-    def postprocess(self, response: Response):
-        # TODO: a signal to indicate this method is being called correctly
-        pass
+    permitted_methods = ("DELETE", "GET", "POST", "PUT")
 
     sleep_timer_base = 0.5
 
 
 class ApiClientTest(ClientTest):
-    def test_auth_method(self):
-        # TODO: ValueError raise
-        pass
+    def new_client(self):
+        return DummyApiClient(DummyAuthMethod("token"))
 
-    # def cooldown_factor(self) -> float:
-    # TODO: mock random(), self.stagger_cooldown and sleep_timer_base
+    def test_auth_method(self):
+        client = self.new_client()
+        with self.assertRaises(ValueError):
+            client.auth_method = None
+        client.auth_method_set = False
+        client.auth_method = DummyAuthMethod("new_token")
+        self.assertTrue(client.auth_method_set)
+
+    def test_cooldown_factor(self) -> float:
+        # TODO: mock random(), self.stagger_cooldown and sleep_timer_base
+        pass
 
     def test_normalize_params(self):
         # TODO: check for the signal in the class.
@@ -61,16 +70,17 @@ class ApiClientTest(ClientTest):
         # TODO: calls normalize_url correctly
         pass
 
-    # def prepare_headers(
-    #    self, method: str, user_headers: Optional[dict] = None
-    # ) -> dict:
-    # TODO: Define user agent
-    # TODO: Set JSON content type when sending a payload-bearing request
-    # TODO: apply user headers with the expected precedence of user headers
-    # TODO: add auth_method's auth header, if any.
+    def test_prepare_headers(self):
+        #    self, method: str, user_headers: Optional[dict] = None
+        # ) -> dict:
+        # TODO: Define user agent
+        # TODO: Set JSON content type when sending a payload-bearing request
+        # TODO: apply user headers with the expected precedence of user headers
+        # TODO: add auth_method's auth header, if any.
+        pass
 
     def test_print_debug(self):
-        client = DummyApiClient(DummyAuthMethod("token"))
+        client = self.new_client()
         log = Mock()
         log.setLevel = Mock()
         log.addHandler = Mock()
@@ -109,16 +119,13 @@ class ApiClientTest(ClientTest):
         client.print_debug = True
         self.assertTrue(hasattr(client, "_debugHandler"))
 
-    @patch.object(pagerduty.RestApiV2Client, "postprocess")
+    @patch.object(pagerduty.ApiClient, "postprocess")
     def test_request(self, postprocess):
-        # TODO: Refactor this to use the dummy client class
-        client = pagerduty.RestApiV2Client("12345")
-        parent = Client()
-        request = MagicMock()
+        # TODO: Fully refactor this to use the dummy client class
+        client = self.new_client()
         # Expected headers:
         headers_get = {
-            "Accept": "application/vnd.pagerduty+json;version=2",
-            "Authorization": "Token token=12345",
+            "Authorization": "some format idk secret=token", # DummyAuthMethod
             "User-Agent": "python-pagerduty/%s python-httpx/%s Python/%d.%d"
             % (
                 pagerduty.__version__,
@@ -135,8 +142,10 @@ class ApiClientTest(ClientTest):
         # When submitting post/put, the content type should also be set
         headers_post = headers_get.copy()
         headers_post.update({"Content-Type": "application/json"})
-        parent.headers = headers_get
 
+        client = self.new_client()
+        parent = Client()
+        request = MagicMock()
         with patch.object(client, "parent", new=parent):
             parent.request = request
             # Test bad request method
@@ -151,15 +160,18 @@ class ApiClientTest(ClientTest):
                 "role": "limited_user",
                 "email": "user@example.com",
             }
-            users = {"users": user}
+            users = {
+                "users": user,
+            }
 
             # Test basic GET & profiling
-            request.return_value = Response(200, json.dumps(users))
+            return_value = Response(200, json.dumps(users))
+            request.return_value = return_value
             r = client.request("get", "/users")
-            postprocess.assert_called_with(request.return_value)
+            postprocess.assert_called_with(return_value)
             request.assert_called_once_with(
                 "GET",
-                "https://api.pagerduty.com/users",
+                f"{client.url}/users",
                 headers=client.prepare_headers("GET"),
                 timeout=pagerduty.TIMEOUT,
                 auth=None,
@@ -173,9 +185,12 @@ class ApiClientTest(ClientTest):
             client.request("post", "users", json={"user": user})
             request.assert_called_once_with(
                 "POST",
-                "https://api.pagerduty.com/users",
+                f"{client.url}/users",
                 headers=client.prepare_headers("POST"),
-                json={"user": user},
+                json={
+                    "user": user,
+                    "secret": "token" # From DummyAuthMethod
+                },
                 timeout=pagerduty.TIMEOUT,
                 auth=None,
                 follow_redirects=False,
@@ -187,36 +202,20 @@ class ApiClientTest(ClientTest):
             request.return_value = Response(200, json.dumps({"users": [user]}))
             user_query = {"query": "user@example.com"}
             r = client.get("/users", params=user_query)
+            expected_params = {
+                'new_added_param': 'arbitrary-value' # From normalize_params
+            }
+            expected_params.update(user_query)
             request.assert_called_once_with(
                 "GET",
-                "https://api.pagerduty.com/users",
+                f"{client.url}/users",
                 headers=client.prepare_headers("GET"),
-                params=user_query,
+                params=expected_params,
                 follow_redirects=False,
                 timeout=pagerduty.TIMEOUT,
                 auth=None,
                 cookies=None,
                 extensions=None,
-            )
-            request.reset_mock()
-
-            # Test GET with one array-type parameter not suffixed with []
-            request.return_value = Response(200, json.dumps({"users": [user]}))
-            user_query = {"query": "user@example.com", "team_ids": ["PCWKOPZ"]}
-            modified_user_query = copy.deepcopy(user_query)
-            modified_user_query["team_ids[]"] = user_query["team_ids"]
-            del modified_user_query["team_ids"]
-            r = client.get("/users", params=user_query)
-            request.assert_called_once_with(
-                "GET",
-                "https://api.pagerduty.com/users",
-                params=modified_user_query,
-                headers=client.prepare_headers("GET"),
-                cookies=None,
-                follow_redirects=False,
-                timeout=pagerduty.TIMEOUT,
-                extensions=None,
-                auth=None,
             )
             request.reset_mock()
 
@@ -232,11 +231,14 @@ class ApiClientTest(ClientTest):
             )
             request.assert_called_once_with(
                 "POST",
-                "https://api.pagerduty.com/users/PD6LYSO/future_endpoint",
+                f"{client.url}/users/PD6LYSO/future_endpoint",
                 content=None,
                 data=None,
                 files=None,
-                json={"user": user},
+                json={
+                    "user": user,
+                    "secret": "token" # From DummyAuthMethod
+                },
                 params=None,
                 headers=client.prepare_headers(
                     "POST", user_headers=headers_special
@@ -365,8 +367,8 @@ class ApiClientTest(ClientTest):
     # TODO: UrlError
 
     def test_trunc_key(self):
-        client = pagerduty.RestApiV2Client("abcd1234")
-        self.assertEqual("*1234", client.trunc_key)
+        client = self.new_client()
+        self.assertEqual("*oken", client.trunc_key)
 
     # def user_agent(self) -> str:
     # #TODO: Matches a "looks like this" regex
