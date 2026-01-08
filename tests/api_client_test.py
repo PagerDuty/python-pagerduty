@@ -381,11 +381,9 @@ class ApiClientTest(ClientTest):
         with self.assertRaises(ValueError):
             client.stagger_cooldown = None
 
-    @patch.object(DummyAuthMethod, "trunc_secret")
-    def test_trunc_key(self, trunc_secret):
+    def test_trunc_key(self):
         client = self.new_client()
-        trunc_secret.return_value = "*1234"
-        self.assertEqual("*1234", client.trunc_key)
+        self.assertEqual("*oken", client.trunc_key)
 
     def test_url(self):
         client = self.new_client()
