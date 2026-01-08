@@ -2,12 +2,14 @@ import copy
 import json
 import logging
 import httpx
+import random
 import sys
 from unittest.mock import Mock, MagicMock, patch
 
 import pagerduty
+from pagerduty import common
 from pagerduty.auth_method import AuthMethod
-from pagerduty.errors import Error
+from pagerduty.errors import Error, UrlError
 from common_test import ClientTest
 from mocks import Client, Response
 
@@ -58,26 +60,52 @@ class ApiClientTest(ClientTest):
         client.auth_method = DummyAuthMethod("new_token")
         self.assertTrue(client.auth_method_set)
 
-    def test_cooldown_factor(self) -> float:
-        # TODO: mock random(), self.stagger_cooldown and sleep_timer_base
-        pass
+    def test_cooldown_factor(self):
+        rmock = MagicMock()
+        with patch.object(random, "random", new=rmock):
+            rmock.return_value = 42
+            client = self.new_client()
+            client.sleep_timer_base = 67
+            client.stagger_cooldown = 89
+            self.assertTrue(
+                257146,
+                client.cooldown_factor
+            )
 
     def test_normalize_params(self):
-        # TODO: check for the signal in the class.
-        pass
+        client = self.new_client()
+        self.assertEqual(
+            {"new_added_param": "arbitrary-value"},
+            client.normalize_params({})
+        )
 
     def test_normalize_url(self):
-        # TODO: calls normalize_url correctly
-        pass
+        client = self.new_client()
+        self.assertEqual(
+            f"{client.url}/some/path",
+            client.normalize_url("/some/path")
+        )
 
     def test_prepare_headers(self):
-        #    self, method: str, user_headers: Optional[dict] = None
-        # ) -> dict:
-        # TODO: Define user agent
-        # TODO: Set JSON content type when sending a payload-bearing request
-        # TODO: apply user headers with the expected precedence of user headers
-        # TODO: add auth_method's auth header, if any.
-        pass
+        client = self.new_client()
+        self.assertTrue(
+            set(
+                client.prepare_headers(
+                    "GET",
+                    {"X-Arbitrary-Header": "arbitrary-value"}
+                ).keys()
+            ).issubset(
+                set(
+                    # HTTPX lowercases headers:
+                    [
+                        "x-arbitrary-header",
+                        "user-agent",
+                        "authorization" # From the AuthMethod
+                    ]
+                )
+            )
+        )
+
 
     def test_print_debug(self):
         client = self.new_client()
@@ -357,18 +385,30 @@ class ApiClientTest(ClientTest):
                 r = client.get("/users/P123456")
                 self.assertEqual(404, r.status_code)
 
-    # def stagger_cooldown(self, val: Union[float, int]):
-    # TODO: ValueError
+    def test_stagger_cooldown(self):
+        client = self.new_client()
+        with self.assertRaises(ValueError):
+            client.stagger_cooldown = None
 
-    # def trunc_key(self) -> str:
-    # TODO: mock auth_method and test that trunc_secret is set.
+    @patch.object(DummyAuthMethod, "trunc_secret")
+    def test_trunc_key(self, trunc_secret):
+        client = self.new_client()
+        trunc_secret.return_value = "*1234"
+        self.assertEqual("*1234", client.trunc_key)
 
-    # def url(self) -> str:
-    # TODO: UrlError
+    def test_url(self):
+        client = self.new_client()
+        with self.assertRaises(UrlError):
+            client.url = "http://lol-so-secure.url"
 
     def test_trunc_key(self):
         client = self.new_client()
         self.assertEqual("*oken", client.trunc_key)
 
-    # def user_agent(self) -> str:
-    # #TODO: Matches a "looks like this" regex
+    def test_user_agent(self):
+        client = self.new_client()
+        self.assertRegex(
+            client.user_agent,
+            r"""python-pagerduty/[0-9.]* python-httpx/[0-9.]* """
+                r"""Python/[0-9]\.[0-9]"""
+        )
