@@ -4,8 +4,6 @@ from .rest_api_v2_base_client import CanonicalPath, RestApiV2BaseClient
 
 CANONICAL_PATHS = ["/incidents/{incident_id}/meeting"]
 
-CURSOR_BASED_PAGINATION_PATHS = []
-
 ENTITY_WRAPPER_CONFIG = {
     # The "create a meeting" endpoint follows classic conventions.
     #
@@ -50,10 +48,6 @@ class MsTeamsIntegrationApiClient(RestApiV2BaseClient):
     @property
     def canonical_paths(self) -> List[CanonicalPath]:
         return CANONICAL_PATHS
-
-    @property
-    def cursor_based_pagination_paths(self) -> List[CanonicalPath]:
-        return CURSOR_BASED_PAGINATION_PATHS
 
     @property
     def entity_wrapper_config(self) -> dict:
