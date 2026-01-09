@@ -102,23 +102,26 @@ class CommonTest(unittest.TestCase):
         """
         Tests relative_seconds_to_datetime and datetime_to_relative_seconds.
 
-        These two methods basically are inverse functions of each other.
+        These two methods are practically inverse functions of each other. The
+        method ``relative_seconds_to_datetime`` is lossy because the formatted
+        string return value does not express milliseconds. So, the rounding
+        error can be up to 1 second.
 
-        Note: this test might be flaky, if something causes a serious delay in
-        the execution of any of the underlying Python methods. It is a test of
-        two methods, which should be the inverse of each other, but since
-        datetime.datetime.now is immutable, we can't use patch.object to mock
-        it so the best I could come up with for now is to assert that the
-        relative number of seconds in-between changing it to a timestamp in the
-        future and turning that back into a number of seconds relative to the
-        new time afterwards is very close to the original.
+        Since ``datetime.datetime`` is an immutable type, we can't use
+        patch.object to mock ``datetime.datetime.now()``, so the best we can do
+        now is to assert that the relative number of seconds in-between
+        changing it to a timestamp in the future and turning that back into a
+        number of seconds relative to the new time afterwards is very close to
+        the original.
 
-        To fix this, we
+        The current value for the epsilon was chosen by dividing 1 by 10 until
+        the test started failing in CircleCI builds. In local tests it has been
+        observed to pass with values an order of magnitude or two smaller.
         """
-        t0 = 86400
+        t0 = 86400 # one day
         future_timestamp = common.relative_seconds_to_datetime(t0)
         t1 = common.datetime_to_relative_seconds(future_timestamp)
-        self.assertTrue(abs(t1 - t0) / t0 < 0.0001)
+        self.assertTrue(abs(t1 - t0) / t0 < 1e-4)
 
     def test_normalize_url(self):
         urls_expected = [
