@@ -118,7 +118,7 @@ class CommonTest(unittest.TestCase):
         the test started failing in CircleCI builds. In local tests it has been
         observed to pass with values an order of magnitude or two smaller.
         """
-        t0 = 86400 # one day
+        t0 = 86400  # one day
         future_timestamp = common.relative_seconds_to_datetime(t0)
         t1 = common.datetime_to_relative_seconds(future_timestamp)
         self.assertTrue(abs(t1 - t0) / t0 < 1e-4)
