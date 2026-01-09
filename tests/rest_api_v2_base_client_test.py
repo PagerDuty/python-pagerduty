@@ -357,12 +357,20 @@ class FunctionDecoratorsTest(unittest.TestCase):
 
 class RestApiV2BaseClientTest(ClientTest):
     def test_auth_method(self):
-        # TODO: test validation of the pick-one-by-keyword selection interface
-        pass
+        client = new_rest_api_v2_client()
+        with self.assertRaises(AttributeError):
+            client.auth_type = "something_else"
 
-    def test_dict_all(self):
-        # TODO: compose a dict (pretty basic)
-        pass
+    @patch.object(pagerduty.RestApiV2Client, "get")
+    def test_dict_all(self, get):
+        client = new_rest_api_v2_client()
+        get.side_effect = [
+            Response(200, page(0, 30, 10)),
+            Response(200, page(1, 30, 10)),
+            Response(200, page(2, 30, 10)),
+        ]
+        users = client.dict_all("/users")
+        self.assertEqual(users, {i: {"id": i} for i in range(30)})
 
     @patch.object(pagerduty.RestApiV2Client, "get")
     def test_get_total_valid(self, get):
