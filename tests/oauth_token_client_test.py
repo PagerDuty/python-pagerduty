@@ -51,7 +51,12 @@ class OAuthTokenClientTest(unittest.TestCase):
             ),
         )
         response = client.get_new_token(foo="bar", bar="baz")
-        # Use a small epsilon instead of exact equality to avoid flakiness:
+        # Use a small epsilon instead of exact equality to avoid flakiness from
+        # floating point rounding errors.
+        #
+        # We have to do it this way because if one tries to patch /
+        # stub datetime.datetime.now(), one gets a TypeError: "cannot set 'now'
+        # attribute of immutable type"
         self.assertTrue(
             abs(
                 864000
