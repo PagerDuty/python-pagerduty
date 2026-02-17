@@ -40,6 +40,8 @@ class JiraServerIntegrationApiClient(RestApiV2BaseClient):
     :param debug:
         Sets :attr:`pagerduty.ApiClient.print_debug`. Set to ``True`` to enable
         verbose command line output.
+    :param base_url:
+        Sets the base API URL to be used by the client for all API calls.
     """
 
     def __init__(

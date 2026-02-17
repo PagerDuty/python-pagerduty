@@ -9,7 +9,9 @@ from .errors import ServerHttpError
 
 class McpApiClient(ApiClient):
     """
-    Client class for the PagerDuty MCP API
+    Client class for the PagerDuty MCP API.
+
+    For constructor arguments, see :class:`pagerduty.ApiClient`.
 
     Usage example:
 

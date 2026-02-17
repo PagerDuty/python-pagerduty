@@ -14,6 +14,8 @@ class ScimApiClient(ApiClient):
     Other endpoints of the PagerDuty SCIM API can be accessed through the
     standard methods named after the HTTP methods.
 
+    For constructor arguments, see :class:`pagerduty.ApiClient`.
+
     Usage example:
 
     .. code-block:: python
