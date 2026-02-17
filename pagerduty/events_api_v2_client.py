@@ -38,19 +38,27 @@ class EventsApiV2Client(ApiClient):
         The routing key to use for authentication with the Events API.
         Sometimes called an ``integration_key`` or ``service_key`` in legacy
         integrations.
-
     :param debug:
         Sets :attr:`pagerduty.ApiClient.print_debug`. Set to ``True`` to enable
         verbose command line output.
+    :param base_url:
+        Sets the base API URL to be used by the client for all API calls.
     """
 
-    _url = "https://events.pagerduty.com"
-
-    permitted_methods = ("POST",)
-
-    def __init__(self, routing_key: str, debug: bool = False, **kw):
+    def __init__(
+            self,
+            routing_key: str,
+            debug: bool = False,
+            base_url = None,
+            **kw
+        ):
         auth_method = RoutingKeyAuthMethod(routing_key)
-        super(EventsApiV2Client, self).__init__(auth_method, debug=debug, **kw)
+        super(EventsApiV2Client, self).__init__(
+            auth_method,
+            debug = debug,
+            base_url = base_url,
+            **kw
+        )
         # See: https://developer.pagerduty.com/docs/3d063fd4814a6-events-api-v2-overview#response-codes--retry-logic
         self.retry[500] = 2  # internal server error
         self.retry[502] = 4  # bad gateway
@@ -69,8 +77,16 @@ class EventsApiV2Client(ApiClient):
         return self.send_event("acknowledge", dedup_key=dedup_key)
 
     @property
+    def default_base_url(self) -> str:
+        return "https://events.pagerduty.com"
+
+    @property
     def event_timestamp(self) -> str:
         return datetime.utcnow().isoformat() + "Z"
+
+    @property
+    def permitted_methods(self) -> tuple:
+        return ("POST",)
 
     def resolve(self, dedup_key: str) -> str:
         """

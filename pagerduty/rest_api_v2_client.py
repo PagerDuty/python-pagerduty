@@ -500,14 +500,12 @@ class RestApiV2Client(RestApiV2BaseClient):
     :param debug:
         Sets :attr:`pagerduty.ApiClient.print_debug`. Set to ``True`` to enable
         verbose command line output.
+    :param base_url:
+        Sets the base API URL to be used by the client for all API calls.
     """
-
-    _url = "https://api.pagerduty.com"
 
     default_from = None
     """The default value to use as the ``From`` request header"""
-
-    permitted_methods = ("GET", "PATCH", "POST", "PUT", "DELETE")
 
     def __init__(
         self,
@@ -515,10 +513,15 @@ class RestApiV2Client(RestApiV2BaseClient):
         default_from: Optional[str] = None,
         auth_type: str = "token",
         debug: bool = False,
+        base_url = None
         **kw,
     ):
         super(RestApiV2Client, self).__init__(
-            api_key, auth_type, debug=debug, **kw
+            api_key,
+            auth_type,
+            debug = debug,
+            base_url = base_url,
+            **kw
         )
 
         self.default_from = default_from
@@ -606,6 +609,10 @@ class RestApiV2Client(RestApiV2BaseClient):
     @property
     def cursor_based_pagination_paths(self) -> List[CanonicalPath]:
         return CURSOR_BASED_PAGINATION_PATHS
+
+    @property
+    def default_base_url(self) -> str:
+        return "https://api.pagerduty.com"
 
     @property
     def entity_wrapper_config(self) -> dict:
@@ -939,6 +946,10 @@ class RestApiV2Client(RestApiV2BaseClient):
             else:
                 updated_params[param] = value
         return updated_params
+
+    @property
+    def permitted_methods(self) -> tuple:
+        return ("GET", "PATCH", "POST", "PUT", "DELETE")
 
     def persist(
         self, resource: str, attr: str, values: dict, update: bool = False

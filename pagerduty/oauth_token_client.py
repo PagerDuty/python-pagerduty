@@ -3,6 +3,7 @@ import base64
 import hashlib
 import secrets
 from typing import Optional, Tuple
+import warnings
 
 from copy import deepcopy
 
@@ -19,6 +20,7 @@ from .common import (
 from .errors import ServerHttpError
 from .rest_api_v2_client import RestApiV2Client
 
+DEFAULT_URL = "https://identity.pagerduty.com"
 
 class ClientCredentialsAuthMethod(BodyParameterAuthMethod):
     """
@@ -80,11 +82,9 @@ class OAuthTokenClient(ApiClient):
     :param debug:
         Passed to the parent constructor as the ``debug`` argument. See:
         :class:`ApiClient`
+    :param base_url:
+        Sets the base API URL to be used by the client for all API calls.
     """
-
-    permitted_methods = ("POST",)
-
-    url = "https://identity.pagerduty.com"
 
     early_refresh_buffer = 86400
     """
@@ -101,13 +101,25 @@ class OAuthTokenClient(ApiClient):
     By default, this is 24 hours.
     """
 
-    def __init__(self, client_secret: str, client_id: str, debug=False, **kw):
+    def __init__(
+            self,
+            client_secret: str,
+            client_id: str,
+            debug = False,
+            base_url = None,
+            **kw
+        ):
         """
         Create an OAuth token client
         """
         auth_method = ClientCredentialsAuthMethod(client_secret, client_id)
 
-        super(OAuthTokenClient, self).__init__(auth_method, debug=debug, **kw)
+        super(OAuthTokenClient, self).__init__(
+            auth_method,
+            debug = debug,
+            base_url = base_url,
+            **kw
+        )
 
     def amended_auth_response(self, response: Response) -> dict:
         """
@@ -148,9 +160,22 @@ class OAuthTokenClient(ApiClient):
         :returns:
             The formatted authorize URL.
         """
-        return self.get_authorize_url(
-            self.auth_method.client_id, scope, redirect_uri
+        return (
+            self.url
+            + "/oauth/authorize?"
+            + urllib.parse.urlencode(
+                [
+                    ("client_id", client_id),
+                    ("redirect_uri", redirect_uri),
+                    ("response_type", "code"),
+                    ("scope", scope),
+                ]
+            )
         )
+
+    @property
+    def default_base_url(self) -> str:
+        return DEFAULT_URL
 
     @classmethod
     def get_authorize_url(
@@ -176,8 +201,13 @@ class OAuthTokenClient(ApiClient):
         :returns:
             The formatted authorize URL.
         """
+        warnings.warn(
+            "Class method OAuthTokenClient.get_authorize_url is deprecated, " +
+                "and it does not support all service regions.",
+            DeprecationWarning
+        )
         return (
-            cls.url
+            DEFAULT_URL
             + "/oauth/authorize?"
             + urllib.parse.urlencode(
                 [
@@ -361,6 +391,10 @@ class OAuthTokenClient(ApiClient):
             redirect_uri=redirect_uri,
             code_verifier=code_verifier,
         )
+
+    @property
+    def permitted_methods(self) -> tuple:
+        return ("POST",)
 
     def refresh_client(
         self,

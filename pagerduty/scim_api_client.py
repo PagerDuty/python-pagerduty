@@ -25,6 +25,7 @@ class ScimApiClient(ApiClient):
         # Instantiate:
         client = ScimApiClient(TokenAuthMethod(API_KEY))
 
+        # List Users:
         scim_users = client.list_users()
 
         create_users_response = client.post(
@@ -40,9 +41,9 @@ class ScimApiClient(ApiClient):
 
     """
 
-    _url = "https://api.pagerduty.com/scim/v2"
-
-    permitted_methods = ("DELETE", "GET", "PATCH", "POST", "PUT")
+    @property
+    def default_base_url(self) -> str:
+        return "https://api.pagerduty.com/scim/v2"
 
     def list_users(
         self,
@@ -95,3 +96,7 @@ class ScimApiClient(ApiClient):
             current_start_index += items_per_page
 
         return all_users
+
+    @property
+    def permitted_methods(self) -> tuple:
+        return ("DELETE", "GET", "PATCH", "POST", "PUT")
