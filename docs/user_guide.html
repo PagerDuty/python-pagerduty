@@ -877,17 +877,17 @@ initially.</p>
 </section>
 <section id="error-handling">
 <h2>Error Handling<a class="headerlink" href="#error-handling" title="Link to this heading"></a></h2>
-<p>The <a class="reference internal" href="module_reference.html#pagerduty.UrlError" title="pagerduty.UrlError"><code class="xref py py-class docutils literal notranslate"><span class="pre">pagerduty.UrlError</span></code></a> is raised prior to making API calls, and it indicates
-unsupported URLs and/or malformed input.</p>
-<p>The base exception class for all errors encountered when making requests is
-<a class="reference internal" href="module_reference.html#pagerduty.Error" title="pagerduty.Error"><code class="xref py py-class docutils literal notranslate"><span class="pre">pagerduty.Error</span></code></a>. This includes network / transport issues where there
-is no response from the API, in which case the exception will inherit from the
-exception raised by the underlying HTTP library.</p>
+<p>There are two main base-level exception classes. The base exception class for
+all errors encountered when making requests is <a class="reference internal" href="module_reference.html#pagerduty.Error" title="pagerduty.Error"><code class="xref py py-class docutils literal notranslate"><span class="pre">pagerduty.Error</span></code></a>. This
+includes network / transport issues where there is no response from the API, in
+which case the exception will inherit from the exception raised by the
+underlying HTTP library. For all validation errors encountered prior to API
+calls, exceptions will be instances of <a class="reference internal" href="module_reference.html#pagerduty.UrlError" title="pagerduty.UrlError"><code class="xref py py-class docutils literal notranslate"><span class="pre">pagerduty.UrlError</span></code></a>. For
+example, unsupported URLs and/or malformed input.</p>
 <p>All errors that involve a response from the API are instances of
 <a class="reference internal" href="module_reference.html#pagerduty.HttpError" title="pagerduty.HttpError"><code class="xref py py-class docutils literal notranslate"><span class="pre">pagerduty.HttpError</span></code></a> and will have a <code class="docutils literal notranslate"><span class="pre">response</span></code> property containing
-the <a class="reference external" href="https://www.python-httpx.org/api/#response">httpx.Response</a> object. Its subclass
-<code class="xref py py-class docutils literal notranslate"><span class="pre">pagerduty.HttpServerError</span></code> is used for special cases when the API is
-responding in an unexpected way.</p>
+the <a class="reference external" href="https://www.python-httpx.org/api/#response">httpx.Response</a> object. Its subclass <code class="xref py py-class docutils literal notranslate"><span class="pre">pagerduty.HttpServerError</span></code>
+is used for special cases when the API is responding in an unexpected way.</p>
 <p>One can thus define specialized error handling logic in which the REST API
 response data (i.e.  headers, code and body) are available in the catching
 scope. For example, the following code prints “User not found” in the event of a 404,
