@@ -200,9 +200,12 @@ class OAuthTokenClient(ApiClient):
             The formatted authorize URL.
         """
         warnings.warn(
-            "Class method OAuthTokenClient.get_authorize_url is deprecated, "
-            + "and it does not support all service regions.",
-            DeprecationWarning,
+            "Class method OAuthTokenClient.get_authorize_url is deprecated. "
+            + "Please construct an instance and use the method "
+            + "authorize_url. A placeholder string can be used in place of "
+            + "client_secret if the true secret is unavailable in this "
+            + "context.",
+            DeprecationWarning
         )
         return (
             DEFAULT_URL
