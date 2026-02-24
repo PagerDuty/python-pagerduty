@@ -48,12 +48,12 @@
 <li class="toctree-l2"><a class="reference internal" href="#installation">Installation</a></li>
 <li class="toctree-l2"><a class="reference internal" href="#command-line-interface">Command Line Interface</a></li>
 <li class="toctree-l2"><a class="reference internal" href="#authentication">Authentication</a><ul>
-<li class="toctree-l3"><a class="reference internal" href="#using-non-us-service-regions">Using Non-US Service Regions</a></li>
 <li class="toctree-l3"><a class="reference internal" href="#the-from-header">The From header</a></li>
 <li class="toctree-l3"><a class="reference internal" href="#performing-an-oauth-exchange-to-obtain-an-access-token">Performing an OAuth Exchange to Obtain an Access Token</a></li>
 <li class="toctree-l3"><a class="reference internal" href="#performing-oauth-token-refresh-automatically">Performing OAuth Token Refresh Automatically</a></li>
 </ul>
 </li>
+<li class="toctree-l2"><a class="reference internal" href="#using-non-us-service-regions">Using Non-US Service Regions</a></li>
 <li class="toctree-l2"><a class="reference internal" href="#basic-usage-examples">Basic Usage Examples</a><ul>
 <li class="toctree-l3"><a class="reference internal" href="#rest-api-v2">REST API v2</a></li>
 <li class="toctree-l3"><a class="reference internal" href="#events-api-v2">Events API v2</a></li>
@@ -166,21 +166,6 @@ context managers. For example:</p>
     <span class="n">do_application</span><span class="p">(</span><span class="n">client</span><span class="p">)</span>
 </pre></div>
 </div>
-<section id="using-non-us-service-regions">
-<h3>Using Non-US Service Regions<a class="headerlink" href="#using-non-us-service-regions" title="Link to this heading"></a></h3>
-<p>If your PagerDuty account is in the EU or other service region outside the US,
-set the <code class="docutils literal notranslate"><span class="pre">url</span></code> attribute according to the documented <a class="reference external" href="https://support.pagerduty.com/docs/service-regions#api-access-urls">API Access URLs</a>, i.e.
-for the EU:</p>
-<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="c1"># REST API</span>
-<span class="n">client</span><span class="o">.</span><span class="n">url</span> <span class="o">=</span> <span class="s1">&#39;https://api.eu.pagerduty.com&#39;</span>
-<span class="c1"># Events API:</span>
-<span class="n">events_client</span><span class="o">.</span><span class="n">url</span> <span class="o">=</span> <span class="s1">&#39;https://events.eu.pagerduty.com&#39;</span>
-<span class="c1"># Slack Integration &quot;Connections&quot; API (and likewise for other</span>
-<span class="c1"># APIs that use apps.pagerduty.com and/or some unique base path):</span>
-<span class="n">slack_integration_client</span><span class="o">.</span><span class="n">url</span> <span class="o">=</span> <span class="s1">&#39;https://apps.eu.pagerduty.com/integration-slack&#39;</span>
-</pre></div>
-</div>
-</section>
 <section id="the-from-header">
 <h3>The From header<a class="headerlink" href="#the-from-header" title="Link to this heading"></a></h3>
 <p>This request header can be set for all requests using the attribute
@@ -296,6 +281,46 @@ before using the token:</p>
 </pre></div>
 </div>
 </section>
+</section>
+<section id="using-non-us-service-regions">
+<h2>Using Non-US Service Regions<a class="headerlink" href="#using-non-us-service-regions" title="Link to this heading"></a></h2>
+<p>If your PagerDuty account is in the EU or other service region outside the US,
+set the <code class="docutils literal notranslate"><span class="pre">url</span></code> attribute according to the documented <a class="reference external" href="https://support.pagerduty.com/docs/service-regions#api-access-urls">API Access URLs</a>. This
+can be done either by passing a <code class="docutils literal notranslate"><span class="pre">base_url</span></code> keyword argument to the
+constructor or after instantiation. Note that this base URL will depend not
+only on the service region, but also the particular API in use.</p>
+<p>A few examples of how to use the EU service region:</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="c1"># REST API</span>
+<span class="n">client</span> <span class="o">=</span> <span class="n">pagerduty</span><span class="o">.</span><span class="n">RestApiV2Client</span><span class="p">(</span>
+    <span class="n">API_KEY</span><span class="p">,</span>
+    <span class="n">base_url</span> <span class="o">=</span> <span class="s2">&quot;https://api.eu.pagerduty.com&quot;</span>
+<span class="p">)</span>
+<span class="c1"># The following also works:</span>
+<span class="n">client</span> <span class="o">=</span> <span class="n">pagerduty</span><span class="o">.</span><span class="n">RestApiV2Client</span><span class="p">(</span><span class="n">API_KEY</span><span class="p">)</span>
+<span class="n">client</span><span class="o">.</span><span class="n">url</span> <span class="o">=</span> <span class="s2">&quot;https://api.eu.pagerduty.com&quot;</span>
+</pre></div>
+</div>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="c1"># Events API:</span>
+<span class="n">events_client</span> <span class="o">=</span> <span class="n">pagerduty</span><span class="o">.</span><span class="n">EventsApiClient</span><span class="p">(</span>
+    <span class="n">API_KEY</span><span class="p">,</span>
+    <span class="n">base_url</span> <span class="o">=</span> <span class="s2">&quot;https://events.eu.pagerduty.com&quot;</span>
+<span class="p">)</span>
+<span class="c1"># Or:</span>
+<span class="n">events_client</span> <span class="o">=</span> <span class="n">pagerduty</span><span class="o">.</span><span class="n">EventsApiClient</span><span class="p">(</span><span class="n">API_KEY</span><span class="p">)</span>
+<span class="n">events_client</span><span class="o">.</span><span class="n">url</span> <span class="o">=</span> <span class="s1">&#39;https://events.eu.pagerduty.com&#39;</span>
+</pre></div>
+</div>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="c1"># Slack Integration &quot;Connections&quot; API (and likewise for other</span>
+<span class="c1"># APIs that use apps.pagerduty.com and/or some unique base path)</span>
+<span class="n">slack_conn_client</span> <span class="o">=</span> <span class="n">pagerduty</span><span class="o">.</span><span class="n">SlackIntegrationConnectionsApiClients</span><span class="p">(</span>
+    <span class="n">API_KEY</span><span class="p">,</span>
+    <span class="n">base_url</span> <span class="o">=</span> <span class="s2">&quot;https://apps.eu.pagerduty.com/integration-slack&quot;</span>
+<span class="p">)</span>
+<span class="c1"># Or:</span>
+<span class="n">slack_conn_client</span> <span class="o">=</span> <span class="n">pagerduty</span><span class="o">.</span><span class="n">SlackIntegrationConnectionsApiClients</span><span class="p">(</span><span class="n">API_KEY</span><span class="p">)</span>
+<span class="n">slack_integration_client</span><span class="o">.</span><span class="n">url</span> <span class="o">=</span> <span class="s2">&quot;https://apps.eu.pagerduty.com/integration-slack&quot;</span>
+</pre></div>
+</div>
 </section>
 <section id="basic-usage-examples">
 <h2>Basic Usage Examples<a class="headerlink" href="#basic-usage-examples" title="Link to this heading"></a></h2>
@@ -1015,7 +1040,7 @@ reached in the underlying HTTP request methods.</p>
   <hr/>
 
   <div role="contentinfo">
-    <p>&#169; Copyright 2025 PagerDuty, Inc.</p>
+    <p>&#169; Copyright 2026 PagerDuty, Inc.</p>
   </div>
 
   Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
