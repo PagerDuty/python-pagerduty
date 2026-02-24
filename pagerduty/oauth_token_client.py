@@ -205,7 +205,7 @@ class OAuthTokenClient(ApiClient):
             + "authorize_url. A placeholder string can be used in place of "
             + "client_secret if the true secret is unavailable in this "
             + "context.",
-            DeprecationWarning
+            DeprecationWarning,
         )
         return (
             DEFAULT_URL

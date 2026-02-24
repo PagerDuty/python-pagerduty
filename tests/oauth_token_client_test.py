@@ -36,7 +36,7 @@ class OAuthTokenClientTest(unittest.TestCase):
             "https://identity.pagerduty.com/oauth/authorize?"
             + f"client_id={client_id}&redirect_uri={uri_encoded}&"
             + f"response_type=code&scope={scope}",
-            client.authorize_url(scope, redirect_uri)
+            client.authorize_url(scope, redirect_uri),
         )
 
     @patch.object(httpx.Client, "request")
