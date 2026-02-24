@@ -30,7 +30,7 @@ CANONICAL_PATHS = [
     "/accounts_mappings",
     "/accounts_mappings/{id}",
     "/accounts_mappings/{id}/rules",
-    "/accounts_mappings/{id}/rules/{rule_id}"
+    "/accounts_mappings/{id}/rules/{rule_id}",
 ]
 
 ENTITY_WRAPPER_CONFIG = {
@@ -38,8 +38,9 @@ ENTITY_WRAPPER_CONFIG = {
     # "List rules" follows orthodox schema patterns and supports pagination;
     # all other nested API endpoints, i.e. create / read / update rule, do not.
     "POST /accounts_mappings/{id}/rules": None,
-    "* /accounts_mappings/{id}/rules/{rule_id}": None
+    "* /accounts_mappings/{id}/rules/{rule_id}": None,
 }
+
 
 class JiraCloudIntegrationApiClient(RestApiV2BaseClient):
     """
@@ -59,15 +60,11 @@ class JiraCloudIntegrationApiClient(RestApiV2BaseClient):
         api_key: str,
         auth_type: str = "token",
         debug: bool = False,
-        base_url = None,
-        **kw
+        base_url=None,
+        **kw,
     ):
         super(JiraCloudIntegrationApiClient, self).__init__(
-            api_key,
-            auth_type = auth_type,
-            debug = debug,
-            base_url = base_url,
-            **kw
+            api_key, auth_type=auth_type, debug=debug, base_url=base_url, **kw
         )
         self.headers.update(
             {

@@ -31,19 +31,9 @@ class MsTeamsIntegrationApiClient(RestApiV2BaseClient):
     For constructor arguments, see :class:`pagerduty.ApiClient`.
     """
 
-    def __init__(
-            self,
-            api_key: str,
-            debug: bool = False,
-            base_url = None,
-            **kw
-        ):
+    def __init__(self, api_key: str, debug: bool = False, base_url=None, **kw):
         super(MsTeamsIntegrationApiClient, self).__init__(
-            api_key,
-            auth_type = "token",
-            debug = debug,
-            base_url = base_url,
-            **kw
+            api_key, auth_type="token", debug=debug, base_url=base_url, **kw
         )
         self.headers.update(
             {

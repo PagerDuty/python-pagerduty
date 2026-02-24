@@ -3,9 +3,7 @@ from typing import List
 from .rest_api_v2_base_client import CanonicalPath, RestApiV2BaseClient
 
 
-CANONICAL_PATHS = [
-    "/rules"
-]
+CANONICAL_PATHS = ["/rules"]
 
 ENTITY_WRAPPER_CONFIG = {
     # The /rules endpoints follow classic conventions; the wrapper can be inferred.
@@ -49,15 +47,15 @@ class JiraServerIntegrationApiClient(RestApiV2BaseClient):
         access_token: str,
         jira_signature_token: str,
         debug: bool = False,
-        base_url = None,
+        base_url=None,
         **kw,
     ):
         super(JiraServerIntegrationApiClient, self).__init__(
             access_token,
-            auth_type = "bearer",
-            debug = debug,
-            base_url = base_url,
-            **kw
+            auth_type="bearer",
+            debug=debug,
+            base_url=base_url,
+            **kw,
         )
 
         self.jira_signature_token = jira_signature_token

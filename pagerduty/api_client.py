@@ -113,12 +113,8 @@ class ApiClient(Client):
     """
 
     def __init__(
-            self,
-            auth_method: AuthMethod,
-            debug=False,
-            base_url=None,
-            **kw
-        ):
+        self, auth_method: AuthMethod, debug=False, base_url=None, **kw
+    ):
         self.parent = super(ApiClient, self)
         self.parent.__init__(**kw)
         self.auth_method = auth_method

@@ -32,17 +32,10 @@ class McpApiClient(ApiClient):
     """
 
     def __init__(
-            self,
-            auth_method: AuthMethod,
-            debug = False,
-            base_url = None,
-            **kw
-        ):
+        self, auth_method: AuthMethod, debug=False, base_url=None, **kw
+    ):
         super(McpApiClient, self).__init__(
-            auth_method,
-            debug = debug,
-            base_url = base_url,
-            **kw
+            auth_method, debug=debug, base_url=base_url, **kw
         )
         self.headers.update({"Accept": "application/json, text/event-stream"})
 

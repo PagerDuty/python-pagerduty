@@ -22,6 +22,7 @@ from .rest_api_v2_client import RestApiV2Client
 
 DEFAULT_URL = "https://identity.pagerduty.com"
 
+
 class ClientCredentialsAuthMethod(BodyParameterAuthMethod):
     """
     AuthMethod used in OAuth token exchange requests.
@@ -102,23 +103,20 @@ class OAuthTokenClient(ApiClient):
     """
 
     def __init__(
-            self,
-            client_secret: str,
-            client_id: str,
-            debug = False,
-            base_url = None,
-            **kw
-        ):
+        self,
+        client_secret: str,
+        client_id: str,
+        debug=False,
+        base_url=None,
+        **kw,
+    ):
         """
         Create an OAuth token client
         """
         auth_method = ClientCredentialsAuthMethod(client_secret, client_id)
 
         super(OAuthTokenClient, self).__init__(
-            auth_method,
-            debug = debug,
-            base_url = base_url,
-            **kw
+            auth_method, debug=debug, base_url=base_url, **kw
         )
 
     def amended_auth_response(self, response: Response) -> dict:
@@ -202,9 +200,9 @@ class OAuthTokenClient(ApiClient):
             The formatted authorize URL.
         """
         warnings.warn(
-            "Class method OAuthTokenClient.get_authorize_url is deprecated, " +
-                "and it does not support all service regions.",
-            DeprecationWarning
+            "Class method OAuthTokenClient.get_authorize_url is deprecated, "
+            + "and it does not support all service regions.",
+            DeprecationWarning,
         )
         return (
             DEFAULT_URL

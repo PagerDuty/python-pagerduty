@@ -46,18 +46,11 @@ class EventsApiV2Client(ApiClient):
     """
 
     def __init__(
-            self,
-            routing_key: str,
-            debug: bool = False,
-            base_url = None,
-            **kw
-        ):
+        self, routing_key: str, debug: bool = False, base_url=None, **kw
+    ):
         auth_method = RoutingKeyAuthMethod(routing_key)
         super(EventsApiV2Client, self).__init__(
-            auth_method,
-            debug = debug,
-            base_url = base_url,
-            **kw
+            auth_method, debug=debug, base_url=base_url, **kw
         )
         # See: https://developer.pagerduty.com/docs/3d063fd4814a6-events-api-v2-overview#response-codes--retry-logic
         self.retry[500] = 2  # internal server error
