@@ -163,7 +163,7 @@ class OAuthTokenClient(ApiClient):
             + "/oauth/authorize?"
             + urllib.parse.urlencode(
                 [
-                    ("client_id", client_id),
+                    ("client_id", self.auth_method.client_id),
                     ("redirect_uri", redirect_uri),
                     ("response_type", "code"),
                     ("scope", scope),

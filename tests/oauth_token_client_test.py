@@ -31,6 +31,13 @@ class OAuthTokenClientTest(unittest.TestCase):
             + f"response_type=code&scope={scope}",
             OAuthTokenClient.get_authorize_url(client_id, scope, redirect_uri),
         )
+        client = OAuthTokenClient("randomly-generated", client_id)
+        self.assertEqual(
+            "https://identity.pagerduty.com/oauth/authorize?"
+            + f"client_id={client_id}&redirect_uri={uri_encoded}&"
+            + f"response_type=code&scope={scope}",
+            client.authorize_url(scope, redirect_uri)
+        )
 
     @patch.object(httpx.Client, "request")
     def test_get_new_token(self, request):
