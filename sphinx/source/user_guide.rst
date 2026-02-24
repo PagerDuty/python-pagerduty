@@ -860,19 +860,19 @@ initially.
 
 Error Handling
 --------------
-The :class:`pagerduty.UrlError` is raised prior to making API calls, and it indicates
-unsupported URLs and/or malformed input.
 
-The base exception class for all errors encountered when making requests is
-:class:`pagerduty.Error`. This includes network / transport issues where there
-is no response from the API, in which case the exception will inherit from the
-exception raised by the underlying HTTP library.
+There are two main base-level exception classes. The base exception class for
+all errors encountered when making requests is :class:`pagerduty.Error`. This
+includes network / transport issues where there is no response from the API, in
+which case the exception will inherit from the exception raised by the
+underlying HTTP library. For all validation errors encountered prior to API
+calls, exceptions will be instances of :class:`pagerduty.UrlError`. For
+example, unsupported URLs and/or malformed input.
 
 All errors that involve a response from the API are instances of
 :class:`pagerduty.HttpError` and will have a ``response`` property containing
-the `httpx.Response`_ object. Its subclass
-:class:`pagerduty.HttpServerError` is used for special cases when the API is
-responding in an unexpected way.
+the `httpx.Response`_ object. Its subclass :class:`pagerduty.HttpServerError`
+is used for special cases when the API is responding in an unexpected way.
 
 One can thus define specialized error handling logic in which the REST API
 response data (i.e.  headers, code and body) are available in the catching
