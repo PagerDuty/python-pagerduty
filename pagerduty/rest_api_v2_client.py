@@ -513,7 +513,7 @@ class RestApiV2Client(RestApiV2BaseClient):
         default_from: Optional[str] = None,
         auth_type: str = "token",
         debug: bool = False,
-        base_url = None
+        base_url = None,
         **kw,
     ):
         super(RestApiV2Client, self).__init__(
