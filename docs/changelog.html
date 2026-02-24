@@ -76,6 +76,9 @@
              
   <section id="changelog">
 <h1>Changelog<a class="headerlink" href="#changelog" title="Link to this heading"></a></h1>
+<p><strong>2026-02-23: 6.2.0: New way of setting base URL + deprecate method in OAuthTokenClient</strong></p>
+<p>This adds <code class="docutils literal notranslate"><span class="pre">base_url</span></code> as a universally-accepted keyword argument to constructors of all clients, and provides a more explicit method of specifying the default base URL for any given client class.</p>
+<p>It also deprecates a classmethod in OAuthTokenClient, which cannot be used outside of the commercial AWS partition, in favor of the more flexible instance methods.</p>
 <p><strong>2025-11-19: 6.1.0: Add uv and ruff and fix errors and formatting</strong></p>
 <p>This release adopts <a class="reference external" href="https://docs.astral.sh/uv/">uv</a> as the project’s chosen package manager and build tool, and <a class="reference external" href="https://docs.astral.sh/ruff/">ruff</a> as its chosen linter and formatter.</p>
 <ul class="simple">

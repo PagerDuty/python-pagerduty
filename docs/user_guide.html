@@ -197,17 +197,21 @@ Token via Code Grant</a> and
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">token_client</span> <span class="o">=</span> <span class="n">pagerduty</span><span class="o">.</span><span class="n">OAuthTokenClient</span><span class="p">(</span><span class="n">client_secret</span><span class="p">,</span> <span class="n">client_id</span><span class="p">)</span>
 </pre></div>
 </div>
-<p>To generate the URL that the user must visit to authorize the application:</p>
-<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="c1"># With a client object:</span>
-<span class="n">authorize_url</span> <span class="o">=</span> <span class="n">token_client</span><span class="o">.</span><span class="n">authorize_url</span><span class="p">(</span><span class="n">scope</span><span class="p">,</span> <span class="n">redirect_uri</span><span class="p">)</span>
-
-<span class="c1"># Without a client object:</span>
-<span class="n">authorize_url</span> <span class="o">=</span> <span class="n">pagerduty</span><span class="o">.</span><span class="n">OAuthTokenClient</span><span class="o">.</span><span class="n">get_authorize_url</span><span class="p">(</span><span class="n">client_id</span><span class="p">,</span> <span class="n">scope</span><span class="p">,</span> <span class="n">redirect_uri</span><span class="p">)</span>
-
-<span class="c1"># For PKCE:</span>
-<span class="n">code_verifier</span><span class="p">,</span> <span class="n">code_challenge</span> <span class="o">=</span> <span class="n">client</span><span class="o">.</span><span class="n">generate_s256_pkce_params</span><span class="p">()</span>
-<span class="n">authorize_url</span> <span class="o">=</span> <span class="n">token_client</span><span class="o">.</span><span class="n">get_pkce_authorize_url</span><span class="p">(</span><span class="n">scope</span><span class="p">,</span> <span class="n">redirect_uri</span><span class="p">,</span> <span class="n">code_challenge</span><span class="p">)</span>
-<span class="c1"># code_verifier must be securely and temporarily stored for the final step of authorization</span>
+<p>To generate the URL that the user must visit to authorize the application, the
+client in this context does not need an actual secret, though it does still
+require a client ID. In these examples the client uses a dummy secret. That is
+because the secret is not used to generate the authorize URL. If a client
+object already exists in this context and it has the secret, it can still be
+used.</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">dummy_secret</span> <span class="o">=</span> <span class="s2">&quot;randomly-generated&quot;</span>
+<span class="n">client</span> <span class="o">=</span> <span class="n">pagerduty</span><span class="o">.</span><span class="n">OAuthTokenClient</span><span class="p">(</span><span class="n">dummy_secret</span><span class="p">,</span> <span class="n">client_id</span><span class="p">)</span>
+<span class="n">authorize_url</span> <span class="o">=</span> <span class="n">client</span><span class="o">.</span><span class="n">authorize_url</span><span class="p">(</span><span class="n">scope</span><span class="p">,</span> <span class="n">redirect_uri</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>To generate an authorize URL for use in PKCE-based authentication:</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">code_verifier</span><span class="p">,</span> <span class="n">code_challenge</span> <span class="o">=</span> <span class="n">client</span><span class="o">.</span><span class="n">generate_s256_pkce_params</span><span class="p">()</span>
+<span class="n">authorize_url</span> <span class="o">=</span> <span class="n">client</span><span class="o">.</span><span class="n">get_pkce_authorize_url</span><span class="p">(</span><span class="n">scope</span><span class="p">,</span> <span class="n">redirect_uri</span><span class="p">,</span> <span class="n">code_challenge</span><span class="p">)</span>
+<span class="c1"># code_verifier will be needed later in the final step of authorization</span>
 </pre></div>
 </div>
 <p>In all cases, the application must provide a redirect URI at which to receive
@@ -216,12 +220,14 @@ application and is redirected back to the application at the redirect URI, the
 <code class="docutils literal notranslate"><span class="pre">code</span></code> parameter appended to it will contain the authorization code. The code
 it contains can then be exchanged for an access token in one of the following ways:</p>
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="c1"># via code grant:</span>
-<span class="n">auth_response</span> <span class="o">=</span> <span class="n">token_client</span><span class="o">.</span><span class="n">get_new_token_from_code</span><span class="p">(</span><span class="n">auth_code</span><span class="p">,</span> <span class="n">scope</span><span class="p">,</span>
-    <span class="n">redirect_uri</span><span class="p">)</span>
+<span class="n">auth_response</span> <span class="o">=</span> <span class="n">token_client</span><span class="o">.</span><span class="n">get_new_token_from_code</span><span class="p">(</span>
+    <span class="n">auth_code</span><span class="p">,</span> <span class="n">scope</span><span class="p">,</span> <span class="n">redirect_uri</span>
+<span class="p">)</span>
 
 <span class="c1"># via PKCE:</span>
-<span class="n">auth_response</span> <span class="o">=</span> <span class="n">token_client</span><span class="o">.</span><span class="n">get_new_token_from_code_with_pkce</span><span class="p">(</span><span class="n">auth_code</span><span class="p">,</span>
-    <span class="n">scope</span><span class="p">,</span> <span class="n">redirect_uri</span><span class="p">,</span> <span class="n">code_verifier</span><span class="p">)</span>
+<span class="n">auth_response</span> <span class="o">=</span> <span class="n">token_client</span><span class="o">.</span><span class="n">get_new_token_from_code_with_pkce</span><span class="p">(</span>
+    <span class="n">auth_code</span><span class="p">,</span> <span class="n">scope</span><span class="p">,</span> <span class="n">redirect_uri</span><span class="p">,</span> <span class="n">code_verifier</span>
+<span class="p">)</span>
 
 <span class="c1"># the dictionary it returns in either case can then be used as follows:</span>
 <span class="n">access_token</span> <span class="o">=</span> <span class="n">auth_response</span><span class="p">[</span><span class="s1">&#39;access_token&#39;</span><span class="p">]</span>
