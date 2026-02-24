@@ -54,23 +54,6 @@ context managers. For example:
     with pagerduty.RestApiV2Client(API_KEY) as client:
         do_application(client)
 
-Using Non-US Service Regions
-****************************
-If your PagerDuty account is in the EU or other service region outside the US,
-set the ``url`` attribute according to the documented `API Access URLs
-<https://support.pagerduty.com/docs/service-regions#api-access-urls>`_, i.e.
-for the EU:
-
-.. code-block:: python
-
-    # REST API
-    client.url = 'https://api.eu.pagerduty.com'
-    # Events API:
-    events_client.url = 'https://events.eu.pagerduty.com'
-    # Slack Integration "Connections" API (and likewise for other
-    # APIs that use apps.pagerduty.com and/or some unique base path):
-    slack_integration_client.url = 'https://apps.eu.pagerduty.com/integration-slack'
-
 The From header
 ***************
 This request header can be set for all requests using the attribute
@@ -200,6 +183,51 @@ before using the token:
         expiration_date = auth['expiration_date']
     # API clients can now be constructed with access_token;
     # stored values of refresh_token and expiration_date must be updated
+
+Using Non-US Service Regions
+----------------------------
+If your PagerDuty account is in the EU or other service region outside the US,
+set the ``url`` attribute according to the documented `API Access URLs
+<https://support.pagerduty.com/docs/service-regions#api-access-urls>`_. This
+can be done either by passing a ``base_url`` keyword argument to the
+constructor or after instantiation. Note that this base URL will depend not
+only on the service region, but also the particular API in use.
+
+A few examples of how to use the EU service region:
+
+.. code-block:: python
+
+    # REST API
+    client = pagerduty.RestApiV2Client(
+        API_KEY,
+        base_url = "https://api.eu.pagerduty.com"
+    )
+    # The following also works:
+    client = pagerduty.RestApiV2Client(API_KEY)
+    client.url = "https://api.eu.pagerduty.com"
+
+.. code-block:: python
+
+    # Events API:
+    events_client = pagerduty.EventsApiClient(
+        API_KEY,
+        base_url = "https://events.eu.pagerduty.com"
+    )
+    # Or:
+    events_client = pagerduty.EventsApiClient(API_KEY)
+    events_client.url = 'https://events.eu.pagerduty.com'
+
+.. code-block:: python
+
+    # Slack Integration "Connections" API (and likewise for other
+    # APIs that use apps.pagerduty.com and/or some unique base path)
+    slack_conn_client = pagerduty.SlackIntegrationConnectionsApiClients(
+        API_KEY,
+        base_url = "https://apps.eu.pagerduty.com/integration-slack"
+    )
+    # Or:
+    slack_conn_client = pagerduty.SlackIntegrationConnectionsApiClients(API_KEY)
+    slack_integration_client.url = "https://apps.eu.pagerduty.com/integration-slack"
 
 
 Basic Usage Examples
