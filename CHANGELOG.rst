@@ -1,8 +1,8 @@
 **2026-02-23: 6.2.0: New way of setting base URL + deprecate method in OAuthTokenClient**
 
-This adds ``base_url`` as a universally-accepted keyword argument to constructors of all clients, and provides a more explicit method of specifying the default base URL for any given client class.
-
-It also deprecates a classmethod in OAuthTokenClient, which cannot be used outside of the commercial AWS partition, in favor of the more flexible instance methods.
+* Adds ``base_url`` as a universally-accepted keyword argument to constructors of all clients, and provides a more explicit method of specifying the default base URL for any given client class.
+* Deprecate classmethod in ``get_authorize_url`` in ``OAuthTokenClient``, which cannot be used outside of the commercial AWS partition, in favor of the more flexible instance methods.
+* Add support for two new endpoints in the Jira Cloud Integration API
 
 **2025-11-19: 6.1.0: Add uv and ruff and fix errors and formatting**
 
