@@ -93,20 +93,27 @@ Token via Code Grant
 
     token_client = pagerduty.OAuthTokenClient(client_secret, client_id)
 
-To generate the URL that the user must visit to authorize the application:
+To generate the URL that the user must visit to authorize the application, the
+client in this context does not need an actual secret, though it does still
+require a client ID. In these examples the client uses a dummy secret. That is
+because the secret is not used to generate the authorize URL. If a client
+object already exists in this context and it has the secret, it can still be
+used.
 
 .. code-block:: python
 
-    # With a client object:
-    authorize_url = token_client.authorize_url(scope, redirect_uri)
+    dummy_secret = "randomly-generated"
+    client = pagerduty.OAuthTokenClient(dummy_secret, client_id)
+    authorize_url = client.authorize_url(scope, redirect_uri)
 
-    # Without a client object:
-    authorize_url = pagerduty.OAuthTokenClient.get_authorize_url(client_id, scope, redirect_uri)
 
-    # For PKCE:
+To generate an authorize URL for use in PKCE-based authentication:
+
+.. code-block:: python
+
     code_verifier, code_challenge = client.generate_s256_pkce_params()
-    authorize_url = token_client.get_pkce_authorize_url(scope, redirect_uri, code_challenge)
-    # code_verifier must be securely and temporarily stored for the final step of authorization
+    authorize_url = client.get_pkce_authorize_url(scope, redirect_uri, code_challenge)
+    # code_verifier will be needed later in the final step of authorization
 
 In all cases, the application must provide a redirect URI at which to receive
 the authorization code parameter. Once the user visits, has authorized the
@@ -117,16 +124,19 @@ it contains can then be exchanged for an access token in one of the following wa
 .. code-block:: python
 
     # via code grant:
-    auth_response = token_client.get_new_token_from_code(auth_code, scope,
-        redirect_uri)
+    auth_response = token_client.get_new_token_from_code(
+        auth_code, scope, redirect_uri
+    )
 
     # via PKCE:
-    auth_response = token_client.get_new_token_from_code_with_pkce(auth_code,
-        scope, redirect_uri, code_verifier)
+    auth_response = token_client.get_new_token_from_code_with_pkce(
+        auth_code, scope, redirect_uri, code_verifier
+    )
 
     # the dictionary it returns in either case can then be used as follows:
     access_token = auth_response['access_token']
     refresh_token = auth_response['refresh_token']
+
 
 Performing OAuth Token Refresh Automatically
 ********************************************
