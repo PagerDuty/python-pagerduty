@@ -76,6 +76,12 @@
              
   <section id="changelog">
 <h1>Changelog<a class="headerlink" href="#changelog" title="Link to this heading"></a></h1>
+<p><strong>2026-02-23: 6.2.0: New way of setting base URL + deprecate method in OAuthTokenClient</strong></p>
+<ul class="simple">
+<li><p>Adds <code class="docutils literal notranslate"><span class="pre">base_url</span></code> as a universally-accepted keyword argument to constructors of all clients, and provides a more explicit method of specifying the default base URL for any given client class.</p></li>
+<li><p>Deprecate classmethod in <code class="docutils literal notranslate"><span class="pre">get_authorize_url</span></code> in <code class="docutils literal notranslate"><span class="pre">OAuthTokenClient</span></code>, which cannot be used outside of the commercial AWS partition, in favor of the more flexible instance methods.</p></li>
+<li><p>Add support for two new endpoints in the Jira Cloud Integration API</p></li>
+</ul>
 <p><strong>2025-11-19: 6.1.0: Add uv and ruff and fix errors and formatting</strong></p>
 <p>This release adopts <a class="reference external" href="https://docs.astral.sh/uv/">uv</a> as the project’s chosen package manager and build tool, and <a class="reference external" href="https://docs.astral.sh/ruff/">ruff</a> as its chosen linter and formatter.</p>
 <ul class="simple">
@@ -314,7 +320,7 @@
   <hr/>
 
   <div role="contentinfo">
-    <p>&#169; Copyright 2025 PagerDuty, Inc.</p>
+    <p>&#169; Copyright 2026 PagerDuty, Inc.</p>
   </div>
 
   Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a

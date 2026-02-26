@@ -67,7 +67,7 @@ control over how API calls were made.
 
 License
 -------
-All the code in this distribution is Copyright (c) 2025 PagerDuty.
+All the code in this distribution is Copyright (c) 2026 PagerDuty.
 
 ``python-pagerduty`` is made available under the MIT License:
 

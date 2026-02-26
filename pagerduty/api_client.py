@@ -42,7 +42,11 @@ class ApiClient(Client):
     :param debug:
         Sets :attr:`print_debug`. Set to ``True`` to enable verbose command
         line output.
+    :param base_url:
+        Sets the base API URL to be used by the client for all API calls.
     """
+
+    _url = None
 
     log = None
     """
@@ -67,16 +71,6 @@ class ApiClient(Client):
 
     parent = None
     """The ``super`` object (`httpx.Client`_)"""
-
-    permitted_methods = ()
-    """
-    A tuple of the methods permitted by the API which the client implements.
-
-    For instance:
-
-    * The REST API accepts GET, POST, PUT and DELETE.
-    * The Events API and Change Events APIs only accept POST.
-    """
 
     retry = {}
     """
@@ -118,12 +112,18 @@ class ApiClient(Client):
     determines the TCP read timeout.
     """
 
-    def __init__(self, auth_method: AuthMethod, debug=False, **kw):
+    def __init__(
+        self, auth_method: AuthMethod, debug=False, base_url=None, **kw
+    ):
         self.parent = super(ApiClient, self)
         self.parent.__init__(**kw)
         self.auth_method = auth_method
         self.log = logging.getLogger(__name__)
         self.print_debug = debug
+        if base_url is None:
+            self.url = self.default_base_url
+        else:
+            self.url = base_url
         self.retry = {}
 
     def after_set_auth_method(self):
@@ -153,6 +153,13 @@ class ApiClient(Client):
     def cooldown_factor(self) -> float:
         return self.sleep_timer_base * (1 + self.stagger_cooldown * random())
 
+    @property
+    def default_base_url(self) -> str:
+        """
+        The base URL to use for :attr:`url` if unspecified in the constructor
+        """
+        raise NotImplementedError
+
     def normalize_params(self, params: dict) -> dict:
         """
         Modify the user-supplied parameters to ease implementation
@@ -165,6 +172,18 @@ class ApiClient(Client):
     def normalize_url(self, url: str) -> str:
         """Compose the URL whether it is a path or an already-complete URL"""
         return normalize_url(self.url, url)
+
+    @property
+    def permitted_methods(self) -> tuple:
+        """
+        A tuple of the methods permitted by the API that the client implements.
+
+        For instance:
+
+        * The REST API accepts GET, POST, PUT and DELETE.
+        * The Events API and Change Events APIs only accept POST.
+        """
+        return ()
 
     def postprocess(self, response: Response):
         """

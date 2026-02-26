@@ -1,6 +1,6 @@
 [project]
 name = "pagerduty"
-version = "6.1.0"
+version = "6.2.0"
 description = "Clients for PagerDuty's Public APIs"
 requires-python = ">=3.6"
 dependencies = ["httpx"]

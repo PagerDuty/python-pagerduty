@@ -31,10 +31,6 @@ class SlackIntegrationConnectionsApiClient(RestApiV2BaseClient):
     For constructor arguments, see :class:`pagerduty.RestApiV2BaseClient`.
     """
 
-    permitted_methods = ("GET", "POST", "PUT", "DELETE")
-
-    url = "https://app.pagerduty.com/integration-slack"
-
     def __init__(
         self, api_key: str, auth_type: str = "token", debug: bool = False
     ):
@@ -52,5 +48,13 @@ class SlackIntegrationConnectionsApiClient(RestApiV2BaseClient):
         return CANONICAL_PATHS
 
     @property
+    def default_base_url(self) -> str:
+        return "https://app.pagerduty.com/integration-slack"
+
+    @property
     def entity_wrapper_config(self) -> dict:
         return ENTITY_WRAPPER_CONFIG
+
+    @property
+    def permitted_methods(self) -> tuple:
+        return ("GET", "POST", "PUT", "DELETE")

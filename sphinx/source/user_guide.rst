@@ -54,23 +54,6 @@ context managers. For example:
     with pagerduty.RestApiV2Client(API_KEY) as client:
         do_application(client)
 
-Using Non-US Service Regions
-****************************
-If your PagerDuty account is in the EU or other service region outside the US,
-set the ``url`` attribute according to the documented `API Access URLs
-<https://support.pagerduty.com/docs/service-regions#api-access-urls>`_, i.e.
-for the EU:
-
-.. code-block:: python
-
-    # REST API
-    client.url = 'https://api.eu.pagerduty.com'
-    # Events API:
-    events_client.url = 'https://events.eu.pagerduty.com'
-    # Slack Integration "Connections" API (and likewise for other
-    # APIs that use apps.pagerduty.com and/or some unique base path):
-    slack_integration_client.url = 'https://apps.eu.pagerduty.com/integration-slack'
-
 The From header
 ***************
 This request header can be set for all requests using the attribute
@@ -110,20 +93,27 @@ Token via Code Grant
 
     token_client = pagerduty.OAuthTokenClient(client_secret, client_id)
 
-To generate the URL that the user must visit to authorize the application:
+To generate the URL that the user must visit to authorize the application, the
+client in this context does not need an actual secret, though it does still
+require a client ID. In these examples the client uses a dummy secret. That is
+because the secret is not used to generate the authorize URL. If a client
+object already exists in this context and it has the secret, it can still be
+used.
 
 .. code-block:: python
 
-    # With a client object:
-    authorize_url = token_client.authorize_url(scope, redirect_uri)
+    dummy_secret = "randomly-generated"
+    client = pagerduty.OAuthTokenClient(dummy_secret, client_id)
+    authorize_url = client.authorize_url(scope, redirect_uri)
 
-    # Without a client object:
-    authorize_url = pagerduty.OAuthTokenClient.get_authorize_url(client_id, scope, redirect_uri)
 
-    # For PKCE:
+To generate an authorize URL for use in PKCE-based authentication:
+
+.. code-block:: python
+
     code_verifier, code_challenge = client.generate_s256_pkce_params()
-    authorize_url = token_client.get_pkce_authorize_url(scope, redirect_uri, code_challenge)
-    # code_verifier must be securely and temporarily stored for the final step of authorization
+    authorize_url = client.get_pkce_authorize_url(scope, redirect_uri, code_challenge)
+    # code_verifier will be needed later in the final step of authorization
 
 In all cases, the application must provide a redirect URI at which to receive
 the authorization code parameter. Once the user visits, has authorized the
@@ -134,16 +124,19 @@ it contains can then be exchanged for an access token in one of the following wa
 .. code-block:: python
 
     # via code grant:
-    auth_response = token_client.get_new_token_from_code(auth_code, scope,
-        redirect_uri)
+    auth_response = token_client.get_new_token_from_code(
+        auth_code, scope, redirect_uri
+    )
 
     # via PKCE:
-    auth_response = token_client.get_new_token_from_code_with_pkce(auth_code,
-        scope, redirect_uri, code_verifier)
+    auth_response = token_client.get_new_token_from_code_with_pkce(
+        auth_code, scope, redirect_uri, code_verifier
+    )
 
     # the dictionary it returns in either case can then be used as follows:
     access_token = auth_response['access_token']
     refresh_token = auth_response['refresh_token']
+
 
 Performing OAuth Token Refresh Automatically
 ********************************************
@@ -200,6 +193,51 @@ before using the token:
         expiration_date = auth['expiration_date']
     # API clients can now be constructed with access_token;
     # stored values of refresh_token and expiration_date must be updated
+
+Using Non-US Service Regions
+----------------------------
+If your PagerDuty account is in the EU or other service region outside the US,
+set the ``url`` attribute according to the documented `API Access URLs
+<https://support.pagerduty.com/docs/service-regions#api-access-urls>`_. This
+can be done either by passing a ``base_url`` keyword argument to the
+constructor or after instantiation. Note that this base URL will depend not
+only on the service region, but also the particular API in use.
+
+A few examples of how to use the EU service region:
+
+.. code-block:: python
+
+    # REST API
+    client = pagerduty.RestApiV2Client(
+        API_KEY,
+        base_url = "https://api.eu.pagerduty.com"
+    )
+    # The following also works:
+    client = pagerduty.RestApiV2Client(API_KEY)
+    client.url = "https://api.eu.pagerduty.com"
+
+.. code-block:: python
+
+    # Events API:
+    events_client = pagerduty.EventsApiClient(
+        API_KEY,
+        base_url = "https://events.eu.pagerduty.com"
+    )
+    # Or:
+    events_client = pagerduty.EventsApiClient(API_KEY)
+    events_client.url = 'https://events.eu.pagerduty.com'
+
+.. code-block:: python
+
+    # Slack Integration "Connections" API (and likewise for other
+    # APIs that use apps.pagerduty.com and/or some unique base path)
+    slack_conn_client = pagerduty.SlackIntegrationConnectionsApiClients(
+        API_KEY,
+        base_url = "https://apps.eu.pagerduty.com/integration-slack"
+    )
+    # Or:
+    slack_conn_client = pagerduty.SlackIntegrationConnectionsApiClients(API_KEY)
+    slack_integration_client.url = "https://apps.eu.pagerduty.com/integration-slack"
 
 
 Basic Usage Examples
@@ -822,19 +860,19 @@ initially.
 
 Error Handling
 --------------
-The :class:`pagerduty.UrlError` is raised prior to making API calls, and it indicates
-unsupported URLs and/or malformed input.
 
-The base exception class for all errors encountered when making requests is
-:class:`pagerduty.Error`. This includes network / transport issues where there
-is no response from the API, in which case the exception will inherit from the
-exception raised by the underlying HTTP library.
+There are two main base-level exception classes. The base exception class for
+all errors encountered when making requests is :class:`pagerduty.Error`. This
+includes network / transport issues where there is no response from the API, in
+which case the exception will inherit from the exception raised by the
+underlying HTTP library. For all validation errors encountered prior to API
+calls, exceptions will be instances of :class:`pagerduty.UrlError`. For
+example, unsupported URLs and/or malformed input.
 
 All errors that involve a response from the API are instances of
 :class:`pagerduty.HttpError` and will have a ``response`` property containing
-the `httpx.Response`_ object. Its subclass
-:class:`pagerduty.HttpServerError` is used for special cases when the API is
-responding in an unexpected way.
+the `httpx.Response`_ object. Its subclass :class:`pagerduty.HttpServerError`
+is used for special cases when the API is responding in an unexpected way.
 
 One can thus define specialized error handling logic in which the REST API
 response data (i.e.  headers, code and body) are available in the catching

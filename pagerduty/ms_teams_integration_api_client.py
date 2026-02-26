@@ -31,13 +31,9 @@ class MsTeamsIntegrationApiClient(RestApiV2BaseClient):
     For constructor arguments, see :class:`pagerduty.ApiClient`.
     """
 
-    permitted_methods = ("POST",)
-
-    url = "https://api.pagerduty.com/integration-ms-teams"
-
-    def __init__(self, api_key: str, debug: bool = False, **kw):
+    def __init__(self, api_key: str, debug: bool = False, base_url=None, **kw):
         super(MsTeamsIntegrationApiClient, self).__init__(
-            api_key, auth_type="token", debug=debug, **kw
+            api_key, auth_type="token", debug=debug, base_url=base_url, **kw
         )
         self.headers.update(
             {
@@ -50,5 +46,13 @@ class MsTeamsIntegrationApiClient(RestApiV2BaseClient):
         return CANONICAL_PATHS
 
     @property
+    def default_base_url(self):
+        return "https://api.pagerduty.com/integration-ms-teams"
+
+    @property
     def entity_wrapper_config(self) -> dict:
         return ENTITY_WRAPPER_CONFIG
+
+    @property
+    def permitted_methods(self) -> tuple:
+        return ("POST",)

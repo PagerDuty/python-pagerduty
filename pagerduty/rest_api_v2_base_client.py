@@ -91,8 +91,9 @@ def canonical_path(
         j = i + 1
         patterns = list(
             filter(
-                lambda p: p.split("/")[j] == node
-                or is_path_param(p.split("/")[j]),
+                lambda p: (
+                    p.split("/")[j] == node or is_path_param(p.split("/")[j])
+                ),
                 patterns,
             )
         )
@@ -521,6 +522,8 @@ class RestApiV2BaseClient(ApiClient):
     :param debug:
         Sets :attr:`pagerduty.ApiClient.print_debug`. Set to ``True`` to enable
         verbose command-line output.
+    :param base_url:
+        Sets the base API URL to be used by the client for all API calls.
     """
 
     api_call_counts = None
@@ -536,14 +539,19 @@ class RestApiV2BaseClient(ApiClient):
     """
 
     def __init__(
-        self, api_key: str, auth_type: str = "token", debug: bool = False, **kw
+        self,
+        api_key: str,
+        auth_type: str = "token",
+        debug: bool = False,
+        base_url=None,
+        **kw,
     ):
         self.api_call_counts = {}
         self.api_time = {}
         self.auth_type = auth_type
         auth_method = self._build_auth_method(api_key)
         super(RestApiV2BaseClient, self).__init__(
-            auth_method, debug=debug, **kw
+            auth_method, debug=debug, base_url=base_url, **kw
         )
 
     def _build_auth_method(self, api_key: str) -> AuthMethod:

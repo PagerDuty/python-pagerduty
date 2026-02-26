@@ -8,8 +8,9 @@ CANONICAL_PATHS = ["/rules"]
 ENTITY_WRAPPER_CONFIG = {
     # The /rules endpoints follow classic conventions; the wrapper can be inferred.
     #
-    # This dictionary was intentionally created and left empty so that it is fewer steps
-    # to support antipatterns if they get added to this API in the future.
+    # This dictionary was intentionally created and left empty so that it is
+    # fewer steps to support antipatterns if they get added to this API in the
+    # future.
 }
 
 
@@ -37,21 +38,24 @@ class JiraServerIntegrationApiClient(RestApiV2BaseClient):
     :param debug:
         Sets :attr:`pagerduty.ApiClient.print_debug`. Set to ``True`` to enable
         verbose command line output.
+    :param base_url:
+        Sets the base API URL to be used by the client for all API calls.
     """
-
-    _url = "https://app.pagerduty.com/integration-jira-service"
-
-    permitted_methods = ("GET", "POST", "PUT", "DELETE")
 
     def __init__(
         self,
         access_token: str,
         jira_signature_token: str,
         debug: bool = False,
+        base_url=None,
         **kw,
     ):
         super(JiraServerIntegrationApiClient, self).__init__(
-            access_token, auth_type="bearer", debug=debug, **kw
+            access_token,
+            auth_type="bearer",
+            debug=debug,
+            base_url=base_url,
+            **kw,
         )
 
         self.jira_signature_token = jira_signature_token
@@ -67,5 +71,13 @@ class JiraServerIntegrationApiClient(RestApiV2BaseClient):
         return CANONICAL_PATHS
 
     @property
+    def default_base_url(self) -> str:
+        return "https://app.pagerduty.com/integration-jira-service"
+
+    @property
     def entity_wrapper_config(self) -> dict:
         return ENTITY_WRAPPER_CONFIG
+
+    @property
+    def permitted_methods(self) -> tuple:
+        return ("GET", "POST", "PUT", "DELETE")

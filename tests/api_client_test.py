@@ -28,11 +28,14 @@ class DummyApiClient(pagerduty.ApiClient):
     testing.
     """
 
-    _url = "https://dummy-api.pagerduty.com"
     auth_method_set = False
 
     def after_set_auth_method(self):
         self.auth_method_set = True
+
+    @property
+    def default_base_url(self) -> str:
+        return "https://dummy-api.pagerduty.com"
 
     def normalize_params(self, params: dict) -> dict:
         """
@@ -42,7 +45,9 @@ class DummyApiClient(pagerduty.ApiClient):
         normalized_params.update(params)
         return normalized_params
 
-    permitted_methods = ("DELETE", "GET", "POST", "PUT")
+    @property
+    def permitted_methods(self) -> tuple:
+        return ("DELETE", "GET", "POST", "PUT")
 
     sleep_timer_base = 0.5
 
