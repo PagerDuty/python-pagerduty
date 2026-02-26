@@ -237,7 +237,7 @@ A few examples of how to use the EU service region:
     )
     # Or:
     slack_conn_client = pagerduty.SlackIntegrationConnectionsApiClients(API_KEY)
-    slack_integration_client.url = "https://apps.eu.pagerduty.com/integration-slack"
+    slack_conn_client.url = "https://apps.eu.pagerduty.com/integration-slack"
 
 
 Basic Usage Examples
