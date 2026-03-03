@@ -131,9 +131,9 @@ def http_error_message(r: Response, context: Optional[str] = None) -> str:
         context_msg = f" in {context}"
     if received_http_response and not r.is_success:
         err_type = "unknown"
-        if r.status_code >= 400 and r.status_code < 500:
+        if r.status_code // 100 == 4:
             err_type = "client"
-        elif r.status_code >= 500:
+        elif r.status_code // 100 == 5:
             err_type = "server"
         tr_bod = truncate_text(r.text)
         return (
@@ -288,7 +288,7 @@ def successful_response(
     """
     if r.is_success and bool(r.status_code):
         return r
-    elif r.status_code >= 500:
+    elif r.status_code // 100 == 5:
         raise ServerHttpError(http_error_message(r, context=context), r)
     elif bool(r.status_code):
         raise HttpError(http_error_message(r, context=context), r)
