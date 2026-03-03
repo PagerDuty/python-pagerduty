@@ -14,7 +14,7 @@ testpublish: build
 	./test/publish-test.sh
 
 publish: build
-	uv publish --username __token__
+	bash -c '[[ -z $$UV_PUBLISH_PASSWORD ]] && echo "Environment variable UV_PUBLISH_PASSWORD missing." && exit 1; uv publish --username __token__'
 
 uv.lock: pyproject.toml
 	uv sync
