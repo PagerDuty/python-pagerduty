@@ -1,3 +1,7 @@
+**2026-03-03: 6.2.1: Fix erroneous floating point division**
+
+* Bug fix by ``@blagh``: The HTTP status handling uses floating point division whereas, for it to evaluate correctly, it needs to explicitly use integer division rather than relying on implicit integer division when both numerator and denominator are integers.
+
 **2026-02-23: 6.2.0: New way of setting base URL + deprecate method in OAuthTokenClient**
 
 * Adds ``base_url`` as a universally-accepted keyword argument to constructors of all clients, and provides a more explicit method of specifying the default base URL for any given client class.
