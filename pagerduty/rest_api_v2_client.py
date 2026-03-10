@@ -268,6 +268,18 @@ CANONICAL_PATHS = [
     "/workflows/integrations/connections",
     "/workflows/integrations/{integration_id}/connections",
     "/workflows/integrations/{integration_id}/connections/{id}",
+
+    # EXPERIMENTAL/EA: Flex Schedules
+    "/v3/schedules",
+    "/v3/schedules/{id}",
+    "/v3/schedules/{id}/rotations",
+    "/v3/schedules/{id}/rotations/{rotation_id}",
+    "/v3/schedules/{id}/rotations/{rotation_id}/events",
+    "/v3/schedules/{id}/rotations/{rotation_id}/events/{event_id}",
+    "/v3/schedules/{id}/custom_shifts",
+    "/v3/schedules/{id}/custom_shifts/{custom_shift_id}",
+    "/v3/schedules/{id}/overrides",
+    "/v3/schedules/{id}/overrides/{override_id}",
 ]
 
 CURSOR_BASED_PAGINATION_PATHS = [
@@ -439,6 +451,10 @@ ENTITY_WRAPPER_CONFIG = {
     # Adheres to orthodox API conventions / fully supported via inference from path
     # OAuth Delegations
     "GET /oauth_delegations/revocation_requests/status": None,
+
+    # EXPERIMENTAL/EA: Flex Schedules
+    "POST /v3/schedules/{id}/rotations": None,
+    "POST /v3/schedules/{id}/custom_shifts": "custom_shifts",
 }
 
 ################################
