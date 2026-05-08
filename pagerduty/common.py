@@ -1,6 +1,7 @@
 # Core
+import functools
 from datetime import datetime, timedelta, timezone
-from typing import List, Optional, Tuple, Union
+from typing import Any, Callable, List, Optional, Tuple, Union
 from warnings import warn
 from json.decoder import JSONDecodeError
 
@@ -213,18 +214,17 @@ def relative_seconds_to_datetime(seconds_remaining: int) -> str:
     return strftime(target_time)
 
 
-def requires_success(method: callable) -> callable:
+def requires_success(method: Callable[..., Any]) -> Callable[..., Any]:
     """
     Decorator that validates HTTP responses.
 
     Uses :attr:`pagerduty.common.successful_response` for said validation.
     """
-    doc = method.__doc__
 
+    @functools.wraps(method)
     def call(self, url, **kw):
         return successful_response(method(self, url, **kw))
 
-    call.__doc__ = doc
     return call
 
 
