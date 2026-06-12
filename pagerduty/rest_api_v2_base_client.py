@@ -1,6 +1,15 @@
 # Core
+import functools
 from copy import deepcopy
-from typing import Iterator, List, Optional, Tuple, Union
+from typing import (
+    Any,
+    Callable,
+    Iterator,
+    List,
+    Optional,
+    Tuple,
+    Union,
+)
 from warnings import warn
 
 # PyPI
@@ -360,7 +369,7 @@ def unwrap(response: Response, wrapper: EntityWrapping) -> Union[dict, list]:
 ###########################
 
 
-def auto_json(method: callable) -> callable:
+def auto_json(method: Callable[..., Any]) -> Callable[..., Any]:
     """
     Decorator to return the full response body object after decoding from JSON.
 
@@ -369,16 +378,15 @@ def auto_json(method: callable) -> callable:
 
     The new return value is the JSON-decoded response body.
     """
-    doc = method.__doc__
 
+    @functools.wraps(method)
     def call(self, url, **kw):
         return try_decoding(successful_response(method(self, url, **kw)))
 
-    call.__doc__ = doc
     return call
 
 
-def resource_url(method: callable) -> callable:
+def resource_url(method: Callable[..., Any]) -> Callable[..., Any]:
     """
     API call decorator that allows passing a resource dict as the path/URL
 
@@ -389,9 +397,9 @@ def resource_url(method: callable) -> callable:
     such a resource dictionary as the ``path`` argument, thus eliminating the
     need to re-construct the resource URL or hold it in a temporary variable.
     """
-    DOC = method.__doc__
     NAME = method.__name__
 
+    @functools.wraps(method)
     def call(self, resource, **kw):
         url = resource
         if type(resource) is dict:
@@ -410,11 +418,10 @@ def resource_url(method: callable) -> callable:
             )
         return method(self, url, **kw)
 
-    call.__doc__ = DOC
     return call
 
 
-def wrapped_entities(method: callable) -> callable:
+def wrapped_entities(method: Callable[..., Any]) -> Callable[..., Any]:
     """
     Decorator to automatically wrap/unwrap request and response entities
 
@@ -444,8 +451,8 @@ def wrapped_entities(method: callable) -> callable:
         A callable object; the reformed method
     """
     HTTP_METHOD = method.__name__.lstrip("r")
-    DOC = method.__doc__
 
+    @functools.wraps(method)
     def call(self, url, **kw):
         pass_kw = deepcopy(kw)  # Make a copy for modification
         path = self.canonical_path(url)
@@ -466,7 +473,6 @@ def wrapped_entities(method: callable) -> callable:
         # Unpack the response:
         return unwrap(r, res_w)
 
-    call.__doc__ = DOC
     return call
 
 
@@ -733,7 +739,7 @@ class RestApiV2BaseClient(ApiClient):
         url,
         params: Optional[dict] = None,
         page_size: Optional[int] = None,
-        item_hook: Optional[callable] = None,
+        item_hook: Optional[Callable[..., Any]] = None,
         total: Optional[bool] = False,
     ) -> Iterator[dict]:
         """
@@ -894,7 +900,7 @@ class RestApiV2BaseClient(ApiClient):
         self,
         url: str,
         params: Optional[dict] = None,
-        item_hook: Optional[callable] = None,
+        item_hook: Optional[Callable[..., Any]] = None,
         page_size: Optional[int] = None,
     ) -> Iterator[dict]:
         """

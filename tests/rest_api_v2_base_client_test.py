@@ -354,6 +354,34 @@ class FunctionDecoratorsTest(unittest.TestCase):
             do_http_things.mock_calls[0][2]["json"], {"incidents": incidents}
         )
 
+    def test_decorators_preserve_function_metadata(self):
+        client = new_rest_api_v2_client()
+        decorated_methods = [
+            "jget",
+            "jpost",
+            "jput",
+            "rget",
+            "rpost",
+            "rput",
+            "rdelete",
+            "rpatch",
+        ]
+        for name in decorated_methods:
+            method = getattr(client, name)
+            self.assertEqual(
+                method.__name__,
+                name,
+                f"{name} lost its __name__ after decoration",
+            )
+            self.assertIsNotNone(
+                method.__doc__,
+                f"{name} lost its __doc__ after decoration",
+            )
+            self.assertTrue(
+                hasattr(method, "__wrapped__"),
+                f"{name} missing __wrapped__ (functools.wraps not applied)",
+            )
+
 
 class RestApiV2BaseClientTest(ClientTest):
     def test_auth_method(self):
