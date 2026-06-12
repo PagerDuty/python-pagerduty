@@ -1,3 +1,8 @@
+**2026-06-12: 6.2.2: Fix type annotation errors**
+
+* Incorporate function decorator type annotation bugfix reported/contributed by ``@wpfleger97`` in `#80 <https://github.com/PagerDuty/python-pagerduty/issues/80>`_
+* Fix bug reported by ``@DanielJanzon``
+
 **2026-03-03: 6.2.1: Fix erroneous floating point division**
 
 * Bug fix by ``@blagh``: The HTTP status handling uses floating point division whereas, for it to evaluate correctly, it needs to explicitly use integer division rather than relying on implicit integer division when both numerator and denominator are integers.
