@@ -240,7 +240,7 @@ class EventsApiV2Client(ApiClient):
         source: str,
         dedup_key: Optional[str] = None,
         severity: str = "critical",
-        payload: Optional[str] = None,
+        payload: Optional[dict] = None,
         custom_details: Optional[dict] = None,
         images: Optional[List[dict]] = None,
         links: Optional[List[dict]] = None,
@@ -270,15 +270,6 @@ class EventsApiV2Client(ApiClient):
             Set the ``images`` property of the event.
         :param links:
             Set the ``links`` property of the event.
-        :type action: str
-        :type custom_details: dict
-        :type dedup_key: str
-        :type images: list
-        :type links: list
-        :type payload: dict
-        :type severity: str
-        :type source: str
-        :type summary: str
         :returns:
             The deduplication key of the incident, if any.
         """
