@@ -48,7 +48,7 @@
 <li class="toctree-l1"><a class="reference internal" href="module_reference.html">Module Reference</a></li>
 <li class="toctree-l1 current"><a class="current reference internal" href="#">Contribution Guide</a><ul>
 <li class="toctree-l2"><a class="reference internal" href="#initial-setup-and-unit-tests">Initial Setup and Unit Tests</a></li>
-<li class="toctree-l2"><a class="reference internal" href="#maintaining-entity-wrapper-configuration">Maintaining Entity Wrapper Configuration</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="#adding-support-for-new-api-endpoints">Adding Support for New API Endpoints</a><ul>
 <li class="toctree-l3"><a class="reference internal" href="#introduction">Introduction</a></li>
 <li class="toctree-l3"><a class="reference internal" href="#limitations">Limitations</a></li>
 <li class="toctree-l3"><a class="reference internal" href="#updating-the-canonical-path-set">Updating the Canonical Path Set</a></li>
@@ -105,20 +105,29 @@ issue number in the commit message.</p>
 <p>To be able to rebuild the documentation, apply formatting and release new
 versions, first make sure you have <a class="reference external" href="https://www.gnu.org/software/make/">make</a>
 installed in your local development environment, as well as
-[uv](<a class="reference external" href="https://docs.astral.sh/uv/">https://docs.astral.sh/uv/</a>) for dependency management.</p>
+<a class="reference external" href="https://docs.astral.sh/uv/">uv</a> for dependency management.</p>
 <p>Next, run <code class="docutils literal notranslate"><span class="pre">test.sh</span></code> in the root path of the repository to validate that unit
 tests can be run locally.</p>
 </section>
-<section id="maintaining-entity-wrapper-configuration">
-<h2>Maintaining Entity Wrapper Configuration<a class="headerlink" href="#maintaining-entity-wrapper-configuration" title="Link to this heading"></a></h2>
-<p>Typically, but not for all endpoints, the key (“wrapper name”) in the request
-or response schema can be inferred from the last or second to last node of the
-endpoint URL’s path. The wrapper name is a singular noun for an individual
-resource or plural for a collection of resources.</p>
+<section id="adding-support-for-new-api-endpoints">
+<h2>Adding Support for New API Endpoints<a class="headerlink" href="#adding-support-for-new-api-endpoints" title="Link to this heading"></a></h2>
+<p>For the most part, the clients of <code class="docutils literal notranslate"><span class="pre">python-pagerduty</span></code> are agnostic to the API
+schema and do not require modification for basic support of new APIs. The
+instance methods that are named after HTTP request methods already support
+arbitrary requests and can be used with experimental new endpoints. However,
+the features of clients built upon common patterns, i.e. pagination support,
+must have knowledge of the key (“wrapper name”) in the request or response
+schema.</p>
+<p>Typically, but not for all endpoints, the wrapper name can be inferred from the
+last or second to last node of the endpoint URL’s path. In these cases, the
+wrapper name is a singular noun for an individual resource or plural for a
+collection of resources.</p>
 <p>When new endpoints are added to REST API v2, and they don’t follow this
 orthodox schema pattern, the client’s pagination and entity wrapping methods
 have no a-priori way of supporting them because the wrapper name cannot be
-inferred from the endpoint path.</p>
+reliably inferred from the endpoint. So, in the current design regime, any
+schema antipatterns must be manually accounted for in order to support
+pagination and other abstractions for new endpoints.</p>
 <section id="introduction">
 <h3>Introduction<a class="headerlink" href="#introduction" title="Link to this heading"></a></h3>
 <p>To support the growing list of schema antipatterns in the PagerDuty product
@@ -134,13 +143,18 @@ antipattern-handling configuration.</p>
 <li><p><code class="xref py py-attr docutils literal notranslate"><span class="pre">pagerduty.rest_api_v2_client.CANONICAL_PATHS</span></code>, the list of canonical paths</p></li>
 <li><p><code class="xref py py-attr docutils literal notranslate"><span class="pre">pagerduty.rest_api_v2_client.ENTITY_WRAPPER_CONFIG</span></code>, a dictionary of exceptions to entity wrapping and schema conventions</p></li>
 </ul>
+<p>For other APIs defined outside of the bounds of REST API v2 in the API
+references, there are separate API client classes defined, each with their own
+<code class="docutils literal notranslate"><span class="pre">CANONICAL_PATHS</span></code> and <code class="docutils literal notranslate"><span class="pre">ENTITY_WRAPPER_CONFIG</span></code> (and
+<code class="docutils literal notranslate"><span class="pre">CURSOR_BASED_PAGINATION_PATHS</span></code>, for determining when a collection endpoint
+supports cursor-based pagination).</p>
 </section>
 <section id="limitations">
 <h3>Limitations<a class="headerlink" href="#limitations" title="Link to this heading"></a></h3>
 <p>There are three main categories of antipatterns:</p>
 <ol class="arabic simple">
 <li><p>Entity wrapping is present but doesn’t follow the original schema convention</p></li>
-<li><p>There may or may not be wrapping but pagination is not implemented according to standards</p></li>
+<li><p>There may or may not be wrapping but pagination is not implemented according to standards and requires its own special abstraction/interface</p></li>
 <li><p>There is no entity wrapping</p></li>
 </ol>
 <p>In the first case, If the endpoint’s schema wraps entities but the wrapper name
@@ -150,7 +164,7 @@ new API, the automatic pagination methods can also support it once the
 antipattern configuration entry is added.</p>
 <p>However, if there is no entity wrapping, or pagination is not implemented
 according to documented standards, automatic pagination cannot be supported for
-resource collection endpoints.</p>
+the new resource collection endpoints.</p>
 </section>
 <section id="updating-the-canonical-path-set">
 <h3>Updating the Canonical Path Set<a class="headerlink" href="#updating-the-canonical-path-set" title="Link to this heading"></a></h3>
