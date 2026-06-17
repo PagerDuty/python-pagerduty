@@ -61,10 +61,12 @@ CANONICAL_PATHS = [
     "/analytics/metrics/pd_advance_usage/features",
     "/analytics/metrics/responders/all",
     "/analytics/metrics/responders/teams",
+    "/analytics/metrics/users/all",
     "/analytics/raw/incidents",
     "/analytics/raw/incidents/{id}",
     "/analytics/raw/incidents/{id}/responses",
     "/analytics/raw/responders/{responder_id}/incidents",
+    "/analytics/raw/users",
     "/audit/records",
     "/automation_actions/actions",
     "/automation_actions/actions/{id}",
@@ -109,6 +111,8 @@ CANONICAL_PATHS = [
     "/event_orchestrations/services/{service_id}/cache_variables",
     "/event_orchestrations/services/{service_id}/cache_variables/{cache_variable_id}",
     "/event_orchestrations/services/{service_id}/cache_variables/{cache_variable_id}/data",
+    "/event_orchestrations/{id}/enablements",
+    "/event_orchestrations/{id}/enablements/{feature_name}",
     "/extension_schemas",
     "/extension_schemas/{id}",
     "/extensions",
@@ -133,11 +137,13 @@ CANONICAL_PATHS = [
     "/incidents/{id}/log_entries",
     "/incidents/{id}/merge",
     "/incidents/{id}/notes",
+    "/incidents/{id}/notes/{note_id}",
     "/incidents/{id}/outlier_incident",
     "/incidents/{id}/past_incidents",
     "/incidents/{id}/related_change_events",
     "/incidents/{id}/related_incidents",
     "/incidents/{id}/responder_requests",
+    "/incidents/{id}/responder_requests/cancel",
     "/incidents/{id}/snooze",
     "/incidents/{id}/status_updates",
     "/incidents/{id}/status_updates/subscribers",
@@ -153,6 +159,7 @@ CANONICAL_PATHS = [
     "/incidents/custom_fields/{field_id}",
     "/incidents/custom_fields/{field_id}/field_options",
     "/incidents/custom_fields/{field_id}/field_options/{field_option_id}",
+    # Coming soon: /ip_allow_lists/*
     "/license_allocations",
     "/licenses",
     "/log_entries",
@@ -196,6 +203,9 @@ CANONICAL_PATHS = [
     "/services/custom_fields/{field_id}/field_options",
     "/services/custom_fields/{field_id}/field_options/{field_option_id}",
     "/services/{id}/custom_fields/values",
+    "/services/{id}/enablements",
+    "/services/{id}/enablements/{feature_name}",
+    "/session_configurations",
     "/standards",
     "/standards/{id}",
     "/standards/scores/{resource_type}",
@@ -221,6 +231,8 @@ CANONICAL_PATHS = [
     "/status_pages/{id}/posts/{post_id}/postmortem",
     "/status_pages/{id}/subscriptions",
     "/status_pages/{id}/subscriptions/{subscription_id}",
+    "/sre_agent/memories",
+    "/sre_agent/memories/{id}",
     "/tags",
     "/tags/{id}",
     "/tags/{id}/users",
@@ -243,6 +255,8 @@ CANONICAL_PATHS = [
     "/users/{id}/audit/records",
     "/users/{id}/contact_methods",
     "/users/{id}/contact_methods/{contact_method_id}",
+    "/users/{id}/oauth_delegations",
+    "/users/{id}/oauth_delegations/{delegation_id}",
     "/users/{id}/license",
     "/users/{id}/notification_rules",
     "/users/{id}/notification_rules/{notification_rule_id}",
@@ -256,6 +270,17 @@ CANONICAL_PATHS = [
     "/users/{id}/status_update_notification_rules/{status_update_notification_rule_id}",
     "/users/me",
     "/vendors",
+    "/v3/schedules",
+    "/v3/schedules/{id}",
+    "/v3/schedules/{id}/audit/records",
+    "/v3/schedules/{id}/custom_shifts",
+    "/v3/schedules/{id}/custom_shifts/{custom_shift_id}",
+    "/v3/schedules/{id}/overrides",
+    "/v3/schedules/{id}/overrides/{override_id}",
+    "/v3/schedules/{id}/rotations",
+    "/v3/schedules/{id}/rotations/{rotation_id}",
+    "/v3/schedules/{id}/rotations/{rotation_id}/events",
+    "/v3/schedules/{id}/rotations/{rotation_id}/events/{event_id}",
     "/vendors/{id}",
     "/webhook_subscriptions",
     "/webhook_subscriptions/{id}",
@@ -268,18 +293,10 @@ CANONICAL_PATHS = [
     "/workflows/integrations/connections",
     "/workflows/integrations/{integration_id}/connections",
     "/workflows/integrations/{integration_id}/connections/{id}",
-
-    # EXPERIMENTAL/EA: Flex Schedules
-    "/v3/schedules",
-    "/v3/schedules/{id}",
-    "/v3/schedules/{id}/rotations",
-    "/v3/schedules/{id}/rotations/{rotation_id}",
-    "/v3/schedules/{id}/rotations/{rotation_id}/events",
-    "/v3/schedules/{id}/rotations/{rotation_id}/events/{event_id}",
-    "/v3/schedules/{id}/custom_shifts",
-    "/v3/schedules/{id}/custom_shifts/{custom_shift_id}",
-    "/v3/schedules/{id}/overrides",
-    "/v3/schedules/{id}/overrides/{override_id}",
+    "/recommendations/event_orchestrations/rules",
+    "/recommendations/event_orchestrations/services/{service_id}/rules/{recommendation_id}/dismiss",
+    "/recommendations/event_orchestrations/services/{service_id}/rules/{recommendation_id}/accept",
+    "/recommendations/event_orchestrations/services/{service_id}/accepted_rules/{rule_id}",
 ]
 
 CURSOR_BASED_PAGINATION_PATHS = [
@@ -289,13 +306,17 @@ CURSOR_BASED_PAGINATION_PATHS = [
     "/escalation_policies/{id}/audit/records",
     "/incident_workflows/actions",
     "/incident_workflows/triggers",
+    # Coming soon: /ip_allow_lists/*
     "/schedules/{id}/audit/records",
     "/services/{id}/audit/records",
     "/teams/{id}/audit/records",
     "/users/{id}/audit/records",
+    "/users/{id}/oauth_delegations",
+    "/v3/schedules/{id}/audit/records",
     "/workflows/integrations",
     "/workflows/integrations/connections",
     "/workflows/integrations/{integration_id}/connections",
+    "/recommendations/event_orchestrations/rules",
 ]
 
 # END auto-generated content
@@ -318,7 +339,7 @@ ENTITY_WRAPPER_CONFIG = {
     "GET /abilities/{id}": None,
     # Add-ons follows orthodox schema patterns
     # Alert grouping settings follows orthodox schema patterns
-    # Analytics
+    # Analytics:
     "* /analytics/metrics/incidents/all": None,
     "* /analytics/metrics/incidents/escalation_policies": None,
     "* /analytics/metrics/incidents/escalation_policies/all": None,
@@ -329,15 +350,17 @@ ENTITY_WRAPPER_CONFIG = {
     "* /analytics/metrics/pd_advance_usage/features": None,
     "* /analytics/metrics/responders/all": None,
     "* /analytics/metrics/responders/teams": None,
+    "* /analytics/metrics/users/all": None,
     "* /analytics/raw/incidents": None,
     "* /analytics/raw/incidents/{id}": None,
     "* /analytics/raw/incidents/{id}/responses": None,
-    # Automation Actions
+    "* /analytics/raw/users": None,
+    # Automation Actions:
     "POST /automation_actions/actions/{id}/invocations": (None, "invocation"),
-    # Paused Incident Reports
+    # Paused Incident Reports:
     "GET /paused_incident_reports/alerts": "paused_incident_reporting_counts",
     "GET /paused_incident_reports/counts": "paused_incident_reporting_counts",
-    # Business Services
+    # Business Services:
     "* /business_services/{id}/account_subscription": None,
     "POST /business_services/{id}/subscribers": (
         "subscribers",
@@ -347,10 +370,10 @@ ENTITY_WRAPPER_CONFIG = {
     "* /business_services/priority_thresholds": None,
     "GET /business_services/impacts": "services",
     "GET /business_services/{id}/supporting_services/impacts": "services",
-    # Change Events
+    # Change Events:
     "POST /change_events": None,  # why not just use EventsApiV2Client?
     "GET /incidents/{id}/related_change_events": "change_events",
-    # Event Orchestrations
+    # Event Orchestrations:
     "* /event_orchestrations": "orchestrations",
     "* /event_orchestrations/services/{id}": "orchestration_path",
     "* /event_orchestrations/services/{id}/active": None,
@@ -361,10 +384,11 @@ ENTITY_WRAPPER_CONFIG = {
     "* /event_orchestrations/{id}/unrouted": "orchestration_path",
     # follows orthodox schema patterns:
     # /event_orchestrations/{id}/cache_variables/{cache_variable_id}
+    # /event_orchestrations/{id}/enablements/{feature_name}
     "* /event_orchestrations/services/{service_id}/cache_variables/{cache_variable_id}/data": None,
-    # Extensions
+    # Extensions:
     "POST /extensions/{id}/enable": (None, "extension"),
-    # Incidents
+    # Incidents:
     "PUT /incidents/{id}/merge": ("source_incidents", "incident"),
     "POST /incidents/{id}/responder_requests": (None, "responder_request"),
     "POST /incidents/{id}/snooze": (None, "incident"),
@@ -377,10 +401,10 @@ ENTITY_WRAPPER_CONFIG = {
     "GET /incidents/{id}/business_services/impacts": "services",
     "PUT /incidents/{id}/business_services/{business_service_id}/impacts": None,
     "* /incidents/{id}/custom_fields/values": "custom_fields",
-    # Incident Custom Fields
+    # Incident Custom Fields:
     "* /incidents/custom_fields": ("field", "fields"),
     "* /incidents/custom_fields/{field_id}": "field",
-    # Incident Types
+    # Incident Types:
     "GET /incidents/types": "incident_types",
     "POST /incidents/types": "incident_type",
     "* /incidents/types/{type_id_or_name}": "incident_type",
@@ -390,14 +414,15 @@ ENTITY_WRAPPER_CONFIG = {
     # follows orthodox schema patterns:
     # /incidents/types/{type_id_or_name}/custom_fields/{field_id}/field_options
     # /incidents/types/{type_id_or_name}/custom_fields/{field_id}/field_options/{field_option_id}
-    # Incident Workflows
+    "PUT /incidents/{id}/responder_requests/cancel": None,
+    # Incident Workflows:
     "POST /incident_workflows/{id}/instances": "incident_workflow_instance",
     "POST /incident_workflows/triggers/{id}/services": ("service", "trigger"),
-    # Schedules
+    # Schedules:
     "POST /schedules/{id}/overrides": ("overrides", None),
-    # Service Dependencies
+    # Service Dependencies:
     "POST /service_dependencies/associate": "relationships",
-    # Service Custom Fields
+    # Service Custom Fields:
     "POST /services/custom_fields": "field",
     "GET /services/custom_fields": "fields",
     "* /services/custom_fields/{field_id}": "field",
@@ -405,7 +430,7 @@ ENTITY_WRAPPER_CONFIG = {
     # follows orthodox schema patterns:
     # /services/{id}/custom_fields/{field_id}/field_options
     # /services/custom_fields/{field_id}/field_options/{field_option_id}
-    # Webhooks
+    # Webhooks:
     "POST /webhook_subscriptions/{id}/enable": (None, "webhook_subscription"),
     "POST /webhook_subscriptions/{id}/ping": None,
     # follows orthodox schema patterns:
@@ -413,15 +438,15 @@ ENTITY_WRAPPER_CONFIG = {
     # /webhook_subscriptions/{id}
     # /webhook_subscriptions/oauth_clients
     # /webhook_subscriptions/oauth_clients/{id}
-    # Status Dashboards
+    # Status Dashboards:
     "GET /status_dashboards/{id}/service_impacts": "services",
     "GET /status_dashboards/url_slugs/{url_slug}": "status_dashboard",
     "GET /status_dashboards/url_slugs/{url_slug}/service_impacts": "services",
-    # Status Pages
-    # Adheres to orthodox API conventions / fully supported via inference from path
-    # Tags
+    # Status Pages adheres to orthodox API conventions / fully supported via
+    # inference from path
+    # Tags:
     "POST /{entity_type}/{id}/change_tags": None,
-    # Teams
+    # Teams:
     "PUT /teams/{id}/escalation_policies/{escalation_policy_id}": None,
     "POST /teams/{id}/notification_subscriptions": (
         "subscribables",
@@ -433,9 +458,9 @@ ENTITY_WRAPPER_CONFIG = {
     ),
     "PUT /teams/{id}/users/{user_id}": None,
     "GET /teams/{id}/notification_subscriptions": "subscriptions",
-    # Templates
+    # Templates:
     "POST /templates/{id}/render": None,
-    # Users
+    # Users:
     "* /users/{id}/notification_subscriptions": (
         "subscribables",
         "subscriptions",
@@ -447,14 +472,24 @@ ENTITY_WRAPPER_CONFIG = {
     "GET /users/{id}/sessions": "user_sessions",
     "GET /users/{id}/sessions/{type}/{session_id}": "user_session",
     "GET /users/me": "user",
-    # Workflow Integrations
-    # Adheres to orthodox API conventions / fully supported via inference from path
-    # OAuth Delegations
+    # Workflow Integrations adheres to orthodox API conventions / fully
+    # supported via inference from path
+    # OAuth Delegations:
     "GET /oauth_delegations/revocation_requests/status": None,
-
-    # EXPERIMENTAL/EA: Flex Schedules
-    "POST /v3/schedules/{id}/rotations": None,
+    # Flex Schedules:
+    "POST /v3/schedules/{id}/rotations": (None, "rotation"),
+    "POST /v3/schedules/{id}/overrides": "overrides",
     "POST /v3/schedules/{id}/custom_shifts": "custom_shifts",
+    # Session Configurations:
+    "PUT /session_configurations": (
+        "session_configuration",
+        "session_configurations",
+    ),
+    # SRE Agent: follows conventions (so far)
+    # Recommendations:
+    "GET /recommendations/event_orchestrations/rules": "recommended_rules",
+    "POST /recommendations/event_orchestrations/services/{service_id}/rules/{recommendation_id}/dismiss": None,
+    "POST /recommendations/event_orchestrations/services/{service_id}/rules/{recommendation_id}/accept": None,
 }
 
 ################################

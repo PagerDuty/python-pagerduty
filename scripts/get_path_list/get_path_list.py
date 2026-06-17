@@ -17,25 +17,25 @@ except ImportError:
     from yaml import Loader
 
 
-# This script is not part of the python-pagerduty library. Rather, it can be used for
-# the by PagerDuty engineers to assist with its development and maintenance.  It
-# automatically generates the declaration of module variables "ENDPOINT_PATTERNS" and
-# "CURSOR_BASED_ITERATION_ENDPOINTS" from the API documentation source code (which is
-# kept in a private repository in the
+# This script is not part of the python-pagerduty library. Rather, it can be
+# used for the by PagerDuty engineers to assist with its development and
+# maintenance.  It automatically generates the declaration of module variables
+# "CANONICAL_PATHS" and "CURSOR_BASED_ITERATION_ENDPOINTS" from the API
+# documentation source code (which is kept in a private repository in the
 # PagerDuty GitHub org).
 #
-# It is meant to minimize the amount of work that has to be done to allow the REST API
-# v2 client to support new APIs by generating the client's specific knowledge of APIs
-# directly from the documentation programatically.
+# It is meant to minimize the amount of work that has to be done to allow the
+# REST API v2 client to support new APIs by generating the client's specific
+# knowledge of APIs directly from the documentation programatically.
 
 # NOTE:
 #
 # If any new API introduces an endpoint that is designed to work as a resource
-# collection and support pagination, but whose path ends in a variable parameter
-# that refers to a value in a fixed list of well-recognized entity types (as
-# opposed to a separate documentation page per distinct entity type), THE
-# CANONICAL PATH WILL NEED TO BE ADDED TO THE FOLLOWING DICTIONARY, OR ENTITY
-# WRAPPING WILL END UP BROKEN FOR THAT ENDPOINT:
+# collection and support pagination, but whose path ends in a variable
+# parameter that refers to a value in a fixed list of well-recognized entity
+# types (as opposed to a separate documentation page per distinct entity type),
+# THE CANONICAL PATH WILL NEED TO BE ADDED TO THE FOLLOWING DICTIONARY, OR
+# PAGINATION AND ENTITY WRAPPING WILL NOT WORK PROPERLY FOR THAT ENDPOINT:
 EXPAND_PATHS = {
     "/tags/{id}/{entity_type}": [
         "/tags/{id}/" + et for et in ("users", "teams", "escalation_policies")
@@ -72,7 +72,7 @@ def main():
     for path in public_endpoints:
         print_paths = EXPAND_PATHS.get(path, [path])
         for path in print_paths:
-            print(f"    '{path}',")
+            print(f'    "{path}",')
     print("]\n")
 
     print("CURSOR_BASED_PAGINATION_PATHS = [")
@@ -82,7 +82,7 @@ def main():
         getparams = getspec.get("parameters", [])
         for param in getparams:
             if cursor_param_ref in param.values():
-                print(f"    '{path}',")
+                print(f'    "{path}",')
     print("]\n")
 
 
