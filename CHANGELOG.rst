@@ -1,3 +1,7 @@
+**2026-06-17: 6.3.0: Add support for Schedules v3 and others**
+
+* Adds support for new endpoints, most significantly the new Flex Schedules API.
+
 **2026-06-12: 6.2.2: Fix type annotation errors**
 
 * Incorporate function decorator type annotation bugfix reported/contributed by ``@wpfleger97`` in `#80 <https://github.com/PagerDuty/python-pagerduty/issues/80>`_
