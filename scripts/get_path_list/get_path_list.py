@@ -72,7 +72,7 @@ def main():
     for path in public_endpoints:
         print_paths = EXPAND_PATHS.get(path, [path])
         for path in print_paths:
-            print(f"    '{path}',")
+            print(f'    "{path}",')
     print("]\n")
 
     print("CURSOR_BASED_PAGINATION_PATHS = [")
@@ -82,7 +82,7 @@ def main():
         getparams = getspec.get("parameters", [])
         for param in getparams:
             if cursor_param_ref in param.values():
-                print(f"    '{path}',")
+                print(f'    "{path}",')
     print("]\n")
 
 
