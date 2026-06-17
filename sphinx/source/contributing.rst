@@ -16,22 +16,32 @@ Initial Setup and Unit Tests
 To be able to rebuild the documentation, apply formatting and release new
 versions, first make sure you have `make <https://www.gnu.org/software/make/>`_
 installed in your local development environment, as well as
-[uv](https://docs.astral.sh/uv/) for dependency management.
+`uv <https://docs.astral.sh/uv/>`_ for dependency management.
 
 Next, run ``test.sh`` in the root path of the repository to validate that unit
 tests can be run locally.
 
-Maintaining Entity Wrapper Configuration
-----------------------------------------
-Typically, but not for all endpoints, the key ("wrapper name") in the request
-or response schema can be inferred from the last or second to last node of the
-endpoint URL's path. The wrapper name is a singular noun for an individual
-resource or plural for a collection of resources.
+Adding Support for New API Endpoints
+------------------------------------
+For the most part, the clients of ``python-pagerduty`` are agnostic to the API
+schema and do not require modification for basic support of new APIs. The
+instance methods that are named after HTTP request methods already support
+arbitrary requests and can be used with experimental new endpoints. However,
+the features of clients built upon common patterns, i.e. pagination support,
+must have knowledge of the key ("wrapper name") in the request or response
+schema.
+
+Typically, but not for all endpoints, the wrapper name can be inferred from the
+last or second to last node of the endpoint URL's path. In these cases, the
+wrapper name is a singular noun for an individual resource or plural for a
+collection of resources.
 
 When new endpoints are added to REST API v2, and they don't follow this
 orthodox schema pattern, the client's pagination and entity wrapping methods
 have no a-priori way of supporting them because the wrapper name cannot be
-inferred from the endpoint path.
+reliably inferred from the endpoint. So, in the current design regime, any
+schema antipatterns must be manually accounted for in order to support
+pagination and other abstractions for new endpoints.
 
 Introduction
 ************
@@ -49,12 +59,18 @@ This system requires two global variables that must be manually maintained:
 * :attr:`pagerduty.rest_api_v2_client.CANONICAL_PATHS`, the list of canonical paths
 * :attr:`pagerduty.rest_api_v2_client.ENTITY_WRAPPER_CONFIG`, a dictionary of exceptions to entity wrapping and schema conventions
 
+For other APIs defined outside of the bounds of REST API v2 in the API
+references, there are separate API client classes defined, each with their own
+``CANONICAL_PATHS`` and ``ENTITY_WRAPPER_CONFIG`` (and
+``CURSOR_BASED_PAGINATION_PATHS``, for determining when a collection endpoint
+supports cursor-based pagination).
+
 Limitations
 ***********
 There are three main categories of antipatterns:
 
 1. Entity wrapping is present but doesn't follow the original schema convention
-2. There may or may not be wrapping but pagination is not implemented according to standards
+2. There may or may not be wrapping but pagination is not implemented according to standards and requires its own special abstraction/interface
 3. There is no entity wrapping
 
 In the first case, If the endpoint's schema wraps entities but the wrapper name
@@ -65,7 +81,7 @@ antipattern configuration entry is added.
 
 However, if there is no entity wrapping, or pagination is not implemented
 according to documented standards, automatic pagination cannot be supported for
-resource collection endpoints.
+the new resource collection endpoints.
 
 Updating the Canonical Path Set
 *******************************
