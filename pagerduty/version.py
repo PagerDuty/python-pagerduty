@@ -19,6 +19,7 @@ def get_version():
     try:
         # Use package metadata introspection to get the version:
         from importlib.metadata import version
+
         return version(__package__)
     except Exception:
         # No package has been built/installed yet, so this is a stopgap to
