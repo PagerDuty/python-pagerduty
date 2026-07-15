@@ -160,7 +160,7 @@ constructor is the secret to use for accessing the API:</p>
 <span class="n">events_client</span> <span class="o">=</span> <span class="n">pagerduty</span><span class="o">.</span><span class="n">EventsApiV2Client</span><span class="p">(</span><span class="n">ROUTING_KEY</span><span class="p">)</span>
 </pre></div>
 </div>
-<p>Client objects, being instances also of <a class="reference external" href="https://www.python-httpx.org/api/#client">httpx.Client</a>, can be used as
+<p>Client objects, being instances also of <a class="reference external" href="https://httpx2.pydantic.dev/api/#client">httpx2.Client</a>, can be used as
 context managers. For example:</p>
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="k">with</span> <span class="n">pagerduty</span><span class="o">.</span><span class="n">RestApiV2Client</span><span class="p">(</span><span class="n">API_KEY</span><span class="p">)</span> <span class="k">as</span> <span class="n">client</span><span class="p">:</span>
     <span class="n">do_application</span><span class="p">(</span><span class="n">client</span><span class="p">)</span>
@@ -358,7 +358,7 @@ and having them represented as a dictionary object using three different methods
 </pre></div>
 </div>
 <p><strong>Pagination with query parameters:</strong> set the <code class="docutils literal notranslate"><span class="pre">params</span></code> keyword argument, which is
-converted to URL query parameters by <a class="reference external" href="https://www.python-httpx.org">HTTPX</a>:</p>
+converted to URL query parameters by <a href="#id6"><span class="problematic" id="id7">HTTPX_</span></a>:</p>
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="c1"># Get a list of all services with &quot;SN&quot; in their name:</span>
 <span class="n">services</span> <span class="o">=</span> <span class="n">client</span><span class="o">.</span><span class="n">list_all</span><span class="p">(</span><span class="s1">&#39;services&#39;</span><span class="p">,</span> <span class="n">params</span><span class="o">=</span><span class="p">{</span><span class="s1">&#39;query&#39;</span><span class="p">:</span> <span class="s1">&#39;SN&#39;</span><span class="p">})</span>
 
@@ -500,24 +500,24 @@ also are based on inherit the features of <a class="reference internal" href="mo
 </section>
 <section id="generic-client-features">
 <h2>Generic Client Features<a class="headerlink" href="#generic-client-features" title="Link to this heading"></a></h2>
-<p>Generally, all of the features of <a class="reference external" href="https://www.python-httpx.org/api/#client">httpx.Client</a> are available to the user
-as they would be if using the <a class="reference external" href="https://www.python-httpx.org">HTTPX</a> Python library directly, since
+<p>Generally, all of the features of <a class="reference external" href="https://httpx2.pydantic.dev/api/#client">httpx2.Client</a> are available to the user
+as they would be if using the <a href="#id8"><span class="problematic" id="id9">`HTTPX`_</span></a> Python library directly, since
 <a class="reference internal" href="module_reference.html#pagerduty.ApiClient" title="pagerduty.ApiClient"><code class="xref py py-class docutils literal notranslate"><span class="pre">pagerduty.ApiClient</span></code></a> and its subclasses for the REST/Events APIs are
 descendants of it.</p>
 <p>Generally, all client classes pass along all keyword arguments at the end of
 their constructor function signatures (the splat-operator catch-all <code class="docutils literal notranslate"><span class="pre">**kw</span></code>)
 to the constructor of the superclass. Any keyword arguments not specifically
 named in the function signature will be passed along in this way, allowing users
-to pass additional options to <a class="reference external" href="https://www.python-httpx.org/api/#client">httpx.Client</a>.</p>
+to pass additional options to <a class="reference external" href="https://httpx2.pydantic.dev/api/#client">httpx2.Client</a>.</p>
 <p>The <code class="docutils literal notranslate"><span class="pre">get</span></code>, <code class="docutils literal notranslate"><span class="pre">post</span></code>, <code class="docutils literal notranslate"><span class="pre">put</span></code> and <code class="docutils literal notranslate"><span class="pre">delete</span></code> methods of REST/Events API
-client classes are similar to the analogous functions in <a class="reference external" href="https://www.python-httpx.org/api/#client">httpx.Client</a>.
-The arguments they accept are the same and they all return <a class="reference external" href="https://www.python-httpx.org/api/#response">httpx.Response</a>
+client classes are similar to the analogous functions in <a class="reference external" href="https://httpx2.pydantic.dev/api/#client">httpx2.Client</a>.
+The arguments they accept are the same and they all return <a class="reference external" href="https://httpx2.pydantic.dev/api/#response">httpx2.Response</a>
 objects.</p>
 <p>Any keyword arguments passed to the <code class="docutils literal notranslate"><span class="pre">j*</span></code> or <code class="docutils literal notranslate"><span class="pre">r*</span></code> methods will be passed
-through to the analogous method in <a class="reference external" href="https://www.python-httpx.org">HTTPX</a>, though in some cases the
+through to the analogous method in <a href="#id10"><span class="problematic" id="id11">HTTPX_</span></a>, though in some cases the
 arguments (i.e. <code class="docutils literal notranslate"><span class="pre">json</span></code>) are first modified.</p>
 <p>For documentation on any generic HTTP client features that are available, refer
-to the <a class="reference external" href="https://www.python-httpx.org">HTTPX</a> documentation.</p>
+to the <a href="#id12"><span class="problematic" id="id13">HTTPX_</span></a> documentation.</p>
 </section>
 <section id="urls">
 <h2>URLs<a class="headerlink" href="#urls" title="Link to this heading"></a></h2>
@@ -536,7 +536,7 @@ value at its <code class="docutils literal notranslate"><span class="pre">self</
 </section>
 <section id="query-parameters">
 <h2>Query Parameters<a class="headerlink" href="#query-parameters" title="Link to this heading"></a></h2>
-<p>As with <a class="reference external" href="https://www.python-httpx.org">HTTPX</a>, there is no need to compose the query string (everything
+<p>As with <a href="#id14"><span class="problematic" id="id15">`HTTPX`_</span></a>, there is no need to compose the query string (everything
 that will follow <code class="docutils literal notranslate"><span class="pre">?</span></code> in the URL). Simply set the <code class="docutils literal notranslate"><span class="pre">params</span></code> keyword argument
 to a dictionary, and each of the key/value pairs will be serialized to the
 query string in the final URL of the request:</p>
@@ -571,7 +571,7 @@ be automatically appended to the parameter name. For example:</p>
 <p>To set the request body in a post or put request, pass as the <code class="docutils literal notranslate"><span class="pre">json</span></code> keyword
 argument an object that will be JSON-encoded as the body.</p>
 <p>To obtain the response from the API, if using plain <code class="docutils literal notranslate"><span class="pre">get</span></code>, <code class="docutils literal notranslate"><span class="pre">post</span></code>, <code class="docutils literal notranslate"><span class="pre">put</span></code>
-or <code class="docutils literal notranslate"><span class="pre">delete</span></code>, use the returned <a class="reference external" href="https://www.python-httpx.org/api/#response">httpx.Response</a> object. That object’s
+or <code class="docutils literal notranslate"><span class="pre">delete</span></code>, use the returned <a class="reference external" href="https://httpx2.pydantic.dev/api/#response">httpx2.Response</a> object. That object’s
 <code class="docutils literal notranslate"><span class="pre">json()</span></code> method will return the result of JSON-decoding the response body (it
 will typically of type <code class="docutils literal notranslate"><span class="pre">dict</span></code>). Other metadata such as headers can also be
 obtained:</p>
@@ -585,7 +585,7 @@ obtained:</p>
 will be the full body of the response from the API after JSON-decoding, and
 the <code class="docutils literal notranslate"><span class="pre">json</span></code> keyword argument is not modified.</p>
 <p>When using the <code class="docutils literal notranslate"><span class="pre">r*</span></code> methods, the <code class="docutils literal notranslate"><span class="pre">json</span></code> keyword argument is modified before
-sending to <a class="reference external" href="https://www.python-httpx.org">HTTPX</a>, if necessary, to encapsulate the body inside an entity
+sending to <a href="#id16"><span class="problematic" id="id17">HTTPX_</span></a>, if necessary, to encapsulate the body inside an entity
 wrapper.  The response is the decoded body after unwrapping, if the API
 endpoint returns wrapped entities. For more details, refer to <a class="reference internal" href="#wrapping"><span class="std std-ref">Entity Wrapping</span></a>.</p>
 <section id="data-types">
@@ -886,7 +886,7 @@ calls, exceptions will be instances of <a class="reference internal" href="modul
 example, unsupported URLs and/or malformed input.</p>
 <p>All errors that involve a response from the API are instances of
 <a class="reference internal" href="module_reference.html#pagerduty.HttpError" title="pagerduty.HttpError"><code class="xref py py-class docutils literal notranslate"><span class="pre">pagerduty.HttpError</span></code></a> and will have a <code class="docutils literal notranslate"><span class="pre">response</span></code> property containing
-the <a class="reference external" href="https://www.python-httpx.org/api/#response">httpx.Response</a> object. Its subclass <code class="xref py py-class docutils literal notranslate"><span class="pre">pagerduty.HttpServerError</span></code>
+the <a class="reference external" href="https://httpx2.pydantic.dev/api/#response">httpx2.Response</a> object. Its subclass <code class="xref py py-class docutils literal notranslate"><span class="pre">pagerduty.HttpServerError</span></code>
 is used for special cases when the API is responding in an unexpected way.</p>
 <p>One can thus define specialized error handling logic in which the REST API
 response data (i.e.  headers, code and body) are available in the catching
@@ -942,7 +942,7 @@ production systems.</p>
 <h2>Using a Proxy Server<a class="headerlink" href="#using-a-proxy-server" title="Link to this heading"></a></h2>
 <p>Client classes pass <code class="docutils literal notranslate"><span class="pre">proxy</span></code> and <code class="docutils literal notranslate"><span class="pre">mounts</span></code> keyword arguments through to the
 constructor of the superclass, thus allowing them to be used as described in:
-<a class="reference external" href="https://www.python-httpx.org/advanced/proxies/">HTTPX: Proxies</a>. For example:</p>
+<a class="reference external" href="https://httpx2.pydantic.dev/advanced/proxies/">HTTPX2: Proxies</a>. For example:</p>
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="c1"># To tunnel traffic through HTTP proxy at 192.168.1.2:8080 i.e. via CONNECT:</span>
 <span class="n">client</span> <span class="o">=</span> <span class="n">pagerduty</span><span class="o">.</span><span class="n">RestApiV2Client</span><span class="p">(</span><span class="n">API_KEY</span><span class="p">,</span> <span class="n">proxy</span><span class="o">=</span><span class="s1">&#39;http://192.168.1.2:8080&#39;</span><span class="p">)</span>
 </pre></div>
@@ -975,7 +975,7 @@ successive time.  When encountering status <code class="docutils literal notrans
 will immediately raise <a class="reference internal" href="module_reference.html#pagerduty.HttpError" title="pagerduty.HttpError"><code class="xref py py-attr docutils literal notranslate"><span class="pre">pagerduty.HttpError</span></code></a>; this is a non-transient error
 caused by an invalid credential.</p>
 <p>For all other success or error statuses, the underlying request method in the
-client will return the <a class="reference external" href="https://www.python-httpx.org/api/#response">httpx.Response</a> object.</p>
+client will return the <a class="reference external" href="https://httpx2.pydantic.dev/api/#response">httpx2.Response</a> object.</p>
 </section>
 <section id="exponential-cooldown">
 <h3>Exponential Cooldown<a class="headerlink" href="#exponential-cooldown" title="Link to this heading"></a></h3>
@@ -1009,7 +1009,7 @@ limited by <a class="reference internal" href="module_reference.html#pagerduty.A
 supersede the maximum number of retries for any status defined in
 <a class="reference internal" href="module_reference.html#pagerduty.ApiClient.retry" title="pagerduty.ApiClient.retry"><code class="xref py py-attr docutils literal notranslate"><span class="pre">pagerduty.ApiClient.retry</span></code></a> if it is lower.</p>
 <p>Low-level HTTP request functions in client classes, i.e. <code class="docutils literal notranslate"><span class="pre">get</span></code>, will return
-<a class="reference external" href="https://www.python-httpx.org/api/#response">httpx.Response</a> objects when they run out of retries. Higher-level
+<a class="reference external" href="https://httpx2.pydantic.dev/api/#response">httpx2.Response</a> objects when they run out of retries. Higher-level
 functions that require a success status response, i.e.
 <code class="xref py py-attr docutils literal notranslate"><span class="pre">pagerduty.RestApiV2Client.list_all</span></code> and
 <a class="reference internal" href="module_reference.html#pagerduty.EventsApiV2Client.trigger" title="pagerduty.EventsApiV2Client.trigger"><code class="xref py py-attr docutils literal notranslate"><span class="pre">pagerduty.EventsApiV2Client.trigger</span></code></a>, will raise instances of
