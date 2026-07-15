@@ -6,7 +6,7 @@ from warnings import warn
 from json.decoder import JSONDecodeError
 
 # PyPI
-from httpx import Response
+from httpx2 import Response
 
 # Local
 from .errors import Error, HttpError, ServerHttpError, UrlError

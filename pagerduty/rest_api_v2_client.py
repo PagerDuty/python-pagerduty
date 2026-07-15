@@ -115,6 +115,7 @@ CANONICAL_PATHS = [
     "/event_orchestrations/{id}/enablements/{feature_name}",
     "/extension_schemas",
     "/extension_schemas/{id}",
+    # Early Access / not supported yet: /enrichment/*
     "/extensions",
     "/extensions/{id}",
     "/extensions/{id}/enable",

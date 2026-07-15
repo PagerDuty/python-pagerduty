@@ -28,7 +28,7 @@ For more details, use the ``-h`` flag to display the script's helptext.
 Overview
 --------
 This library supplies classes for making requests to PagerDuty's public APIs
-that extend the `httpx.Client`_ class from the python-httpx_ HTTP library . It
+that extend the `httpx2.Client`_ class from the httpx2_ HTTP library . It
 is the successor to the popular `pdpyras`_ library and was originally based on
 the same source code.
 
@@ -39,7 +39,7 @@ client as a platform to cover the basics.
 
 Features
 --------
-- Uses HTTPX's automatic HTTP connection pooling and persistence
+- Uses HTTPX2's automatic HTTP connection pooling and persistence
 - Tested in / support for Python 3.6 through 3.13
 - Abstraction layer for authentication, pagination, filtering and wrapped
   entities
@@ -103,7 +103,9 @@ Warranty
 .. References:
 .. -----------
 
-.. _`python-httpx`: https://www.python-httpx.org/
+.. _`httpx2`: https://www.python-httpx.org/
+.. _httpx2.Response: https://httpx2.pydantic.dev/api/#response
+.. _httpx2.Client: https://httpx2.pydantic.dev/api/#client
 .. _`pdpyras`: https://github.com/PagerDuty/pdpyras
 .. _`Errors`: https://developer.pagerduty.com/docs/ZG9jOjExMDI5NTYz-errors
 .. _`PagerDuty API Reference`: https://developer.pagerduty.com/api-reference/

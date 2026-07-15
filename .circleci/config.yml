@@ -43,46 +43,6 @@ jobs:
           command: |
             uvx ruff format --check
 
-  py3_6:
-    docker:
-      - image: cimg/python:3.6
-    steps:
-      - checkout
-      - run:
-          environment:
-            NO_UV: 1
-          <<: *test
-
-  py3_7:
-    docker:
-      - image: cimg/python:3.7
-    steps:
-      - checkout
-      - run:
-          environment:
-            NO_UV: 1
-          <<: *test
-
-  py3_8:
-    docker:
-      - image: cimg/python:3.8
-    steps:
-      - checkout
-      - run:
-          <<: *uv
-      - run:
-          <<: *test
-
-  py3_9:
-    docker:
-      - image: cimg/python:3.9
-    steps:
-      - checkout
-      - run:
-          <<: *uv
-      - run:
-          <<: *test
-
   py3_10:
     docker:
       - image: cimg/python:3.10
@@ -123,18 +83,26 @@ jobs:
       - run:
           <<: *test
 
+  py3_14:
+    docker:
+      - image: cimg/python:3.14
+    steps:
+      - checkout
+      - run:
+          <<: *uv
+      - run:
+          <<: *test
+
+
 workflows:
   version: 2.1
   run_tests:
     jobs:
-      - py3_6
-      - py3_7
-      - py3_8
-      - py3_9
       - py3_10
       - py3_11
       - py3_12
       - py3_13
+      - py3_14
       - lint
       - format
 

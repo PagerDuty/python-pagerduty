@@ -134,6 +134,6 @@ able to repurpose them in APIs that follow similar conventions.
 .. References:
 .. -----------
 
-.. _`HTTPX`: https://www.python-httpx.org/
-.. _httpx.Response: https://www.python-httpx.org/api/#response
-.. _httpx.Client: https://www.python-httpx.org/api/#client
+.. _`HTTPX`: https://www.python-httpx2.org/
+.. _httpx2.Response: https://httpx2.pydantic.dev/api/#response
+.. _httpx2.Client: https://httpx2.pydantic.dev/api/#client

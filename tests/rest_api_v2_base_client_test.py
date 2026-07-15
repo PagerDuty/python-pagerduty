@@ -11,7 +11,7 @@ antipatterns in new APIs that need special-case support.
 import copy
 import datetime
 import json
-import httpx
+import httpx2
 import sys
 import unittest
 from datetime import timezone
@@ -451,7 +451,7 @@ class RestApiV2BaseClientTest(ClientTest):
             params={"since": pd_start, "until": now},
         )
 
-    @patch.object(httpx.Client, "request")
+    @patch.object(httpx2.Client, "request")
     def test_oauth_headers(self, request):
         """
         A deeper functional test of auth methods

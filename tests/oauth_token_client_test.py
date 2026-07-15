@@ -2,7 +2,7 @@ import json
 import unittest
 from unittest.mock import patch
 
-import httpx
+import httpx2
 
 from mocks import Response
 from pagerduty import OAuthTokenClient
@@ -39,7 +39,7 @@ class OAuthTokenClientTest(unittest.TestCase):
             client.authorize_url(scope, redirect_uri),
         )
 
-    @patch.object(httpx.Client, "request")
+    @patch.object(httpx2.Client, "request")
     def test_get_new_token(self, request):
         (client_secret, client_id, client) = self.new_client()
         # The following adapted from the documentation page

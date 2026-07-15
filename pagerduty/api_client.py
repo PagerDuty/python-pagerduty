@@ -8,8 +8,8 @@ from random import random
 from typing import Optional, Union
 
 # PyPI
-from httpx import __version__ as HTTPX_VERSION
-from httpx import Client, Headers, TransportError, Response
+from httpx2 import __version__ as HTTPX_VERSION
+from httpx2 import Client, Headers, TransportError, Response
 
 # Local
 from .auth_method import AuthMethod
@@ -22,7 +22,7 @@ class ApiClient(Client):
     """
     Base class for making HTTP requests to PagerDuty APIs
 
-    This is an opinionated wrapper of `httpx.Client`_, with a few additional
+    This is an opinionated wrapper of `httpx2.Client`_, with a few additional
     features:
 
     - The client will reattempt the request with auto-increasing cooldown/retry
@@ -70,7 +70,7 @@ class ApiClient(Client):
     """
 
     parent = None
-    """The ``super`` object (`httpx.Client`_)"""
+    """The ``super`` object (`httpx2.Client`_)"""
 
     retry = {}
     """
@@ -86,7 +86,7 @@ class ApiClient(Client):
       encountered first), and then return the final response.
 
     The default behavior is to retry without limit on status 429, raise an
-    exception on a 401, and return the `httpx.Response`_ object in any other
+    exception on a 401, and return the `httpx2.Response`_ object in any other
     case (assuming a HTTP response was received from the server).
     """
 
@@ -200,7 +200,7 @@ class ApiClient(Client):
         """
         Append all necessary headers per-request.
 
-        The upstream client class `httpx.Client`_ will merge headers into the
+        The upstream client class `httpx2.Client`_ will merge headers into the
         default instance headers, so any defaults set by the end user in the
         mutable ``headers`` property will already be merged in, and the headers
         specified at request time will take precendence.
@@ -274,11 +274,11 @@ class ApiClient(Client):
             The path/URL to request. If it does not start with the base URL,
             the base URL will be prepended.
         :param **kwargs:
-            Custom keyword arguments to pass to ``httpx.Client.request``.
+            Custom keyword arguments to pass to ``httpx2.Client.request``.
         :type method: str
         :type url: str
         :returns:
-            The `httpx.Response`_ object corresponding to the HTTP response
+            The `httpx2.Response`_ object corresponding to the HTTP response
         """
         sleep_timer = self.sleep_timer
         network_attempts = 0
@@ -476,7 +476,7 @@ class ApiClient(Client):
 
     @property
     def user_agent(self) -> str:
-        return "python-pagerduty/%s python-httpx/%s Python/%d.%d" % (
+        return "python-pagerduty/%s httpx2/%s Python/%d.%d" % (
             __version__,
             HTTPX_VERSION,
             sys.version_info.major,

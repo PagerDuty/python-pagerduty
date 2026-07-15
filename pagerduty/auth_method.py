@@ -7,7 +7,7 @@ class AuthMethod:
     An abstract class for authentication methods.
 
     **Design note:** we currently still implement our own interface for API
-    authentication instead of making a custom ``httpx.AuthType`` (which would
+    authentication instead of making a custom ``httpx2.AuthType`` (which would
     be more elegant and require less bespoke code) because some of our APIs'
     authorization methods require adding parameters to the body. Once the
     ``Request`` object has been instantiated, its body is already encoded based

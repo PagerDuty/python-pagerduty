@@ -46,7 +46,7 @@ constructor is the secret to use for accessing the API:
     # Events API v2, including change events:
     events_client = pagerduty.EventsApiV2Client(ROUTING_KEY)
 
-Client objects, being instances also of `httpx.Client`_, can be used as
+Client objects, being instances also of `httpx2.Client`_, can be used as
 context managers. For example:
 
 .. code-block:: python
@@ -441,7 +441,7 @@ also are based on inherit the features of :class:`pagerduty.RestApiV2BaseClient`
 
 Generic Client Features
 -----------------------
-Generally, all of the features of `httpx.Client`_ are available to the user
+Generally, all of the features of `httpx2.Client`_ are available to the user
 as they would be if using the `HTTPX`_ Python library directly, since
 :class:`pagerduty.ApiClient` and its subclasses for the REST/Events APIs are
 descendants of it. 
@@ -450,11 +450,11 @@ Generally, all client classes pass along all keyword arguments at the end of
 their constructor function signatures (the splat-operator catch-all ``**kw``)
 to the constructor of the superclass. Any keyword arguments not specifically
 named in the function signature will be passed along in this way, allowing users
-to pass additional options to `httpx.Client`_.
+to pass additional options to `httpx2.Client`_.
 
 The ``get``, ``post``, ``put`` and ``delete`` methods of REST/Events API
-client classes are similar to the analogous functions in `httpx.Client`_.
-The arguments they accept are the same and they all return `httpx.Response`_
+client classes are similar to the analogous functions in `httpx2.Client`_.
+The arguments they accept are the same and they all return `httpx2.Response`_
 objects.
 
 Any keyword arguments passed to the ``j*`` or ``r*`` methods will be passed
@@ -523,7 +523,7 @@ To set the request body in a post or put request, pass as the ``json`` keyword
 argument an object that will be JSON-encoded as the body.
 
 To obtain the response from the API, if using plain ``get``, ``post``, ``put``
-or ``delete``, use the returned `httpx.Response`_ object. That object's
+or ``delete``, use the returned `httpx2.Response`_ object. That object's
 ``json()`` method will return the result of JSON-decoding the response body (it
 will typically of type ``dict``). Other metadata such as headers can also be
 obtained:
@@ -871,7 +871,7 @@ example, unsupported URLs and/or malformed input.
 
 All errors that involve a response from the API are instances of
 :class:`pagerduty.HttpError` and will have a ``response`` property containing
-the `httpx.Response`_ object. Its subclass :class:`pagerduty.HttpServerError`
+the `httpx2.Response`_ object. Its subclass :class:`pagerduty.HttpServerError`
 is used for special cases when the API is responding in an unexpected way.
 
 One can thus define specialized error handling logic in which the REST API
@@ -934,7 +934,7 @@ Using a Proxy Server
 --------------------
 Client classes pass ``proxy`` and ``mounts`` keyword arguments through to the
 constructor of the superclass, thus allowing them to be used as described in:
-`HTTPX: Proxies <https://www.python-httpx.org/advanced/proxies/>`_. For example:
+`HTTPX2: Proxies <https://httpx2.pydantic.dev/advanced/proxies/>`_. For example:
 
 .. code-block:: python
 
@@ -972,7 +972,7 @@ will immediately raise :attr:`pagerduty.HttpError`; this is a non-transient erro
 caused by an invalid credential.
 
 For all other success or error statuses, the underlying request method in the
-client will return the `httpx.Response`_ object.
+client will return the `httpx2.Response`_ object.
 
 Exponential Cooldown
 ********************
@@ -1013,7 +1013,7 @@ supersede the maximum number of retries for any status defined in
 :attr:`pagerduty.ApiClient.retry` if it is lower.
 
 Low-level HTTP request functions in client classes, i.e. ``get``, will return
-`httpx.Response`_ objects when they run out of retries. Higher-level
+`httpx2.Response`_ objects when they run out of retries. Higher-level
 functions that require a success status response, i.e.
 :attr:`pagerduty.RestApiV2Client.list_all` and
 :attr:`pagerduty.EventsApiV2Client.trigger`, will raise instances of
@@ -1041,12 +1041,12 @@ reached in the underlying HTTP request methods.
 .. References:
 .. -----------
 
-.. _`HTTPX`: https://www.python-httpx.org
+.. _`HTTPX2`: https://httpx2.pydantic.dev/
 .. _`Errors`: https://developer.pagerduty.com/docs/ZG9jOjExMDI5NTYz-errors
 .. _`Events API v2`: https://developer.pagerduty.com/docs/ZG9jOjExMDI5NTgw-events-api-v2-overview
 .. _`PagerDuty API Reference`: https://developer.pagerduty.com/api-reference/
 .. _`REST API v2`: https://developer.pagerduty.com/docs/ZG9jOjExMDI5NTUw-rest-api-v2-overview
-.. _httpx.Response: https://www.python-httpx.org/api/#response
-.. _httpx.Client: https://www.python-httpx.org/api/#client
+.. _httpx2.Response: https://httpx2.pydantic.dev/api/#response
+.. _httpx2.Client: https://httpx2.pydantic.dev/api/#client
 .. _`resource references`: https://developer.pagerduty.com/docs/resource-references
 .. _`REST API v2 Overview`: https://developer.pagerduty.com/docs/rest-api-overview
