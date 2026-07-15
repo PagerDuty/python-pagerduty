@@ -13,7 +13,7 @@ from typing import (
 from warnings import warn
 
 # PyPI
-from httpx import Response
+from httpx2 import Response
 
 # Local
 from .api_client import ApiClient, normalize_url
@@ -374,7 +374,7 @@ def auto_json(method: Callable[..., Any]) -> Callable[..., Any]:
     Decorator to return the full response body object after decoding from JSON.
 
     Intended for use on functions that take a URL positional argument followed
-    by keyword arguments and return a `httpx.Response`_ object.
+    by keyword arguments and return a `httpx2.Response`_ object.
 
     The new return value is the JSON-decoded response body.
     """
@@ -436,7 +436,7 @@ def wrapped_entities(method: Callable[..., Any]) -> Callable[..., Any]:
     argument will be normalized to include the wrapper.
 
     Methods using this decorator will raise a :class:`pagerduty.HttpError` with
-    its ``response`` property being being the `httpx.Response`_ object in the
+    its ``response`` property being being the `httpx2.Response`_ object in the
     case of any error, so that the implementer can access it by catching the
     exception, and thus design their own custom logic around different types of
     error responses.
@@ -445,7 +445,7 @@ def wrapped_entities(method: Callable[..., Any]) -> Callable[..., Any]:
         Method being decorated. Must take one positional argument after
         ``self`` that is the URL/path to the resource, followed by keyword any
         number of keyword arguments, and must return an object of class
-        `httpx.Response`_, and be named after the HTTP method but with "r"
+        `httpx2.Response`_, and be named after the HTTP method but with "r"
         prepended.
     :returns:
         A callable object; the reformed method
@@ -997,11 +997,11 @@ class RestApiV2BaseClient(ApiClient):
         Records performance information / request metadata about the API call.
 
         :param response:
-            The `httpx.Response`_ object returned by the request method
+            The `httpx2.Response`_ object returned by the request method
         :param suffix:
             Optional suffix to append to the key
         :type method: str
-        :type response: `httpx.Response`_
+        :type response: `httpx2.Response`_
         :type suffix: str or None
         """
         method = response.request.method.upper()
@@ -1055,7 +1055,7 @@ class RestApiV2BaseClient(ApiClient):
             representing an API resource that contains an item with key
             ``self`` whose value is the URL of the resource.
         :param **kw:
-            Custom keyword arguments to pass to ``httpx.Client.delete``
+            Custom keyword arguments to pass to ``httpx2.Client.delete``
         """
         return self.delete(resource, **kw)
 
@@ -1073,7 +1073,7 @@ class RestApiV2BaseClient(ApiClient):
             representing an API resource that contains an item with key
             ``self`` whose value is the URL of the resource.
         :param **kw:
-            Custom keyword arguments to pass to ``httpx.Client.get``
+            Custom keyword arguments to pass to ``httpx2.Client.get``
         :returns:
             The API response after JSON-decoding and unwrapping
         """
@@ -1090,7 +1090,7 @@ class RestApiV2BaseClient(ApiClient):
             The path/URL to which to send the POST request, which should be an
             index endpoint.
         :param **kw:
-            Custom keyword arguments to pass to ``httpx.Client.post``
+            Custom keyword arguments to pass to ``httpx2.Client.post``
         :returns:
             The API response after JSON-decoding and unwrapping
         """
@@ -1111,7 +1111,7 @@ class RestApiV2BaseClient(ApiClient):
             representing an API resource that contains an item with key
             ``self`` whose value is the URL of the resource.
         :param **kw:
-            Custom keyword arguments to pass to ``httpx.Client.put``
+            Custom keyword arguments to pass to ``httpx2.Client.put``
         :returns:
             The API response after JSON-decoding and unwrapping. In the case of
             at least one Teams endpoint (within REST API v2) and any other

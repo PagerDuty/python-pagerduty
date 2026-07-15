@@ -1,6 +1,6 @@
 import json
 import logging
-import httpx
+import httpx2
 import random
 import sys
 from unittest.mock import Mock, MagicMock, patch
@@ -150,10 +150,10 @@ class ApiClientTest(ClientTest):
         # Expected headers:
         headers_get = {
             "Authorization": "some format idk secret=token",  # DummyAuthMethod
-            "User-Agent": "python-pagerduty/%s python-httpx/%s Python/%d.%d"
+            "User-Agent": "python-pagerduty/%s httpx2/%s Python/%d.%d"
             % (
                 pagerduty.__version__,
-                httpx.__version__,
+                httpx2.__version__,
                 sys.version_info.major,
                 sys.version_info.minor,
             ),
@@ -401,6 +401,6 @@ class ApiClientTest(ClientTest):
         # stopgap, we need to use \S+ to match the version.
         self.assertRegex(
             client.user_agent,
-            r"""python-pagerduty/\S+ python-httpx/[0-9.]+ """
+            r"""python-pagerduty/\S+ httpx2/[0-9.]+ """
             r"""Python/[0-9]+\.[0-9]+""",
         )

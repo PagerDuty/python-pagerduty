@@ -7,7 +7,7 @@ import warnings
 
 from copy import deepcopy
 
-from httpx import Response
+from httpx2 import Response
 
 from .api_client import ApiClient
 from .auth_method import BodyParameterAuthMethod

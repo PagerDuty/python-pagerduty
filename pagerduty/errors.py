@@ -1,4 +1,4 @@
-from httpx import Response
+from httpx2 import Response
 
 ##################
 ### EXCEPTIONS ###
@@ -41,7 +41,7 @@ class HttpError(Error):
 
     This class was created to make it easier to more cleanly handle errors by
     way of a class that is guaranteed to have its ``response`` be a valid
-    `httpx.Response`_ object.
+    `httpx2.Response`_ object.
 
     Whereas, the more generic :class:`Error` could also be used
     to denote such things as non-transient network errors wherein no response

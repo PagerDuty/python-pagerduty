@@ -1,3 +1,9 @@
+**2026-07-15: 7.0.0: Switch upstream client to httpx2**
+
+* Changes the core HTTP client from ``httpx`` to ``httpx2``, which is based on it but more actively maintained, so that clients can continue to receive bug fixes and security updates.
+* **Breaking Changes:**
+  * Drop support for Python 3.6 thru 3.9
+
 **2026-06-17: 6.3.0: Add support for Schedules v3 and others**
 
 * Adds support for new endpoints, most significantly the new Flex Schedules API.
