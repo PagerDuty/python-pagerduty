@@ -80,7 +80,8 @@
 <ul class="simple">
 <li><p>Changes the core HTTP client from <code class="docutils literal notranslate"><span class="pre">httpx</span></code> to <code class="docutils literal notranslate"><span class="pre">httpx2</span></code>, which is based on it but more actively maintained, so that clients can continue to receive bug fixes and security updates.</p></li>
 <li><p><strong>Breaking Changes:</strong>
-* Drop support for Python 3.6 thru 3.9</p></li>
+* Drop support for Python 3.6 thru 3.9
+* Any references to features of the HTTP client accessed directly through the module interface, i.e. <code class="docutils literal notranslate"><span class="pre">httpx.&lt;module&gt;</span></code>, must be updated so that the references point to <code class="docutils literal notranslate"><span class="pre">httpx2</span></code>.</p></li>
 </ul>
 <p><strong>2026-06-17: 6.3.0: Add support for Schedules v3 and others</strong></p>
 <ul class="simple">

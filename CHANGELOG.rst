@@ -3,6 +3,7 @@
 * Changes the core HTTP client from ``httpx`` to ``httpx2``, which is based on it but more actively maintained, so that clients can continue to receive bug fixes and security updates.
 * **Breaking Changes:**
   * Drop support for Python 3.6 thru 3.9
+  * Any references to features of the HTTP client accessed directly through the module interface, i.e. ``httpx.<module>``, must be updated so that the references point to ``httpx2``.
 
 **2026-06-17: 6.3.0: Add support for Schedules v3 and others**
 
