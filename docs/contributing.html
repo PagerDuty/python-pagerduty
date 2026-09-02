@@ -8,14 +8,14 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Contribution Guide &mdash; python-pagerduty 6.0.0 documentation</title>
       <link rel="stylesheet" type="text/css" href="_static/pygments.css?v=03e43079" />
-      <link rel="stylesheet" type="text/css" href="_static/css/theme.css?v=e59714d7" />
+      <link rel="stylesheet" type="text/css" href="_static/css/theme.css?v=9edc463e" />
 
   
       <script src="_static/jquery.js?v=5d32c60e"></script>
       <script src="_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
       <script src="_static/documentation_options.js?v=12958129"></script>
-      <script src="_static/doctools.js?v=9bcbadda"></script>
-      <script src="_static/sphinx_highlight.js?v=dc90522c"></script>
+      <script src="_static/doctools.js?v=fd6eb6e6"></script>
+      <script src="_static/sphinx_highlight.js?v=6ffebe34"></script>
     <script src="_static/js/theme.js"></script>
     <link rel="index" title="Index" href="genindex.html" />
     <link rel="search" title="Search" href="search.html" />
@@ -223,11 +223,11 @@ request and response bodies.</p>
 <p>Following the same examples as given in the <a class="reference internal" href="user_guide.html#user-guide"><span class="std std-ref">User Guide</span></a>: the entry in
 <code class="xref py py-attr docutils literal notranslate"><span class="pre">pagerduty.rest_api_v2_client.ENTITY_WRAPPER_CONFIG</span></code> to handle the “Create Business Service
 Subscribers” looks like this:</p>
-<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="s1">&#39;POST /business_services/</span><span class="si">{id}</span><span class="s1">/subscribers&#39;</span><span class="p">:</span> <span class="p">(</span><span class="s1">&#39;subscribers&#39;</span><span class="p">,</span> <span class="s1">&#39;subscriptions&#39;</span><span class="p">),</span>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="s1">'POST /business_services/</span><span class="si">{id}</span><span class="s1">/subscribers'</span><span class="p">:</span> <span class="p">(</span><span class="s1">'subscribers'</span><span class="p">,</span> <span class="s1">'subscriptions'</span><span class="p">),</span>
 </pre></div>
 </div>
 <p>The “Create one or more overrides” API endpoint entry looks like this:</p>
-<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="s1">&#39;POST /schedules/</span><span class="si">{id}</span><span class="s1">/overrides&#39;</span><span class="p">:</span> <span class="p">(</span><span class="s1">&#39;overrides&#39;</span><span class="p">,</span> <span class="kc">None</span><span class="p">),</span>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="s1">'POST /schedules/</span><span class="si">{id}</span><span class="s1">/overrides'</span><span class="p">:</span> <span class="p">(</span><span class="s1">'overrides'</span><span class="p">,</span> <span class="kc">None</span><span class="p">),</span>
 </pre></div>
 </div>
 </section>
