@@ -3,6 +3,7 @@
 import argparse
 import socket
 import sys
+
 from .events_api_v2_client import EventsApiV2Client
 
 HOSTNAME = socket.gethostname()
@@ -42,42 +43,37 @@ def run(argv):
     # Create the Events API client
     client = EventsApiV2Client(args.routing_key)
 
-    try:
-        # Handle the different actions
-        if args.action == "trigger":
-            if not args.description:
-                parser.error("--description is required for trigger action")
-            dedup_key = client.trigger(
-                args.description, args.source, dedup_key=args.dedup_key
-            )
-            print(
-                f"Alert triggered successfully. Deduplication key: {dedup_key}"
-            )
+    # Handle the different actions
+    if args.action == "trigger":
+        if not args.description:
+            parser.error("--description is required for trigger action")
+        dedup_key = client.trigger(
+            args.description, args.source, dedup_key=args.dedup_key
+        )
+        print(
+            f"Alert triggered successfully. Deduplication key: {dedup_key}"
+        )
 
-        elif args.action == "acknowledge":
-            if not args.dedup_key:
-                parser.error(
-                    "-i/--dedup-key is required for acknowledge action"
-                )
-
-            dedup_key = client.acknowledge(args.dedup_key)
-            print(
-                "Alert acknowledged successfully. Deduplication key: "
-                + dedup_key
+    elif args.action == "acknowledge":
+        if not args.dedup_key:
+            parser.error(
+                "-i/--dedup-key is required for acknowledge action"
             )
 
-        elif args.action == "resolve":
-            if not args.dedup_key:
-                parser.error("-i/--dedup-key is required for resolve action")
+        dedup_key = client.acknowledge(args.dedup_key)
+        print(
+            "Alert acknowledged successfully. Deduplication key: "
+            + dedup_key
+        )
 
-            dedup_key = client.resolve(args.dedup_key)
-            print(
-                f"Alert resolved successfully. Deduplication key: {dedup_key}"
-            )
+    elif args.action == "resolve":
+        if not args.dedup_key:
+            parser.error("-i/--dedup-key is required for resolve action")
 
-    except Exception as e:
-        print(f"Error: {str(e)}", file=sys.stderr)
-        sys.exit(1)
+        dedup_key = client.resolve(args.dedup_key)
+        print(
+            f"Alert resolved successfully. Deduplication key: {dedup_key}"
+        )
 
 
 def main():
