@@ -54,8 +54,8 @@ support, must have knowledge of the key ("wrapper name") in the request or
 response schema. When new endpoints are added, the client has no a-priori
 knowledge of them, and supporting them with these conveniences requries a few
 small changes. The system in place for supporting endpoints requires the
-following module variables that must be manually maintained for the API client
-class that shall be used to access them:
+following variables in ``pagerduty/rest_api_v2_client.py`` be manually
+maintained:
 
 * ``CANONICAL_PATHS``, the list of canonical paths;
 * ``CURSOR_BASED_PAGINATION_PATHS``, a list of canonical paths that support cursor-based pagination
@@ -66,9 +66,7 @@ API references), but that use similar patterns to REST API v2, there are
 separate API client classes defined for them based on ``RestApiV2BaseClient``,
 namespaced within ther own modules. The modules also contain their own
 definitions for ``CANONICAL_PATHS``, ``ENTITY_WRAPPER_CONFIG`` and
-``CURSOR_BASED_PAGINATION_PATHS`` that are used for those APIs. These lists and
-dictionaries are namespaced and defined uniquely inside each of the modules
-where the client classes that use them are also defined.
+``CURSOR_BASED_PAGINATION_PATHS`` that are used for those APIs.
 
 
 Adding a New Client Class
