@@ -48,7 +48,9 @@
 <li class="toctree-l2"><a class="reference internal" href="#installation">Installation</a></li>
 <li class="toctree-l2"><a class="reference internal" href="#command-line-interface">Command Line Interface</a></li>
 <li class="toctree-l2"><a class="reference internal" href="#authentication">Authentication</a><ul>
-<li class="toctree-l3"><a class="reference internal" href="#the-from-header">The From header</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#which-client-class-to-use">Which Client Class To Use</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#clients-as-context-managers">Clients as Context Managers</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#the-from-header">The From Header</a></li>
 <li class="toctree-l3"><a class="reference internal" href="#performing-an-oauth-exchange-to-obtain-an-access-token">Performing an OAuth Exchange to Obtain an Access Token</a></li>
 <li class="toctree-l3"><a class="reference internal" href="#performing-oauth-token-refresh-automatically">Performing OAuth Token Refresh Automatically</a></li>
 </ul>
@@ -160,33 +162,57 @@ constructor is the secret to use for accessing the API:</p>
 <span class="n">events_client</span> <span class="o">=</span> <span class="n">pagerduty</span><span class="o">.</span><span class="n">EventsApiV2Client</span><span class="p">(</span><span class="n">ROUTING_KEY</span><span class="p">)</span>
 </pre></div>
 </div>
+<section id="which-client-class-to-use">
+<h3>Which Client Class To Use<a class="headerlink" href="#which-client-class-to-use" title="Link to this heading"></a></h3>
+<p>If the API endpoints to use are documented under “PagerDuty API” in the
+<a class="reference external" href="https://developer.pagerduty.com/api-reference/e65c5833eeb07-pager-duty-api">API Reference</a>,
+they are part of the standard REST API, and <a class="reference internal" href="module_reference.html#pagerduty.RestApiV2Client" title="pagerduty.RestApiV2Client"><code class="xref py py-attr docutils literal notranslate"><span class="pre">pagerduty.RestApiV2Client</span></code></a>
+should be used to access them.</p>
+<p>To access PagerDuty’s MCP interface, use <a class="reference internal" href="module_reference.html#pagerduty.McpApiClient" title="pagerduty.McpApiClient"><code class="xref py py-attr docutils literal notranslate"><span class="pre">pagerduty.McpApiClient</span></code></a>.</p>
+<p>The “V1 Events API” is not supported.</p>
+<p>All “Events” and “Change Events” API actions should be carried out by
+<a class="reference internal" href="module_reference.html#pagerduty.EventsApiV2Client" title="pagerduty.EventsApiV2Client"><code class="xref py py-attr docutils literal notranslate"><span class="pre">pagerduty.EventsApiV2Client</span></code></a>.</p>
+<p>All “Integration” API actions should be carried out by an aptly-named client
+class, i.e. <code class="xref py py-attr docutils literal notranslate"><span class="pre">pagerduty.MsTeamsIntegrationApi</span></code> should be used to access
+API endpoints of the MS Teams Integration API. Note that there is a separate
+API client for Slack Connections API endpoints as distinct from the rest of the
+Slack Integration API; this is due in part to it requiring the use of a
+different server hostname.</p>
+<p>To use PagerDuty’s OAuth interface, see “Performing an OAuth Exchange” below.</p>
+</section>
+<section id="clients-as-context-managers">
+<h3>Clients as Context Managers<a class="headerlink" href="#clients-as-context-managers" title="Link to this heading"></a></h3>
 <p>Client objects, being instances also of <a class="reference external" href="https://httpx2.pydantic.dev/api/#client">httpx2.Client</a>, can be used as
 context managers. For example:</p>
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="k">with</span> <span class="n">pagerduty</span><span class="o">.</span><span class="n">RestApiV2Client</span><span class="p">(</span><span class="n">API_KEY</span><span class="p">)</span> <span class="k">as</span> <span class="n">client</span><span class="p">:</span>
     <span class="n">do_application</span><span class="p">(</span><span class="n">client</span><span class="p">)</span>
 </pre></div>
 </div>
+</section>
 <section id="the-from-header">
-<h3>The From header<a class="headerlink" href="#the-from-header" title="Link to this heading"></a></h3>
-<p>This request header can be set for all requests using the attribute
-<a class="reference internal" href="module_reference.html#pagerduty.RestApiV2Client.default_from" title="pagerduty.RestApiV2Client.default_from"><code class="xref py py-attr docutils literal notranslate"><span class="pre">pagerduty.RestApiV2Client.default_from</span></code></a> property, either directly or
-through the <code class="docutils literal notranslate"><span class="pre">default_from</span></code> keyword argument when instantiating the client
-object:</p>
-<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">client</span> <span class="o">=</span> <span class="n">pagerduty</span><span class="o">.</span><span class="n">RestApiV2Client</span><span class="p">(</span><span class="n">API_KEY</span><span class="p">,</span> <span class="n">default_from</span><span class="o">=</span><span class="s2">"admin@example.com"</span><span class="p">)</span>
-</pre></div>
-</div>
+<h3>The From Header<a class="headerlink" href="#the-from-header" title="Link to this heading"></a></h3>
 <p>If using an account-level API key, created by an administrator via the “API
 Access Keys” page in the “Integrations” menu, a <code class="docutils literal notranslate"><span class="pre">From</span></code> header must be set in
 requests to certain API endpoints, e.g. acknowledging or resolving incidents.
 Its value must be the email address of a valid PagerDuty user.</p>
+<p>This request header can be set for all requests made by a given client by
+setting the attribute <a class="reference internal" href="module_reference.html#pagerduty.RestApiV2Client.default_from" title="pagerduty.RestApiV2Client.default_from"><code class="xref py py-attr docutils literal notranslate"><span class="pre">pagerduty.RestApiV2Client.default_from</span></code></a> property,
+either directly or through the <code class="docutils literal notranslate"><span class="pre">default_from</span></code> keyword argument when
+instantiating the client object:</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">client</span> <span class="o">=</span> <span class="n">pagerduty</span><span class="o">.</span><span class="n">RestApiV2Client</span><span class="p">(</span><span class="n">API_KEY</span><span class="p">,</span> <span class="n">default_from</span><span class="o">=</span><span class="s2">"admin@example.com"</span><span class="p">)</span>
+</pre></div>
+</div>
 <p>Otherwise, if using a user’s API key (created under “API Access” in the “User
 Settings” tab of the user’s profile), the user will be derived from the key
 itself and it is not necessary to set <code class="docutils literal notranslate"><span class="pre">default_from</span></code> or supply a <code class="docutils literal notranslate"><span class="pre">From</span></code>
 header.</p>
 <p>If the source of the API key is unknown, the value of the client object’s
 property <a class="reference internal" href="module_reference.html#pagerduty.RestApiV2Client.api_key_access" title="pagerduty.RestApiV2Client.api_key_access"><code class="xref py py-attr docutils literal notranslate"><span class="pre">pagerduty.RestApiV2Client.api_key_access</span></code></a> can be used. It will
-be <code class="docutils literal notranslate"><span class="pre">account</span></code> if its API secret is an account-level API key, and it will be
-<code class="docutils literal notranslate"><span class="pre">user</span></code> for a user-level API key.</p>
+be:</p>
+<ul class="simple">
+<li><p><code class="docutils literal notranslate"><span class="pre">account</span></code> if its API secret is an account-level API key</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">user</span></code> if it is using a user-scoped API key.</p></li>
+</ul>
 </section>
 <section id="performing-an-oauth-exchange-to-obtain-an-access-token">
 <h3>Performing an OAuth Exchange to Obtain an Access Token<a class="headerlink" href="#performing-an-oauth-exchange-to-obtain-an-access-token" title="Link to this heading"></a></h3>

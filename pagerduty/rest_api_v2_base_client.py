@@ -285,8 +285,7 @@ def infer_entity_wrapper(method: str, path: CanonicalPath) -> EntityWrapper:
     the v2 REST API, where the wrapper name is predictable from the path and
     method. This is the default logic applied to determine the wrapper name
     based on the path if there is no explicit entity wrapping defined for the
-    given path i.e. in
-    :attr:`pagerduty.rest_api_v2_client.ENTITY_WRAPPER_CONFIG` for
+    given path i.e. in ``ENTITY_WRAPPER_CONFIG`` for
     :class:`pagerduty.RestApiV2Client`.
 
     :param method:
