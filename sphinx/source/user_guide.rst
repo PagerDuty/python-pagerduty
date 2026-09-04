@@ -776,7 +776,7 @@ For all endpoints that implement one of the standard pagination styles (classic
 or cursor-based), :attr:`pagerduty.RestApiV2BaseClient.iter_all` will work. If
 the endpoint does not completely or correctly implement one of these styles of
 pagination, the pagination methods (i.e.  ``iter_all``/``list_all``) cannot be
-used with them. For example:
+used with them.
 
 As of this writing, there are two API endpoints known to have a their own special
 pagination style, and specialized methods have been added for them. They are
@@ -805,6 +805,8 @@ as desired.
 
 Updating, creating or deleting while paginating
 ***********************************************
+**The following applies only to classic pagination.**
+
 If performing page-wise write operations, i.e. making persistent changes to the
 PagerDuty application state immediately after fetching each page of results, an
 erroneous condition can result if there is any change to the resources in the

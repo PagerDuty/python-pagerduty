@@ -799,7 +799,7 @@ memory, the partial data it retrieved will be lost to garbage collection.</p>
 or cursor-based), <a class="reference internal" href="module_reference.html#pagerduty.RestApiV2BaseClient.iter_all" title="pagerduty.RestApiV2BaseClient.iter_all"><code class="xref py py-attr docutils literal notranslate"><span class="pre">pagerduty.RestApiV2BaseClient.iter_all</span></code></a> will work. If
 the endpoint does not completely or correctly implement one of these styles of
 pagination, the pagination methods (i.e.  <code class="docutils literal notranslate"><span class="pre">iter_all</span></code>/<code class="docutils literal notranslate"><span class="pre">list_all</span></code>) cannot be
-used with them. For example:</p>
+used with them.</p>
 <p>As of this writing, there are two API endpoints known to have a their own special
 pagination style, and specialized methods have been added for them. They are
 as follows:</p>
@@ -826,6 +826,7 @@ as desired.</p>
 </section>
 <section id="updating-creating-or-deleting-while-paginating">
 <h3>Updating, creating or deleting while paginating<a class="headerlink" href="#updating-creating-or-deleting-while-paginating" title="Link to this heading"></a></h3>
+<p><strong>The following applies only to classic pagination.</strong></p>
 <p>If performing page-wise write operations, i.e. making persistent changes to the
 PagerDuty application state immediately after fetching each page of results, an
 erroneous condition can result if there is any change to the resources in the
