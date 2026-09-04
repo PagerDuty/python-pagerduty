@@ -136,8 +136,8 @@ support, must have knowledge of the key (“wrapper name”) in the request or
 response schema. When new endpoints are added, the client has no a-priori
 knowledge of them, and supporting them with these conveniences requries a few
 small changes. The system in place for supporting endpoints requires the
-following module variables that must be manually maintained for the API client
-class that shall be used to access them:</p>
+following variables in <code class="docutils literal notranslate"><span class="pre">pagerduty/rest_api_v2_client.py</span></code> be manually
+maintained:</p>
 <ul class="simple">
 <li><p><code class="docutils literal notranslate"><span class="pre">CANONICAL_PATHS</span></code>, the list of canonical paths;</p></li>
 <li><p><code class="docutils literal notranslate"><span class="pre">CURSOR_BASED_PAGINATION_PATHS</span></code>, a list of canonical paths that support cursor-based pagination</p></li>
@@ -148,9 +148,7 @@ API references), but that use similar patterns to REST API v2, there are
 separate API client classes defined for them based on <code class="docutils literal notranslate"><span class="pre">RestApiV2BaseClient</span></code>,
 namespaced within ther own modules. The modules also contain their own
 definitions for <code class="docutils literal notranslate"><span class="pre">CANONICAL_PATHS</span></code>, <code class="docutils literal notranslate"><span class="pre">ENTITY_WRAPPER_CONFIG</span></code> and
-<code class="docutils literal notranslate"><span class="pre">CURSOR_BASED_PAGINATION_PATHS</span></code> that are used for those APIs. These lists and
-dictionaries are namespaced and defined uniquely inside each of the modules
-where the client classes that use them are also defined.</p>
+<code class="docutils literal notranslate"><span class="pre">CURSOR_BASED_PAGINATION_PATHS</span></code> that are used for those APIs.</p>
 <section id="adding-a-new-client-class">
 <h3>Adding a New Client Class<a class="headerlink" href="#adding-a-new-client-class" title="Link to this heading"></a></h3>
 <p>When evaluating a new API, the first question to ask is whether the new API
