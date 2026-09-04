@@ -11,8 +11,9 @@ ensure code coverage. If the change(s) fix a bug, please add assertions that
 reproduce the bug along with code changes themselves, and include the GitHub
 issue number in the commit message.
 
-Initial Setup and Unit Tests
-----------------------------
+
+Initial Setup
+-------------
 To be able to rebuild the documentation, apply formatting and release new
 versions, first make sure you have `make <https://www.gnu.org/software/make/>`_
 installed in your local development environment, as well as
@@ -21,89 +22,113 @@ installed in your local development environment, as well as
 Next, run ``test.sh`` in the root path of the repository to validate that unit
 tests can be run locally.
 
+
+Linting, Formatting and Testing
+-------------------------------
+All of the CI tests can be run locally, provided that all development
+dependencies are installed locally.
+
+**To run unit tests:** run ``make test``. To see all output from ``print``
+statements in unit test cases, run ``./test.sh`` directly, or ``make
+verbose-test``.
+
+**Linting:** run ``make lint`` or ``uvx ruff check`` to run lint checks. To fix
+issues automatically where possible, run ``make lint-fix`` or ``uvx ruff check
+--fix``.
+
+**Formatting:** run ``make format`` or ``uvf ruff format --check`` to check for code format
+issues, and to fix automatically where possible, run ``make format-fix`` or
+``uvx ruff format``.
+
+
 Adding Support for New API Endpoints
 ------------------------------------
 For the most part, the clients of ``python-pagerduty`` are agnostic to the API
 schema and do not require modification for basic support of new APIs. The
 instance methods that are named after HTTP request methods already support
-arbitrary requests and can be used with experimental new endpoints. However,
-the features of clients built upon common patterns, i.e. pagination support,
-must have knowledge of the key ("wrapper name") in the request or response
-schema.
+arbitrary requests and can be used with experimental new endpoints, in addition
+to the ``j*`` methods.
 
-Typically, but not for all endpoints, the wrapper name can be inferred from the
-last or second to last node of the endpoint URL's path. In these cases, the
-wrapper name is a singular noun for an individual resource or plural for a
-collection of resources.
+However, the features of clients built upon common patterns, i.e. pagination
+support, must have knowledge of the key ("wrapper name") in the request or
+response schema. When new endpoints are added, the client has no a-priori
+knowledge of them, and supporting them with these conveniences requries a few
+small changes. The system in place for supporting endpoints requires the
+following module variables that must be manually maintained for the API client
+class that shall be used to access them:
 
-When new endpoints are added to REST API v2, and they don't follow this
-orthodox schema pattern, the client's pagination and entity wrapping methods
-have no a-priori way of supporting them because the wrapper name cannot be
-reliably inferred from the endpoint. So, in the current design regime, any
-schema antipatterns must be manually accounted for in order to support
-pagination and other abstractions for new endpoints.
+* ``CANONICAL_PATHS``, the list of canonical paths;
+* ``CURSOR_BASED_PAGINATION_PATHS``, a list of canonical paths that support cursor-based pagination
+* ``ENTITY_WRAPPER_CONFIG``, a dictionary of exceptions to entity wrapping and schema conventions
 
-Introduction
-************
-To support the growing list of schema antipatterns in the PagerDuty product
-REST API v2, a system was created (originally in `pdpyras`_ version 5.0.0) to
-work around them and codify the deviations from orthodox patterns with minimal
-hard-coded changes to the client. This system works by identifying endpoints
-according to their "canonical path", that is to say the path portion of the
-endpoint URL with ``{name}`` placeholders for variable/identifiers. The
-canonical path is then used as an identifier to perform a hash lookup of
-antipattern-handling configuration.
+For any APIs defined outside of the bounds of REST API v2 (as structured in the
+API references), but that use similar patterns to REST API v2, there are
+separate API client classes defined for them based on ``RestApiV2BaseClient``,
+namespaced within ther own modules. The modules also contain their own
+definitions for ``CANONICAL_PATHS``, ``ENTITY_WRAPPER_CONFIG`` and
+``CURSOR_BASED_PAGINATION_PATHS`` that are used for those APIs. These lists and
+dictionaries are namespaced and defined uniquely inside each of the modules
+where the client classes that use them are also defined.
 
-This system requires two global variables that must be manually maintained:
 
-* :attr:`pagerduty.rest_api_v2_client.CANONICAL_PATHS`, the list of canonical paths
-* :attr:`pagerduty.rest_api_v2_client.ENTITY_WRAPPER_CONFIG`, a dictionary of exceptions to entity wrapping and schema conventions
+Adding a New Client Class
+*************************
+When evaluating a new API, the first question to ask is whether the new API
+resides within the scope of the existing REST API. This is addressed in the
+user guide ("Which Client Class To Use"); to recap, if it's documented under
+"PagerDuty API", it will be accessed using :attr:`pagerduty.RestApiV2Client`;
+otherwise, it requires a different client class.  The new endpoints should
+follow all the same basic conventions for authentication and access, i.e. use
+the standard ``api.pagerduty.com`` server hostname.
 
-For other APIs defined outside of the bounds of REST API v2 in the API
-references, there are separate API client classes defined, each with their own
-``CANONICAL_PATHS`` and ``ENTITY_WRAPPER_CONFIG`` (and
-``CURSOR_BASED_PAGINATION_PATHS``, for determining when a collection endpoint
-supports cursor-based pagination).
+If the new API is very similar in function to the REST API but is documented as
+a separate new API, i.e. it features pagination endpoints, the client can be
+designed as a child class of :attr:`pagerduty.RestApiV2BaseClient`. Refer to
+existing derivative classes, i.e. the "Integration" API clients, for examples.
 
-Limitations
-***********
-There are three main categories of antipatterns:
+If any new API endpoint is documented within the REST API, but breaks out of
+these conventions, i.e.
 
-1. Entity wrapping is present but doesn't follow the original schema convention
-2. There may or may not be wrapping but pagination is not implemented according to standards and requires its own special abstraction/interface
-3. There is no entity wrapping
+* Uses a new and different form of authentication
+* Does not support all forms of authentication (token and OAuth / Bearer) supported by other REST API endpoints
+* Uses a different host name than ``api.pagerduty.com`` for one or more of its endpoints
+* Uses any format other than JSON to encode content
 
-In the first case, If the endpoint's schema wraps entities but the wrapper name
-doesn't follow from the path, entity wrapping can still be supported. If
-classic pagination or cursor-based pagination is correctly implemented in the
-new API, the automatic pagination methods can also support it once the
-antipattern configuration entry is added.
+Then the new API has been erroneously added to the standard REST API, and it
+should instead be added as a separate new top-level API, and it cannot be
+supported by the existing REST API client. Contact PagerDuty support or the
+appropriate engineering team about documenting it as a new API distinct from
+REST API v2. It cannot be treated as part of the standard REST API because its
+requirements for use contradict the instructions for API access documented
+generally for all other REST API endpoints.
 
-However, if there is no entity wrapping, or pagination is not implemented
-according to documented standards, automatic pagination cannot be supported for
-the new resource collection endpoints.
 
 Updating the Canonical Path Set
 *******************************
-The first step for adding support for new APIs is to have a copy of the API
-Reference source code (this is a private GitHub repository owned by the
-PagerDuty org). The script ``scripts/get_path_list/get_path_list.py`` can then
-be used to automatically generate definitions of the global variables
-:attr:`pagerduty.rest_api_v2_client.CANONICAL_PATHS` and
-:attr:`pagerduty.rest_api_v2_client.CURSOR_BASED_PAGINATION_PATHS` that can be copied into the
-source code to replace the existing definitions. The script takes one argument:
-a path to the file ``reference/v2/Index.yaml`` within the reference source
-repository.
+First, to add support for new REST API endpoints, have an updated clone of the API Reference
+source code repository (this is a private GitHub repository owned by the PagerDuty org).
+Next, run the script:
 
-Evaluating New Endpoints For Support
-************************************
+.. code-block:: bash
+
+    ./scripts/get_path_list/get_path_list.py [PATH-TO-REPOSITORY]/reference/v2/Index.yaml
+
+This sript will print definitions of the global variables ``CANONICAL_PATHS``
+and ``CURSOR_BASED_PAGINATION_PATHS`` for ``pagerduty/rest_api_v2_client.py``,
+i.e. that can be copied into the source code to replace the existing
+definitions.
+
+
+Evaluating New REST API Endpoints
+*********************************
 The next step is to look at the request and response schemas in the API
 reference for each new endpoint added to the canonical path list, to see if it
 follows classic schema conventions for entity wrapping. If any new path does
-not, adding support for it will also require adding entries to
-:attr:`pagerduty.rest_api_v2_client.ENTITY_WRAPPER_CONFIG`. "Classic schema conventions" refers to
-the logic codified in :attr:`pagerduty.infer_entity_wrapper` and
-:attr:`pagerduty.unwrap` (where a "node" is a component of the path component
+not, adding support for it will also require adding entries to the
+``ENTITY_WRAPPER_CONFIG`` dictionary defined in the client's module (see
+"Antipattern Endpoints" below). "Classic schema conventions" refers to the
+logic codified in :attr:`pagerduty.rest_api_v2_base_client.infer_entity_wrapper` and
+:attr:`pagerduty.rest_api_v2_base_client.unwrap` (where a "node" is a component of the path component
 of the URL, separated by forward slashes):
 
 **1:** If the last node of the path is an opaque identifier, then the path corresponds
@@ -123,38 +148,69 @@ the same as the last node of the path. Examples: ``GET /services`` (wrapper =
 ``services``), ``PUT /incidents`` (wrapper = ``incidents``)
 
 If all of the above apply to new endpoints for all request methods, then no new
-entries need to be added to
-:attr:`pagerduty.rest_api_v2_client.ENTITY_WRAPPER_CONFIG` to support them;
-they are supported automatically by virtue of following preexisting
-already-supported API patterns. Their corresponding entries in
-:attr:`pagerduty.rest_api_v2_client.CANONICAL_PATHS` officiates their support
-for entity-wrapping-aware functions.
+entries need to be added to ``ENTITY_WRAPPER_CONFIG`` to support them; they are
+supported automatically by virtue of following preexisting already-supported
+API patterns. Support for them is fully covered by adding the corresponding
+entries in ``CANONICAL_PATHS``.
 
-Adding Support for Non-Conforming Endpoints
-*******************************************
+Adding Support for Antipattern Endpoints
+****************************************
 If the new endpoints do not follow classic schema conventions for entity
-wrapping, entries for them must be added to
-:attr:`pagerduty.rest_api_v2_client.ENTITY_WRAPPER_CONFIG` in order to support them. As described
-in the documentation of that attribute, each key is a combination of the
-request method (or "*" for the configuration entry to apply to all methods) and
-the canonical path in question, and each value is a string (for the same
-wrapper name in the request and response bodies), ``None`` if entity wrapping
-is not applicable, and a tuple if the entity wrapping differs between the
-request and response bodies.
+wrapping, entries for them must be added to the appropriate
+``ENTITY_WRAPPER_CONFIG`` dictionary in the module corresponding to the API
+client in question in order to support them.  In that dictionary, each key is a
+combination of the request method (or ``*`` for the configuration entry to
+apply to all methods) and the canonical path in question, and each value:
+
+* Is a string value, to signify the same wrapper name in the request and response bodies,
+* ``None`` if entity wrapping is not applicable (in which case pagination is not supported),
+* A 2-tuple if the entity wrapping differs between the request and response bodies (where the first element is the request body wrapper, and the second is the response body wrapper)
 
 Following the same examples as given in the :ref:`user_guide`: the entry in
-:attr:`pagerduty.rest_api_v2_client.ENTITY_WRAPPER_CONFIG` to handle the "Create Business Service
-Subscribers" looks like this:
+``ENTITY_WRAPPER_CONFIG`` to handle the "Create Business Service Subscribers"
+looks like this:
 
 .. code-block:: python
 
     'POST /business_services/{id}/subscribers': ('subscribers', 'subscriptions'),
 
-The "Create one or more overrides" API endpoint entry looks like this:
+
+In other words, what this describes is that when making a ``POST`` request to
+``/business_services/{id}/subscribers``, the JSON data of the request should be
+wrapped in a root-level JSON attribute named ``subscribers``, and in the
+response, the JSON data is wrapped in a root-level JSON attribute named
+``subscriptions``.
+
+To give another example, the "Create one or more overrides" API endpoint entry looks like this:
 
 .. code-block:: python
 
     'POST /schedules/{id}/overrides': ('overrides', None),
+
+
+In requests to that endpoint, the list of override objects must be nested
+within an ``overrides`` property, but the response is a bare list at the root
+level of the body after JSON-decoding.
+
+
+Limitations to Pagination Support
+*********************************
+There are three main categories of antipatterns:
+
+1. Entity wrapping is present but doesn't follow the original schema convention
+2. There may or may not be wrapping but pagination is not implemented according to standards and requires its own special abstraction/interface
+3. There is no entity wrapping
+
+In the first case, If the endpoint's schema wraps entities but the wrapper name
+doesn't follow from the path, entity wrapping can still be supported. If
+classic pagination or cursor-based pagination is correctly implemented in the
+new API, the automatic pagination methods can also support it once the
+antipattern configuration entry is added.
+
+However, if there is no entity wrapping, or pagination is not implemented
+according to documented standards, automatic pagination cannot be supported for
+the new resource collection endpoints.
+
 
 Updating Documentation
 ----------------------

@@ -3,7 +3,7 @@ version: 2.1
 test: &test
   name: Run tests
   command: |
-    ./test.sh
+    SUPPRESS_OUTPUT=1 ./test.sh
 
 uv: &uv
   name: Install uv

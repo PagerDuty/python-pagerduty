@@ -1,6 +1,6 @@
 %: build
 
-.PHONY: test lint lint-fix format format-fix
+.PHONY: test verbose-test lint lint-fix format format-fix
 
 build: uv.lock pagerduty/* pyproject.toml
 	rm -f dist/* && uv build
@@ -32,4 +32,7 @@ format-fix:
 	uvx ruff format
 
 test:
+	SUPPRESS_OUTPUT=1 ./test.sh
+
+verbose-test:
 	./test.sh

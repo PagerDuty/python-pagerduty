@@ -46,6 +46,34 @@ constructor is the secret to use for accessing the API:
     # Events API v2, including change events:
     events_client = pagerduty.EventsApiV2Client(ROUTING_KEY)
 
+
+Which Client Class To Use
+*************************
+If the API endpoints to use are documented under "PagerDuty API" in the 
+`API Reference
+<https://developer.pagerduty.com/api-reference/e65c5833eeb07-pager-duty-api>`_,
+they are part of the standard REST API, and :attr:`pagerduty.RestApiV2Client`
+should be used to access them.
+
+To access PagerDuty's MCP interface, use :attr:`pagerduty.McpApiClient`.
+
+The "V1 Events API" is not supported.
+
+All "Events" and "Change Events" API actions should be carried out by
+:attr:`pagerduty.EventsApiV2Client`.
+
+All "Integration" API actions should be carried out by an aptly-named client
+class, i.e. :attr:`pagerduty.MsTeamsIntegrationApi` should be used to access
+API endpoints of the MS Teams Integration API. Note that there is a separate
+API client for Slack Connections API endpoints as distinct from the rest of the
+Slack Integration API; this is due in part to it requiring the use of a
+different server hostname.
+
+To use PagerDuty's OAuth interface, see "Performing an OAuth Exchange" below.
+
+
+Clients as Context Managers
+***************************
 Client objects, being instances also of `httpx2.Client`_, can be used as
 context managers. For example:
 
@@ -54,21 +82,21 @@ context managers. For example:
     with pagerduty.RestApiV2Client(API_KEY) as client:
         do_application(client)
 
-The From header
+The From Header
 ***************
-This request header can be set for all requests using the attribute
-:attr:`pagerduty.RestApiV2Client.default_from` property, either directly or
-through the ``default_from`` keyword argument when instantiating the client
-object:
-
-.. code-block:: python
-
-    client = pagerduty.RestApiV2Client(API_KEY, default_from="admin@example.com")
-
 If using an account-level API key, created by an administrator via the "API
 Access Keys" page in the "Integrations" menu, a ``From`` header must be set in
 requests to certain API endpoints, e.g. acknowledging or resolving incidents.
 Its value must be the email address of a valid PagerDuty user. 
+
+This request header can be set for all requests made by a given client by
+setting the attribute :attr:`pagerduty.RestApiV2Client.default_from` property,
+either directly or through the ``default_from`` keyword argument when
+instantiating the client object:
+
+.. code-block:: python
+
+    client = pagerduty.RestApiV2Client(API_KEY, default_from="admin@example.com")
 
 Otherwise, if using a user's API key (created under "API Access" in the "User
 Settings" tab of the user's profile), the user will be derived from the key
@@ -77,8 +105,10 @@ header.
 
 If the source of the API key is unknown, the value of the client object's
 property :attr:`pagerduty.RestApiV2Client.api_key_access` can be used. It will
-be ``account`` if its API secret is an account-level API key, and it will be
-``user`` for a user-level API key.
+be:
+
+* ``account`` if its API secret is an account-level API key
+* ``user`` if it is using a user-scoped API key.
 
 Performing an OAuth Exchange to Obtain an Access Token
 ******************************************************
