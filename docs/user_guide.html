@@ -169,15 +169,16 @@ constructor is the secret to use for accessing the API:</p>
 they are part of the standard REST API, and <a class="reference internal" href="module_reference.html#pagerduty.RestApiV2Client" title="pagerduty.RestApiV2Client"><code class="xref py py-attr docutils literal notranslate"><span class="pre">pagerduty.RestApiV2Client</span></code></a>
 should be used to access them.</p>
 <p>To access PagerDuty’s MCP interface, use <a class="reference internal" href="module_reference.html#pagerduty.McpApiClient" title="pagerduty.McpApiClient"><code class="xref py py-attr docutils literal notranslate"><span class="pre">pagerduty.McpApiClient</span></code></a>.</p>
+<p>The SCIM API should be accessed using <a class="reference internal" href="module_reference.html#pagerduty.ScimApiClient" title="pagerduty.ScimApiClient"><code class="xref py py-attr docutils literal notranslate"><span class="pre">pagerduty.ScimApiClient</span></code></a>.</p>
 <p>The “V1 Events API” is not supported.</p>
 <p>All “Events” and “Change Events” API actions should be carried out by
 <a class="reference internal" href="module_reference.html#pagerduty.EventsApiV2Client" title="pagerduty.EventsApiV2Client"><code class="xref py py-attr docutils literal notranslate"><span class="pre">pagerduty.EventsApiV2Client</span></code></a>.</p>
 <p>All “Integration” API actions should be carried out by an aptly-named client
-class, i.e. <code class="xref py py-attr docutils literal notranslate"><span class="pre">pagerduty.MsTeamsIntegrationApi</span></code> should be used to access
-API endpoints of the MS Teams Integration API. Note that there is a separate
-API client for Slack Connections API endpoints as distinct from the rest of the
-Slack Integration API; this is due in part to it requiring the use of a
-different server hostname.</p>
+class, i.e. <a class="reference internal" href="module_reference.html#pagerduty.MsTeamsIntegrationApiClient" title="pagerduty.MsTeamsIntegrationApiClient"><code class="xref py py-attr docutils literal notranslate"><span class="pre">pagerduty.MsTeamsIntegrationApiClient</span></code></a> should be used to
+access API endpoints of the MS Teams Integration API. Note that there is a
+separate API client for Slack Connections API endpoints as distinct from the
+rest of the Slack Integration API; this is due in part to it requiring the use
+of a different server hostname.</p>
 <p>To use PagerDuty’s OAuth interface, see “Performing an OAuth Exchange” below.</p>
 </section>
 <section id="clients-as-context-managers">
