@@ -57,17 +57,19 @@ should be used to access them.
 
 To access PagerDuty's MCP interface, use :attr:`pagerduty.McpApiClient`.
 
+The SCIM API should be accessed using :attr:`pagerduty.ScimApiClient`.
+
 The "V1 Events API" is not supported.
 
 All "Events" and "Change Events" API actions should be carried out by
 :attr:`pagerduty.EventsApiV2Client`.
 
 All "Integration" API actions should be carried out by an aptly-named client
-class, i.e. :attr:`pagerduty.MsTeamsIntegrationApi` should be used to access
-API endpoints of the MS Teams Integration API. Note that there is a separate
-API client for Slack Connections API endpoints as distinct from the rest of the
-Slack Integration API; this is due in part to it requiring the use of a
-different server hostname.
+class, i.e. :attr:`pagerduty.MsTeamsIntegrationApiClient` should be used to
+access API endpoints of the MS Teams Integration API. Note that there is a
+separate API client for Slack Connections API endpoints as distinct from the
+rest of the Slack Integration API; this is due in part to it requiring the use
+of a different server hostname.
 
 To use PagerDuty's OAuth interface, see "Performing an OAuth Exchange" below.
 
