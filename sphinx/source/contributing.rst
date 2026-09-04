@@ -111,7 +111,7 @@ Next, run the script:
 
     ./scripts/get_path_list/get_path_list.py [PATH-TO-REPOSITORY]/reference/v2/Index.yaml
 
-This sript will print definitions of the global variables ``CANONICAL_PATHS``
+This script will print definitions of the global variables ``CANONICAL_PATHS``
 and ``CURSOR_BASED_PAGINATION_PATHS`` for ``pagerduty/rest_api_v2_client.py``,
 i.e. that can be copied into the source code to replace the existing
 definitions.
