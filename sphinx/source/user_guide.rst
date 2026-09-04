@@ -276,7 +276,7 @@ and having them represented as a dictionary object using three different methods
         print(user['id'], user['email'], user['name'])
 
 **Pagination with query parameters:** set the ``params`` keyword argument, which is
-converted to URL query parameters by HTTPX_:
+converted to URL query parameters by HTTPX2_:
 
 .. code-block:: python
 
@@ -442,7 +442,7 @@ also are based on inherit the features of :class:`pagerduty.RestApiV2BaseClient`
 Generic Client Features
 -----------------------
 Generally, all of the features of `httpx2.Client`_ are available to the user
-as they would be if using the `HTTPX`_ Python library directly, since
+as they would be if using the `HTTP2X`_ Python library directly, since
 :class:`pagerduty.ApiClient` and its subclasses for the REST/Events APIs are
 descendants of it. 
 
@@ -458,11 +458,11 @@ The arguments they accept are the same and they all return `httpx2.Response`_
 objects.
 
 Any keyword arguments passed to the ``j*`` or ``r*`` methods will be passed
-through to the analogous method in HTTPX_, though in some cases the
+through to the analogous method in HTTPX2_, though in some cases the
 arguments (i.e. ``json``) are first modified.
 
 For documentation on any generic HTTP client features that are available, refer
-to the HTTPX_ documentation.
+to the HTTPX2_ documentation.
 
 URLs
 ----
@@ -483,7 +483,7 @@ value at its ``self`` key will be used as the request URL.
 
 Query Parameters
 ----------------
-As with `HTTPX`_, there is no need to compose the query string (everything
+As with `HTTPX2`_, there is no need to compose the query string (everything
 that will follow ``?`` in the URL). Simply set the ``params`` keyword argument
 to a dictionary, and each of the key/value pairs will be serialized to the
 query string in the final URL of the request:
@@ -540,7 +540,7 @@ will be the full body of the response from the API after JSON-decoding, and
 the ``json`` keyword argument is not modified.
 
 When using the ``r*`` methods, the ``json`` keyword argument is modified before
-sending to HTTPX_, if necessary, to encapsulate the body inside an entity
+sending to HTTPX2_, if necessary, to encapsulate the body inside an entity
 wrapper.  The response is the decoded body after unwrapping, if the API
 endpoint returns wrapped entities. For more details, refer to :ref:`wrapping`.
 

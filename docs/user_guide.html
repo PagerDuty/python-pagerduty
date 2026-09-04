@@ -358,7 +358,7 @@ and having them represented as a dictionary object using three different methods
 </pre></div>
 </div>
 <p><strong>Pagination with query parameters:</strong> set the <code class="docutils literal notranslate"><span class="pre">params</span></code> keyword argument, which is
-converted to URL query parameters by <a href="#id6"><span class="problematic" id="id7">HTTPX_</span></a>:</p>
+converted to URL query parameters by <a class="reference external" href="https://httpx2.pydantic.dev/">HTTPX2</a>:</p>
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="c1"># Get a list of all services with "SN" in their name:</span>
 <span class="n">services</span> <span class="o">=</span> <span class="n">client</span><span class="o">.</span><span class="n">list_all</span><span class="p">(</span><span class="s1">'services'</span><span class="p">,</span> <span class="n">params</span><span class="o">=</span><span class="p">{</span><span class="s1">'query'</span><span class="p">:</span> <span class="s1">'SN'</span><span class="p">})</span>
 
@@ -501,7 +501,7 @@ also are based on inherit the features of <a class="reference internal" href="mo
 <section id="generic-client-features">
 <h2>Generic Client Features<a class="headerlink" href="#generic-client-features" title="Link to this heading"></a></h2>
 <p>Generally, all of the features of <a class="reference external" href="https://httpx2.pydantic.dev/api/#client">httpx2.Client</a> are available to the user
-as they would be if using the <a href="#id8"><span class="problematic" id="id9">`HTTPX`_</span></a> Python library directly, since
+as they would be if using the <a href="#id6"><span class="problematic" id="id7">`HTTP2X`_</span></a> Python library directly, since
 <a class="reference internal" href="module_reference.html#pagerduty.ApiClient" title="pagerduty.ApiClient"><code class="xref py py-class docutils literal notranslate"><span class="pre">pagerduty.ApiClient</span></code></a> and its subclasses for the REST/Events APIs are
 descendants of it.</p>
 <p>Generally, all client classes pass along all keyword arguments at the end of
@@ -514,10 +514,10 @@ client classes are similar to the analogous functions in <a class="reference ext
 The arguments they accept are the same and they all return <a class="reference external" href="https://httpx2.pydantic.dev/api/#response">httpx2.Response</a>
 objects.</p>
 <p>Any keyword arguments passed to the <code class="docutils literal notranslate"><span class="pre">j*</span></code> or <code class="docutils literal notranslate"><span class="pre">r*</span></code> methods will be passed
-through to the analogous method in <a href="#id10"><span class="problematic" id="id11">HTTPX_</span></a>, though in some cases the
+through to the analogous method in <a class="reference external" href="https://httpx2.pydantic.dev/">HTTPX2</a>, though in some cases the
 arguments (i.e. <code class="docutils literal notranslate"><span class="pre">json</span></code>) are first modified.</p>
 <p>For documentation on any generic HTTP client features that are available, refer
-to the <a href="#id12"><span class="problematic" id="id13">HTTPX_</span></a> documentation.</p>
+to the <a class="reference external" href="https://httpx2.pydantic.dev/">HTTPX2</a> documentation.</p>
 </section>
 <section id="urls">
 <h2>URLs<a class="headerlink" href="#urls" title="Link to this heading"></a></h2>
@@ -536,7 +536,7 @@ value at its <code class="docutils literal notranslate"><span class="pre">self</
 </section>
 <section id="query-parameters">
 <h2>Query Parameters<a class="headerlink" href="#query-parameters" title="Link to this heading"></a></h2>
-<p>As with <a href="#id14"><span class="problematic" id="id15">`HTTPX`_</span></a>, there is no need to compose the query string (everything
+<p>As with <a class="reference external" href="https://httpx2.pydantic.dev/">HTTPX2</a>, there is no need to compose the query string (everything
 that will follow <code class="docutils literal notranslate"><span class="pre">?</span></code> in the URL). Simply set the <code class="docutils literal notranslate"><span class="pre">params</span></code> keyword argument
 to a dictionary, and each of the key/value pairs will be serialized to the
 query string in the final URL of the request:</p>
@@ -585,7 +585,7 @@ obtained:</p>
 will be the full body of the response from the API after JSON-decoding, and
 the <code class="docutils literal notranslate"><span class="pre">json</span></code> keyword argument is not modified.</p>
 <p>When using the <code class="docutils literal notranslate"><span class="pre">r*</span></code> methods, the <code class="docutils literal notranslate"><span class="pre">json</span></code> keyword argument is modified before
-sending to <a href="#id16"><span class="problematic" id="id17">HTTPX_</span></a>, if necessary, to encapsulate the body inside an entity
+sending to <a class="reference external" href="https://httpx2.pydantic.dev/">HTTPX2</a>, if necessary, to encapsulate the body inside an entity
 wrapper.  The response is the decoded body after unwrapping, if the API
 endpoint returns wrapped entities. For more details, refer to <a class="reference internal" href="#wrapping"><span class="std std-ref">Entity Wrapping</span></a>.</p>
 <section id="data-types">
