@@ -1,15 +1,8 @@
 # Core
 import functools
+from collections.abc import Callable, Iterator
 from copy import deepcopy
-from typing import (
-    Any,
-    Callable,
-    Iterator,
-    List,
-    Optional,
-    Tuple,
-    Union,
-)
+from typing import Any
 from warnings import warn
 
 # PyPI
@@ -18,7 +11,6 @@ from httpx2 import Response
 # Local
 from .api_client import ApiClient, normalize_url
 from .auth_method import AuthMethod, HeaderAuthMethod, PassThruHeaderAuthMethod
-
 from .common import (
     requires_success,
     singular_name,
@@ -63,7 +55,7 @@ variable parameter versus a literal substring of the path.
 
 
 def canonical_path(
-    paths: List[CanonicalPath], base_url: str, url: str
+    paths: list[CanonicalPath], base_url: str, url: str
 ) -> CanonicalPath:
     """
     The canonical path from the API documentation corresponding to a URL.
@@ -119,7 +111,7 @@ def canonical_path(
             return url_path
 
         # ...otherwise this is ambiguous.
-        raise Exception(
+        raise UrlError(
             f"Ambiguous URL {url} matches more than one "
             "canonical path pattern: "
             + ", ".join(patterns)
@@ -150,9 +142,8 @@ def endpoint_matches(
     :returns:
         True or False based on whether the pattern matches the endpoint
     """
-    return (
-        endpoint_pattern.startswith(method.upper())
-        or endpoint_pattern.startswith("*")
+    return endpoint_pattern.startswith(
+        (method.upper(), "*")
     ) and endpoint_pattern.endswith(f" {path}")
 
 
@@ -173,7 +164,7 @@ def is_path_param(path_node: str) -> bool:
 ###############################
 EntityWrapper = str
 
-EntityWrapping = Optional[EntityWrapper]
+EntityWrapping = EntityWrapper | None
 """
 Descriptive entity wrapping type.
 
@@ -184,7 +175,7 @@ ignored, i.e. send the user-supplied request body in the API request or return
 the response body without any modification.
 """
 
-EntityWrappingSpec = Tuple[EntityWrapping, EntityWrapping]
+EntityWrappingSpec = tuple[EntityWrapping, EntityWrapping]
 """
 Descriptive type for how entity wrapping is configured for an API endoint.
 
@@ -254,7 +245,7 @@ def entity_wrappers(
         )
         if wrapper is not None and type(wrapper) not in (tuple, str):
             # Catch-all for invalid types.
-            raise Exception(invalid_config_error)
+            raise UrlError(invalid_config_error)
         elif wrapper is None or type(wrapper) is str:
             # Both request and response have the same wrapping at this endpoint.
             return (wrapper, wrapper)
@@ -267,11 +258,11 @@ def entity_wrappers(
             # value should be encoded and decoded as-is without modifications.
             if False in [w is None or type(w) is str for w in wrapper]:
                 # One or both is neither a string nor None, which is invalid:
-                raise Exception(invalid_config_error)
+                raise UrlError(invalid_config_error)
             return wrapper
         else:
             # If a tuple but not of length 2, what are we doing here?
-            raise Exception(invalid_config_error)
+            raise UrlError(invalid_config_error)
     elif len(match) == 0:
         # Nothing in entity wrapper config matches. In this case it is assumed
         # that the endpoint follows classic API patterns and the wrapper name
@@ -280,7 +271,7 @@ def entity_wrappers(
         return (wrapper, wrapper)
     else:
         matches_str = ", ".join(match)
-        raise Exception(
+        raise UrlError(
             f"{endpoint} matches more than one pattern: "
             + f"{matches_str}; this is most likely a bug."
         )
@@ -323,7 +314,7 @@ def infer_entity_wrapper(method: str, path: CanonicalPath) -> EntityWrapper:
         return path_nodes[-1]
 
 
-def unwrap(response: Response, wrapper: EntityWrapping) -> Union[dict, list]:
+def unwrap(response: Response, wrapper: EntityWrapping) -> dict | list:
     """
     Unwraps a wrapped entity from a HTTP response.
 
@@ -556,9 +547,7 @@ class RestApiV2BaseClient(ApiClient):
         self.api_time = {}
         self.auth_type = auth_type
         auth_method = self._build_auth_method(api_key)
-        super(RestApiV2BaseClient, self).__init__(
-            auth_method, debug=debug, base_url=base_url, **kw
-        )
+        super().__init__(auth_method, debug=debug, base_url=base_url, **kw)
 
     def _build_auth_method(self, api_key: str) -> AuthMethod:
         """
@@ -621,7 +610,7 @@ class RestApiV2BaseClient(ApiClient):
         return canonical_path(self.canonical_paths, self.url, url)
 
     @property
-    def canonical_paths(self) -> List[CanonicalPath]:
+    def canonical_paths(self) -> list[CanonicalPath]:
         """
         List of canonical paths supported by the particular API client.
 
@@ -636,7 +625,7 @@ class RestApiV2BaseClient(ApiClient):
         return []
 
     @property
-    def cursor_based_pagination_paths(self) -> List[CanonicalPath]:
+    def cursor_based_pagination_paths(self) -> list[CanonicalPath]:
         """
         List of paths known by the client to support cursor-based pagination.
         """
@@ -704,7 +693,7 @@ class RestApiV2BaseClient(ApiClient):
         """
         return entity_wrappers(self.entity_wrapper_config, http_method, path)
 
-    def get_total(self, url: str, params: Optional[dict] = None) -> int:
+    def get_total(self, url: str, params: dict | None = None) -> int:
         """
         Gets the total count of records from a classic pagination index endpoint.
 
@@ -737,10 +726,10 @@ class RestApiV2BaseClient(ApiClient):
     def iter_all(
         self,
         url,
-        params: Optional[dict] = None,
-        page_size: Optional[int] = None,
-        item_hook: Optional[Callable[..., Any]] = None,
-        total: Optional[bool] = False,
+        params: dict | None = None,
+        page_size: int | None = None,
+        item_hook: Callable[..., Any] | None = None,
+        total: bool | None = False,
     ) -> Iterator[dict]:
         """
         Iterator for the contents of an index endpoint or query.
@@ -892,16 +881,16 @@ class RestApiV2BaseClient(ApiClient):
             for result in results:
                 n += 1
                 # Call a callable object for each item, i.e. to print progress:
-                if hasattr(item_hook, "__call__"):
+                if callable(item_hook):
                     item_hook(result, n, total_count)
                 yield result
 
     def iter_cursor(
         self,
         url: str,
-        params: Optional[dict] = None,
-        item_hook: Optional[Callable[..., Any]] = None,
-        page_size: Optional[int] = None,
+        params: dict | None = None,
+        item_hook: Callable[..., Any] | None = None,
+        page_size: int | None = None,
     ) -> Iterator[dict]:
         """
         Iterator for results from an endpoint using cursor-based pagination.
@@ -948,7 +937,7 @@ class RestApiV2BaseClient(ApiClient):
             results = unwrap(r, wrapper)
             for result in results:
                 total += 1
-                if hasattr(item_hook, "__call__"):
+                if callable(item_hook):
                     item_hook(result, total, "?")
                 yield result
 
@@ -958,7 +947,7 @@ class RestApiV2BaseClient(ApiClient):
 
     @resource_url
     @auto_json
-    def jget(self, url: Union[str, dict], **kw) -> Union[dict, list]:
+    def jget(self, url: str | dict, **kw) -> dict | list:
         """
         Performs a GET request, returning the JSON-decoded body as a dictionary
         """
@@ -966,7 +955,7 @@ class RestApiV2BaseClient(ApiClient):
 
     @resource_url
     @auto_json
-    def jpost(self, url: Union[str, dict], **kw) -> Union[dict, list]:
+    def jpost(self, url: str | dict, **kw) -> dict | list:
         """
         Performs a POST request, returning the JSON-decoded body
         """
@@ -974,7 +963,7 @@ class RestApiV2BaseClient(ApiClient):
 
     @resource_url
     @auto_json
-    def jput(self, url: Union[str, dict], **kw) -> Optional[Union[dict, list]]:
+    def jput(self, url: str | dict, **kw) -> dict | list | None:
         """
         Performs a PUT request, returning the JSON-decoded body
         """
@@ -992,7 +981,7 @@ class RestApiV2BaseClient(ApiClient):
         """
         return list(self.iter_all(url, **kw))
 
-    def postprocess(self, response: Response, suffix: Optional[str] = None):
+    def postprocess(self, response: Response, suffix: str | None = None):
         """
         Records performance information / request metadata about the API call.
 
@@ -1046,7 +1035,7 @@ class RestApiV2BaseClient(ApiClient):
 
     @resource_url
     @requires_success
-    def rdelete(self, resource: Union[str, dict], **kw) -> Response:
+    def rdelete(self, resource: str | dict, **kw) -> Response:
         """
         Delete a resource.
 
@@ -1061,7 +1050,7 @@ class RestApiV2BaseClient(ApiClient):
 
     @resource_url
     @wrapped_entities
-    def rget(self, resource: Union[str, dict], **kw) -> Union[dict, list]:
+    def rget(self, resource: str | dict, **kw) -> dict | list:
         """
         Wrapped-entity-aware GET function.
 
@@ -1080,7 +1069,7 @@ class RestApiV2BaseClient(ApiClient):
         return self.get(resource, **kw)
 
     @wrapped_entities
-    def rpost(self, path: str, **kw) -> Union[dict, list]:
+    def rpost(self, path: str, **kw) -> dict | list:
         """
         Wrapped-entity-aware POST function.
 
@@ -1098,9 +1087,7 @@ class RestApiV2BaseClient(ApiClient):
 
     @resource_url
     @wrapped_entities
-    def rput(
-        self, resource: Union[str, dict], **kw
-    ) -> Optional[Union[dict, list]]:
+    def rput(self, resource: str | dict, **kw) -> dict | list | None:
         """
         Wrapped-entity-aware PUT function.
 

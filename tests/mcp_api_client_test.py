@@ -3,6 +3,7 @@ import unittest
 from unittest.mock import patch
 
 from mocks import Response
+
 from pagerduty import ApiClient, McpApiClient, TokenAuthMethod
 
 

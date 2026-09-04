@@ -1,4 +1,3 @@
-from typing import Optional
 import uuid
 
 from .api_client import ApiClient
@@ -34,13 +33,11 @@ class McpApiClient(ApiClient):
     def __init__(
         self, auth_method: AuthMethod, debug=False, base_url=None, **kw
     ):
-        super(McpApiClient, self).__init__(
-            auth_method, debug=debug, base_url=base_url, **kw
-        )
+        super().__init__(auth_method, debug=debug, base_url=base_url, **kw)
         self.headers.update({"Accept": "application/json, text/event-stream"})
 
     def call(
-        self, method: str, params: Optional[dict] = None, req_id=None
+        self, method: str, params: dict | None = None, req_id=None
     ) -> dict:
         """
         Make a JSON-RPC request to the MCP API.

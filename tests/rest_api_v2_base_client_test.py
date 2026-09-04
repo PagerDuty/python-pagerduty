@@ -11,16 +11,16 @@ antipatterns in new APIs that need special-case support.
 import copy
 import datetime
 import json
-import httpx2
 import sys
 import unittest
 from datetime import timezone
-from unittest.mock import MagicMock, patch, call
+from unittest.mock import MagicMock, call, patch
+
+import httpx2
+from common_test import ClientTest, Response
 
 import pagerduty
 import pagerduty.rest_api_v2_base_client
-from common_test import ClientTest, Response
-
 from pagerduty.rest_api_v2_client import CANONICAL_PATHS, ENTITY_WRAPPER_CONFIG
 
 

@@ -4,6 +4,7 @@ import unittest.mock
 from unittest.mock import patch
 
 from mocks import Response
+
 from pagerduty import ApiClient, ScimApiClient, TokenAuthMethod
 
 

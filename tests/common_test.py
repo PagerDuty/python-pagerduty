@@ -15,7 +15,6 @@ from datetime import timezone
 
 from mocks import Response
 
-
 import pagerduty
 from pagerduty import common
 
@@ -35,7 +34,7 @@ class ClientTest(unittest.TestCase):
             msg=f"First dict (keys={d0_keys}) is not a subset of second dict "
             f"(keys={d1_keys})",
         )
-        self.assertEqual(d0, dict([(k, d1[k]) for k in d0]))
+        self.assertEqual(d0, {k: d1[k] for k in d0})
 
     def assertDictContainsCaseInsensitiveSubset(self, d0, d1):
         self.assertDictContainsSubset(
@@ -52,10 +51,22 @@ class CommonTest(unittest.TestCase):
     def test_datetime_intervals(self):
         # Fall back to 1s / no. of seconds for intervals if the interval is too short
         start = datetime.datetime(
-            year=2025, month=7, day=1, hour=0, minute=0, second=0
+            year=2025,
+            month=7,
+            day=1,
+            hour=0,
+            minute=0,
+            second=0,
+            tzinfo=timezone.utc,
         )
         end = datetime.datetime(
-            year=2025, month=7, day=1, hour=0, minute=0, second=3
+            year=2025,
+            month=7,
+            day=1,
+            hour=0,
+            minute=0,
+            second=3,
+            tzinfo=timezone.utc,
         )
         intervals = pagerduty.common.datetime_intervals(start, end)
         # The start and end must line up with the original arguments:
@@ -66,7 +77,13 @@ class CommonTest(unittest.TestCase):
             self.assertEqual(1, int((intl_end - intl_start).total_seconds()))
         # If the interval cannot be evenly divided among sub-intervals:
         end = datetime.datetime(
-            year=2025, month=7, day=1, hour=0, minute=1, second=0
+            year=2025,
+            month=7,
+            day=1,
+            hour=0,
+            minute=1,
+            second=0,
+            tzinfo=timezone.utc,
         )
         intervals = pagerduty.common.datetime_intervals(start, end, n=7)
         # There should be the specified number of intervals:

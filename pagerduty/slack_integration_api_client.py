@@ -1,10 +1,8 @@
-from typing import List
-
 from .rest_api_v2_base_client import CanonicalPath, RestApiV2BaseClient
 
 CANONICAL_PATHS = [
-    "/incidents/{incident_id}/dedicated_channel"
-    "/incidents/{incident_id}/notification_channels"
+    "/incidents/{incident_id}/dedicated_channel",
+    "/incidents/{incident_id}/notification_channels",
 ]
 
 ENTITY_WRAPPER_CONFIG = {
@@ -34,9 +32,7 @@ class SlackIntegrationApiClient(RestApiV2BaseClient):
     def __init__(
         self, api_key: str, auth_type: str = "token", debug: bool = False
     ):
-        super(SlackIntegrationApiClient, self).__init__(
-            api_key, auth_type=auth_type, debug=debug
-        )
+        super().__init__(api_key, auth_type=auth_type, debug=debug)
         self.headers.update(
             {
                 "Accept": "application/json",
@@ -44,7 +40,7 @@ class SlackIntegrationApiClient(RestApiV2BaseClient):
         )
 
     @property
-    def canonical_paths(self) -> List[CanonicalPath]:
+    def canonical_paths(self) -> list[CanonicalPath]:
         return CANONICAL_PATHS
 
     @property

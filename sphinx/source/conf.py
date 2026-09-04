@@ -1,5 +1,3 @@
-# -*- coding: utf-8 -*-
-
 # -- Path setup --------------------------------------------------------------
 import os
 import sys
@@ -7,10 +5,10 @@ import sys
 sys.path.insert(
     0, os.path.abspath(os.path.join(os.path.dirname(__file__), "..", ".."))
 )
-from pagerduty import __version__
-
 # -- Project information -----------------------------------------------------
 import datetime
+
+from pagerduty import __version__
 
 year = datetime.datetime.now(datetime.UTC).year
 project = "python-pagerduty"

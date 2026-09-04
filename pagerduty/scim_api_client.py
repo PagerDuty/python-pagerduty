@@ -1,5 +1,3 @@
-from typing import List, Optional
-
 from .api_client import ApiClient
 from .common import successful_response, try_decoding
 
@@ -49,10 +47,10 @@ class ScimApiClient(ApiClient):
 
     def list_users(
         self,
-        fltr: Optional[str] = None,
+        fltr: str | None = None,
         start_index: int = 1,
         page_size: int = 100,
-    ) -> List[dict]:
+    ) -> list[dict]:
         """
         List all users using SCIM API with automatic pagination.
 

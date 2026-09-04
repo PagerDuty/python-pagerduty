@@ -41,7 +41,12 @@ line-length = 79
 
 [tool.ruff.lint]
 ignore = [
-  "E731" # In the author's opinion it is sometimes clearer to assign lambdas to variables than define nested functions
+  "E731", # In the author's opinion it is sometimes clearer to assign lambdas to variables than define nested functions
+  "TRY004", # TODO: changing ValueError -> TypeError would be a breaking change (it breaks downstream exception handling) so it is left for a future major version update
+  "RUF012", # TODO: getter/setter/etc for ApiClient.retry
+  "UP031", # TODO: switch to format strings everywhere now that they are fully supported in all Python versions
+  "DTZ007", # This rule misfires (pagerduty.common.DATETIME_FMT DOES in fact contain %z despite the warning)
+  "YTT204", # TODO: for Python 4 compatibility (comparison in pagerduty.version.get_version)
 ]
 
 [tool.uv.build-backend]

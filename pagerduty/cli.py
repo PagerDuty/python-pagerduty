@@ -50,20 +50,15 @@ def run(argv):
         dedup_key = client.trigger(
             args.description, args.source, dedup_key=args.dedup_key
         )
-        print(
-            f"Alert triggered successfully. Deduplication key: {dedup_key}"
-        )
+        print(f"Alert triggered successfully. Deduplication key: {dedup_key}")
 
     elif args.action == "acknowledge":
         if not args.dedup_key:
-            parser.error(
-                "-i/--dedup-key is required for acknowledge action"
-            )
+            parser.error("-i/--dedup-key is required for acknowledge action")
 
         dedup_key = client.acknowledge(args.dedup_key)
         print(
-            "Alert acknowledged successfully. Deduplication key: "
-            + dedup_key
+            "Alert acknowledged successfully. Deduplication key: " + dedup_key
         )
 
     elif args.action == "resolve":
@@ -71,9 +66,7 @@ def run(argv):
             parser.error("-i/--dedup-key is required for resolve action")
 
         dedup_key = client.resolve(args.dedup_key)
-        print(
-            f"Alert resolved successfully. Deduplication key: {dedup_key}"
-        )
+        print(f"Alert resolved successfully. Deduplication key: {dedup_key}")
 
 
 def main():

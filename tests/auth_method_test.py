@@ -16,12 +16,12 @@ def AuthMethodTest(AuthMethodBaseTest):
     def test_auth_header(self):
         am = self.new_auth_method()
         with self.assertRaises(NotImplementedError):
-            am.auth_header
+            am.auth_header  # noqa: B018
 
     def test_auth_param(self):
         am = self.new_auth_method()
         with self.assertRaises(NotImplementedError):
-            am.auth_param
+            am.auth_param  # noqa: B018
 
 
 class HeaderAuthMethodTest(AuthMethodBaseTest):

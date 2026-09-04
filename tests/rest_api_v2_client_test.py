@@ -1,18 +1,16 @@
 import datetime
 import json
 from datetime import timezone
-from typing import Optional
 from unittest.mock import patch
 
 from common_test import ClientTest
 from mocks import Response
 
-
 import pagerduty
 from pagerduty.rest_api_v2_base_client import OAuthTokenAuthMethod
 
 
-def page_alert_grouping_settings(after: Optional[str], limit: int) -> str:
+def page_alert_grouping_settings(after: str | None, limit: int) -> str:
     """
     Generate a dummy page for testing alert grouping settings API's special pagination
     """

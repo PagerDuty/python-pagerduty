@@ -1,5 +1,3 @@
-from typing import List
-
 from .rest_api_v2_base_client import CanonicalPath, RestApiV2BaseClient
 
 CANONICAL_PATHS = ["/incidents/{incident_id}/meeting"]
@@ -32,7 +30,7 @@ class MsTeamsIntegrationApiClient(RestApiV2BaseClient):
     """
 
     def __init__(self, api_key: str, debug: bool = False, base_url=None, **kw):
-        super(MsTeamsIntegrationApiClient, self).__init__(
+        super().__init__(
             api_key, auth_type="token", debug=debug, base_url=base_url, **kw
         )
         self.headers.update(
@@ -42,7 +40,7 @@ class MsTeamsIntegrationApiClient(RestApiV2BaseClient):
         )
 
     @property
-    def canonical_paths(self) -> List[CanonicalPath]:
+    def canonical_paths(self) -> list[CanonicalPath]:
         return CANONICAL_PATHS
 
     @property
