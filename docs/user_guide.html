@@ -6,16 +6,16 @@
   <meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" />
 
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>User Guide &mdash; python-pagerduty 6.0.0 documentation</title>
+  <title>User Guide &mdash; python-pagerduty 7.0.1 documentation</title>
       <link rel="stylesheet" type="text/css" href="_static/pygments.css?v=03e43079" />
-      <link rel="stylesheet" type="text/css" href="_static/css/theme.css?v=e59714d7" />
+      <link rel="stylesheet" type="text/css" href="_static/css/theme.css?v=9edc463e" />
 
   
       <script src="_static/jquery.js?v=5d32c60e"></script>
       <script src="_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
-      <script src="_static/documentation_options.js?v=12958129"></script>
-      <script src="_static/doctools.js?v=9bcbadda"></script>
-      <script src="_static/sphinx_highlight.js?v=dc90522c"></script>
+      <script src="_static/documentation_options.js?v=4b9d3a76"></script>
+      <script src="_static/doctools.js?v=fd6eb6e6"></script>
+      <script src="_static/sphinx_highlight.js?v=6ffebe34"></script>
     <script src="_static/js/theme.js"></script>
     <link rel="index" title="Index" href="genindex.html" />
     <link rel="search" title="Search" href="search.html" />
@@ -138,7 +138,7 @@ has in-depth documentation on client classes and methods.</p>
 <h2>Command Line Interface<a class="headerlink" href="#command-line-interface" title="Link to this heading"></a></h2>
 <p>This package also includes a basic CLI for PagerDuty Events API V2. For
 example, to trigger an incident:</p>
-<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>pagerduty<span class="w"> </span>trigger<span class="w"> </span>-k<span class="w"> </span><span class="nv">$ROUTING_KEY</span><span class="w"> </span>--description<span class="w"> </span><span class="s2">&quot;Network latency is high&quot;</span>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>pagerduty<span class="w"> </span>trigger<span class="w"> </span>-k<span class="w"> </span><span class="nv">$ROUTING_KEY</span><span class="w"> </span>--description<span class="w"> </span><span class="s2">"Network latency is high"</span>
 </pre></div>
 </div>
 <p>For more details, use the <code class="docutils literal notranslate"><span class="pre">-h</span></code> flag to display the script’s helptext.</p>
@@ -153,8 +153,8 @@ constructor is the secret to use for accessing the API:</p>
 <span class="n">client</span> <span class="o">=</span> <span class="n">pagerduty</span><span class="o">.</span><span class="n">RestApiV2Client</span><span class="p">(</span><span class="n">API_KEY</span><span class="p">)</span>
 
 <span class="c1"># REST API v2 with an OAuth2 access token (both are equivalent)</span>
-<span class="n">client_oauth</span> <span class="o">=</span> <span class="n">pagerduty</span><span class="o">.</span><span class="n">RestApiV2Client</span><span class="p">(</span><span class="n">OAUTH_TOKEN</span><span class="p">,</span> <span class="n">auth_type</span><span class="o">=</span><span class="s1">&#39;oauth2&#39;</span><span class="p">)</span>
-<span class="n">client_oauth</span> <span class="o">=</span> <span class="n">pagerduty</span><span class="o">.</span><span class="n">RestApiV2Client</span><span class="p">(</span><span class="n">OAUTH_TOKEN</span><span class="p">,</span> <span class="n">auth_type</span><span class="o">=</span><span class="s1">&#39;bearer&#39;</span><span class="p">)</span>
+<span class="n">client_oauth</span> <span class="o">=</span> <span class="n">pagerduty</span><span class="o">.</span><span class="n">RestApiV2Client</span><span class="p">(</span><span class="n">OAUTH_TOKEN</span><span class="p">,</span> <span class="n">auth_type</span><span class="o">=</span><span class="s1">'oauth2'</span><span class="p">)</span>
+<span class="n">client_oauth</span> <span class="o">=</span> <span class="n">pagerduty</span><span class="o">.</span><span class="n">RestApiV2Client</span><span class="p">(</span><span class="n">OAUTH_TOKEN</span><span class="p">,</span> <span class="n">auth_type</span><span class="o">=</span><span class="s1">'bearer'</span><span class="p">)</span>
 
 <span class="c1"># Events API v2, including change events:</span>
 <span class="n">events_client</span> <span class="o">=</span> <span class="n">pagerduty</span><span class="o">.</span><span class="n">EventsApiV2Client</span><span class="p">(</span><span class="n">ROUTING_KEY</span><span class="p">)</span>
@@ -172,7 +172,7 @@ context managers. For example:</p>
 <a class="reference internal" href="module_reference.html#pagerduty.RestApiV2Client.default_from" title="pagerduty.RestApiV2Client.default_from"><code class="xref py py-attr docutils literal notranslate"><span class="pre">pagerduty.RestApiV2Client.default_from</span></code></a> property, either directly or
 through the <code class="docutils literal notranslate"><span class="pre">default_from</span></code> keyword argument when instantiating the client
 object:</p>
-<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">client</span> <span class="o">=</span> <span class="n">pagerduty</span><span class="o">.</span><span class="n">RestApiV2Client</span><span class="p">(</span><span class="n">API_KEY</span><span class="p">,</span> <span class="n">default_from</span><span class="o">=</span><span class="s2">&quot;admin@example.com&quot;</span><span class="p">)</span>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">client</span> <span class="o">=</span> <span class="n">pagerduty</span><span class="o">.</span><span class="n">RestApiV2Client</span><span class="p">(</span><span class="n">API_KEY</span><span class="p">,</span> <span class="n">default_from</span><span class="o">=</span><span class="s2">"admin@example.com"</span><span class="p">)</span>
 </pre></div>
 </div>
 <p>If using an account-level API key, created by an administrator via the “API
@@ -203,7 +203,7 @@ require a client ID. In these examples the client uses a dummy secret. That is
 because the secret is not used to generate the authorize URL. If a client
 object already exists in this context and it has the secret, it can still be
 used.</p>
-<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">dummy_secret</span> <span class="o">=</span> <span class="s2">&quot;randomly-generated&quot;</span>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">dummy_secret</span> <span class="o">=</span> <span class="s2">"randomly-generated"</span>
 <span class="n">client</span> <span class="o">=</span> <span class="n">pagerduty</span><span class="o">.</span><span class="n">OAuthTokenClient</span><span class="p">(</span><span class="n">dummy_secret</span><span class="p">,</span> <span class="n">client_id</span><span class="p">)</span>
 <span class="n">authorize_url</span> <span class="o">=</span> <span class="n">client</span><span class="o">.</span><span class="n">authorize_url</span><span class="p">(</span><span class="n">scope</span><span class="p">,</span> <span class="n">redirect_uri</span><span class="p">)</span>
 </pre></div>
@@ -230,8 +230,8 @@ it contains can then be exchanged for an access token in one of the following wa
 <span class="p">)</span>
 
 <span class="c1"># the dictionary it returns in either case can then be used as follows:</span>
-<span class="n">access_token</span> <span class="o">=</span> <span class="n">auth_response</span><span class="p">[</span><span class="s1">&#39;access_token&#39;</span><span class="p">]</span>
-<span class="n">refresh_token</span> <span class="o">=</span> <span class="n">auth_response</span><span class="p">[</span><span class="s1">&#39;refresh_token&#39;</span><span class="p">]</span>
+<span class="n">access_token</span> <span class="o">=</span> <span class="n">auth_response</span><span class="p">[</span><span class="s1">'access_token'</span><span class="p">]</span>
+<span class="n">refresh_token</span> <span class="o">=</span> <span class="n">auth_response</span><span class="p">[</span><span class="s1">'refresh_token'</span><span class="p">]</span>
 </pre></div>
 </div>
 </section>
@@ -259,9 +259,9 @@ token as necessary.</p>
 <span class="c1"># other token-getting methods:</span>
 <span class="k">if</span> <span class="nb">type</span><span class="p">(</span><span class="n">auth_response</span><span class="p">)</span> <span class="ow">is</span> <span class="nb">dict</span><span class="p">:</span>
     <span class="n">securely_store_values</span><span class="p">(</span>
-        <span class="n">access_token</span> <span class="o">=</span> <span class="n">auth_response</span><span class="p">[</span><span class="s1">&#39;access_token&#39;</span><span class="p">],</span>
-        <span class="n">refresh_token</span> <span class="o">=</span> <span class="n">auth_response</span><span class="p">[</span><span class="s1">&#39;refresh_token&#39;</span><span class="p">],</span>
-        <span class="n">expiration_date</span> <span class="o">=</span> <span class="n">auth_response</span><span class="p">[</span><span class="s1">&#39;expiration_date&#39;</span><span class="p">]</span>
+        <span class="n">access_token</span> <span class="o">=</span> <span class="n">auth_response</span><span class="p">[</span><span class="s1">'access_token'</span><span class="p">],</span>
+        <span class="n">refresh_token</span> <span class="o">=</span> <span class="n">auth_response</span><span class="p">[</span><span class="s1">'refresh_token'</span><span class="p">],</span>
+        <span class="n">expiration_date</span> <span class="o">=</span> <span class="n">auth_response</span><span class="p">[</span><span class="s1">'expiration_date'</span><span class="p">]</span>
     <span class="p">)</span>
 </pre></div>
 </div>
@@ -279,9 +279,9 @@ before using the token:</p>
 <span class="kn">from</span><span class="w"> </span><span class="nn">pagerduty.common</span><span class="w"> </span><span class="kn">import</span> <span class="n">datetime_to_relative_seconds</span> <span class="k">as</span> <span class="n">rel_seconds</span>
 <span class="k">if</span> <span class="n">rel_seconds</span><span class="p">(</span><span class="n">expiration_date</span><span class="p">)</span> <span class="o">&lt;</span> <span class="mi">86400</span><span class="p">:</span>
     <span class="n">auth</span> <span class="o">=</span> <span class="n">token_client</span><span class="o">.</span><span class="n">get_refreshed_token</span><span class="p">(</span><span class="n">refresh_token</span><span class="p">)</span>
-    <span class="n">access_token</span> <span class="o">=</span> <span class="n">auth</span><span class="p">[</span><span class="s1">&#39;access_token&#39;</span><span class="p">]</span>
-    <span class="n">refresh_token</span> <span class="o">=</span> <span class="n">auth</span><span class="p">[</span><span class="s1">&#39;refresh_token&#39;</span><span class="p">]</span>
-    <span class="n">expiration_date</span> <span class="o">=</span> <span class="n">auth</span><span class="p">[</span><span class="s1">&#39;expiration_date&#39;</span><span class="p">]</span>
+    <span class="n">access_token</span> <span class="o">=</span> <span class="n">auth</span><span class="p">[</span><span class="s1">'access_token'</span><span class="p">]</span>
+    <span class="n">refresh_token</span> <span class="o">=</span> <span class="n">auth</span><span class="p">[</span><span class="s1">'refresh_token'</span><span class="p">]</span>
+    <span class="n">expiration_date</span> <span class="o">=</span> <span class="n">auth</span><span class="p">[</span><span class="s1">'expiration_date'</span><span class="p">]</span>
 <span class="c1"># API clients can now be constructed with access_token;</span>
 <span class="c1"># stored values of refresh_token and expiration_date must be updated</span>
 </pre></div>
@@ -299,32 +299,32 @@ only on the service region, but also the particular API in use.</p>
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="c1"># REST API</span>
 <span class="n">client</span> <span class="o">=</span> <span class="n">pagerduty</span><span class="o">.</span><span class="n">RestApiV2Client</span><span class="p">(</span>
     <span class="n">API_KEY</span><span class="p">,</span>
-    <span class="n">base_url</span> <span class="o">=</span> <span class="s2">&quot;https://api.eu.pagerduty.com&quot;</span>
+    <span class="n">base_url</span> <span class="o">=</span> <span class="s2">"https://api.eu.pagerduty.com"</span>
 <span class="p">)</span>
 <span class="c1"># The following also works:</span>
 <span class="n">client</span> <span class="o">=</span> <span class="n">pagerduty</span><span class="o">.</span><span class="n">RestApiV2Client</span><span class="p">(</span><span class="n">API_KEY</span><span class="p">)</span>
-<span class="n">client</span><span class="o">.</span><span class="n">url</span> <span class="o">=</span> <span class="s2">&quot;https://api.eu.pagerduty.com&quot;</span>
+<span class="n">client</span><span class="o">.</span><span class="n">url</span> <span class="o">=</span> <span class="s2">"https://api.eu.pagerduty.com"</span>
 </pre></div>
 </div>
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="c1"># Events API:</span>
 <span class="n">events_client</span> <span class="o">=</span> <span class="n">pagerduty</span><span class="o">.</span><span class="n">EventsApiClient</span><span class="p">(</span>
     <span class="n">API_KEY</span><span class="p">,</span>
-    <span class="n">base_url</span> <span class="o">=</span> <span class="s2">&quot;https://events.eu.pagerduty.com&quot;</span>
+    <span class="n">base_url</span> <span class="o">=</span> <span class="s2">"https://events.eu.pagerduty.com"</span>
 <span class="p">)</span>
 <span class="c1"># Or:</span>
 <span class="n">events_client</span> <span class="o">=</span> <span class="n">pagerduty</span><span class="o">.</span><span class="n">EventsApiClient</span><span class="p">(</span><span class="n">API_KEY</span><span class="p">)</span>
-<span class="n">events_client</span><span class="o">.</span><span class="n">url</span> <span class="o">=</span> <span class="s1">&#39;https://events.eu.pagerduty.com&#39;</span>
+<span class="n">events_client</span><span class="o">.</span><span class="n">url</span> <span class="o">=</span> <span class="s1">'https://events.eu.pagerduty.com'</span>
 </pre></div>
 </div>
-<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="c1"># Slack Integration &quot;Connections&quot; API (and likewise for other</span>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="c1"># Slack Integration "Connections" API (and likewise for other</span>
 <span class="c1"># APIs that use apps.pagerduty.com and/or some unique base path)</span>
 <span class="n">slack_conn_client</span> <span class="o">=</span> <span class="n">pagerduty</span><span class="o">.</span><span class="n">SlackIntegrationConnectionsApiClients</span><span class="p">(</span>
     <span class="n">API_KEY</span><span class="p">,</span>
-    <span class="n">base_url</span> <span class="o">=</span> <span class="s2">&quot;https://apps.eu.pagerduty.com/integration-slack&quot;</span>
+    <span class="n">base_url</span> <span class="o">=</span> <span class="s2">"https://apps.eu.pagerduty.com/integration-slack"</span>
 <span class="p">)</span>
 <span class="c1"># Or:</span>
 <span class="n">slack_conn_client</span> <span class="o">=</span> <span class="n">pagerduty</span><span class="o">.</span><span class="n">SlackIntegrationConnectionsApiClients</span><span class="p">(</span><span class="n">API_KEY</span><span class="p">)</span>
-<span class="n">slack_conn_client</span><span class="o">.</span><span class="n">url</span> <span class="o">=</span> <span class="s2">&quot;https://apps.eu.pagerduty.com/integration-slack&quot;</span>
+<span class="n">slack_conn_client</span><span class="o">.</span><span class="n">url</span> <span class="o">=</span> <span class="s2">"https://apps.eu.pagerduty.com/integration-slack"</span>
 </pre></div>
 </div>
 </section>
@@ -335,81 +335,81 @@ only on the service region, but also the particular API in use.</p>
 <p><strong>Making a request and decoding the response:</strong> obtaining a resource’s contents
 and having them represented as a dictionary object using three different methods:</p>
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="c1"># Using get:</span>
-<span class="n">response</span> <span class="o">=</span> <span class="n">client</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;/users/PABC123&#39;</span><span class="p">)</span>
+<span class="n">response</span> <span class="o">=</span> <span class="n">client</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">'/users/PABC123'</span><span class="p">)</span>
 <span class="n">user</span> <span class="o">=</span> <span class="kc">None</span>
 <span class="k">if</span> <span class="n">response</span><span class="o">.</span><span class="n">is_success</span><span class="p">:</span>
-    <span class="n">user</span> <span class="o">=</span> <span class="n">response</span><span class="o">.</span><span class="n">json</span><span class="p">()[</span><span class="s1">&#39;user&#39;</span><span class="p">]</span>
+    <span class="n">user</span> <span class="o">=</span> <span class="n">response</span><span class="o">.</span><span class="n">json</span><span class="p">()[</span><span class="s1">'user'</span><span class="p">]</span>
 
 <span class="c1"># Using jget (return the full body after decoding):</span>
-<span class="n">user</span> <span class="o">=</span> <span class="n">client</span><span class="o">.</span><span class="n">jget</span><span class="p">(</span><span class="s1">&#39;/users/PABC123&#39;</span><span class="p">)[</span><span class="s1">&#39;user&#39;</span><span class="p">]</span>
+<span class="n">user</span> <span class="o">=</span> <span class="n">client</span><span class="o">.</span><span class="n">jget</span><span class="p">(</span><span class="s1">'/users/PABC123'</span><span class="p">)[</span><span class="s1">'user'</span><span class="p">]</span>
 
 <span class="c1"># Using rget (return the response entity after unwrapping):</span>
-<span class="n">user</span> <span class="o">=</span> <span class="n">client</span><span class="o">.</span><span class="n">rget</span><span class="p">(</span><span class="s1">&#39;/users/PABC123&#39;</span><span class="p">)</span>
+<span class="n">user</span> <span class="o">=</span> <span class="n">client</span><span class="o">.</span><span class="n">rget</span><span class="p">(</span><span class="s1">'/users/PABC123'</span><span class="p">)</span>
 
 <span class="c1"># &gt;&gt;&gt; user</span>
-<span class="c1"># {&quot;type&quot;: &quot;user&quot;, &quot;email&quot;: &quot;user@example.com&quot;, ... }</span>
+<span class="c1"># {"type": "user", "email": "user@example.com", ... }</span>
 </pre></div>
 </div>
 <p><strong>Using pagination:</strong> <code class="docutils literal notranslate"><span class="pre">iter_all</span></code>, <code class="docutils literal notranslate"><span class="pre">iter_cursor</span></code>, <code class="docutils literal notranslate"><span class="pre">list_all</span></code> and
 <code class="docutils literal notranslate"><span class="pre">dict_all</span></code> can be used to obtain results from a resource collection:</p>
-<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="c1"># Print each user&#39;s email address and name:</span>
-<span class="k">for</span> <span class="n">user</span> <span class="ow">in</span> <span class="n">client</span><span class="o">.</span><span class="n">iter_all</span><span class="p">(</span><span class="s1">&#39;users&#39;</span><span class="p">):</span>
-    <span class="nb">print</span><span class="p">(</span><span class="n">user</span><span class="p">[</span><span class="s1">&#39;id&#39;</span><span class="p">],</span> <span class="n">user</span><span class="p">[</span><span class="s1">&#39;email&#39;</span><span class="p">],</span> <span class="n">user</span><span class="p">[</span><span class="s1">&#39;name&#39;</span><span class="p">])</span>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="c1"># Print each user's email address and name:</span>
+<span class="k">for</span> <span class="n">user</span> <span class="ow">in</span> <span class="n">client</span><span class="o">.</span><span class="n">iter_all</span><span class="p">(</span><span class="s1">'users'</span><span class="p">):</span>
+    <span class="nb">print</span><span class="p">(</span><span class="n">user</span><span class="p">[</span><span class="s1">'id'</span><span class="p">],</span> <span class="n">user</span><span class="p">[</span><span class="s1">'email'</span><span class="p">],</span> <span class="n">user</span><span class="p">[</span><span class="s1">'name'</span><span class="p">])</span>
 </pre></div>
 </div>
 <p><strong>Pagination with query parameters:</strong> set the <code class="docutils literal notranslate"><span class="pre">params</span></code> keyword argument, which is
-converted to URL query parameters by <a href="#id6"><span class="problematic" id="id7">HTTPX_</span></a>:</p>
-<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="c1"># Get a list of all services with &quot;SN&quot; in their name:</span>
-<span class="n">services</span> <span class="o">=</span> <span class="n">client</span><span class="o">.</span><span class="n">list_all</span><span class="p">(</span><span class="s1">&#39;services&#39;</span><span class="p">,</span> <span class="n">params</span><span class="o">=</span><span class="p">{</span><span class="s1">&#39;query&#39;</span><span class="p">:</span> <span class="s1">&#39;SN&#39;</span><span class="p">})</span>
+converted to URL query parameters by <a class="reference external" href="https://httpx2.pydantic.dev/">HTTPX2</a>:</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="c1"># Get a list of all services with "SN" in their name:</span>
+<span class="n">services</span> <span class="o">=</span> <span class="n">client</span><span class="o">.</span><span class="n">list_all</span><span class="p">(</span><span class="s1">'services'</span><span class="p">,</span> <span class="n">params</span><span class="o">=</span><span class="p">{</span><span class="s1">'query'</span><span class="p">:</span> <span class="s1">'SN'</span><span class="p">})</span>
 
 <span class="c1"># &gt;&gt;&gt; services</span>
-<span class="c1"># [{&#39;type&#39;:&#39;service&#39;, ...}, ...]</span>
+<span class="c1"># [{'type':'service', ...}, ...]</span>
 </pre></div>
 </div>
 <p><strong>Searching resource collections:</strong> use <code class="docutils literal notranslate"><span class="pre">find</span></code> to look up a resource (a user,
 in this example) exactly matching a string using the <code class="docutils literal notranslate"><span class="pre">query</span></code> parameter on an
 index endpoint:</p>
-<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="c1"># Find the user with email address &quot;jane@example35.com&quot;</span>
-<span class="n">user</span> <span class="o">=</span> <span class="n">client</span><span class="o">.</span><span class="n">find</span><span class="p">(</span><span class="s1">&#39;users&#39;</span><span class="p">,</span> <span class="s1">&#39;jane@example35.com&#39;</span><span class="p">,</span> <span class="n">attribute</span><span class="o">=</span><span class="s1">&#39;email&#39;</span><span class="p">)</span>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="c1"># Find the user with email address "jane@example35.com"</span>
+<span class="n">user</span> <span class="o">=</span> <span class="n">client</span><span class="o">.</span><span class="n">find</span><span class="p">(</span><span class="s1">'users'</span><span class="p">,</span> <span class="s1">'jane@example35.com'</span><span class="p">,</span> <span class="n">attribute</span><span class="o">=</span><span class="s1">'email'</span><span class="p">)</span>
 
 <span class="c1"># &gt;&gt;&gt; user</span>
-<span class="c1"># {&#39;type&#39;: &#39;user&#39;, &#39;email&#39;: &#39;jane@example35.com&#39;, ...}</span>
+<span class="c1"># {'type': 'user', 'email': 'jane@example35.com', ...}</span>
 </pre></div>
 </div>
 <p><strong>Getting a count of records:</strong> use <code class="docutils literal notranslate"><span class="pre">get_total</span></code> on any endpoint
 that supports classic pagination:</p>
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="c1"># Get the total number of users in the whole account:</span>
-<span class="n">total_users</span> <span class="o">=</span> <span class="n">client</span><span class="o">.</span><span class="n">get_total</span><span class="p">(</span><span class="s1">&#39;users&#39;</span><span class="p">)</span>
+<span class="n">total_users</span> <span class="o">=</span> <span class="n">client</span><span class="o">.</span><span class="n">get_total</span><span class="p">(</span><span class="s1">'users'</span><span class="p">)</span>
 
 <span class="c1"># Get the total number of users on a given team:</span>
 <span class="n">total_users_on_team_x</span> <span class="o">=</span> <span class="n">client</span><span class="o">.</span><span class="n">get_total</span><span class="p">(</span>
-    <span class="s1">&#39;users&#39;</span><span class="p">,</span>
-    <span class="n">params</span> <span class="o">=</span> <span class="p">{</span><span class="s1">&#39;team_ids[]&#39;</span><span class="p">:</span> <span class="p">[</span><span class="s1">&#39;PGHI789&#39;</span><span class="p">]}</span>
+    <span class="s1">'users'</span><span class="p">,</span>
+    <span class="n">params</span> <span class="o">=</span> <span class="p">{</span><span class="s1">'team_ids[]'</span><span class="p">:</span> <span class="p">[</span><span class="s1">'PGHI789'</span><span class="p">]}</span>
 <span class="p">)</span>
 </pre></div>
 </div>
 <p><strong>Updating a resource:</strong> use the <code class="docutils literal notranslate"><span class="pre">json</span></code> keyword argument to set the body of the request:</p>
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="c1"># &gt;&gt;&gt; user</span>
-<span class="c1"># {&#39;self&#39;:&#39;https://api.pagerduty.com/users/PABC123&#39;, &#39;type&#39;: &#39;user&#39;, ...}</span>
+<span class="c1"># {'self':'https://api.pagerduty.com/users/PABC123', 'type': 'user', ...}</span>
 
 <span class="c1"># (1) using put directly:</span>
 <span class="n">updated_user</span> <span class="o">=</span> <span class="kc">None</span>
-<span class="n">response</span> <span class="o">=</span> <span class="n">client</span><span class="o">.</span><span class="n">put</span><span class="p">(</span><span class="n">user</span><span class="p">[</span><span class="s1">&#39;self&#39;</span><span class="p">],</span> <span class="n">json</span><span class="o">=</span><span class="p">{</span>
-    <span class="s1">&#39;user&#39;</span><span class="p">:</span> <span class="p">{</span>
-        <span class="s1">&#39;type&#39;</span><span class="p">:</span><span class="s1">&#39;user&#39;</span><span class="p">,</span>
-        <span class="s1">&#39;name&#39;</span><span class="p">:</span> <span class="s1">&#39;Jane Doe&#39;</span>
+<span class="n">response</span> <span class="o">=</span> <span class="n">client</span><span class="o">.</span><span class="n">put</span><span class="p">(</span><span class="n">user</span><span class="p">[</span><span class="s1">'self'</span><span class="p">],</span> <span class="n">json</span><span class="o">=</span><span class="p">{</span>
+    <span class="s1">'user'</span><span class="p">:</span> <span class="p">{</span>
+        <span class="s1">'type'</span><span class="p">:</span><span class="s1">'user'</span><span class="p">,</span>
+        <span class="s1">'name'</span><span class="p">:</span> <span class="s1">'Jane Doe'</span>
     <span class="p">}</span>
 <span class="p">})</span>
 <span class="k">if</span> <span class="n">response</span><span class="o">.</span><span class="n">is_success</span><span class="p">:</span>
-    <span class="n">updated_user</span> <span class="o">=</span> <span class="n">response</span><span class="o">.</span><span class="n">json</span><span class="p">()[</span><span class="s1">&#39;user&#39;</span><span class="p">]</span>
+    <span class="n">updated_user</span> <span class="o">=</span> <span class="n">response</span><span class="o">.</span><span class="n">json</span><span class="p">()[</span><span class="s1">'user'</span><span class="p">]</span>
 
 <span class="c1"># (2) using rput:</span>
 <span class="c1">#   - The URL argument may also be a resource / resource reference dict</span>
-<span class="c1">#   - The json argument doesn&#39;t have to include the &quot;user&quot; wrapper dict</span>
+<span class="c1">#   - The json argument doesn't have to include the "user" wrapper dict</span>
 <span class="c1">#   - If an HTTP error is encountered, it will raise an exception</span>
 <span class="n">updated_user</span> <span class="o">=</span> <span class="n">client</span><span class="o">.</span><span class="n">rput</span><span class="p">(</span><span class="n">user</span><span class="p">,</span> <span class="n">json</span><span class="o">=</span><span class="p">{</span>
-    <span class="s1">&#39;type&#39;</span><span class="p">:</span><span class="s1">&#39;user&#39;</span><span class="p">,</span>
-    <span class="s1">&#39;name&#39;</span><span class="p">:</span> <span class="s1">&#39;Jane Doe&#39;</span>
+    <span class="s1">'type'</span><span class="p">:</span><span class="s1">'user'</span><span class="p">,</span>
+    <span class="s1">'name'</span><span class="p">:</span> <span class="s1">'Jane Doe'</span>
 <span class="p">})</span>
 </pre></div>
 </div>
@@ -417,8 +417,8 @@ that supports classic pagination:</p>
 on the dictionary object <code class="docutils literal notranslate"><span class="pre">user_data</span></code>, using the “email” key/property as the
 uniquely identifying attribute, and update it if it exists and differs from
 <code class="docutils literal notranslate"><span class="pre">user_data</span></code>:</p>
-<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">user_data</span> <span class="o">=</span> <span class="p">{</span><span class="s1">&#39;email&#39;</span><span class="p">:</span> <span class="s1">&#39;user123@example.com&#39;</span><span class="p">,</span> <span class="s1">&#39;name&#39;</span><span class="p">:</span> <span class="s1">&#39;User McUserson&#39;</span><span class="p">}</span>
-<span class="n">updated_user</span> <span class="o">=</span> <span class="n">client</span><span class="o">.</span><span class="n">persist</span><span class="p">(</span><span class="s1">&#39;users&#39;</span><span class="p">,</span> <span class="s1">&#39;email&#39;</span><span class="p">,</span> <span class="n">user_data</span><span class="p">,</span> <span class="n">update</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">user_data</span> <span class="o">=</span> <span class="p">{</span><span class="s1">'email'</span><span class="p">:</span> <span class="s1">'user123@example.com'</span><span class="p">,</span> <span class="s1">'name'</span><span class="p">:</span> <span class="s1">'User McUserson'</span><span class="p">}</span>
+<span class="n">updated_user</span> <span class="o">=</span> <span class="n">client</span><span class="o">.</span><span class="n">persist</span><span class="p">(</span><span class="s1">'users'</span><span class="p">,</span> <span class="s1">'email'</span><span class="p">,</span> <span class="n">user_data</span><span class="p">,</span> <span class="n">update</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
 </pre></div>
 </div>
 <p><strong>Using multi-valued set filters:</strong> set the value in the <code class="docutils literal notranslate"><span class="pre">params</span></code> dictionary
@@ -426,11 +426,11 @@ at the appropriate key to a list. Square brackets will then be automatically
 appended to the names of list-type-value parameters as necessary. For example:</p>
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="c1"># Query all open incidents assigned to a user</span>
 <span class="n">incidents</span> <span class="o">=</span> <span class="n">client</span><span class="o">.</span><span class="n">list_all</span><span class="p">(</span>
-    <span class="s1">&#39;incidents&#39;</span><span class="p">,</span>
+    <span class="s1">'incidents'</span><span class="p">,</span>
     <span class="n">params</span><span class="o">=</span><span class="p">{</span>
       <span class="c1"># Both of the following parameter names are valid:</span>
-      <span class="s1">&#39;user_ids[]&#39;</span><span class="p">:</span> <span class="p">[</span><span class="s1">&#39;PHIJ789&#39;</span><span class="p">],</span>
-      <span class="s1">&#39;statuses&#39;</span><span class="p">:</span> <span class="p">[</span><span class="s1">&#39;triggered&#39;</span><span class="p">,</span> <span class="s1">&#39;acknowledged&#39;</span><span class="p">]</span> <span class="c1"># &quot;[]&quot; will be automatically appended</span>
+      <span class="s1">'user_ids[]'</span><span class="p">:</span> <span class="p">[</span><span class="s1">'PHIJ789'</span><span class="p">],</span>
+      <span class="s1">'statuses'</span><span class="p">:</span> <span class="p">[</span><span class="s1">'triggered'</span><span class="p">,</span> <span class="s1">'acknowledged'</span><span class="p">]</span> <span class="c1"># "[]" will be automatically appended</span>
     <span class="p">}</span>
 <span class="p">)</span>
 <span class="c1"># API calls will look like the following:</span>
@@ -439,45 +439,45 @@ appended to the names of list-type-value parameters as necessary. For example:</
 </div>
 <p><strong>Get a list of all incident notes submitted by a team within a time range:</strong></p>
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">notes</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="n">client</span><span class="o">.</span><span class="n">iter_incident_notes</span><span class="p">(</span><span class="n">params</span><span class="o">=</span><span class="p">{</span>
-    <span class="s1">&#39;team_ids&#39;</span><span class="p">:[</span><span class="s1">&#39;PN1T34M&#39;</span><span class="p">],</span>
-    <span class="s1">&#39;since&#39;</span><span class="p">:</span> <span class="s1">&#39;2025-01-01&#39;</span><span class="p">,</span>
-    <span class="s1">&#39;until&#39;</span><span class="p">:</span> <span class="s1">&#39;2025-07-01&#39;</span>
+    <span class="s1">'team_ids'</span><span class="p">:[</span><span class="s1">'PN1T34M'</span><span class="p">],</span>
+    <span class="s1">'since'</span><span class="p">:</span> <span class="s1">'2025-01-01'</span><span class="p">,</span>
+    <span class="s1">'until'</span><span class="p">:</span> <span class="s1">'2025-07-01'</span>
 <span class="p">}))</span>
 
 <span class="c1"># &gt;&gt;&gt; notes</span>
-<span class="c1"># [{&#39;type&#39;: &#39;annotate_log_entry&#39;, &#39;summary&#39;: &#39;Resolved by reboot&#39; ... }, ... ]</span>
+<span class="c1"># [{'type': 'annotate_log_entry', 'summary': 'Resolved by reboot' ... }, ... ]</span>
 </pre></div>
 </div>
 <p><strong>Performing multi-update:</strong> for endpoints that support it only, i.e. <code class="docutils literal notranslate"><span class="pre">PUT</span> <span class="pre">/incidents</span></code>:</p>
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="c1"># Acknowledge all triggered incidents assigned to a user:</span>
 <span class="n">incidents</span> <span class="o">=</span> <span class="n">client</span><span class="o">.</span><span class="n">list_all</span><span class="p">(</span>
-    <span class="s1">&#39;incidents&#39;</span><span class="p">,</span>
-    <span class="n">params</span><span class="o">=</span><span class="p">{</span><span class="s1">&#39;user_ids&#39;</span><span class="p">:[</span><span class="s1">&#39;PHIJ789&#39;</span><span class="p">],</span><span class="s1">&#39;statuses&#39;</span><span class="p">:[</span><span class="s1">&#39;triggered&#39;</span><span class="p">]}</span>
+    <span class="s1">'incidents'</span><span class="p">,</span>
+    <span class="n">params</span><span class="o">=</span><span class="p">{</span><span class="s1">'user_ids'</span><span class="p">:[</span><span class="s1">'PHIJ789'</span><span class="p">],</span><span class="s1">'statuses'</span><span class="p">:[</span><span class="s1">'triggered'</span><span class="p">]}</span>
 <span class="p">)</span>
 <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="n">incidents</span><span class="p">:</span>
-    <span class="n">i</span><span class="p">[</span><span class="s1">&#39;status&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="s1">&#39;acknowledged&#39;</span>
-<span class="n">updated_incidents</span> <span class="o">=</span> <span class="n">client</span><span class="o">.</span><span class="n">rput</span><span class="p">(</span><span class="s1">&#39;incidents&#39;</span><span class="p">,</span> <span class="n">json</span><span class="o">=</span><span class="n">incidents</span><span class="p">)</span>
+    <span class="n">i</span><span class="p">[</span><span class="s1">'status'</span><span class="p">]</span> <span class="o">=</span> <span class="s1">'acknowledged'</span>
+<span class="n">updated_incidents</span> <span class="o">=</span> <span class="n">client</span><span class="o">.</span><span class="n">rput</span><span class="p">(</span><span class="s1">'incidents'</span><span class="p">,</span> <span class="n">json</span><span class="o">=</span><span class="n">incidents</span><span class="p">)</span>
 </pre></div>
 </div>
 </section>
 <section id="events-api-v2">
 <h3>Events API v2<a class="headerlink" href="#events-api-v2" title="Link to this heading"></a></h3>
 <p><strong>Trigger and resolve an alert,</strong> getting its deduplication key from the API, using <a class="reference internal" href="module_reference.html#pagerduty.EventsApiV2Client" title="pagerduty.EventsApiV2Client"><code class="xref py py-class docutils literal notranslate"><span class="pre">pagerduty.EventsApiV2Client</span></code></a>:</p>
-<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">dedup_key</span> <span class="o">=</span> <span class="n">events_client</span><span class="o">.</span><span class="n">trigger</span><span class="p">(</span><span class="s2">&quot;Server is on fire&quot;</span><span class="p">,</span> <span class="s1">&#39;dusty.old.server.net&#39;</span><span class="p">)</span>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">dedup_key</span> <span class="o">=</span> <span class="n">events_client</span><span class="o">.</span><span class="n">trigger</span><span class="p">(</span><span class="s2">"Server is on fire"</span><span class="p">,</span> <span class="s1">'dusty.old.server.net'</span><span class="p">)</span>
 <span class="c1"># ...</span>
 <span class="n">events_client</span><span class="o">.</span><span class="n">resolve</span><span class="p">(</span><span class="n">dedup_key</span><span class="p">)</span>
 </pre></div>
 </div>
 <p><strong>Trigger an alert and acknowledge it</strong> using a custom deduplication key:</p>
-<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">events_client</span><span class="o">.</span><span class="n">trigger</span><span class="p">(</span><span class="s2">&quot;Server is on fire&quot;</span><span class="p">,</span> <span class="s1">&#39;dusty.old.server.net&#39;</span><span class="p">,</span>
-    <span class="n">dedup_key</span><span class="o">=</span><span class="s1">&#39;abc123&#39;</span><span class="p">)</span>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">events_client</span><span class="o">.</span><span class="n">trigger</span><span class="p">(</span><span class="s2">"Server is on fire"</span><span class="p">,</span> <span class="s1">'dusty.old.server.net'</span><span class="p">,</span>
+    <span class="n">dedup_key</span><span class="o">=</span><span class="s1">'abc123'</span><span class="p">)</span>
 <span class="c1"># ...</span>
-<span class="n">events_client</span><span class="o">.</span><span class="n">acknowledge</span><span class="p">(</span><span class="s1">&#39;abc123&#39;</span><span class="p">)</span>
+<span class="n">events_client</span><span class="o">.</span><span class="n">acknowledge</span><span class="p">(</span><span class="s1">'abc123'</span><span class="p">)</span>
 </pre></div>
 </div>
 <p><strong>Submit a change event</strong> using a <a class="reference internal" href="module_reference.html#pagerduty.EventsApiV2Client" title="pagerduty.EventsApiV2Client"><code class="xref py py-class docutils literal notranslate"><span class="pre">pagerduty.EventsApiV2Client</span></code></a> instance:</p>
-<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">events_client</span><span class="o">.</span><span class="n">submit</span><span class="p">(</span><span class="s2">&quot;new build finished at latest HEAD&quot;</span><span class="p">,</span>
-    <span class="n">source</span><span class="o">=</span><span class="s2">&quot;automation&quot;</span><span class="p">)</span>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">events_client</span><span class="o">.</span><span class="n">submit</span><span class="p">(</span><span class="s2">"new build finished at latest HEAD"</span><span class="p">,</span>
+    <span class="n">source</span><span class="o">=</span><span class="s2">"automation"</span><span class="p">)</span>
 </pre></div>
 </div>
 </section>
@@ -501,7 +501,7 @@ also are based on inherit the features of <a class="reference internal" href="mo
 <section id="generic-client-features">
 <h2>Generic Client Features<a class="headerlink" href="#generic-client-features" title="Link to this heading"></a></h2>
 <p>Generally, all of the features of <a class="reference external" href="https://httpx2.pydantic.dev/api/#client">httpx2.Client</a> are available to the user
-as they would be if using the <a href="#id8"><span class="problematic" id="id9">`HTTPX`_</span></a> Python library directly, since
+as they would be if using the <a href="#id6"><span class="problematic" id="id7">`HTTP2X`_</span></a> Python library directly, since
 <a class="reference internal" href="module_reference.html#pagerduty.ApiClient" title="pagerduty.ApiClient"><code class="xref py py-class docutils literal notranslate"><span class="pre">pagerduty.ApiClient</span></code></a> and its subclasses for the REST/Events APIs are
 descendants of it.</p>
 <p>Generally, all client classes pass along all keyword arguments at the end of
@@ -514,10 +514,10 @@ client classes are similar to the analogous functions in <a class="reference ext
 The arguments they accept are the same and they all return <a class="reference external" href="https://httpx2.pydantic.dev/api/#response">httpx2.Response</a>
 objects.</p>
 <p>Any keyword arguments passed to the <code class="docutils literal notranslate"><span class="pre">j*</span></code> or <code class="docutils literal notranslate"><span class="pre">r*</span></code> methods will be passed
-through to the analogous method in <a href="#id10"><span class="problematic" id="id11">HTTPX_</span></a>, though in some cases the
+through to the analogous method in <a class="reference external" href="https://httpx2.pydantic.dev/">HTTPX2</a>, though in some cases the
 arguments (i.e. <code class="docutils literal notranslate"><span class="pre">json</span></code>) are first modified.</p>
 <p>For documentation on any generic HTTP client features that are available, refer
-to the <a href="#id12"><span class="problematic" id="id13">HTTPX_</span></a> documentation.</p>
+to the <a class="reference external" href="https://httpx2.pydantic.dev/">HTTPX2</a> documentation.</p>
 </section>
 <section id="urls">
 <h2>URLs<a class="headerlink" href="#urls" title="Link to this heading"></a></h2>
@@ -536,14 +536,14 @@ value at its <code class="docutils literal notranslate"><span class="pre">self</
 </section>
 <section id="query-parameters">
 <h2>Query Parameters<a class="headerlink" href="#query-parameters" title="Link to this heading"></a></h2>
-<p>As with <a href="#id14"><span class="problematic" id="id15">`HTTPX`_</span></a>, there is no need to compose the query string (everything
+<p>As with <a class="reference external" href="https://httpx2.pydantic.dev/">HTTPX2</a>, there is no need to compose the query string (everything
 that will follow <code class="docutils literal notranslate"><span class="pre">?</span></code> in the URL). Simply set the <code class="docutils literal notranslate"><span class="pre">params</span></code> keyword argument
 to a dictionary, and each of the key/value pairs will be serialized to the
 query string in the final URL of the request:</p>
-<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">first_dan</span> <span class="o">=</span> <span class="n">client</span><span class="o">.</span><span class="n">rget</span><span class="p">(</span><span class="s1">&#39;users&#39;</span><span class="p">,</span> <span class="n">params</span><span class="o">=</span><span class="p">{</span>
-    <span class="s1">&#39;query&#39;</span><span class="p">:</span> <span class="s1">&#39;Dan&#39;</span><span class="p">,</span>
-    <span class="s1">&#39;limit&#39;</span><span class="p">:</span> <span class="mi">1</span><span class="p">,</span>
-    <span class="s1">&#39;offset&#39;</span><span class="p">:</span> <span class="mi">0</span><span class="p">,</span>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">first_dan</span> <span class="o">=</span> <span class="n">client</span><span class="o">.</span><span class="n">rget</span><span class="p">(</span><span class="s1">'users'</span><span class="p">,</span> <span class="n">params</span><span class="o">=</span><span class="p">{</span>
+    <span class="s1">'query'</span><span class="p">:</span> <span class="s1">'Dan'</span><span class="p">,</span>
+    <span class="s1">'limit'</span><span class="p">:</span> <span class="mi">1</span><span class="p">,</span>
+    <span class="s1">'offset'</span><span class="p">:</span> <span class="mi">0</span><span class="p">,</span>
 <span class="p">})</span>
 <span class="c1"># GET https://api.pagerduty.com/users?query=Dan&amp;limit=1&amp;offset=0</span>
 </pre></div>
@@ -552,17 +552,17 @@ query string in the final URL of the request:</p>
 list. If a list is given, and the key name does not end with <code class="docutils literal notranslate"><span class="pre">[]</span></code> (which is
 required for all such multi-valued parameters in REST API v2), then <code class="docutils literal notranslate"><span class="pre">[]</span></code> will
 be automatically appended to the parameter name. For example:</p>
-<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="c1"># If there are 82 services with name matching &quot;foo&quot; this will return all of</span>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="c1"># If there are 82 services with name matching "foo" this will return all of</span>
 <span class="c1"># them as a list:</span>
-<span class="n">foo_services</span> <span class="o">=</span> <span class="n">client</span><span class="o">.</span><span class="n">list_all</span><span class="p">(</span><span class="s1">&#39;services&#39;</span><span class="p">,</span> <span class="n">params</span><span class="o">=</span><span class="p">{</span>
-    <span class="s1">&#39;query&#39;</span><span class="p">:</span> <span class="s1">&#39;foo&#39;</span><span class="p">,</span>
-    <span class="s1">&#39;include&#39;</span><span class="p">:</span> <span class="p">[</span><span class="s1">&#39;escalation_policies&#39;</span><span class="p">,</span> <span class="s1">&#39;teams&#39;</span><span class="p">],</span>
-    <span class="s1">&#39;limit&#39;</span><span class="p">:</span> <span class="mi">50</span><span class="p">,</span>
+<span class="n">foo_services</span> <span class="o">=</span> <span class="n">client</span><span class="o">.</span><span class="n">list_all</span><span class="p">(</span><span class="s1">'services'</span><span class="p">,</span> <span class="n">params</span><span class="o">=</span><span class="p">{</span>
+    <span class="s1">'query'</span><span class="p">:</span> <span class="s1">'foo'</span><span class="p">,</span>
+    <span class="s1">'include'</span><span class="p">:</span> <span class="p">[</span><span class="s1">'escalation_policies'</span><span class="p">,</span> <span class="s1">'teams'</span><span class="p">],</span>
+    <span class="s1">'limit'</span><span class="p">:</span> <span class="mi">50</span><span class="p">,</span>
 <span class="p">})</span>
 <span class="c1"># GET https://api.pagerduty.com/services?query=foo&amp;include%5B%5D=escalation_policies&amp;include%5B%5D=teams&amp;limit=50&amp;offset=0</span>
 <span class="c1"># GET https://api.pagerduty.com/services?query=foo&amp;include%5B%5D=escalation_policies&amp;include%5B%5D=teams&amp;limit=50&amp;offset=50</span>
 <span class="c1"># &gt;&gt;&gt; foo_services</span>
-<span class="c1"># [{&quot;type&quot;: &quot;service&quot; ...}, ... ]</span>
+<span class="c1"># [{"type": "service" ...}, ... ]</span>
 </pre></div>
 </div>
 </section>
@@ -575,17 +575,17 @@ or <code class="docutils literal notranslate"><span class="pre">delete</span></c
 <code class="docutils literal notranslate"><span class="pre">json()</span></code> method will return the result of JSON-decoding the response body (it
 will typically of type <code class="docutils literal notranslate"><span class="pre">dict</span></code>). Other metadata such as headers can also be
 obtained:</p>
-<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">response</span> <span class="o">=</span> <span class="n">client</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;incidents&#39;</span><span class="p">)</span>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">response</span> <span class="o">=</span> <span class="n">client</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">'incidents'</span><span class="p">)</span>
 <span class="c1"># The UUID of the API request, which can be supplied to PagerDuty Customer</span>
 <span class="c1"># Support in the event of server errors (status 5xx):</span>
-<span class="nb">print</span><span class="p">(</span><span class="n">response</span><span class="o">.</span><span class="n">headers</span><span class="p">[</span><span class="s1">&#39;x-request-id&#39;</span><span class="p">])</span>
+<span class="nb">print</span><span class="p">(</span><span class="n">response</span><span class="o">.</span><span class="n">headers</span><span class="p">[</span><span class="s1">'x-request-id'</span><span class="p">])</span>
 </pre></div>
 </div>
 <p>If using the <code class="docutils literal notranslate"><span class="pre">j*</span></code> methods, i.e. <code class="xref py py-attr docutils literal notranslate"><span class="pre">pagerduty.RestApiV2Client.jget</span></code>, the return value
 will be the full body of the response from the API after JSON-decoding, and
 the <code class="docutils literal notranslate"><span class="pre">json</span></code> keyword argument is not modified.</p>
 <p>When using the <code class="docutils literal notranslate"><span class="pre">r*</span></code> methods, the <code class="docutils literal notranslate"><span class="pre">json</span></code> keyword argument is modified before
-sending to <a href="#id16"><span class="problematic" id="id17">HTTPX_</span></a>, if necessary, to encapsulate the body inside an entity
+sending to <a class="reference external" href="https://httpx2.pydantic.dev/">HTTPX2</a>, if necessary, to encapsulate the body inside an entity
 wrapper.  The response is the decoded body after unwrapping, if the API
 endpoint returns wrapped entities. For more details, refer to <a class="reference internal" href="#wrapping"><span class="std std-ref">Entity Wrapping</span></a>.</p>
 <section id="data-types">
@@ -605,27 +605,27 @@ design of the <a class="reference external" href="https://docs.python.org/3/libr
 the API reference page for <code class="docutils literal notranslate"><span class="pre">GET</span> <span class="pre">/escalation_policies/{id}</span></code> (“Get an
 escalation policy”). To access the name of the second target in level 1,
 assuming the variable <code class="docutils literal notranslate"><span class="pre">ep</span></code> represents the unwrapped escalation policy object:</p>
-<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">ep</span><span class="p">[</span><span class="s1">&#39;escalation_rules&#39;</span><span class="p">][</span><span class="mi">0</span><span class="p">][</span><span class="s1">&#39;targets&#39;</span><span class="p">][</span><span class="mi">1</span><span class="p">][</span><span class="s1">&#39;summary&#39;</span><span class="p">]</span>
-<span class="c1"># &quot;Daily Engineering Rotation&quot;</span>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">ep</span><span class="p">[</span><span class="s1">'escalation_rules'</span><span class="p">][</span><span class="mi">0</span><span class="p">][</span><span class="s1">'targets'</span><span class="p">][</span><span class="mi">1</span><span class="p">][</span><span class="s1">'summary'</span><span class="p">]</span>
+<span class="c1"># "Daily Engineering Rotation"</span>
 </pre></div>
 </div>
 <p>To add a new level, one would need to create a new escalation rule as a
 dictionary object and then append it to the <code class="docutils literal notranslate"><span class="pre">escalation</span> <span class="pre">rules</span></code> property.
 Using the example given in the API reference page:</p>
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">new_rule</span> <span class="o">=</span> <span class="p">{</span>
-    <span class="s2">&quot;escalation_delay_in_minutes&quot;</span><span class="p">:</span> <span class="mi">30</span><span class="p">,</span>
-    <span class="s2">&quot;targets&quot;</span><span class="p">:</span> <span class="p">[</span>
+    <span class="s2">"escalation_delay_in_minutes"</span><span class="p">:</span> <span class="mi">30</span><span class="p">,</span>
+    <span class="s2">"targets"</span><span class="p">:</span> <span class="p">[</span>
         <span class="p">{</span>
-            <span class="s2">&quot;id&quot;</span><span class="p">:</span> <span class="s2">&quot;PAM4FGS&quot;</span><span class="p">,</span>
-            <span class="s2">&quot;type&quot;</span><span class="p">:</span> <span class="s2">&quot;user_reference&quot;</span>
+            <span class="s2">"id"</span><span class="p">:</span> <span class="s2">"PAM4FGS"</span><span class="p">,</span>
+            <span class="s2">"type"</span><span class="p">:</span> <span class="s2">"user_reference"</span>
         <span class="p">},</span>
         <span class="p">{</span>
-            <span class="s2">&quot;id&quot;</span><span class="p">:</span> <span class="s2">&quot;PI7DH85&quot;</span><span class="p">,</span>
-            <span class="s2">&quot;type&quot;</span><span class="p">:</span> <span class="s2">&quot;schedule_reference&quot;</span>
+            <span class="s2">"id"</span><span class="p">:</span> <span class="s2">"PI7DH85"</span><span class="p">,</span>
+            <span class="s2">"type"</span><span class="p">:</span> <span class="s2">"schedule_reference"</span>
         <span class="p">}</span>
     <span class="p">]</span>
 <span class="p">}</span>
-<span class="n">ep</span><span class="p">[</span><span class="s1">&#39;escalation_rules&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">new_rule</span><span class="p">)</span>
+<span class="n">ep</span><span class="p">[</span><span class="s1">'escalation_rules'</span><span class="p">]</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">new_rule</span><span class="p">)</span>
 <span class="c1"># Save changes:</span>
 <span class="n">ep</span> <span class="o">=</span> <span class="n">client</span><span class="o">.</span><span class="n">rput</span><span class="p">(</span><span class="n">ep</span><span class="p">,</span> <span class="n">json</span><span class="o">=</span><span class="n">ep</span><span class="p">)</span>
 </pre></div>
@@ -699,30 +699,30 @@ is not wrapped or vice versa, i.e. creating Schedule overrides (<code class="doc
 need to account for this, as the content will be returned and the request
 entity is wrapped as appropriate.</p>
 <p>What that looks like, for the “Create one or more overrides” endpoint:</p>
-<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">created_overrides</span> <span class="o">=</span> <span class="n">client</span><span class="o">.</span><span class="n">rpost</span><span class="p">(</span><span class="s1">&#39;/schedules/PGHI789/overrides&#39;</span><span class="p">,</span> <span class="n">json</span><span class="o">=</span><span class="p">[</span>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">created_overrides</span> <span class="o">=</span> <span class="n">client</span><span class="o">.</span><span class="n">rpost</span><span class="p">(</span><span class="s1">'/schedules/PGHI789/overrides'</span><span class="p">,</span> <span class="n">json</span><span class="o">=</span><span class="p">[</span>
     <span class="p">{</span>
-        <span class="s2">&quot;start&quot;</span><span class="p">:</span> <span class="s2">&quot;2023-07-01T00:00:00-04:00&quot;</span><span class="p">,</span>
-        <span class="s2">&quot;end&quot;</span><span class="p">:</span> <span class="s2">&quot;2023-07-02T00:00:00-04:00&quot;</span><span class="p">,</span>
-        <span class="s2">&quot;user&quot;</span><span class="p">:</span> <span class="p">{</span>
-            <span class="s2">&quot;id&quot;</span><span class="p">:</span> <span class="s2">&quot;PEYSGVA&quot;</span><span class="p">,</span>
-            <span class="s2">&quot;type&quot;</span><span class="p">:</span> <span class="s2">&quot;user_reference&quot;</span>
+        <span class="s2">"start"</span><span class="p">:</span> <span class="s2">"2023-07-01T00:00:00-04:00"</span><span class="p">,</span>
+        <span class="s2">"end"</span><span class="p">:</span> <span class="s2">"2023-07-02T00:00:00-04:00"</span><span class="p">,</span>
+        <span class="s2">"user"</span><span class="p">:</span> <span class="p">{</span>
+            <span class="s2">"id"</span><span class="p">:</span> <span class="s2">"PEYSGVA"</span><span class="p">,</span>
+            <span class="s2">"type"</span><span class="p">:</span> <span class="s2">"user_reference"</span>
         <span class="p">},</span>
-        <span class="s2">&quot;time_zone&quot;</span><span class="p">:</span> <span class="s2">&quot;UTC&quot;</span>
+        <span class="s2">"time_zone"</span><span class="p">:</span> <span class="s2">"UTC"</span>
     <span class="p">},</span>
     <span class="p">{</span>
-        <span class="s2">&quot;start&quot;</span><span class="p">:</span> <span class="s2">&quot;2023-07-03T00:00:00-04:00&quot;</span><span class="p">,</span>
-        <span class="s2">&quot;end&quot;</span><span class="p">:</span> <span class="s2">&quot;2023-07-01T00:00:00-04:00&quot;</span><span class="p">,</span>
-        <span class="s2">&quot;user&quot;</span><span class="p">:</span> <span class="p">{</span>
-            <span class="s2">&quot;id&quot;</span><span class="p">:</span> <span class="s2">&quot;PEYSGVF&quot;</span><span class="p">,</span>
-            <span class="s2">&quot;type&quot;</span><span class="p">:</span> <span class="s2">&quot;user_reference&quot;</span>
+        <span class="s2">"start"</span><span class="p">:</span> <span class="s2">"2023-07-03T00:00:00-04:00"</span><span class="p">,</span>
+        <span class="s2">"end"</span><span class="p">:</span> <span class="s2">"2023-07-01T00:00:00-04:00"</span><span class="p">,</span>
+        <span class="s2">"user"</span><span class="p">:</span> <span class="p">{</span>
+            <span class="s2">"id"</span><span class="p">:</span> <span class="s2">"PEYSGVF"</span><span class="p">,</span>
+            <span class="s2">"type"</span><span class="p">:</span> <span class="s2">"user_reference"</span>
         <span class="p">},</span>
-        <span class="s2">&quot;time_zone&quot;</span><span class="p">:</span> <span class="s2">&quot;UTC&quot;</span>
+        <span class="s2">"time_zone"</span><span class="p">:</span> <span class="s2">"UTC"</span>
     <span class="p">}</span>
 <span class="p">])</span>
 <span class="c1"># &gt;&gt;&gt; created_overrides</span>
 <span class="c1"># [</span>
-<span class="c1">#     {&#39;status&#39;: 201, &#39;override&#39;: {...}},</span>
-<span class="c1">#     {&#39;status&#39;: 400, &#39;errors&#39;: [&#39;Override must end after its start&#39;], &#39;override&#39;: {...}}</span>
+<span class="c1">#     {'status': 201, 'override': {...}},</span>
+<span class="c1">#     {'status': 400, 'errors': ['Override must end after its start'], 'override': {...}}</span>
 <span class="c1"># ]</span>
 </pre></div>
 </div>
@@ -740,19 +740,19 @@ collection and return the results as a list or dictionary, respectively.</p>
 these methods will use <a class="reference internal" href="module_reference.html#pagerduty.RestApiV2BaseClient.iter_cursor" title="pagerduty.RestApiV2BaseClient.iter_cursor"><code class="xref py py-attr docutils literal notranslate"><span class="pre">pagerduty.RestApiV2BaseClient.iter_cursor</span></code></a>
 automatically.</p>
 <p>Examples:</p>
-<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="c1"># Example: Find all users with &quot;Dav&quot; in their name/email (i.e. Dave/David)</span>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="c1"># Example: Find all users with "Dav" in their name/email (i.e. Dave/David)</span>
 <span class="c1"># in the PagerDuty account:</span>
-<span class="k">for</span> <span class="n">dave</span> <span class="ow">in</span> <span class="n">client</span><span class="o">.</span><span class="n">iter_all</span><span class="p">(</span><span class="s1">&#39;users&#39;</span><span class="p">,</span> <span class="n">params</span><span class="o">=</span><span class="p">{</span><span class="s1">&#39;query&#39;</span><span class="p">:</span><span class="s2">&quot;Dav&quot;</span><span class="p">}):</span>
-    <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;</span><span class="si">%s</span><span class="s2"> &lt;</span><span class="si">%s</span><span class="s2">&gt;&quot;</span><span class="o">%</span><span class="p">(</span><span class="n">dave</span><span class="p">[</span><span class="s1">&#39;name&#39;</span><span class="p">],</span> <span class="n">dave</span><span class="p">[</span><span class="s1">&#39;email&#39;</span><span class="p">]))</span>
+<span class="k">for</span> <span class="n">dave</span> <span class="ow">in</span> <span class="n">client</span><span class="o">.</span><span class="n">iter_all</span><span class="p">(</span><span class="s1">'users'</span><span class="p">,</span> <span class="n">params</span><span class="o">=</span><span class="p">{</span><span class="s1">'query'</span><span class="p">:</span><span class="s2">"Dav"</span><span class="p">}):</span>
+    <span class="nb">print</span><span class="p">(</span><span class="s2">"</span><span class="si">%s</span><span class="s2"> &lt;</span><span class="si">%s</span><span class="s2">&gt;"</span><span class="o">%</span><span class="p">(</span><span class="n">dave</span><span class="p">[</span><span class="s1">'name'</span><span class="p">],</span> <span class="n">dave</span><span class="p">[</span><span class="s1">'email'</span><span class="p">]))</span>
 
 <span class="c1"># Example: Get a dictionary of all users, keyed by email, and use it to</span>
 <span class="c1"># find the ID of the user whose email is ``bob@example.com``</span>
-<span class="n">users</span> <span class="o">=</span> <span class="n">client</span><span class="o">.</span><span class="n">dict_all</span><span class="p">(</span><span class="s1">&#39;users&#39;</span><span class="p">,</span> <span class="n">by</span><span class="o">=</span><span class="s1">&#39;email&#39;</span><span class="p">)</span>
-<span class="nb">print</span><span class="p">(</span><span class="n">users</span><span class="p">[</span><span class="s1">&#39;bob@example.com&#39;</span><span class="p">][</span><span class="s1">&#39;id&#39;</span><span class="p">])</span>
+<span class="n">users</span> <span class="o">=</span> <span class="n">client</span><span class="o">.</span><span class="n">dict_all</span><span class="p">(</span><span class="s1">'users'</span><span class="p">,</span> <span class="n">by</span><span class="o">=</span><span class="s1">'email'</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="n">users</span><span class="p">[</span><span class="s1">'bob@example.com'</span><span class="p">][</span><span class="s1">'id'</span><span class="p">])</span>
 
 <span class="c1"># Same as above, but using ``find``:</span>
-<span class="n">bob</span> <span class="o">=</span> <span class="n">client</span><span class="o">.</span><span class="n">find</span><span class="p">(</span><span class="s1">&#39;users&#39;</span><span class="p">,</span> <span class="s1">&#39;bob@example.com&#39;</span><span class="p">,</span> <span class="n">attribute</span><span class="o">=</span><span class="s1">&#39;email&#39;</span><span class="p">)</span>
-<span class="nb">print</span><span class="p">(</span><span class="n">bob</span><span class="p">[</span><span class="s1">&#39;id&#39;</span><span class="p">])</span>
+<span class="n">bob</span> <span class="o">=</span> <span class="n">client</span><span class="o">.</span><span class="n">find</span><span class="p">(</span><span class="s1">'users'</span><span class="p">,</span> <span class="s1">'bob@example.com'</span><span class="p">,</span> <span class="n">attribute</span><span class="o">=</span><span class="s1">'email'</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="n">bob</span><span class="p">[</span><span class="s1">'id'</span><span class="p">])</span>
 </pre></div>
 </div>
 <p>By default, classic, a.k.a. numeric pagination, will be used. If the endpoint
@@ -781,9 +781,9 @@ records. Pass these objects as the second and third positional arguments to
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span><span class="w"> </span><span class="nn">datetime</span><span class="w"> </span><span class="kn">import</span> <span class="n">datetime</span><span class="p">,</span> <span class="n">timezone</span>
 <span class="n">until</span> <span class="o">=</span> <span class="n">datetime</span><span class="o">.</span><span class="n">now</span><span class="p">(</span><span class="n">timezone</span><span class="o">.</span><span class="n">utc</span><span class="p">)</span>
 <span class="n">since</span> <span class="o">=</span> <span class="n">datetime</span><span class="p">(</span><span class="n">until</span><span class="o">.</span><span class="n">year</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="n">tzinfo</span><span class="o">=</span><span class="n">timezone</span><span class="o">.</span><span class="n">utc</span><span class="p">)</span>
-<span class="c1"># Assume &quot;client&quot; is an instance of RestApiV2Client and &quot;process_ile&quot; is a</span>
+<span class="c1"># Assume "client" is an instance of RestApiV2Client and "process_ile" is a</span>
 <span class="c1"># storage and/or data reduction/aggregation method:</span>
-<span class="k">for</span> <span class="n">log_entry</span> <span class="ow">in</span> <span class="n">client</span><span class="o">.</span><span class="n">iter_history</span><span class="p">(</span><span class="s1">&#39;/log_entries&#39;</span><span class="p">,</span> <span class="n">since</span><span class="p">,</span>  <span class="n">until</span><span class="p">):</span>
+<span class="k">for</span> <span class="n">log_entry</span> <span class="ow">in</span> <span class="n">client</span><span class="o">.</span><span class="n">iter_history</span><span class="p">(</span><span class="s1">'/log_entries'</span><span class="p">,</span> <span class="n">since</span><span class="p">,</span>  <span class="n">until</span><span class="p">):</span>
     <span class="n">process_ile</span><span class="p">(</span><span class="n">log_entry</span><span class="p">)</span>
 </pre></div>
 </div>
@@ -799,7 +799,7 @@ memory, the partial data it retrieved will be lost to garbage collection.</p>
 or cursor-based), <a class="reference internal" href="module_reference.html#pagerduty.RestApiV2BaseClient.iter_all" title="pagerduty.RestApiV2BaseClient.iter_all"><code class="xref py py-attr docutils literal notranslate"><span class="pre">pagerduty.RestApiV2BaseClient.iter_all</span></code></a> will work. If
 the endpoint does not completely or correctly implement one of these styles of
 pagination, the pagination methods (i.e.  <code class="docutils literal notranslate"><span class="pre">iter_all</span></code>/<code class="docutils literal notranslate"><span class="pre">list_all</span></code>) cannot be
-used with them. For example:</p>
+used with them.</p>
 <p>As of this writing, there are two API endpoints known to have a their own special
 pagination style, and specialized methods have been added for them. They are
 as follows:</p>
@@ -826,6 +826,7 @@ as desired.</p>
 </section>
 <section id="updating-creating-or-deleting-while-paginating">
 <h3>Updating, creating or deleting while paginating<a class="headerlink" href="#updating-creating-or-deleting-while-paginating" title="Link to this heading"></a></h3>
+<p><strong>The following applies only to classic pagination.</strong></p>
 <p>If performing page-wise write operations, i.e. making persistent changes to the
 PagerDuty application state immediately after fetching each page of results, an
 erroneous condition can result if there is any change to the resources in the
@@ -857,10 +858,10 @@ returned more than once, because they get bumped to the next group of 100 pages.
 <p>Multi-update actions can be performed using <code class="docutils literal notranslate"><span class="pre">rput</span></code> with some endpoints. For
 instance, to resolve two incidents with IDs <code class="docutils literal notranslate"><span class="pre">PABC123</span></code> and <code class="docutils literal notranslate"><span class="pre">PDEF456</span></code>:</p>
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">client</span><span class="o">.</span><span class="n">rput</span><span class="p">(</span>
-    <span class="s2">&quot;incidents&quot;</span><span class="p">,</span>
+    <span class="s2">"incidents"</span><span class="p">,</span>
     <span class="n">json</span><span class="o">=</span><span class="p">[</span>
-        <span class="p">{</span><span class="s1">&#39;id&#39;</span><span class="p">:</span><span class="s1">&#39;PABC123&#39;</span><span class="p">,</span><span class="s1">&#39;type&#39;</span><span class="p">:</span><span class="s1">&#39;incident_reference&#39;</span><span class="p">,</span> <span class="s1">&#39;status&#39;</span><span class="p">:</span><span class="s1">&#39;resolved&#39;</span><span class="p">},</span>
-        <span class="p">{</span><span class="s1">&#39;id&#39;</span><span class="p">:</span><span class="s1">&#39;PDEF456&#39;</span><span class="p">,</span><span class="s1">&#39;type&#39;</span><span class="p">:</span><span class="s1">&#39;incident_reference&#39;</span><span class="p">,</span> <span class="s1">&#39;status&#39;</span><span class="p">:</span><span class="s1">&#39;resolved&#39;</span><span class="p">},</span>
+        <span class="p">{</span><span class="s1">'id'</span><span class="p">:</span><span class="s1">'PABC123'</span><span class="p">,</span><span class="s1">'type'</span><span class="p">:</span><span class="s1">'incident_reference'</span><span class="p">,</span> <span class="s1">'status'</span><span class="p">:</span><span class="s1">'resolved'</span><span class="p">},</span>
+        <span class="p">{</span><span class="s1">'id'</span><span class="p">:</span><span class="s1">'PDEF456'</span><span class="p">,</span><span class="s1">'type'</span><span class="p">:</span><span class="s1">'incident_reference'</span><span class="p">,</span> <span class="s1">'status'</span><span class="p">:</span><span class="s1">'resolved'</span><span class="p">},</span>
     <span class="p">],</span>
 <span class="p">)</span>
 </pre></div>
@@ -894,12 +895,12 @@ scope. For example, the following code prints “User not found” in the event 
 prints out the user’s email if the user exists and raises the underlying
 exception if it’s any other HTTP error code:</p>
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="k">try</span><span class="p">:</span>
-    <span class="n">user</span> <span class="o">=</span> <span class="n">client</span><span class="o">.</span><span class="n">rget</span><span class="p">(</span><span class="s2">&quot;/users/PJKL678&quot;</span><span class="p">)</span>
-    <span class="nb">print</span><span class="p">(</span><span class="n">user</span><span class="p">[</span><span class="s1">&#39;email&#39;</span><span class="p">])</span>
+    <span class="n">user</span> <span class="o">=</span> <span class="n">client</span><span class="o">.</span><span class="n">rget</span><span class="p">(</span><span class="s2">"/users/PJKL678"</span><span class="p">)</span>
+    <span class="nb">print</span><span class="p">(</span><span class="n">user</span><span class="p">[</span><span class="s1">'email'</span><span class="p">])</span>
 
 <span class="k">except</span> <span class="n">pagerduty</span><span class="o">.</span><span class="n">HttpError</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
     <span class="k">if</span> <span class="n">e</span><span class="o">.</span><span class="n">response</span><span class="o">.</span><span class="n">status_code</span> <span class="o">==</span> <span class="mi">404</span><span class="p">:</span>
-        <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;User not found&quot;</span><span class="p">)</span>
+        <span class="nb">print</span><span class="p">(</span><span class="s2">"User not found"</span><span class="p">)</span>
     <span class="k">else</span><span class="p">:</span>
         <span class="k">raise</span> <span class="n">e</span>
 </pre></div>
@@ -944,13 +945,13 @@ production systems.</p>
 constructor of the superclass, thus allowing them to be used as described in:
 <a class="reference external" href="https://httpx2.pydantic.dev/advanced/proxies/">HTTPX2: Proxies</a>. For example:</p>
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="c1"># To tunnel traffic through HTTP proxy at 192.168.1.2:8080 i.e. via CONNECT:</span>
-<span class="n">client</span> <span class="o">=</span> <span class="n">pagerduty</span><span class="o">.</span><span class="n">RestApiV2Client</span><span class="p">(</span><span class="n">API_KEY</span><span class="p">,</span> <span class="n">proxy</span><span class="o">=</span><span class="s1">&#39;http://192.168.1.2:8080&#39;</span><span class="p">)</span>
+<span class="n">client</span> <span class="o">=</span> <span class="n">pagerduty</span><span class="o">.</span><span class="n">RestApiV2Client</span><span class="p">(</span><span class="n">API_KEY</span><span class="p">,</span> <span class="n">proxy</span><span class="o">=</span><span class="s1">'http://192.168.1.2:8080'</span><span class="p">)</span>
 </pre></div>
 </div>
 <p><strong>In Versions Prior to 6.0.0:</strong> To configure the client to use a host as a
 proxy for HTTPS traffic, update the <code class="docutils literal notranslate"><span class="pre">proxies</span></code> attribute:</p>
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="c1"># Host 10.42.187.3 port 4012 protocol https:</span>
-<span class="n">client</span><span class="o">.</span><span class="n">proxies</span><span class="o">.</span><span class="n">update</span><span class="p">({</span><span class="s1">&#39;https&#39;</span><span class="p">:</span> <span class="s1">&#39;10.42.187.3:4012&#39;</span><span class="p">})</span>
+<span class="n">client</span><span class="o">.</span><span class="n">proxies</span><span class="o">.</span><span class="n">update</span><span class="p">({</span><span class="s1">'https'</span><span class="p">:</span> <span class="s1">'10.42.187.3:4012'</span><span class="p">})</span>
 </pre></div>
 </div>
 </section>
@@ -1018,17 +1019,17 @@ reached in the underlying HTTP request methods.</p>
 <p><strong>Example:</strong></p>
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="c1"># This will take about 30 seconds plus API request time, carrying out four</span>
 <span class="c1"># attempts with 2, 4, 8 and 16 second pauses between them, before finally</span>
-<span class="c1"># returning the status 404 response object for the user that doesn&#39;t exist:</span>
+<span class="c1"># returning the status 404 response object for the user that doesn't exist:</span>
 <span class="n">client</span><span class="o">.</span><span class="n">max_http_attempts</span> <span class="o">=</span> <span class="mi">4</span> <span class="c1"># lower value takes effect</span>
-<span class="n">client</span><span class="o">.</span><span class="n">retry</span><span class="p">[</span><span class="mi">404</span><span class="p">]</span> <span class="o">=</span> <span class="mi">5</span> <span class="c1"># this won&#39;t take effect</span>
+<span class="n">client</span><span class="o">.</span><span class="n">retry</span><span class="p">[</span><span class="mi">404</span><span class="p">]</span> <span class="o">=</span> <span class="mi">5</span> <span class="c1"># this won't take effect</span>
 <span class="n">client</span><span class="o">.</span><span class="n">sleep_timer</span> <span class="o">=</span> <span class="mi">1</span>
 <span class="n">client</span><span class="o">.</span><span class="n">sleep_timer_base</span> <span class="o">=</span> <span class="mi">2</span>
-<span class="n">response</span> <span class="o">=</span> <span class="n">client</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;/users/PNOEXST&#39;</span><span class="p">)</span>
+<span class="n">response</span> <span class="o">=</span> <span class="n">client</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">'/users/PNOEXST'</span><span class="p">)</span>
 
 <span class="c1"># Same as the above, but with the per-status limit taking precedence, so</span>
 <span class="c1"># the total wait time is 62 seconds:</span>
 <span class="n">client</span><span class="o">.</span><span class="n">max_http_attempts</span> <span class="o">=</span> <span class="mi">6</span>
-<span class="n">response</span> <span class="o">=</span> <span class="n">client</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;/users/PNOEXST&#39;</span><span class="p">)</span>
+<span class="n">response</span> <span class="o">=</span> <span class="n">client</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">'/users/PNOEXST'</span><span class="p">)</span>
 </pre></div>
 </div>
 </section>

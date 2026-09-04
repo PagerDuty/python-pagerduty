@@ -1,5 +1,5 @@
-from .version import __version__
-
+from .api_client import ApiClient
+from .auth_method import PassThruHeaderAuthMethod
 from .common import (
     TEXT_LEN_LIMIT,
     TIMEOUT,
@@ -14,21 +14,13 @@ from .common import (
     truncate_text,
     try_decoding,
 )
-
-from .api_client import ApiClient
-
-from .auth_method import PassThruHeaderAuthMethod
-
 from .errors import Error, HttpError, ServerHttpError, UrlError
-
 from .events_api_v2_client import EventsApiV2Client, RoutingKeyAuthMethod
-
 from .jira_cloud_integration_api_client import JiraCloudIntegrationApiClient
 from .jira_server_integration_api_client import JiraServerIntegrationApiClient
 from .mcp_api_client import McpApiClient
 from .ms_teams_integration_api_client import MsTeamsIntegrationApiClient
 from .oauth_token_client import OAuthTokenClient
-
 from .rest_api_v2_base_client import (
     ITERATION_LIMIT,
     OAuthTokenAuthMethod,
@@ -42,7 +34,6 @@ from .rest_api_v2_base_client import (
     unwrap,
     wrapped_entities,
 )
-
 from .rest_api_v2_client import (
     CANONICAL_PATHS,
     CURSOR_BASED_PAGINATION_PATHS,
@@ -51,12 +42,12 @@ from .rest_api_v2_client import (
     canonical_path,
     entity_wrappers,
 )
-
 from .scim_api_client import ScimApiClient
 from .slack_integration_api_client import SlackIntegrationApiClient
 from .slack_integration_connections_api_client import (
     SlackIntegrationConnectionsApiClient,
 )
+from .version import __version__
 
 # For backwards compatibility, __all__ currently includes all of the above.
 # This should eventually be cleaned up so that it includes only the most-used
@@ -66,15 +57,16 @@ from .slack_integration_connections_api_client import (
 # future breaking change that ends the practice of importing the helper methods
 # and module configuration globals.
 __all__ = [
-    "__version__",
-    "ApiClient",
     "CANONICAL_PATHS",
     "CURSOR_BASED_PAGINATION_PATHS",
     "ENTITY_WRAPPER_CONFIG",
+    "ITERATION_LIMIT",
+    "TEXT_LEN_LIMIT",
+    "TIMEOUT",
+    "ApiClient",
     "Error",
     "EventsApiV2Client",
     "HttpError",
-    "ITERATION_LIMIT",
     "JiraCloudIntegrationApiClient",
     "JiraServerIntegrationApiClient",
     "McpApiClient",
@@ -89,10 +81,9 @@ __all__ = [
     "ServerHttpError",
     "SlackIntegrationApiClient",
     "SlackIntegrationConnectionsApiClient",
-    "TEXT_LEN_LIMIT",
-    "TIMEOUT",
     "TokenAuthMethod",
     "UrlError",
+    "__version__",
     "auto_json",
     "canonical_path",
     "deprecated_kwarg",

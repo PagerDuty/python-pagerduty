@@ -1,15 +1,16 @@
 import json
 import logging
-import httpx2
 import random
 import sys
-from unittest.mock import Mock, MagicMock, patch
+from unittest.mock import MagicMock, Mock, patch
+
+import httpx2
+from common_test import ClientTest
+from mocks import Client, Response
 
 import pagerduty
 from pagerduty.auth_method import AuthMethod
 from pagerduty.errors import UrlError
-from common_test import ClientTest
-from mocks import Client, Response
 
 
 class DummyAuthMethod(AuthMethod):
@@ -93,14 +94,12 @@ class ApiClientTest(ClientTest):
                     "GET", {"X-Arbitrary-Header": "arbitrary-value"}
                 ).keys()
             ).issubset(
-                set(
-                    # HTTPX lowercases headers:
-                    [
-                        "x-arbitrary-header",
-                        "user-agent",
-                        "authorization",  # From the AuthMethod
-                    ]
-                )
+                # HTTPX lowercases headers:
+                {
+                    "x-arbitrary-header",
+                    "user-agent",
+                    "authorization",  # From the AuthMethod
+                }
             )
         )
 
@@ -347,12 +346,6 @@ class ApiClientTest(ClientTest):
                     )
                 except pagerduty.Error as e:
                     self.assertEqual(e.__cause__, raises[-1])
-                except Exception as e:
-                    self.assertTrue(
-                        False,
-                        msg="Raised exception not of the "
-                        f"expected class; was {e.__class__}",
-                    )
                 self.assertEqual(
                     client.max_network_attempts + 1, request.call_count
                 )

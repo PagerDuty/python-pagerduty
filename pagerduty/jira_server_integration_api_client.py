@@ -1,7 +1,4 @@
-from typing import List
-
 from .rest_api_v2_base_client import CanonicalPath, RestApiV2BaseClient
-
 
 CANONICAL_PATHS = ["/rules"]
 
@@ -50,7 +47,7 @@ class JiraServerIntegrationApiClient(RestApiV2BaseClient):
         base_url=None,
         **kw,
     ):
-        super(JiraServerIntegrationApiClient, self).__init__(
+        super().__init__(
             access_token,
             auth_type="bearer",
             debug=debug,
@@ -67,7 +64,7 @@ class JiraServerIntegrationApiClient(RestApiV2BaseClient):
         )
 
     @property
-    def canonical_paths(self) -> List[CanonicalPath]:
+    def canonical_paths(self) -> list[CanonicalPath]:
         return CANONICAL_PATHS
 
     @property

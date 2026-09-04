@@ -10,8 +10,6 @@ class UrlError(Exception):
     Exception class for unsupported URLs or malformed input.
     """
 
-    pass
-
 
 class Error(Exception):
     """
@@ -32,7 +30,7 @@ class Error(Exception):
     def __init__(self, message, response=None):
         self.msg = message
         self.response = response
-        super(Error, self).__init__(message)
+        super().__init__(message)
 
 
 class HttpError(Error):
@@ -69,7 +67,7 @@ class HttpError(Error):
     """
 
     def __init__(self, message, response: Response):
-        super(HttpError, self).__init__(message, response=response)
+        super().__init__(message, response=response)
 
 
 class ServerHttpError(HttpError):
@@ -81,5 +79,3 @@ class ServerHttpError(HttpError):
     changes before GA, or in cases of HTTP status 5xx where a successful
     response is required.
     """
-
-    pass

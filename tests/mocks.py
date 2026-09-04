@@ -1,10 +1,10 @@
 import datetime
 import json
-from unittest.mock import Mock, MagicMock
 from json.decoder import JSONDecodeError
+from unittest.mock import MagicMock, Mock
 
 
-class Client(object):
+class Client:
     """
     Python reqeusts.Client mockery class
     """
@@ -13,14 +13,14 @@ class Client(object):
     headers = None
 
 
-class Response(object):
+class Response:
     """Specialized mock class for emulating httpx.Response objects
 
     Look for existing use of this class for examples on how to use.
     """
 
     def __init__(self, code, text, method="GET", url=None):
-        super(Response, self).__init__()
+        super().__init__()
         self.status_code = code
         self.text = text
         self.is_success = code < 400

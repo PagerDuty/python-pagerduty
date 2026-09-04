@@ -2,20 +2,19 @@
 import logging
 import sys
 import time
-
 from copy import deepcopy
 from random import random
-from typing import Optional, Union
+
+from httpx2 import Client, Headers, Response, TransportError
 
 # PyPI
 from httpx2 import __version__ as HTTPX_VERSION
-from httpx2 import Client, Headers, TransportError, Response
 
 # Local
 from .auth_method import AuthMethod
-from .version import __version__
-from .errors import Error, HttpError, ServerHttpError, UrlError
 from .common import TIMEOUT, normalize_url
+from .errors import Error, HttpError, ServerHttpError, UrlError
+from .version import __version__
 
 
 class ApiClient(Client):
@@ -115,7 +114,7 @@ class ApiClient(Client):
     def __init__(
         self, auth_method: AuthMethod, debug=False, base_url=None, **kw
     ):
-        self.parent = super(ApiClient, self)
+        self.parent = super()
         self.parent.__init__(**kw)
         self.auth_method = auth_method
         self.log = logging.getLogger(__name__)
@@ -131,7 +130,6 @@ class ApiClient(Client):
         Setter hook for setting or updating the authentication method.
         Child classes should implement this to perform additional steps.
         """
-        pass
 
     @property
     def auth_method(self) -> AuthMethod:
@@ -192,10 +190,9 @@ class ApiClient(Client):
         This method is called once per request not including retries, and can be
         extended in child classes.
         """
-        pass
 
     def prepare_headers(
-        self, method: str, user_headers: Optional[dict] = None
+        self, method: str, user_headers: dict | None = None
     ) -> dict:
         """
         Append all necessary headers per-request.
@@ -315,7 +312,7 @@ class ApiClient(Client):
                     req_kw[body_key].update(self.auth_method.auth_param)
 
         # Special changes to user-supplied query parameters, for convenience:
-        if "params" in kwargs and kwargs["params"]:
+        if kwargs.get("params"):
             req_kw["params"] = self.normalize_params(kwargs["params"])
 
         # Make the request (and repeat w/cooldown if the rate limit is reached):
@@ -361,8 +358,7 @@ class ApiClient(Client):
                         or sum(http_attempts.values()) > self.max_http_attempts
                     ):
                         lower_limit = retry_logic
-                        if lower_limit > self.max_http_attempts:
-                            lower_limit = self.max_http_attempts
+                        lower_limit = min(lower_limit, self.max_http_attempts)
                         self.log.error(
                             "%s: Non-transient HTTP error: exceeded "
                             "maximum number of attempts (%d) to make a "
@@ -443,7 +439,7 @@ class ApiClient(Client):
             return 0
 
     @stagger_cooldown.setter
-    def stagger_cooldown(self, val: Union[float, int]):
+    def stagger_cooldown(self, val: float):
         if type(val) not in [float, int] or val < 0:
             raise ValueError(
                 "Cooldown randomization factor stagger_cooldown "

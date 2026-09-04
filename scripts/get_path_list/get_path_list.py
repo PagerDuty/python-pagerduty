@@ -9,6 +9,7 @@ Usage: get_path_list.py PATH
 """
 
 import sys
+
 from yaml import load
 
 try:
@@ -48,25 +49,22 @@ def main():
         print(__doc__)
         return
     file = sys.argv[1]
-    api_ref = load(open(file, "r"), Loader)
-    public_endpoints = list(
-        map(
-            lambda kv: kv[0],
-            filter(
+    with open(file, "r") as file_obj:
+        api_ref = load(file_obj, Loader)
+        public_endpoints = [
+            kv[0]
+            for kv in filter(
                 lambda kv: not kv[1].get("x-pd-private", False),
                 api_ref["paths"].items(),
-            ),
-        )
-    )
-    public_endpoints_dict = dict(
-        map(
-            lambda kv: (kv[0], kv[1]),
-            filter(
+            )
+        ]
+        public_endpoints_dict = {
+            kv[0]: kv[1]
+            for kv in filter(
                 lambda kv: not kv[1].get("x-pd-private", False),
                 api_ref["paths"].items(),
-            ),
-        )
-    )
+            )
+        }
 
     print("CANONICAL_PATHS = [")
     for path in public_endpoints:

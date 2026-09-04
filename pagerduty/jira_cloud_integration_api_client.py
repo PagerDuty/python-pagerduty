@@ -1,5 +1,3 @@
-from typing import List
-
 from .rest_api_v2_base_client import CanonicalPath, RestApiV2BaseClient
 
 # NOTE: This API client contains an antipattern, where the base URL begins
@@ -63,7 +61,7 @@ class JiraCloudIntegrationApiClient(RestApiV2BaseClient):
         base_url=None,
         **kw,
     ):
-        super(JiraCloudIntegrationApiClient, self).__init__(
+        super().__init__(
             api_key, auth_type=auth_type, debug=debug, base_url=base_url, **kw
         )
         self.headers.update(
@@ -76,7 +74,7 @@ class JiraCloudIntegrationApiClient(RestApiV2BaseClient):
         )
 
     @property
-    def canonical_paths(self) -> List[CanonicalPath]:
+    def canonical_paths(self) -> list[CanonicalPath]:
         return CANONICAL_PATHS
 
     @property

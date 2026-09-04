@@ -1,8 +1,8 @@
 # Core
+from collections.abc import Iterator
 from copy import deepcopy
 from datetime import datetime
 from sys import getrecursionlimit
-from typing import Iterator, List, Optional
 from warnings import warn
 
 # Local
@@ -12,9 +12,13 @@ from .rest_api_v2_base_client import (
     ITERATION_LIMIT,
     CanonicalPath,
     RestApiV2BaseClient,
-    canonical_path as canonical_path_common,
-    entity_wrappers as entity_wrappers_common,
     wrapped_entities,
+)
+from .rest_api_v2_base_client import (
+    canonical_path as canonical_path_common,
+)
+from .rest_api_v2_base_client import (
+    entity_wrappers as entity_wrappers_common,
 )
 
 ########################
@@ -562,13 +566,13 @@ class RestApiV2Client(RestApiV2BaseClient):
     def __init__(
         self,
         api_key: str,
-        default_from: Optional[str] = None,
+        default_from: str | None = None,
         auth_type: str = "token",
         debug: bool = False,
         base_url=None,
         **kw,
     ):
-        super(RestApiV2Client, self).__init__(
+        super().__init__(
             api_key, auth_type, debug=debug, base_url=base_url, **kw
         )
 
@@ -651,11 +655,11 @@ class RestApiV2Client(RestApiV2BaseClient):
         return self._api_key_access
 
     @property
-    def canonical_paths(self) -> List[CanonicalPath]:
+    def canonical_paths(self) -> list[CanonicalPath]:
         return CANONICAL_PATHS
 
     @property
-    def cursor_based_pagination_paths(self) -> List[CanonicalPath]:
+    def cursor_based_pagination_paths(self) -> list[CanonicalPath]:
         return CURSOR_BASED_PAGINATION_PATHS
 
     @property
@@ -671,8 +675,8 @@ class RestApiV2Client(RestApiV2BaseClient):
         resource: str,
         query: str,
         attribute: str = "name",
-        params: Optional[dict] = None,
-    ) -> Optional[dict]:
+        params: dict | None = None,
+    ) -> dict | None:
         """
         Finds an object of a given resource type exactly matching a query.
 
@@ -725,7 +729,7 @@ class RestApiV2Client(RestApiV2BaseClient):
         return next(iter(filter(equiv, obj_iter)), None)
 
     def iter_alert_grouping_settings(
-        self, service_ids: Optional[list] = None, limit: Optional[int] = None
+        self, service_ids: list | None = None, limit: int | None = None
     ) -> Iterator[dict]:
         """
         Iterator for the contents of "List alert grouping settings"
@@ -759,8 +763,7 @@ class RestApiV2Client(RestApiV2BaseClient):
             if after is not None:
                 params["after"] = after
             page = self.jget("/alert_grouping_settings", params=params)
-            for result in page["alert_grouping_settings"]:
-                yield result
+            yield from page["alert_grouping_settings"]
             after = page.get("after", None)
             more = after is not None
 
@@ -769,8 +772,8 @@ class RestApiV2Client(RestApiV2BaseClient):
         filters: dict,
         order: str = "desc",
         order_by: str = "created_at",
-        limit: Optional[int] = None,
-        time_zone: Optional[str] = None,
+        limit: int | None = None,
+        time_zone: str | None = None,
     ) -> Iterator[dict]:
         """
         Iterator for raw analytics data on multiple incidents.
@@ -814,8 +817,7 @@ class RestApiV2Client(RestApiV2BaseClient):
             if last is not None:
                 body["starting_after"] = last
             page = self.jpost("/analytics/raw/incidents", json=body)
-            for result in page["data"]:
-                yield result
+            yield from page["data"]
             last = page.get("last", None)
             more = page.get("more", False) and last is not None
 
@@ -935,7 +937,7 @@ class RestApiV2Client(RestApiV2BaseClient):
                     yield item
 
     def iter_incident_notes(
-        self, incident_id: Optional[str] = None, **kw
+        self, incident_id: str | None = None, **kw
     ) -> Iterator[dict]:
         """
         Iterator for incident notes.
@@ -961,7 +963,7 @@ class RestApiV2Client(RestApiV2BaseClient):
             # it must be removed if present:
             for key in ("team_ids", "team_ids[]"):
                 if "params" in my_kw and key in my_kw["params"]:
-                    self.log.warn(
+                    self.log.warning(
                         f'iter_incident_notes: query parameter "{key}" will '
                         "be ignored because argument incident_id was specified"
                     )
@@ -1074,10 +1076,14 @@ class RestApiV2Client(RestApiV2BaseClient):
             try:
                 url = self.rget("users", params={"limit": 1})[0]["html_url"]
                 self._subdomain = url.split("/")[2].split(".")[0]
-            except Error as e:
-                self.log.error(
-                    "Failed to obtain subdomain; encountered error."
-                )
+            except HttpError as e:
+                msg = "Failed to obtain subdomain due to API HTTP error."
+                self.log.error(msg)
                 self._subdomain = None
-                raise e
+                raise HttpError(msg) from e
+            except Error as e:
+                msg = "Encountered an error while obtaining account subdomain."
+                self.log.error(msg)
+                self._subdomain = None
+                raise Error(msg) from e
         return self._subdomain

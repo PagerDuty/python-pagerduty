@@ -1,9 +1,10 @@
 # Core
 import functools
+from collections.abc import Callable
 from datetime import datetime, timedelta, timezone
-from typing import Any, Callable, List, Optional, Tuple, Union
-from warnings import warn
 from json.decoder import JSONDecodeError
+from typing import Any
+from warnings import warn
 
 # PyPI
 from httpx2 import Response
@@ -43,7 +44,7 @@ session.
 
 def datetime_intervals(
     since: datetime, until: datetime, n=10
-) -> List[Tuple[datetime, datetime]]:
+) -> list[tuple[datetime, datetime]]:
     """
     Subdivide a given time interval into smaller consecutive intervals.
 
@@ -89,8 +90,8 @@ def datetime_to_relative_seconds(datestr: str):
 
 def deprecated_kwarg(
     deprecated_name: str,
-    details: Optional[str] = None,
-    method: Optional[str] = None,
+    details: str | None = None,
+    method: str | None = None,
 ):
     """
     Raises a warning if a deprecated keyword argument is used.
@@ -114,7 +115,7 @@ def deprecated_kwarg(
     )
 
 
-def http_error_message(r: Response, context: Optional[str] = None) -> str:
+def http_error_message(r: Response, context: str | None = None) -> str:
     """
     Formats a message describing a HTTP error.
 
@@ -177,7 +178,7 @@ def normalize_url(base_url: str, url: str) -> str:
     """
     if url.startswith(base_url):
         return url
-    elif not (url.startswith("http://") or url.startswith("https://")):
+    elif not url.startswith(("http://", "https://")):
         return base_url.rstrip("/") + "/" + url.lstrip("/")
     else:
         raise UrlError(
@@ -271,9 +272,7 @@ def strptime(datestr: str) -> datetime:
     return datetime.strptime(datestr, DATETIME_FMT)
 
 
-def successful_response(
-    r: Response, context: Optional[str] = None
-) -> Response:
+def successful_response(r: Response, context: str | None = None) -> Response:
     """Validates the response as successful.
 
     Returns the response if it was successful; otherwise, raises
@@ -307,7 +306,7 @@ def truncate_text(text: str) -> str:
         return text
 
 
-def try_decoding(r: Response) -> Optional[Union[dict, list, str]]:
+def try_decoding(r: Response) -> dict | list | str | None:
     """
     JSON-decode a response body
 

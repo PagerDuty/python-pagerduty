@@ -3,14 +3,13 @@ import unittest
 from unittest.mock import patch
 
 import httpx2
-
 from mocks import Response
-from pagerduty import OAuthTokenClient
+
+from pagerduty import OAuthTokenClient, RestApiV2Client
 from pagerduty.common import (
     datetime_to_relative_seconds,
     relative_seconds_to_datetime,
 )
-from pagerduty import RestApiV2Client
 
 
 class OAuthTokenClientTest(unittest.TestCase):
@@ -92,7 +91,7 @@ class OAuthTokenClientTest(unittest.TestCase):
 
     @patch.object(OAuthTokenClient, "get_new_token")
     def test_get_new_token_from_code(self, get_new_token):
-        (client_secret, client_id, client) = self.new_client()
+        (_client_secret, _client_id, client) = self.new_client()
         auth_code = "12345"
         scope = "nope"
         redirect_uri = "http://example.com/foo"
@@ -106,7 +105,7 @@ class OAuthTokenClientTest(unittest.TestCase):
 
     @patch.object(OAuthTokenClient, "get_new_token")
     def test_get_refreshed_token(self, get_new_token):
-        (client_secret, client_id, client) = self.new_client()
+        (_client_secret, _client_id, client) = self.new_client()
         refresh_token = "notarefreshtoken"
         client.get_refreshed_token(refresh_token)
         get_new_token.assert_called_once_with(
@@ -115,7 +114,7 @@ class OAuthTokenClientTest(unittest.TestCase):
 
     @patch.object(OAuthTokenClient, "get_new_token")
     def test_get_scoped_app_token(self, get_new_token):
-        (client_secret, client_id, client) = self.new_client()
+        (_client_secret, _client_id, client) = self.new_client()
         scope = "nope"
         client.get_scoped_app_token(scope)
         get_new_token.assert_called_once_with(
@@ -127,7 +126,7 @@ class OAuthTokenClientTest(unittest.TestCase):
         """
         Test using refresh_client when the token is fresh enough to keep using it
         """
-        (client_secret, client_id, client) = self.new_client()
+        (_client_secret, _client_id, client) = self.new_client()
         fresh_enough_s_in_future = client.early_refresh_buffer + 864000
         existing_access_token = "not_an_access_token"
         rest_client, auth = client.refresh_client(
@@ -148,7 +147,7 @@ class OAuthTokenClientTest(unittest.TestCase):
         """
         Test using refresh_client when the token is old enough to warrant a refresh
         """
-        (client_secret, client_id, client) = self.new_client()
+        (_client_secret, _client_id, client) = self.new_client()
         not_far_enough_in_future = client.early_refresh_buffer - 3600
         freshly_made_expires_in = 864000
         api_key_old = "not_an_access_token"

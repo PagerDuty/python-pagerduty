@@ -1,14 +1,12 @@
 # Core
 from copy import deepcopy
 from datetime import datetime
-from typing import List, Optional
 
 # PyPI
-
 # Local
 from .api_client import ApiClient
 from .auth_method import BodyParameterAuthMethod
-from .common import successful_response, try_decoding, truncate_text
+from .common import successful_response, truncate_text, try_decoding
 from .errors import ServerHttpError
 
 
@@ -49,9 +47,7 @@ class EventsApiV2Client(ApiClient):
         self, routing_key: str, debug: bool = False, base_url=None, **kw
     ):
         auth_method = RoutingKeyAuthMethod(routing_key)
-        super(EventsApiV2Client, self).__init__(
-            auth_method, debug=debug, base_url=base_url, **kw
-        )
+        super().__init__(auth_method, debug=debug, base_url=base_url, **kw)
         # See: https://developer.pagerduty.com/docs/3d063fd4814a6-events-api-v2-overview#response-codes--retry-logic
         self.retry[500] = 2  # internal server error
         self.retry[502] = 4  # bad gateway
@@ -75,7 +71,7 @@ class EventsApiV2Client(ApiClient):
 
     @property
     def event_timestamp(self) -> str:
-        return datetime.utcnow().isoformat() + "Z"
+        return datetime.now(tz=datetime.timezone.utc).isoformat() + "Z"
 
     @property
     def permitted_methods(self) -> tuple:
@@ -92,9 +88,9 @@ class EventsApiV2Client(ApiClient):
 
     def send_change_event(
         self,
-        payload: Optional[dict] = None,
-        links: Optional[List[dict]] = None,
-        images: Optional[List[dict]] = None,
+        payload: dict | None = None,
+        links: list[dict] | None = None,
+        images: list[dict] | None = None,
     ):
         """
         Send a change event to the v2 Change Events API.
@@ -128,7 +124,7 @@ class EventsApiV2Client(ApiClient):
         )
 
     def send_event(
-        self, action: str, dedup_key: Optional[str] = None, **properties
+        self, action: str, dedup_key: str | None = None, **properties
     ) -> str:
         """
         Send an event to the v2 Events API.
@@ -161,11 +157,13 @@ class EventsApiV2Client(ApiClient):
         event.update(properties)
         if isinstance(dedup_key, str):
             event["dedup_key"] = dedup_key
-        elif not action == "trigger":
+        elif action != "trigger":
             raise ValueError(
-                "The dedup_key property is required for"
-                "event_action=%s events, and it must be a string." % action
+                "The dedup_key property is required unless"
+                "event_action=trigger, and it must be a string."
             )
+        elif dedup_key is not None:
+            raise TypeError("The dedup_key property must be string or None.")
         response = successful_response(
             self.post("/v2/enqueue", json=event),
             context="submitting an event to the events API",
@@ -183,10 +181,10 @@ class EventsApiV2Client(ApiClient):
     def submit(
         self,
         summary: str,
-        source: Optional[str] = None,
-        custom_details: Optional[dict] = None,
-        links: Optional[List[dict]] = None,
-        timestamp: Optional[str] = None,
+        source: str | None = None,
+        custom_details: dict | None = None,
+        links: list[dict] | None = None,
+        timestamp: str | None = None,
     ):
         """
         Submit a change event.
@@ -238,12 +236,12 @@ class EventsApiV2Client(ApiClient):
         self,
         summary: str,
         source: str,
-        dedup_key: Optional[str] = None,
+        dedup_key: str | None = None,
         severity: str = "critical",
-        payload: Optional[dict] = None,
-        custom_details: Optional[dict] = None,
-        images: Optional[List[dict]] = None,
-        links: Optional[List[dict]] = None,
+        payload: dict | None = None,
+        custom_details: dict | None = None,
+        images: list[dict] | None = None,
+        links: list[dict] | None = None,
     ) -> str:
         """
         Send an alert-triggering event

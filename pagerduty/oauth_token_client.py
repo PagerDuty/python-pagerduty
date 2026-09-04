@@ -1,10 +1,8 @@
-import urllib.parse
 import base64
 import hashlib
 import secrets
-from typing import Optional, Tuple
+import urllib.parse
 import warnings
-
 from copy import deepcopy
 
 from httpx2 import Response
@@ -115,9 +113,7 @@ class OAuthTokenClient(ApiClient):
         """
         auth_method = ClientCredentialsAuthMethod(client_secret, client_id)
 
-        super(OAuthTokenClient, self).__init__(
-            auth_method, debug=debug, base_url=base_url, **kw
-        )
+        super().__init__(auth_method, debug=debug, base_url=base_url, **kw)
 
     def amended_auth_response(self, response: Response) -> dict:
         """
@@ -307,7 +303,7 @@ class OAuthTokenClient(ApiClient):
         """
         return self.get_new_token(grant_type="client_credentials", scope=scope)
 
-    def generate_s256_pkce_params(self) -> Tuple[str, str]:
+    def generate_s256_pkce_params(self) -> tuple[str, str]:
         """
         Generate PKCE parameters for OAuth authorization.
 
@@ -404,7 +400,7 @@ class OAuthTokenClient(ApiClient):
         expiration_date: str,
         base_url: str = "https://api.pagerduty.com",
         **kw,
-    ) -> Tuple[RestApiV2Client, Optional[dict]]:
+    ) -> tuple[RestApiV2Client, dict | None]:
         """
         Instantiate and return a :class:`pagerduty.RestApiV2Client` object
 
