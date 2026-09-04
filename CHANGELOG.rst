@@ -1,3 +1,10 @@
+**2026-09-04: 7.0.1: Maintenance update**
+
+* Update maintainers list
+* Upgrade all dependencies
+* Fix lint/format issues reported by the latest version of Ruff
+* Documentation fixes
+
 **2026-07-15: 7.0.0: Switch upstream client to httpx2**
 
 * Changes the core HTTP client from ``httpx`` to ``httpx2``, which is based on it but more actively maintained, so that clients can continue to receive bug fixes and security updates.
