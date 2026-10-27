@@ -474,7 +474,7 @@ Events API v2
 Generic Client Features
 -----------------------
 Generally, all of the features of `httpx2.Client`_ are available to the user
-as they would be if using the `HTTP2X`_ Python library directly, since
+as they would be if using the `HTTPX2`_ Python library directly, since
 :class:`pagerduty.ApiClient` and its subclasses for the REST/Events APIs are
 descendants of it. 
 
