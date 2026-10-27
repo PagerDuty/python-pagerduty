@@ -166,6 +166,7 @@ CANONICAL_PATHS = [
     "/incidents/types/{type_id_or_name}/custom_fields/{field_id}",
     "/incidents/types/{type_id_or_name}/custom_fields/{field_id}/field_options",
     "/incidents/types/{type_id_or_name}/custom_fields/{field_id}/field_options/{field_option_id}",
+    # TODO: remove support for deprecated custom_fields API
     "/incidents/custom_fields",
     "/incidents/custom_fields/{field_id}",
     "/incidents/custom_fields/{field_id}/field_options",
