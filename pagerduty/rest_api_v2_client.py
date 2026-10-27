@@ -149,6 +149,12 @@ CANONICAL_PATHS = [
     "/incidents/{id}/related_incidents",
     "/incidents/{id}/responder_requests",
     "/incidents/{id}/responder_requests/cancel",
+    "/incidents/reviews",
+    "/incidents/reviews/action_items",
+    "/incidents/{id}/review",
+    "/incidents/{id}/review/action_items",
+    "/incidents/{id}/review/markers",
+    "/incidents/{id}/scribe_transcripts",
     "/incidents/{id}/snooze",
     "/incidents/{id}/status_updates",
     "/incidents/{id}/status_updates/subscribers",
@@ -164,7 +170,9 @@ CANONICAL_PATHS = [
     "/incidents/custom_fields/{field_id}",
     "/incidents/custom_fields/{field_id}/field_options",
     "/incidents/custom_fields/{field_id}/field_options/{field_option_id}",
-    # Coming soon: /ip_allow_lists/*
+    "/ip_allow_lists",
+    "/ip_allow_lists/{id}",
+    "/ip_allow_lists/{id}/audit/records",
     "/license_allocations",
     "/licenses",
     "/log_entries",
@@ -273,6 +281,7 @@ CANONICAL_PATHS = [
     "/users/{id}/sessions/{type}/{session_id}",
     "/users/{id}/status_update_notification_rules",
     "/users/{id}/status_update_notification_rules/{status_update_notification_rule_id}",
+    "/users/{id}/regenerate_private_url_key",
     "/users/me",
     "/vendors",
     "/v3/schedules",
@@ -311,7 +320,10 @@ CURSOR_BASED_PAGINATION_PATHS = [
     "/escalation_policies/{id}/audit/records",
     "/incident_workflows/actions",
     "/incident_workflows/triggers",
-    # Coming soon: /ip_allow_lists/*
+    "/incidents/reviews",
+    "/incidents/reviews/action_items",
+    "/incidents/{id}/review/action_items",
+    "/ip_allow_lists/{id}/audit/records",
     "/schedules/{id}/audit/records",
     "/services/{id}/audit/records",
     "/teams/{id}/audit/records",
@@ -420,9 +432,16 @@ ENTITY_WRAPPER_CONFIG = {
     # /incidents/types/{type_id_or_name}/custom_fields/{field_id}/field_options
     # /incidents/types/{type_id_or_name}/custom_fields/{field_id}/field_options/{field_option_id}
     "PUT /incidents/{id}/responder_requests/cancel": None,
+    # Incident Reviews:
+    "GET /incidents/reviews": "incident_reviews",
+    "* /incidents/{id}/review": "incident_review",
+    # follows orthodox schema patterns:
+    # /incidents/{id}/review/action_items
+    # /incidents/{id}/review/markers
     # Incident Workflows:
     "POST /incident_workflows/{id}/instances": "incident_workflow_instance",
     "POST /incident_workflows/triggers/{id}/services": ("service", "trigger"),
+    # IP Allow Lists: no schema antipatterns
     # Schedules:
     "POST /schedules/{id}/overrides": ("overrides", None),
     # Service Dependencies:
@@ -477,6 +496,7 @@ ENTITY_WRAPPER_CONFIG = {
     "GET /users/{id}/sessions": "user_sessions",
     "GET /users/{id}/sessions/{type}/{session_id}": "user_session",
     "GET /users/me": "user",
+    "POST /users/{id}/regenerate_private_url_key": (None, "private_url_key"),
     # Workflow Integrations adheres to orthodox API conventions / fully
     # supported via inference from path
     # OAuth Delegations:
