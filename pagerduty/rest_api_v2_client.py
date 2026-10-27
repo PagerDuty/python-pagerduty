@@ -434,10 +434,8 @@ ENTITY_WRAPPER_CONFIG = {
     "PUT /incidents/{id}/responder_requests/cancel": None,
     # Incident Reviews:
     "GET /incidents/reviews": "incident_reviews",
-    "* /incidents/{id}/review": "incident_review",
-    # follows orthodox schema patterns:
-    # /incidents/{id}/review/action_items
-    # /incidents/{id}/review/markers
+    "* /incidents/{id}/review": (None, "incident_review"),
+    "POST /incidents/{id}/review/markers": (None, "marker"),
     # Incident Workflows:
     "POST /incident_workflows/{id}/instances": "incident_workflow_instance",
     "POST /incident_workflows/triggers/{id}/services": ("service", "trigger"),
