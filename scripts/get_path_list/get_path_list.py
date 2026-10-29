@@ -67,10 +67,13 @@ def main():
         }
 
     print("CANONICAL_PATHS = [")
+    path_lines = set()
     for path in public_endpoints:
         print_paths = EXPAND_PATHS.get(path, [path])
         for path in print_paths:
-            print(f'    "{path}",')
+            path_lines.add(f'    "{path}",')
+    for line in sorted(path_lines):
+        print(line)
     print("]\n")
 
     print("CURSOR_BASED_PAGINATION_PATHS = [")
