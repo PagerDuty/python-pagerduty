@@ -6,14 +6,14 @@
   <meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" />
 
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>User Guide &mdash; python-pagerduty 7.0.1 documentation</title>
+  <title>User Guide &mdash; python-pagerduty 7.1.0 documentation</title>
       <link rel="stylesheet" type="text/css" href="_static/pygments.css?v=03e43079" />
       <link rel="stylesheet" type="text/css" href="_static/css/theme.css?v=9edc463e" />
 
   
       <script src="_static/jquery.js?v=5d32c60e"></script>
       <script src="_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
-      <script src="_static/documentation_options.js?v=4b9d3a76"></script>
+      <script src="_static/documentation_options.js?v=9e30f436"></script>
       <script src="_static/doctools.js?v=fd6eb6e6"></script>
       <script src="_static/sphinx_highlight.js?v=6ffebe34"></script>
     <script src="_static/js/theme.js"></script>
@@ -47,10 +47,14 @@
 <li class="toctree-l1 current"><a class="current reference internal" href="#">User Guide</a><ul>
 <li class="toctree-l2"><a class="reference internal" href="#installation">Installation</a></li>
 <li class="toctree-l2"><a class="reference internal" href="#command-line-interface">Command Line Interface</a></li>
-<li class="toctree-l2"><a class="reference internal" href="#authentication">Authentication</a><ul>
-<li class="toctree-l3"><a class="reference internal" href="#which-client-class-to-use">Which Client Class To Use</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#client-initialization">Client Initialization</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#authentication">Authentication</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#selecting-a-client-class">Selecting a Client Class</a></li>
 <li class="toctree-l3"><a class="reference internal" href="#clients-as-context-managers">Clients as Context Managers</a></li>
 <li class="toctree-l3"><a class="reference internal" href="#the-from-header">The From Header</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="#obtaining-oauth-tokens">Obtaining OAuth Tokens</a><ul>
 <li class="toctree-l3"><a class="reference internal" href="#performing-an-oauth-exchange-to-obtain-an-access-token">Performing an OAuth Exchange to Obtain an Access Token</a></li>
 <li class="toctree-l3"><a class="reference internal" href="#performing-oauth-token-refresh-automatically">Performing OAuth Token Refresh Automatically</a></li>
 </ul>
@@ -61,7 +65,6 @@
 <li class="toctree-l3"><a class="reference internal" href="#events-api-v2">Events API v2</a></li>
 </ul>
 </li>
-<li class="toctree-l2"><a class="reference internal" href="#client-classes">Client Classes</a></li>
 <li class="toctree-l2"><a class="reference internal" href="#generic-client-features">Generic Client Features</a></li>
 <li class="toctree-l2"><a class="reference internal" href="#urls">URLs</a></li>
 <li class="toctree-l2"><a class="reference internal" href="#query-parameters">Query Parameters</a></li>
@@ -145,10 +148,13 @@ example, to trigger an incident:</p>
 </div>
 <p>For more details, use the <code class="docutils literal notranslate"><span class="pre">-h</span></code> flag to display the script’s helptext.</p>
 </section>
+<section id="client-initialization">
+<h2>Client Initialization<a class="headerlink" href="#client-initialization" title="Link to this heading"></a></h2>
+<p>The first step is to construct a client object.</p>
 <section id="authentication">
-<h2>Authentication<a class="headerlink" href="#authentication" title="Link to this heading"></a></h2>
-<p>The first step is to construct a client object. The first argument to the
-constructor is the secret to use for accessing the API:</p>
+<h3>Authentication<a class="headerlink" href="#authentication" title="Link to this heading"></a></h3>
+<p>The first argument to the constructor is the secret to use for accessing the
+API:</p>
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span><span class="w"> </span><span class="nn">pagerduty</span>
 
 <span class="c1"># REST API v2:</span>
@@ -162,11 +168,19 @@ constructor is the secret to use for accessing the API:</p>
 <span class="n">events_client</span> <span class="o">=</span> <span class="n">pagerduty</span><span class="o">.</span><span class="n">EventsApiV2Client</span><span class="p">(</span><span class="n">ROUTING_KEY</span><span class="p">)</span>
 </pre></div>
 </div>
-<section id="which-client-class-to-use">
-<h3>Which Client Class To Use<a class="headerlink" href="#which-client-class-to-use" title="Link to this heading"></a></h3>
-<p>If the API endpoints to use are documented under “PagerDuty API” in the
-<a class="reference external" href="https://developer.pagerduty.com/api-reference/e65c5833eeb07-pager-duty-api">API Reference</a>,
-they are part of the standard REST API, and <a class="reference internal" href="module_reference.html#pagerduty.RestApiV2Client" title="pagerduty.RestApiV2Client"><code class="xref py py-attr docutils literal notranslate"><span class="pre">pagerduty.RestApiV2Client</span></code></a>
+</section>
+<section id="selecting-a-client-class">
+<h3>Selecting a Client Class<a class="headerlink" href="#selecting-a-client-class" title="Link to this heading"></a></h3>
+<p>Generally, each client class represents a top-level section of the <a class="reference external" href="https://docs.pagerduty.com/developer/api/reference">API
+Reference</a>
+page.  Each class is a thin wrapper around <a class="reference external" href="https://httpx2.pydantic.dev/api/#client">httpx2.Client</a> that supplies abstractions
+for the most generally-applicable patterns within the API it was built for:
+pagination, URL normalization/validation, error handling and entity wrapping
+(for example). The classes are documented under “API Client Classes” in the
+<a class="reference internal" href="module_reference.html#module-reference"><span class="std std-ref">Module Reference</span></a>.</p>
+<p>For example, if the API endpoints to use are documented under “REST API” in the
+<a class="reference external" href="https://docs.pagerduty.com/developer/api/reference">API Reference</a>,
+they are part of the standard core REST API, and <a class="reference internal" href="module_reference.html#pagerduty.RestApiV2Client" title="pagerduty.RestApiV2Client"><code class="xref py py-attr docutils literal notranslate"><span class="pre">pagerduty.RestApiV2Client</span></code></a>
 should be used to access them.</p>
 <p>To access PagerDuty’s MCP interface, use <a class="reference internal" href="module_reference.html#pagerduty.McpApiClient" title="pagerduty.McpApiClient"><code class="xref py py-attr docutils literal notranslate"><span class="pre">pagerduty.McpApiClient</span></code></a>.</p>
 <p>The SCIM API should be accessed using <a class="reference internal" href="module_reference.html#pagerduty.ScimApiClient" title="pagerduty.ScimApiClient"><code class="xref py py-attr docutils literal notranslate"><span class="pre">pagerduty.ScimApiClient</span></code></a>.</p>
@@ -177,8 +191,8 @@ should be used to access them.</p>
 class, i.e. <a class="reference internal" href="module_reference.html#pagerduty.MsTeamsIntegrationApiClient" title="pagerduty.MsTeamsIntegrationApiClient"><code class="xref py py-attr docutils literal notranslate"><span class="pre">pagerduty.MsTeamsIntegrationApiClient</span></code></a> should be used to
 access API endpoints of the MS Teams Integration API. Note that there is a
 separate API client for Slack Connections API endpoints as distinct from the
-rest of the Slack Integration API; this is due in part to it requiring the use
-of a different server hostname.</p>
+rest of the Slack Integration API; this is due to it requiring the use of a
+different server hostname in its base URL.</p>
 <p>To use PagerDuty’s OAuth interface, see “Performing an OAuth Exchange” below.</p>
 </section>
 <section id="clients-as-context-managers">
@@ -215,6 +229,12 @@ be:</p>
 <li><p><code class="docutils literal notranslate"><span class="pre">user</span></code> if it is using a user-scoped API key.</p></li>
 </ul>
 </section>
+</section>
+<section id="obtaining-oauth-tokens">
+<h2>Obtaining OAuth Tokens<a class="headerlink" href="#obtaining-oauth-tokens" title="Link to this heading"></a></h2>
+<p>Additional client classes are supplied for implementing OAuth exchanges; the
+resulting secret obtained in the exchange can then be used for authentication
+with many of the API client classes.</p>
 <section id="performing-an-oauth-exchange-to-obtain-an-access-token">
 <h3>Performing an OAuth Exchange to Obtain an Access Token<a class="headerlink" href="#performing-an-oauth-exchange-to-obtain-an-access-token" title="Link to this heading"></a></h3>
 <p>The client class <a class="reference internal" href="module_reference.html#pagerduty.OAuthTokenClient" title="pagerduty.OAuthTokenClient"><code class="xref py py-class docutils literal notranslate"><span class="pre">pagerduty.OAuthTokenClient</span></code></a> provides methods
@@ -331,9 +351,8 @@ only on the service region, but also the particular API in use.</p>
 <span class="c1"># The following also works:</span>
 <span class="n">client</span> <span class="o">=</span> <span class="n">pagerduty</span><span class="o">.</span><span class="n">RestApiV2Client</span><span class="p">(</span><span class="n">API_KEY</span><span class="p">)</span>
 <span class="n">client</span><span class="o">.</span><span class="n">url</span> <span class="o">=</span> <span class="s2">"https://api.eu.pagerduty.com"</span>
-</pre></div>
-</div>
-<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="c1"># Events API:</span>
+
+<span class="c1"># Events API:</span>
 <span class="n">events_client</span> <span class="o">=</span> <span class="n">pagerduty</span><span class="o">.</span><span class="n">EventsApiClient</span><span class="p">(</span>
     <span class="n">API_KEY</span><span class="p">,</span>
     <span class="n">base_url</span> <span class="o">=</span> <span class="s2">"https://events.eu.pagerduty.com"</span>
@@ -341,9 +360,8 @@ only on the service region, but also the particular API in use.</p>
 <span class="c1"># Or:</span>
 <span class="n">events_client</span> <span class="o">=</span> <span class="n">pagerduty</span><span class="o">.</span><span class="n">EventsApiClient</span><span class="p">(</span><span class="n">API_KEY</span><span class="p">)</span>
 <span class="n">events_client</span><span class="o">.</span><span class="n">url</span> <span class="o">=</span> <span class="s1">'https://events.eu.pagerduty.com'</span>
-</pre></div>
-</div>
-<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="c1"># Slack Integration "Connections" API (and likewise for other</span>
+
+<span class="c1"># Slack Integration "Connections" API (and likewise for other</span>
 <span class="c1"># APIs that use apps.pagerduty.com and/or some unique base path)</span>
 <span class="n">slack_conn_client</span> <span class="o">=</span> <span class="n">pagerduty</span><span class="o">.</span><span class="n">SlackIntegrationConnectionsApiClients</span><span class="p">(</span>
     <span class="n">API_KEY</span><span class="p">,</span>
@@ -357,6 +375,10 @@ only on the service region, but also the particular API in use.</p>
 </section>
 <section id="basic-usage-examples">
 <h2>Basic Usage Examples<a class="headerlink" href="#basic-usage-examples" title="Link to this heading"></a></h2>
+<p>The most basic way of accessing the API is using the methods <code class="docutils literal notranslate"><span class="pre">get</span></code>, <code class="docutils literal notranslate"><span class="pre">post</span></code>,
+<code class="docutils literal notranslate"><span class="pre">put</span></code>, <code class="docutils literal notranslate"><span class="pre">patch</span></code> and <code class="docutils literal notranslate"><span class="pre">delete</span></code> make requests; they return <a class="reference external" href="https://httpx2.pydantic.dev/api/#response">httpx2.Response</a>
+objects. While some abstractions are available for making API calls, this
+original method remains available.</p>
 <section id="rest-api-v2">
 <h3>REST API v2<a class="headerlink" href="#rest-api-v2" title="Link to this heading"></a></h3>
 <p><strong>Making a request and decoding the response:</strong> obtaining a resource’s contents
@@ -509,26 +531,10 @@ appended to the names of list-type-value parameters as necessary. For example:</
 </div>
 </section>
 </section>
-<section id="client-classes">
-<h2>Client Classes<a class="headerlink" href="#client-classes" title="Link to this heading"></a></h2>
-<p>For each of the APIs documented in the top-level sections of the <a class="reference external" href="https://developer.pagerduty.com/api-reference/e65c5833eeb07-pager-duty-api">API
-References</a>
-page, this library supports and provides abstraction for the API if it has a
-dedicated client class. These classes are documented under
-“API Client Classes” in <a class="reference internal" href="module_reference.html#module-reference"><span class="std std-ref">Module Reference</span></a>.</p>
-<p>All client classes are based on <a class="reference internal" href="module_reference.html#pagerduty.ApiClient" title="pagerduty.ApiClient"><code class="xref py py-class docutils literal notranslate"><span class="pre">pagerduty.ApiClient</span></code></a> and inherit its
-features.</p>
-<p>The class <a class="reference internal" href="module_reference.html#pagerduty.RestApiV2BaseClient" title="pagerduty.RestApiV2BaseClient"><code class="xref py py-class docutils literal notranslate"><span class="pre">pagerduty.RestApiV2BaseClient</span></code></a> defines abstractions for
-features documented under the generic <a class="reference external" href="https://developer.pagerduty.com/docs/rest-api-overview">REST API v2 Overview</a>, and
-<a class="reference internal" href="module_reference.html#pagerduty.RestApiV2Client" title="pagerduty.RestApiV2Client"><code class="xref py py-class docutils literal notranslate"><span class="pre">pagerduty.RestApiV2Client</span></code></a> inherits them.</p>
-<p>The “Integration” APIs are based loosely on REST API v2, and support several of
-the same features and conventions to varying degrees. For this reason, they
-also are based on inherit the features of <a class="reference internal" href="module_reference.html#pagerduty.RestApiV2BaseClient" title="pagerduty.RestApiV2BaseClient"><code class="xref py py-class docutils literal notranslate"><span class="pre">pagerduty.RestApiV2BaseClient</span></code></a>.</p>
-</section>
 <section id="generic-client-features">
 <h2>Generic Client Features<a class="headerlink" href="#generic-client-features" title="Link to this heading"></a></h2>
 <p>Generally, all of the features of <a class="reference external" href="https://httpx2.pydantic.dev/api/#client">httpx2.Client</a> are available to the user
-as they would be if using the <a href="#id6"><span class="problematic" id="id7">`HTTP2X`_</span></a> Python library directly, since
+as they would be if using the <a class="reference external" href="https://httpx2.pydantic.dev/">HTTPX2</a> Python library directly, since
 <a class="reference internal" href="module_reference.html#pagerduty.ApiClient" title="pagerduty.ApiClient"><code class="xref py py-class docutils literal notranslate"><span class="pre">pagerduty.ApiClient</span></code></a> and its subclasses for the REST/Events APIs are
 descendants of it.</p>
 <p>Generally, all client classes pass along all keyword arguments at the end of
