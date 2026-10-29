@@ -27,10 +27,14 @@ example, to trigger an incident:
 
 For more details, use the ``-h`` flag to display the script's helptext.
 
+Client Initialization
+---------------------
+The first step is to construct a client object.
+
 Authentication
---------------
-The first step is to construct a client object. The first argument to the
-constructor is the secret to use for accessing the API:
+**************
+The first argument to the constructor is the secret to use for accessing the
+API:
 
 .. code-block:: python
 
@@ -47,12 +51,21 @@ constructor is the secret to use for accessing the API:
     events_client = pagerduty.EventsApiV2Client(ROUTING_KEY)
 
 
-Which Client Class To Use
-*************************
-If the API endpoints to use are documented under "PagerDuty API" in the 
+Selecting a Client Class
+************************
+Generally, each client class represents a top-level section of the `API
+Reference
+<https://docs.pagerduty.com/developer/api/reference>`_
+page.  Each class is a thin wrapper around `httpx2.Client`_ that supplies abstractions
+for the most generally-applicable patterns within the API it was built for:
+pagination, URL normalization/validation, error handling and entity wrapping
+(for example). The classes are documented under "API Client Classes" in the
+:ref:`module_reference`.
+
+For example, if the API endpoints to use are documented under "REST API" in the 
 `API Reference
-<https://developer.pagerduty.com/api-reference/e65c5833eeb07-pager-duty-api>`_,
-they are part of the standard REST API, and :attr:`pagerduty.RestApiV2Client`
+<https://docs.pagerduty.com/developer/api/reference>`_,
+they are part of the standard core REST API, and :attr:`pagerduty.RestApiV2Client`
 should be used to access them.
 
 To access PagerDuty's MCP interface, use :attr:`pagerduty.McpApiClient`.
@@ -68,11 +81,10 @@ All "Integration" API actions should be carried out by an aptly-named client
 class, i.e. :attr:`pagerduty.MsTeamsIntegrationApiClient` should be used to
 access API endpoints of the MS Teams Integration API. Note that there is a
 separate API client for Slack Connections API endpoints as distinct from the
-rest of the Slack Integration API; this is due in part to it requiring the use
-of a different server hostname.
+rest of the Slack Integration API; this is due to it requiring the use of a
+different server hostname in its base URL.
 
 To use PagerDuty's OAuth interface, see "Performing an OAuth Exchange" below.
-
 
 Clients as Context Managers
 ***************************
@@ -111,6 +123,12 @@ be:
 
 * ``account`` if its API secret is an account-level API key
 * ``user`` if it is using a user-scoped API key.
+
+Obtaining OAuth Tokens
+----------------------
+Additional client classes are supplied for implementing OAuth exchanges; the
+resulting secret obtained in the exchange can then be used for authentication
+with many of the API client classes.
 
 Performing an OAuth Exchange to Obtain an Access Token
 ******************************************************
@@ -226,6 +244,7 @@ before using the token:
     # API clients can now be constructed with access_token;
     # stored values of refresh_token and expiration_date must be updated
 
+
 Using Non-US Service Regions
 ----------------------------
 If your PagerDuty account is in the EU or other service region outside the US,
@@ -248,8 +267,6 @@ A few examples of how to use the EU service region:
     client = pagerduty.RestApiV2Client(API_KEY)
     client.url = "https://api.eu.pagerduty.com"
 
-.. code-block:: python
-
     # Events API:
     events_client = pagerduty.EventsApiClient(
         API_KEY,
@@ -258,8 +275,6 @@ A few examples of how to use the EU service region:
     # Or:
     events_client = pagerduty.EventsApiClient(API_KEY)
     events_client.url = 'https://events.eu.pagerduty.com'
-
-.. code-block:: python
 
     # Slack Integration "Connections" API (and likewise for other
     # APIs that use apps.pagerduty.com and/or some unique base path)
@@ -274,6 +289,11 @@ A few examples of how to use the EU service region:
 
 Basic Usage Examples
 --------------------
+
+The most basic way of accessing the API is using the methods ``get``, ``post``,
+``put``, ``patch`` and ``delete`` make requests; they return `httpx2.Response`_
+objects. While some abstractions are available for making API calls, this
+original method remains available.
 
 REST API v2
 ***********
@@ -451,30 +471,10 @@ Events API v2
     events_client.submit("new build finished at latest HEAD",
         source="automation")
 
-Client Classes
---------------
-For each of the APIs documented in the top-level sections of the `API
-References
-<https://developer.pagerduty.com/api-reference/e65c5833eeb07-pager-duty-api>`_
-page, this library supports and provides abstraction for the API if it has a
-dedicated client class. These classes are documented under
-"API Client Classes" in :ref:`module_reference`.
-
-All client classes are based on :class:`pagerduty.ApiClient` and inherit its
-features.
-
-The class :class:`pagerduty.RestApiV2BaseClient` defines abstractions for
-features documented under the generic `REST API v2 Overview`_, and
-:class:`pagerduty.RestApiV2Client` inherits them.
-
-The "Integration" APIs are based loosely on REST API v2, and support several of
-the same features and conventions to varying degrees. For this reason, they
-also are based on inherit the features of :class:`pagerduty.RestApiV2BaseClient`.
-
 Generic Client Features
 -----------------------
 Generally, all of the features of `httpx2.Client`_ are available to the user
-as they would be if using the `HTTP2X`_ Python library directly, since
+as they would be if using the `HTTPX2`_ Python library directly, since
 :class:`pagerduty.ApiClient` and its subclasses for the REST/Events APIs are
 descendants of it. 
 

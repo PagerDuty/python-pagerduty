@@ -1,3 +1,9 @@
+**2026-10-29: 7.1.0: Maintenance update**
+
+* Add entity wrapping support for new generally available incident reviews and IP allowlist API features
+* Documentation updates
+
+
 **2026-09-04: 7.0.1: Maintenance update**
 
 * Update maintainers list
