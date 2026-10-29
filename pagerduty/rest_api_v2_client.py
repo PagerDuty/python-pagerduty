@@ -44,7 +44,9 @@ classic pagination, {iteration_limit}. Results will be incomplete.{suggestion}
 # CURSOR_BASED_PAGINATION_PATHS based on the API documentation's source code,
 # use scripts/get_path_list/get_path_list.py
 
-# TODO: remove support for deprecated custom_fields API
+# TODO:
+# - remove support for deprecated custom_fields API
+# - add support for enrichments APIs after transition from early access to GA
 
 # BEGIN auto-generated content
 
