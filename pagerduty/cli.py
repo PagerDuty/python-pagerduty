@@ -8,7 +8,7 @@ from .events_api_v2_client import EventsApiV2Client
 
 HOSTNAME = socket.gethostname()
 DEFAULT_SOURCE = f"pagerduty.cli on {HOSTNAME}"
-DEFAULT_BASE_URL = f"https://events.pagerduty.com"
+DEFAULT_BASE_URL = "https://events.pagerduty.com"
 
 
 def run(argv):
@@ -39,7 +39,9 @@ def run(argv):
         "--source", help="Source of the alert", default=DEFAULT_SOURCE
     )
     parser.add_argument(
-        "--base-url", help="Base URL of the alert", default=DEFAULT_BASE_URL
+        "--base-url",
+        help="Base URL of the Events API",
+        default=DEFAULT_BASE_URL,
     )
 
     args = parser.parse_args(argv)
