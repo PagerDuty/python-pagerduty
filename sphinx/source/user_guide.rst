@@ -254,6 +254,9 @@ can be done either by passing a ``base_url`` keyword argument to the
 constructor or after instantiation. Note that this base URL will depend not
 only on the service region, but also the particular API in use.
 
+When using the command line interface, set the base URL with the ``--base-url``
+argument.
+
 A few examples of how to use the EU service region:
 
 .. code-block:: python
