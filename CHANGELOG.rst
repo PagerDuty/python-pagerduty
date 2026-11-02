@@ -1,3 +1,7 @@
+**2026-11-02: 7.2.0: EU support for CLI**
+
+* The CLI now accepts an additional ``--base-url`` argument for EU support, contributed by ``@martijnlina`` in `#98 <https://github.com/PagerDuty/python-pagerduty/pull/98>`_
+
 **2026-10-29: 7.1.0: Maintenance update**
 
 * Add entity wrapping support for new generally available incident reviews and IP allowlist API features
