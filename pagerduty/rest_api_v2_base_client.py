@@ -783,9 +783,12 @@ class RestApiV2BaseClient(ApiClient):
 
         # Short-circuit to cursor-based pagination if appropriate:
         if path in self.cursor_based_pagination_paths:
-            return self.iter_cursor(
+            # This function is a generator, so the results must be yielded;
+            # returning the iterator would end the iteration with no results.
+            yield from self.iter_cursor(
                 url, params=params, page_size=page_size, item_hook=item_hook
             )
+            return
 
         nodes = path.split("/")
         if is_path_param(nodes[-1]):

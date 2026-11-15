@@ -493,7 +493,7 @@ class RestApiV2BaseClientTest(ClientTest):
         self.assertTrue(
             cpath in pagerduty.rest_api_v2_client.CURSOR_BASED_PAGINATION_PATHS
         )
-        iter_cursor.return_value = []
+        iter_cursor.return_value = iter([{"id": "A"}, {"id": "B"}])
         passed_kw = {
             "params": {
                 "since": "2025-01-01T00:00:00Z",
@@ -503,7 +503,8 @@ class RestApiV2BaseClientTest(ClientTest):
             "page_size": 42,
         }
         self.assertEqual(
-            [], list(client.iter_all("/audit/records", **passed_kw))
+            [{"id": "A"}, {"id": "B"}],
+            list(client.iter_all("/audit/records", **passed_kw)),
         )
         iter_cursor.assert_called_once_with("/audit/records", **passed_kw)
 
@@ -585,6 +586,20 @@ class RestApiV2BaseClientTest(ClientTest):
             client.iter_all(weirdurl, item_hook=hook, total=True, page_size=10)
         )
         self.assertEqual(30, len(items))
+
+    @patch.object(pagerduty.RestApiV2Client, "get")
+    def test_iter_all_cursor_pagination(self, get):
+        # iter_all on a cursor-paginated endpoint must yield every record
+        client = new_rest_api_v2_client()
+        client.log = MagicMock()
+        get.side_effect = [
+            Response(200, page_cursor("records", [1, 2, 3], 2)),
+            Response(200, page_cursor("records", [4, 5], None)),
+        ]
+        self.assertEqual(
+            list(client.iter_all("/audit/records")), [1, 2, 3, 4, 5]
+        )
+        self.assertEqual(get.call_count, 2)
 
     @patch.object(pagerduty.RestApiV2Client, "get")
     def test_iter_cursor(self, get):
