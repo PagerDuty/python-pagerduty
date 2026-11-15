@@ -1,3 +1,4 @@
+from datetime import datetime, timezone
 from unittest.mock import MagicMock, patch
 
 from common_test import ClientTest
@@ -96,6 +97,21 @@ class EventsApiV2ClientTest(ClientTest):
             json_sent = parent.request.call_args[1]["json"]
             self.assertTrue("routing_key" in json_sent)
             self.assertEqual(json_sent["routing_key"], "routingkey")
+
+    def test_submit_default_timestamp(self):
+        client = pagerduty.EventsApiV2Client("routingkey")
+        parent = MagicMock()
+        parent.request.return_value = Response(202, "{}")
+        before = datetime.now(timezone.utc)
+        with patch.object(client, "parent", new=parent):
+            client.submit("testing 123")
+        after = datetime.now(timezone.utc)
+        parent.request.assert_called_once()
+        timestamp = parent.request.call_args[1]["json"]["payload"]["timestamp"]
+        parsed = datetime.fromisoformat(timestamp.replace("Z", "+00:00"))
+        self.assertEqual(parsed.utcoffset().total_seconds(), 0)
+        self.assertLessEqual(before, parsed)
+        self.assertLessEqual(parsed, after)
 
     @patch("pagerduty.EventsApiV2Client.event_timestamp", EVENT_TIMESTAMP)
     def test_submit_change_event(self):
