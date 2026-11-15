@@ -1,6 +1,6 @@
 # Core
 from copy import deepcopy
-from datetime import datetime
+from datetime import datetime, timezone
 
 # PyPI
 # Local
@@ -71,7 +71,7 @@ class EventsApiV2Client(ApiClient):
 
     @property
     def event_timestamp(self) -> str:
-        return datetime.now(tz=datetime.timezone.utc).isoformat() + "Z"
+        return datetime.now(tz=timezone.utc).isoformat()
 
     @property
     def permitted_methods(self) -> tuple:
