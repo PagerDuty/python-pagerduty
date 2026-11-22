@@ -279,11 +279,12 @@ class RestApiV2ClientTest(ClientTest):
         now = datetime.datetime.now(timezone.utc)
         future6 = now + datetime.timedelta(seconds=6)
         iter_cursor.side_effect = [iter([{"type": "record"}])]
-        list(
+        results = list(
             client.iter_history(
                 "/audit/records", now, future6, params={"actions": ["delete"]}
             )
         )
+        self.assertEqual([{"type": "record"}], results)
         iter_all.assert_not_called()
         get_total.assert_not_called()
         iter_cursor.assert_called_once()
@@ -291,6 +292,34 @@ class RestApiV2ClientTest(ClientTest):
         self.assertEqual(
             ["delete"], iter_cursor.mock_calls[0][2]["params"]["actions"]
         )
+
+    @patch.object(pagerduty.RestApiV2Client, "get")
+    def test_iter_history_cursor_pagination(self, get):
+        """
+        Validate that records of a cursor-paginated endpoint are yielded
+        """
+        client = pagerduty.RestApiV2Client("token")
+        since = datetime.datetime(2026, 1, 1, tzinfo=timezone.utc)
+        until = datetime.datetime(2026, 1, 2, tzinfo=timezone.utc)
+        get.side_effect = [
+            Response(
+                200,
+                json.dumps({"records": [1, 2, 3], "next_cursor": "abc"}),
+            ),
+            Response(
+                200, json.dumps({"records": [4, 5], "next_cursor": None})
+            ),
+        ]
+        results = list(client.iter_history("/audit/records", since, until))
+        self.assertEqual([1, 2, 3, 4, 5], results)
+        self.assertEqual(2, get.call_count)
+        # Both requests carry the time range; the second adds the cursor.
+        # iter_cursor passes the same dict to each request, so copies of it
+        # are not available here and only the final state is checked.
+        params = get.mock_calls[-1][2]["params"]
+        self.assertEqual("2026-01-01T00:00:00+0000", params["since"])
+        self.assertEqual("2026-01-02T00:00:00+0000", params["until"])
+        self.assertEqual("abc", params["cursor"])
 
     def test_iter_history_invalid_url(self):
         client = pagerduty.RestApiV2Client("token")

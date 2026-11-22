@@ -899,10 +899,13 @@ class RestApiV2Client(RestApiV2BaseClient):
                 "GET /oncalls"
             )
         elif path in self.cursor_based_pagination_paths:
-            # Short-circuit to iter_cursor:
+            # Short-circuit to iter_cursor. This method is a generator, so
+            # the results have to be yielded; returning the iterator would
+            # end the iteration without yielding anything.
             iter_kw.setdefault("params", {})
             iter_kw["params"].update(since_until)
-            return self.iter_cursor(url, **iter_kw)
+            yield from self.iter_cursor(url, **iter_kw)
+            return
         # Obtain the total number of records for the interval:
         query_params = kw.get("params", {})
         query_params.update(since_until)
